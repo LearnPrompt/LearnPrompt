@@ -2,7 +2,7 @@
 slug: welcome
 title: Welcome
 ---
-
+  
 ## 更新日志 
 
 - 04/24/2023 网站上线！
@@ -24,9 +24,11 @@ title: Welcome
 
 或者可以直接添加我们开发者的微信：
 
-|Casper|Kyrie |
-|--|--|
-|![Casper](../../static/img/Casper.jpg) |![Kyrie](../../static/img/Kyrie.jpg) |
+同时我们还建立了一个微信群，在这里我们会更新各种实用的prompt使用技巧，好用不割韭菜的各类工具推荐及使用教学，后期我们还会更新AI相关的各种科普知识以及硬核的论文解读、模型复现等。
+
+|Casper|Kyrie | 微信群 |
+|--|--|--|
+|![Casper](../../static/img/Casper.jpg) |![Kyrie](../../static/img/Kyrie.jpg) |![Group](../../static/img/group.jpg) |
 
 
 
