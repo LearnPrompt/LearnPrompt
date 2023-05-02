@@ -104,7 +104,7 @@ const config = {
           {to: '/blog', label: '快讯', position: 'left'},
           {
             href: '/blog/welcome/',
-            label: '更新日志',
+            label: '更多资源',
             position: 'right',
           },
           //{to: '/blog/changelog', label: '更新日志', position: 'right'},
@@ -123,7 +123,7 @@ const config = {
             title: 'Community',
             items: [
               {
-                label: '加入交流群 & 催更 & 反馈',
+                label: '加入交流群 & 最新资源 & 催更 ',
                 //href: 'https://stackoverflow.com/questions/tagged/docusaurus',
                 to: '/blog/welcome'
               },
@@ -132,7 +132,7 @@ const config = {
           },
           
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Learn Prompt. Built with Casper & Kyrie  .`,
+        copyright: `Copyright © ${new Date().getFullYear()} Learn Prompt. Built with Carl & Kyrie  .`,
       },
       prism: {
         theme: lightCodeTheme,
