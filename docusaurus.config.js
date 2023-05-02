@@ -123,7 +123,7 @@ const config = {
             title: 'Community',
             items: [
               {
-                label: '催更 & 反馈 & 加入我们',
+                label: '加入交流群 & 催更 & 反馈',
                 //href: 'https://stackoverflow.com/questions/tagged/docusaurus',
                 to: '/blog/welcome'
               },

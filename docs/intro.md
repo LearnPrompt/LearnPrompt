@@ -52,7 +52,7 @@ sidebar_position: 1
 如果你是新手，我们建议你从基础篇开始学习。这些章节会为你提供必要的知识和技能，以便更好地理解后续的内容。对于那些已经熟悉这些概念的人来说，精选案例是一个潜心研究和扩展知识的好地方，你可以在这里深入探讨相关的话题，拓展你的知识面。无论你的学习水平如何，我们的教程都会提供有益的信息和资源，帮助你更好地了解人工智能和机器学习的世界。
 
 
-## 共同推进这一课程 ！
+## 加入我们
 
 如果你有任何问题、意见或建议，你可以：
   - 在GitHub上提出一个[issue](https://github.com/LearnPrompt/LearnPrompt/issues)
@@ -60,9 +60,15 @@ sidebar_position: 1
   
 或者可以直接添加我们开发者的微信：
 
-|Casper|Kyrie |
-|--|--|
-|![Casper](../static/img/Casper.jpg) |![Kyrie](../static/img/Kyrie.jpg) |
+同时我们还建立了一个微信群，在这里我们会更新各种实用的prompt使用技巧，好用不割韭菜的各类工具推荐及使用教学，后期我们还会更新AI相关的各种科普知识以及硬核的论文解读、模型复现等。
+
+|Casper|Kyrie | 微信群 |
+|--|--|--|
+|![Casper](../static/img/Carl.jpg) |![Kyrie](../static/img/Kyrie.jpg) |![Group](../static/img/group.jpg) |
+
+也欢迎各位通过以下社交平台关注我们：
+* [即刻](https://okjk.co/vVERU6)：实时分享 AI 相关的新闻和产品体验。
+* [小红书](https://www.xiaohongshu.com/user/profile/5b003bce11be10430bf33433?xhsshare=CopyLink&appuid=5b003bce11be10430bf33433&apptime=1682993929)：主要是分享 ChatGPT 好用的提示语和使用技巧以及最新的Midjourney案例。
 
 相信我们可以一起构造出更好的内容。你可以选择加入我们，成为课程开发的一员😄！ 
 
