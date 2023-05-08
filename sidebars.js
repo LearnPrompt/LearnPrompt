@@ -31,3 +31,31 @@ const sidebars = {
 };
 
 module.exports = sidebars;
+
+
+
+
+//使用前如果没有安装Conda的朋友需要先安装conda，conda教程链接： https://blog.csdn.net/qq_43108090/article/details/121393241 （如果有疑问的朋友可联系在更新日志中联系作者进行反馈，我们将推出保姆级安装教学）。除此之外还需要安装git和cuda
+
+//安装完conda后，我们在windows打开anaconda的命令行终端
+
+//![describe1](./img/img6.png)
+
+//然后通过以下命令新建属于conda的环境（其中[your_name]可以替换成各位想要的名字，比如笔者起的名字为sd，则命令行如下图所示）：
+//```
+//conda create --name [your_name] python=3.8
+//```
+
+//![describe1](./img/img7.png)
+
+//此步骤键盘输入y后按照回车即可安装成功
+
+//![describe1](./img/img8.png)
+
+//安装成功后输入
+//```
+//conda activate [your_name]
+//```
+//激活环境
+
+//![describe1](./img/img9.png)

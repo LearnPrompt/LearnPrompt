@@ -40,6 +40,17 @@ const FeatureList: FeatureItem[] = [
       </>
     ),
   },
+
+  {
+    title: 'Stable Diffusion',
+    Svg: require('@site/static/img/sd.svg').default,
+    //undraw_docusaurus_react.svg
+    description: (
+      <>
+        最火的AI绘画软件之一
+      </>
+    ),
+  },
 ];
 
 function Feature({title, Svg, description}: FeatureItem) {
@@ -53,8 +64,11 @@ function Feature({title, Svg, description}: FeatureItem) {
   else if (title=='Runway'){
     to_path='docs/runway/chap1'
   }
+  else if (title=='Stable Diffusion'){
+    to_path='docs/stable_diffusion/chap1'
+  }
   return (
-    <div className={clsx('col col--4')}>
+    <div className={clsx('col col--6')}>
      
       <div className="text--center">
         <a href={to_path}><Svg className={styles.featureSvg} role="img" /></a>
