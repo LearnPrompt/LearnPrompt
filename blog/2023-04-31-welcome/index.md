@@ -16,8 +16,18 @@ title: Welcome
   
 ## 更新日志 
 
-- 04/24/2023 网站上线！
+- 05/08/2023 Stable diffusion更新
+- 04/24/2023 网站上线！支持ChatGPT,Midjourney,Runway
 - 现有内容的修改日志可点击github
+
+## 后续计划
+
+- [X] Runway AI视频制作教程的大版本更新
+- [X] Stable Diffusion 免费文生图教程
+- [X] 构建社区，希望能在社群同步各种AIGC的体验
+- [ ] 将快讯总结成高质量周报，提供订阅
+- [ ] 持续迭代 ChatGPT 的优秀案例，更新 GPT4 插件开发，个人知识库搭建
+- [ ] LLMs微调
 
 ## 提交反馈
 
@@ -32,12 +42,4 @@ title: Welcome
 如果你有任何问题、意见或建议，你可以：
   - 在GitHub上提出一个[issue](https://github.com/LearnPrompt/LearnPrompt/issues)
   - Email us at [LearnPrompt2023@gmail.com](mailto:LearnPrompt2023@gmail.com)
-  - 在任意一个社交帐号私信我们
-
-## 更新计划
-
-- 持续迭代 ChatGPT 的优秀案例，更新 GPT4 插件开发，个人知识库搭建
-- Runway AI视频制作教程的大版本更新
-- Stable Diffusion 免费文生图教程
-- 将快讯总结成高质量周报，提供订阅
-- 构建社区，希望能在社群同步各种AIGC的体验（如果你有想得到的汇总知识，可以通过反馈通知我们，我们也希望做出一个不一样的社区）
+  - 通过交流群或任意一个社交帐号私信我们

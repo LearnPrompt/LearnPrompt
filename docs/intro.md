@@ -40,10 +40,11 @@ sidebar_position: 1
 
 **🌟 Midjourney案例**: 提供Midjourney在不同的场景的应用案例
 
+**🖼️ Stable Diffusion**: Stable Diffusion 从入门到精通 
+
 **🎥 Runway 视频生成**: 搭配ChatGPT+Midjourney的Runway视频生成
 
 **🔍 工具推荐**: 最新的 ChatGPT、Midjourney、Runway等AIGC相关工具
-
 
 ### 如何使用本教程
 
