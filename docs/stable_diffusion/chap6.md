@@ -2,49 +2,110 @@
 sidebar_position: 1
 ---
 
-# 参数
+# Stable Diffusion模型介绍
 
-参数设置不同，生成的图片也会有区别
-
-## 采样器 Sampler
-Euler, Euler a(更细腻)， Euler 是最简单的，因此生成图的速度比较快。Euler a更有创造力，不同步数可以生成不同的图片。但是部署大于30的时候效果不会更好。
-
-DDIM收敛快，但效率相对低，需要比较多的步数才能获得好的效果，在重绘的时候比较适合使用。
-
-LMS和PLMS是Euler的衍生。大概在步数为30的时候能得到稳定的结果。
-
-DPM2是改进DDIM的采样，减少步骤以获得更好的结果。它每运行一步会经过两次去噪，速度大约是DDIM的两倍。但是如果提示词还在调整的时候，这个采样器的效果一般。
-
-DPM++2M和DPM++2M Karras适合生成真人图片；DPM adaptive和DPM++ SDE Karras适合生成真人写真。
+模型是决定图片生成的效果的最重要的因素，因此如何利用模型来提高生成的图片的质量、风格是非常值得学习的一环。
 
 
+这里可以找到各种各样的模型：
 
-## 采样迭代步数 Step
-图片生成时需要经过多少步的计算，一般为20-50，步数太低图片效果质量不好，但太高也会导致图片失真。步数增加也会增加图片生成的时间。
-
-## 面部修复 Restore faces
-修复面部细节，用于人像图片生成
-
-## 平铺图 Tiling
-生成平铺拼接的图像，类似瓷砖拼接的效果
-
-## 高分辨率修复 Hires.fix
-用于大尺寸的高清图片生成，对设备性能要求很高，耗时比较久
-
-## 宽度 高度
-图像的宽度，高度，像素。这个值越大，需要的显存越多，默认是512 x 512。这个值是8的倍数。
-
-## 总批次数
-每次生成图执行的批次数，出来的图=总批次数*单批数量
-
-## 单批数量
-每批画图的数量，增加这个值可以提高性能，但需要更多的显存，一般默认为1
-
-## 提示词引导系数 CFG scale
-是否严格按照提示词来生成图像，数值越小AI越freestyle。过大过小都会让图片效果变差，一般为7-10
+https://huggingface.co/models?pipeline_tag=text-to-image
 
 
-## 随机种子
-图片生成的时候在初始状态设置的一个值，在相同提示词、参数和种子下，出来的图片会一模一样；-1指每次生成时随机取一个值，这样生成的图片会有所不同
+https://civitai.com/
+
+## 大模型
+又可以称为base model，这一类模型的训练数据集最大，对图片生成效果的影响也最大。Stable Diffusion一般默认的大模型为SD x.x(版本号)
+
+下载的大模型我们把它放在应用的models/Stable_diffusion 路径下，即可使用
+
+![describe1](./img/img39.png)
+
+![describe1](./img/img45.png)
+### 二次元风格大模型
+abyssorangemix3AOM3_aom3a1
+
+![describe1](./img/img27.png)
+
+dalcefoPainting_v4
+
+![describe1](./img/img28.png)
+
+pastelMixStylizedAnime_pastelMixPrunedFP16
+
+油画风
+
+![describe1](./img/img29.png)
+
+threeDelicacyWonton_threeflavorwontonmixv
+
+水墨风
+
+![describe1](./img/img30.png)
+
+revAnimated_v11
+
+大场景
+
+![describe1](./img/img31.png)
+
+Counterfeit
 
 
+![describe1](./img/img32.png)
+
+TMND-Mix
+
+优秀的室内环境
+
+
+![describe1](./img/img33.png)
+
+animelike2D
+
+动漫番画风
+
+![describe1](./img/img34.png)
+
+cetusMix
+
+![describe1](./img/img35.png)
+
+Color Box Model
+
+![describe1](./img/img36.png)
+
+Night Sky YOZORA Style Model
+
+![describe1](./img/img37.png)
+
+## VAE美化模型
+比较像滤镜的感觉，选择VAE相当于给图片加上滤镜；默认是无。
+
+![describe1](./img/img38.png)
+## Lora模型
+Lora模型是拿大模型的一部分生成的小模型，它的能力没有大模型完整，但是经过特定的训练在某些特定内容下会有更好的效果。
+
+![describe1](./img/img40.png)
+
+
+![describe1](./img/img46.png)
+
+比如我们看到C站上一些喜欢的Lora模型的图片，我们可以下载它的lora模型，点击感叹号查看它的参数
+
+
+
+![describe1](./img/img50.png)
+
+下载好的lora模型我们放在此路径下
+![describe1](./img/img51.png)
+
+在应用中的additional network就可以选择lora模型使用了
+
+![describe1](./img/img42.png)
+
+以下是使用lora模型和未使用的生成图片的对比
+
+![describe1](./img/img47.png)
+
+![describe1](./img/img48.png)
