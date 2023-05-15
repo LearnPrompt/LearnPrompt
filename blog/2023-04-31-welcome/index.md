@@ -7,13 +7,15 @@ title: Welcome
 欢迎来到「 卡尔的AI沃茨 」!
 AI沃茨是一个中文AIGC学习社区，我们的开源课程 https://www.learnprompt.pro/ 现已经支持ChatGPT，Midjourney，Runway，Stable Diffusion四大热门项目。同时我们的网站中会不定时更新更多实用的使用技巧，好用不割韭菜的各类工具推荐及使用教学，后期我们还会更新AI相关的科普知识和自己动手做GPT Api应用。各位在浏览我们网站的过程中有什么意见，遇到什么bug，可以在这里提出，也欢迎大家在这里交流AIGC未来各个场景落地的想法。
 
-因微信群人数较多，无法通过扫码入群，如想加入我们的群请直接添加我们开发者的微信：
 
+**因微信一群人数较多（一群即将满员），无法通过扫码入群，如想加入我们的一群请直接添加我们开发者的微信：**
+
+同时我们新建了二群，可以直接通过下方二维码进入二群：
 
 
 |Casper|Kyrie | 微信群 |
 |--|--|--|
-|![Casper](../../static/img/Carl.jpg) |![Kyrie](../../static/img/Kyrie.jpg) |![Group](../../static/img/group.png) |
+|![Casper](../../static/img/Carl.jpg) |![Kyrie](../../static/img/Kyrie.jpg) |![Group](../../static/img/group.jpg) |
 
 也欢迎各位通过以下社交平台关注我们：
 * [即刻](https://okjk.co/vVERU6)：实时分享 AI 相关的新闻和产品体验。
