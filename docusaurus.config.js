@@ -101,7 +101,7 @@ const config = {
             position: 'left',
             label: '教程',
           },
-          {to: '/blog', label: '快讯', position: 'left'},
+          {to: '/blog', label: '加入我们 & AI快讯', position: 'left'},
           {
             href: '/blog/welcome/',
             label: '更多资源',

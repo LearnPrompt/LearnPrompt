@@ -12,13 +12,23 @@ https://www.learnprompt.pro
 
 ## 更新计划
 
-- [ ] 持续迭代 ChatGPT 的优秀案例
-- [ ] GPT4 插件开发
+- [X] 持续迭代 ChatGPT 的优秀案例
+- [X] Runway AI视频制作教程的案例更新
+- [X] Stable Diffusion 文生图教程
+- [ ] GPT4插件 & API应用开发
 - [ ] 个人知识库搭建
-- [ ] Runway AI视频制作教程的案例更新
-- [ ] Stable Diffusion 文生图教程
+- [ ] LLMs大模型微调
+
 
 对后续内容感兴趣的话，不妨点一个star！
+
+## 加入我们
+
+我们建立了一个交流群，在这里我们会更新各种实用的prompt使用技巧，好用不割韭菜的各类工具推荐及使用教学，后期我们还会更新AI相关的各种科普知识以及硬核的论文解读、模型复现等。如果微信二维码失效，你也可以直接添加我们开发者的微信：
+
+|Casper|Kyrie | 微信群 |
+|--|--|--|
+|![Casper](../../static/img/Carl.jpg) |![Kyrie](../../static/img/Kyrie.jpg) |![Group](../../static/img/group.jpg) |
 
 ## 提交反馈
 
@@ -30,16 +40,9 @@ https://www.learnprompt.pro
 
 ### 反馈形式 
 
-
 如果你有任何问题、意见或建议，你可以：
   - 在GitHub上提出一个[issue](https://github.com/LearnPrompt/LearnPrompt/issues)
   - Email us at [LearnPrompt2023@gmail.com](mailto:LearnPrompt2023@gmail.com)
-
-或者可以直接添加我们开发者的微信：
-
-|Casper|Kyrie |
-|--|--|
-|![Casper](./static/img/Casper.jpg) |![Kyrie](./static/img/Kyrie.jpg) |
 
 ## Reference
 
