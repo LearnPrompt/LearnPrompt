@@ -24,17 +24,17 @@ sidebar_position: 1
 
 激活完信用卡后，登录你的[ChatGPT账号](https://chat.openai.com/)，点击Upgrade to Plus，然后点击Upgrade plan
 
-![step1](./img/step1.jpg)
+![step1](./img/step_1.jpg)
 
 然后填写卡片信息和账单信息（参考信用卡开卡信息）
 
-![step2](./img/step2.jpg)
+![step2](./img/step_2.jpg)
 
 这里账单地址最好是复用你开卡的地址
 
 填写完信息，点击订阅/Subscribe 等待验证即可成功订阅开通ChatGPT Plus。
 
-![step3](./img/step3.jpg)
+![step3](./img/step_3.jpg)
 
 一个ChatGPT plus帐号诞生了😄
 
@@ -42,18 +42,18 @@ sidebar_position: 1
 
 回到ChatGPT的聊天页面，这时候已经多出来**GPT4**的选项。
 
-![step4](./img/step4.jpg)
+![step4](./img/step_4.jpg)
 
 点击右下角“...”里的Settings，打开Beat features里的Web browsing
 
-![step5](./img/step5.jpg)
+![step5](./img/step_5.jpg)
 
 回到聊天界面，点击**GPT-4**会出现下拉列表，选择**Browsing Beta**。开始你的插件之旅!
 
-![step6](./img/step6.jpg)
+![step6](./img/step_6.jpg)
 
 我尝试让ChatGPT帮我列出这周10件AI大事：
 
-![step7](./img/step7.jpg)
+![step7](./img/step_7.jpg)
 
 Enjoy！整个过程十分流畅。由于现在OpenAI还是随机更新Plus 用户的插件功能，所以到这一步，大家可以耐心等待。
