@@ -2,7 +2,7 @@
 
 一个免费开源的 AIGC 课程
 
-目前已支持 ChatGPT, Midjourney, Runway
+目前已支持 ChatGPT, Midjourney, Runway, Stable Diffusion 
 
 [![Twitter](https://img.shields.io/twitter/url?label=Follow%20%40prompt_learn&style=social&url=https%3A%2F%2Ftwitter.com%2Flearnprompting)](https://twitter.com/prompt_learn)
 ![Website](https://img.shields.io/website?down_message=offline%20%3A%28&up_message=learnprompt.pro&url=https%3A%2F%2Flearnprompting.org)
@@ -26,9 +26,9 @@ https://www.learnprompt.pro
 
 我们建立了一个交流群，在这里我们会更新各种实用的prompt使用技巧，好用不割韭菜的各类工具推荐及使用教学，后期我们还会更新AI相关的各种科普知识以及硬核的论文解读、模型复现等。如果微信二维码失效，你也可以直接添加我们开发者的微信：
 
-|Casper|Kyrie | 微信群 |
+|Carl |Kyrie | 微信群 |
 |--|--|--|
-|![Casper](../../static/img/Carl.jpg) |![Kyrie](../../static/img/Kyrie.jpg) |![Group](../../static/img/group.jpg) |
+|![Carl](./static/img/Carl.jpg) |![Kyrie](./static/img/Kyrie.jpg) |![Group](./static/img/groupE.jpg) |
 
 ## 提交反馈
 

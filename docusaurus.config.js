@@ -102,11 +102,11 @@ const config = {
             label: '教程',
           },
           {to: '/blog', label: '加入我们 & AI快讯', position: 'left'},
-          {
-            href: '/blog/welcome/',
-            label: '更多资源',
-            position: 'right',
-          },
+          // {
+          //   href: '/blog/welcome/',
+          //   label: '更多资源',
+          //   position: 'right',
+          // },
           //{to: '/blog/changelog', label: '更新日志', position: 'right'},
           {
             href: 'https://github.com/LearnPrompt/LearnPrompt',
