@@ -20,7 +20,7 @@ had 84 - 25 = 59. The answer is 59." max-tokens="256" box-rows="18" model-temp="
 
 ### Zero-shot Chain of Thought Prompting
 
-<div trydyno-embed="" openai-model="text-davinci-003" initial-prompt="LLeah had 53 chocolates and her sister had 31. If they ate 25, how many pieces do they have left in total?\n\nLet’s think step by step" initial-response="Leah had 53 chocolates\nHer sister had 31 chocolates\nThey ate 25 chocolates\n\nSo we can do:\n53 + 31 = 84\n84 - 25 = 59\n\nTherefore, Leah and her sister have 59 pieces of chocolate left in total." max-tokens="256" box-rows="18" model-temp="0.5" top-p="1.0"></div>
+<div trydyno-embed="" openai-model="text-davinci-003" initial-prompt="Leah had 53 chocolates and her sister had 31. If they ate 25, how many pieces do they have left in total?\n\nLet’s think step by step" initial-response="Leah had 53 chocolates\nHer sister had 31 chocolates\nThey ate 25 chocolates\n\nSo we can do:\n53 + 31 = 84\n84 - 25 = 59\n\nTherefore, Leah and her sister have 59 pieces of chocolate left in total." max-tokens="256" box-rows="18" model-temp="0.5" top-p="1.0"></div>
 
 这一次，ChatGPT 不仅算出了我们想要的答案，还省去了我们编写推理步骤的过程。
 
