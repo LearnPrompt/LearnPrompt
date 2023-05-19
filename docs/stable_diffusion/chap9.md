@@ -42,6 +42,24 @@ git clone --recurse-submodules https://github.com/Akegarasu/lora-scripts
 
 ![describe1](./img/train5.png)
 
+如果输入python遇到报错找不到python或者跳出微软商店的
+
+![describe1](./img/train31.png)
+
+请重新安装python，这次我们选择customize install
+
+![describe1](./img/train32.png)
+
+点击下一步
+
+![describe1](./img/train33.png)
+
+这一步我们勾选这个
+
+![describe1](./img/train34.png)
+
+安装完毕后即可正常使用。
+
 3. 安装依赖
 我们去到下载好的lora-scripts路径下，右键install-cn，使用powershell运行
 
