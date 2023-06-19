@@ -30,6 +30,14 @@ https://www.learnprompt.pro
 |--|--|--|
 |![Carl](./static/img/Carl.jpg) |![Kyrie](./static/img/Kyrie.jpg) |![Group](./static/img/groupE.jpg) |
 
+## 支持我们
+通过以下方式支持我们吧
+
+ U | B | E | 
+| --| --| --| 
+| ![usdt](./img/usdt.jpg) | ![btc](./img/btc.jpg) | ![eth](./img/eth.jpg)
+
+
 ## 提交反馈
 
 我们十分高兴能得到你们的反馈，包括但不限于：

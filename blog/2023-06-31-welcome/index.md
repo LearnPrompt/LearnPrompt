@@ -30,7 +30,7 @@ xxx | xxx |
 ## 支持我们
 通过以下方式支持我们吧
 
- U | B | E | V |
+ U | B | E | 
 | --| --| --| 
 | ![usdt](./img/usdt.jpg) | ![btc](./img/btc.jpg) | ![eth](./img/eth.jpg)
 
