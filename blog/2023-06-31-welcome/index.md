@@ -9,21 +9,29 @@ AI沃茨是一个中文AIGC学习社区，我们的开源课程 https://www.lear
 
 感谢大家对我们内容的认可！我们新建了四大学院，可以直接通过下方二维码进入（群内推送保持同步，大家可以自由选择）：
 
-| 蛇院 | 鹰院 | 獾院 | 狮院 |
-|--|--|--|--|
-|![groupS](../../static/img/groupS.jpg)  |![groupE](../../static/img/groupE.jpg)  |![groupH](../../static/img/groupH.jpg)  |添加开发者微信入群|
+| MJ机器人体验群  | 獾院 | 啃大瓜院 |
+|--|--|--|
+|![groupS](../../static/img/MJ.jpg)  |![groupE](../../static/img/kuan.jpg)  |![groupH](../../static/img/dagua.jpg)  |
 
-**因微信一群人数较多，无法通过扫码入群，如想加入请直接添加我们开发者的微信：**
+**因其他微信人数较多，无法通过扫码入群，如想加入请直接添加我们开发者的微信：**
 
 |Casper|Kyrie | 
 |--|--|
-|![Casper](../../static/img/Carl.jpg) |![Kyrie](../../static/img/Kyrie.jpg) |
+|![Casper](../../static/img/Carl.jpg) |![Kyrie](../../static/img/kc.jpg) |
+
+ 
 
 也欢迎各位通过以下社交平台关注我们：
 * 公众号：关注**卡尔的AI沃茨**: 持续更新 AIGC 实操指南
 * [即刻](https://okjk.co/vVERU6)：实时分享 AI 相关的新闻和产品体验。
 * [小红书](https://www.xiaohongshu.com/user/profile/5b003bce11be10430bf33433?xhsshare=CopyLink&appuid=5b003bce11be10430bf33433&apptime=1682993929)：主要是分享 ChatGPT 好用的提示语和使用技巧以及最新的Midjourney案例。
 
+## 支持我们
+通过以下方式支持我们吧
+
+ U | B | E | V | 
+| --| --| --| --|
+| ![usdt](./img/usdt.jpg) | ![btc](./img/btc.jpg) | ![eth](./img/eth.jpg) |![vx](../../static/img/vx.jpg) | 
 
 
 ## 更新日志 
