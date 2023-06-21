@@ -33,9 +33,9 @@ https://www.learnprompt.pro
 ## 支持我们
 通过以下方式支持我们吧
 
- U | B | E | 
-| --| --| --| 
-| ![usdt](./img/usdt.jpg) | ![btc](./img/btc.jpg) | ![eth](./img/eth.jpg)
+ U | B | E | V |
+| --| --| --| -- | 
+| ![usdt](./img/usdt.jpg) | ![btc](./img/btc.jpg) | ![eth](./img/eth.jpg) | ![vx](./static/img/vx.jpg) |
 
 
 ## 提交反馈
