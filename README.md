@@ -28,7 +28,7 @@ https://www.learnprompt.pro
 
 |Carl |Kyrie | 微信群 |
 |--|--|--|
-|![Carl](./static/img/Carl.jpg) |![Kyrie](./static/img/Kyrie.jpg) |![Group](./static/img/groupE.jpg) |
+|![Carl](./static/img/Carl.jpg) |![Kyrie](./static/img/kc.jpg) |![Group](./static/img/groupE.jpg) |
 
 ## 支持我们
 通过以下方式支持我们吧
