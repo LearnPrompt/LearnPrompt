@@ -65,7 +65,7 @@ git clone https://github.com/Winfredy/SadTalker.git
 ## 运行方式二：Colab（需科学上网）
 
 1. 访问 [SadTalcker 的Colab链接](https://colab.research.google.com/github/Winfredy/SadTalker/blob/main/quick_demo.ipynb)，复制到自己的云端硬盘
-![Alt text](image.png)
+![Alt text](img/img0.png)
 
 2. 点击不同单元格，依次运行
 ![Alt text](img/img3.png)
