@@ -45,7 +45,7 @@ OpenAI 对您可以向 API 发出的请求强制实施速率限制。这些应�
 
 1. **OpenCat**：本地桌面ChatGPT客户端，支持iOS和macOS。与ChatGPT每月20美元的订阅费相比，轻度使用的API价格更低。
 
-![OpenCat](./img/OpenCat.png)
+![OpenCat](./img/opencat.png)
 
 2. **ChatBox**：开源免费的OpenAI API桌面客户端，支持Windows、macOS和Linux。用户可以自定义KEY和API Host地址，并在本地保存聊天记录，管理多个会话，并设置不同的Prompt。
 
