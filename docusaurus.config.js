@@ -50,7 +50,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           //postsPerPage: 'ALL',
-          blogSidebarTitle: '所有快讯',
+          blogSidebarTitle: '更新日志',
           blogSidebarCount: 'ALL',
          // editUrl:
            // 'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
@@ -99,18 +99,18 @@ const config = {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
             position: 'left',
-            label: '教程',
+            label: '✨开启AI之旅',
           },
-          {to: '/blog', label: '加入我们 & AI快讯', position: 'left'},
-          // {
-          //   href: '/blog/welcome/',
-          //   label: '更多资源',
-          //   position: 'right',
-          // },
+          {to: '/blog', label: '📚更新日志', position: 'left'},
+          {
+            href: 'https://mp.weixin.qq.com/s/uRs8TdWKkLZFGbJncsS-Tw',
+            label: '🧙关于我们',
+            position: 'right',
+          },
           //{to: '/blog/changelog', label: '更新日志', position: 'right'},
           {
             href: 'https://github.com/LearnPrompt/LearnPrompt',
-            label: 'GitHub',
+            label: '🐱GitHub',
             position: 'right',
           },
         ],
@@ -123,16 +123,16 @@ const config = {
             title: 'Community',
             items: [
               {
-                label: '加入交流群 & 最新资源 & 催更 ',
+                label: '入群交流 & 最新资源',
                 //href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-                to: '/blog/welcome'
+                to: '/docs/intro'
               },
               
             ],
           },
           
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Learn Prompt. Built with Carl & Kyrie  .`,
+        copyright: `Copyright © ${new Date().getFullYear()} Learn Prompt. Built with AI-warts.`,
       },
       prism: {
         theme: lightCodeTheme,

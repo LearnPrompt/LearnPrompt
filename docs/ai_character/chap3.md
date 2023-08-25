@@ -77,11 +77,11 @@ git clone https://github.com/Winfredy/SadTalker.git
 ![Alt text](./img/img8.png)
 
 5. 预览结果
-![Alt text](img/img9.png)
+![Alt text](./img/img9.png)
 
  ### 常见问题
  #### 1. pip install 时提示 python3.8: command not found
-![Alt text](img/img5.png)
+![Alt text](./img/img5.png)
 
 解决方法：手动安装下python3.8
 
@@ -90,4 +90,4 @@ git clone https://github.com/Winfredy/SadTalker.git
 !chmod +x mini.sh
 !bash ./mini.sh -b -f -p /usr/local
 ```
-   ![Alt text](img/img6.png)
+   ![Alt text](./img/img6.png)

@@ -40,7 +40,6 @@ const FeatureList: FeatureItem[] = [
       </>
     ),
   },
-
   {
     title: 'Stable Diffusion',
     Svg: require('@site/static/img/sd.svg').default,
@@ -48,6 +47,26 @@ const FeatureList: FeatureItem[] = [
     description: (
       <>
         最火的AI绘画软件之一
+      </>
+    ),
+  },
+  {
+    title: 'AI digital person',
+    Svg: require('@site/static/img/hey.svg').default,
+    //undraw_docusaurus_react.svg
+    description: (
+      <>
+        首套AI数字人制作教程
+      </>
+    ),
+  },
+  {
+    title: 'AI Voice',
+    Svg: require('@site/static/img/svc.svg').default,
+    //undraw_docusaurus_react.svg
+    description: (
+      <>
+        无需复杂安装，制作AI声音&音乐
       </>
     ),
   },
@@ -68,7 +87,7 @@ function Feature({title, Svg, description}: FeatureItem) {
     to_path='docs/stable_diffusion/chap1'
   }
   return (
-    <div className={clsx('col col--6')}>
+    <div className={clsx('col col--4')}>
      
       <div className="text--center">
         <a href={to_path}><Svg className={styles.featureSvg} role="img" /></a>
