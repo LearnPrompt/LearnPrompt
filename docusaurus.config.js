@@ -8,7 +8,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'Learn Prompt',
   tagline: 'What is next AIGC ?',
-  favicon: 'img/logo.png',
+  favicon: 'img/logo3.png',
   //'img/favicon.ico',
 
   // Set the production url of your site here
@@ -91,7 +91,7 @@ const config = {
         title: 'Learn Prompt',
         logo: {
           alt: 'Learn Prompt Logo',
-          src: 'img/logo.png',
+          src: 'img/logo3.png',
          
         },
         items: [
