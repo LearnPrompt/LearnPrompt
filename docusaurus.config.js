@@ -7,7 +7,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: '🎉 Learn Prompt 🎉',
-  tagline: '📚 Your Guide to Becoming a Pro at Chatting with AI',
+  tagline: '📚 Your Guide to Becoming a Pro at Communicating with AI',
   favicon: 'img/logo3.png',
   //'img/favicon.ico',
 
