@@ -14,11 +14,10 @@
 - [X] Stable Diffusion 文生图教程
 - [X] GPT4插件 & API应用开发
 - [X] LLMs大模型微调
-- [ ] 个人知识库搭建
-- [ ] AI数字人
+- [X] AI Agents知识体系
+- [X] AI数字人
 - [ ] AI声音&音乐
-- [ ] AI Agents知识体系
-
+- [ ] Llama2-index 个人文档问答
 
 对后续内容感兴趣的话，不妨点一个star！
 

@@ -26,28 +26,33 @@ sidebar_position: 1
 
 ## 章节简介
 
-**🤖 AI基础**: AI相关基础知识，用最通俗易懂的方式来让所有读者知道AI是什么
+- **🤖 AI基础**: AI相关基础知识，用最通俗易懂的方式来让所有读者知道AI是什么
 
-**😄 Prompt 基础篇**: 介绍prompt基本概念和使用方法
+- **😄 ChatGPT 入门篇**: 介绍prompt基本概念和使用方法
 
-**🎨 Midjourney 图片生成**: Midjourney文生图工具的基本使用
+- **📝 ChatGPT 精选案例**: 提供prompt在垂直领域的应用案例
 
-**🤖 Midjourney Prompt**: 详解Midjourney Prompt的提示语模板和提示自动生成
+- **💪 Prompt 高级技巧**: 提供实用的模板和技巧
 
-**🖼️ Stable Diffusion**: Stable Diffusion 从入门到精通 
+- **🪄 Agents**: AI下半场！Agent = LLM（大型语言模型）+记忆+规划技能+工具使用
 
-**🎥 Runway 视频生成**: 搭配ChatGPT+Midjourney的Runway视频生成
+- **💡 GPT4综述**: gpt4能力分析
 
+- **⛓️ GPT Plugin插件**: gpt4插件开发教程
 
-**💪 Prompt 高级技巧**: 提供实用的模板和技巧
+- **🎨 Midjourney 图片生成**: Midjourney文生图工具的基本使用
 
-**📝 ChatGPT 精选案例**: 提供prompt在垂直领域的应用案例
+- **🤖 Midjourney Prompt**: 详解Midjourney Prompt的提示语模板和提示自动生成
 
-**🌟 Midjourney案例**: 提供Midjourney在不同的场景的应用案例
+- **🌟 Midjourney案例**: 提供Midjourney在不同的场景的应用案例
 
-**💡 GPT4**: gpt4能力分析以及插件开发教程
+- **👩🏻‍🎤 AI虚拟数字人**: 盘点全数字人解决方案
 
-**🔍 工具推荐**: 最新的 ChatGPT、Midjourney、Runway等AIGC相关工具
+- **🖼️ Stable Diffusion**: Stable Diffusion 从入门到精通 
+
+- **🎥 Runway 视频生成**: 搭配ChatGPT+Midjourney的Runway视频生成
+
+- **🔍 工具推荐**: AIGC 工具和教程的扩展阅读
 
 ## 📖学习方法推荐
 推荐 David Merrill 教授提出的“首要教学原理”：
@@ -56,6 +61,7 @@ sidebar_position: 1
 - 原则三：示范 —— 当向学习者展示新知识时，就会促进学习。
 - 原则四：应用 —— 当学习者应用新知识时，会促进学习。
 - 原则五：整合 —— 当新知识融入学习者的世界时，学习就会得到促进。
+
 ![MERRILL](../static/img/MERRILL.png)
 
 
