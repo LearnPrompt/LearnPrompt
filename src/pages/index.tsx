@@ -12,25 +12,9 @@ inject();
 function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
 
-  useEffect(() => {
-    const script = document.createElement('script');
-
-    script.src = "https://cdn.wwads.cn/js/makemoney.js";
-    script.async = true;
-    script.charset = "UTF-8";
-
-    document.head.appendChild(script);
-
-    return () => {
-      document.head.removeChild(script);
-    }
-  }, []);
-
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
-
       <div className="container">
-        <div className="wwads-cn wwads-horizontal wwads-sticky" data-id="290" style={{maxWidth: '350px'}}></div>
         <h1 className="hero__title">{siteConfig.title}</h1>
         <p className="hero__subtitle">{siteConfig.tagline}</p>
         <div className={styles.buttons}>
