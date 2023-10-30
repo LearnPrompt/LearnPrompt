@@ -12,7 +12,7 @@ export default function TOC({className, ...props}) {
   useEffect(()=>{
     setTimeout(()=>{
       setRenderWwads(true)
-    }, 2000)
+    }, 3000)
   }, [])
 
   return (
