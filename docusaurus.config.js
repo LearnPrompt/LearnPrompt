@@ -3,6 +3,7 @@
 
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const adsPlugin = require('./src/plugins/ads')
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -32,7 +33,9 @@ const config = {
     defaultLocale: 'zh-Hans',
     locales: ['zh-Hans'],
   },
-
+  plugins: [
+    adsPlugin,
+  ],
   presets: [
     [
       'classic',
