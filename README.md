@@ -1,13 +1,17 @@
-# Learn Prompt
+# LearnPrompt
 
-一个永久免费开源的 AIGC 课程 https://www.learnprompt.pro
+中文文档 | [README in English](./README_EN.md)
 
-目前已支持 ChatGPT, Midjourney, Runway, Stable Diffusion, AI数字人，AI声音&音乐，大模型微调
+永久免费开源的 AIGC 课程 https://www.learnprompt.pro
+
+目前已支持 ChatGPT, Agent, Midjourney, Runway, Stable Diffusion, AI数字人，AI声音&音乐，大模型微调
+
+> v3.0版本已上线！支持多语言，评论区，chatBase机器人，每日精选，投稿等多种新功能，欢迎👏大家探索
 
 [![Twitter](https://img.shields.io/twitter/url?label=Follow%20%40aiwarts&style=social&url=https%3A%2F%2Ftwitter.com%2Flearnprompting)](https://twitter.com/aiwarts?s=21&t=bh5DcWYZX2rSeis-DiWzvA)
 ![Website](https://img.shields.io/website?down_message=offline%20%3A%28&up_message=learnprompt.pro&url=https%3A%2F%2Flearnprompting.org)
 
-## 更新计划
+## 更新计划 RoadMap
 
 - [X] 持续迭代 ChatGPT 的优秀案例
 - [X] Runway AI视频制作教程的案例更新
@@ -23,13 +27,9 @@
 
 ## 进群交流 & 支持我们
 
-感谢大家对课程内容的热烈支持！我们「AI沃茨」已建立10个交流群，供大家自由分享和探讨知识。欢迎扫描下方二维码直接加入我们的学习社区！如果微信二维码失效，你也可以直接添加我们开发者的微信：
+感谢大家对课程内容的热烈支持！「AI沃茨」正在不断成长！目前交流群20+，供大家自由分享和探讨知识。欢迎扫描下方二维码直接加入我们的学习社区！如果微信二维码失效，你也可以直接添加我们开发者的微信：
 
-<!-- |交流群 | 支持追更 | 开发者 |
-|--|--|--|
-|![Kyrie](./static/img/group.jpg) |![vx](./static/img/vx.jpg) |![Carl](./static/img/Carl.jpg) | -->
-
-![contact](./static/img/contact.jpg)
+![contact](public/scan.png)
 
 ## 提交反馈
 
@@ -50,3 +50,4 @@
 1. [Learn Prompting](https://learnprompting.org/zh-Hans/)
 2. [Midjourney Documentation](https://docs.midjourney.com/)
 3. [Aituts](https://aituts.com/)
+4. [notion-next](https://github.com/tangly1024/NotionNext)
