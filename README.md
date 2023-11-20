@@ -50,3 +50,4 @@
 1. [Learn Prompting](https://learnprompting.org/zh-Hans/)
 2. [Midjourney Documentation](https://docs.midjourney.com/)
 3. [Aituts](https://aituts.com/)
+4. [notion-next](https://github.com/tangly1024/NotionNext)
