@@ -176,10 +176,10 @@ function Hero(props) {
               <img src={"/images/mjmobile.webp"} alt="Intermediate Mobile" />
               <img src={"/images/runwaymobile.webp"} alt="Advanced Mobile" />
               <LazyLoadImage src={"/images/agentmobile.webp"} alt="Applications Mobile"/>
-              <img src={"/images/bllmmobile.webp"} alt="Beginner Mobile" width={"100%"}/>
+              <img src={"/images/llmmobile.webp"} alt="Beginner Mobile" width={"100%"}/>
               <img src={"/images/sdmobile.webp"} alt="Intermediate Mobile" />
               <img src={"/images/heygenmobile.webp"} alt="Advanced Mobile" />
-              <LazyLoadImage src={"/images/audiowmobile.webp"} alt="Applications Mobile"/>
+              <LazyLoadImage src={"/images/audiomobile.webp"} alt="Applications Mobile"/>
             </div>
           </div>
         </div>
