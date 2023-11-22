@@ -77,7 +77,7 @@ function Hero(props) {
           className="mt-14 text-center text-3xl md:text-7xl font-vietnam md:font-medium font-semibold tracking-tighter lg:px-8 2xl:px-32 pt-2"
           style={{ color: "black" }}
         >
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-400 text-6xl"
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-400 md:text-6xl text-5xl"
               style={{
                 backgroundImage: 'linear-gradient(to bottom right, rgb(36,5,80), rgb(108,75,150), rgb(213,189,237))'
               }}
