@@ -119,7 +119,7 @@ export default function Features(props) {
                     unmount={false}
                   >
                     <div className="relative inline-flex flex-col">
-                      <LazyImage src='/images/feature-1.webp'/>
+                      <img src='/images/feature-1.webp'/>
                     </div>
 
                   </Transition>
