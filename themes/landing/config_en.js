@@ -55,7 +55,7 @@ const CONFIG = {
 
   // 特性介绍 Before, it was scattered lessons, chaotic learning paths, and high costs.
   FEATURES_HEADER_1: 'Learning AI is easy',
-  FEATURES_HEADER_1_P: "How to master AI technology and become an expert?<br/>Before, it was <strong class='font-bold text-red-500'>scattered</strong> lessons, <strong class='font-bold  text-red-500'>chaotic </strong>learning paths, and <strong class='font-bold text-red-500'>high</strong> costs;<br/>Now, an all-in-one platform <strong class='font-bold text-purple-900 bg-clip-text' style='background-image: linear-gradient(to bottom right, rgb(36,5,80), rgb(108,75,150), rgb(213,189,237)); color: transparent;'>Learn Prompt</strong> is all you need 这里换成中文",
+  FEATURES_HEADER_1_P: "How to master AI technology and become an expert?<br/>Before, it was <strong class='font-bold text-red-500'>scattered</strong> lessons, <strong class='font-bold  text-red-500'>chaotic </strong>learning paths, and <strong class='font-bold text-red-500'>high</strong> costs;<br/>Now, an all-in-one platform <strong class='font-bold text-purple-900 bg-clip-text' style='background-image: linear-gradient(to bottom right, rgb(36,5,80), rgb(108,75,150), rgb(213,189,237)); color: transparent;'>Learn Prompt</strong> is all you need",
   FEATURES_HEADER_2: 'Access Core Advantages',
   FEATURES_CARD_1_TITLE: 'Quick Start',
   FEATURES_CARD_1_P: 'Select your course and embark on your AI journey immediately',
