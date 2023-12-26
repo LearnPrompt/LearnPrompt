@@ -17,6 +17,7 @@
 - [X] Runway AI视频制作教程的案例更新
 - [X] Stable Diffusion 文生图教程
 - [X] GPT4插件 & API应用开发
+- [X] GPTs教程
 - [X] LLMs大模型微调
 - [X] AI Agents知识体系
 - [X] AI数字人
@@ -25,9 +26,14 @@
 
 对后续内容感兴趣的话，不妨点一个star！
 
+### Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=LearnPrompt/LearnPrompt&type=Date)](https://star-history.com/#LearnPrompt/LearnPrompt&Date)
+
+
 ## 进群交流 & 支持我们
 
-感谢大家对课程内容的热烈支持！「AI沃茨」正在不断成长！目前交流群20+，供大家自由分享和探讨知识。欢迎扫描下方二维码直接加入我们的学习社区！如果微信二维码失效，你也可以直接添加我们开发者的微信：
+感谢大家对课程内容的热烈支持！「AI沃茨」正在不断成长！目前交流群40+，供大家自由分享和探讨知识。欢迎扫描下方二维码直接加入我们的学习社区！如果微信二维码失效，你也可以直接添加我们开发者的微信：
 
 ![contact](public/scan.png)
 
