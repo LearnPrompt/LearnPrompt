@@ -9,6 +9,13 @@ ChatGPT, Agent, Midjourney, Runway, Stable Diffusion, AI Digital People, AI Soun
 [![Twitter](https://img.shields.io/twitter/url?label=Follow%20%40aiwarts&style=social&url=https%3A%2F%2Ftwitter.com%2Flearnprompting)](https://twitter.com/aiwarts?s=21&t=bh5DcWYZX2rSeis-DiWzvA)
 ![Website](https://img.shields.io/website?down_message=offline%20%3A%28&up_message=learnprompt.pro&url=https%3A%2F%2Flearnprompting.org)
 
+## Update Log 0205
+
+- [Daily Pick](https://www.learnprompt.pro/article/Daily) Breaking 100 new posts!
+- New sound cloning module, colab implementation of GPT-SoVits practice
+- New RAG module
+- Update comment section module, now you don't need to log in with githun account, just type in your comment directly.
+
 ## RoadMap
 
 - [X] Continuously iterate on ChatGPT's good examples
@@ -18,7 +25,7 @@ ChatGPT, Agent, Midjourney, Runway, Stable Diffusion, AI Digital People, AI Soun
 - [X] LLMs Large Model Fine-tuning
 - [X] AI Agents Knowledge
 - [X] AI Digital People
-- [ ] AI Sound & Music
+- [X] AI Sound & Music
 - [ ] Llama2-index RAG
 
 If you are interested in the follow-up content, you may want to click a STAR!
