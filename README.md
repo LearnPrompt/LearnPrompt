@@ -6,10 +6,17 @@
 
 目前已支持 ChatGPT, Agent, Midjourney, Runway, Stable Diffusion, AI数字人，AI声音&音乐，大模型微调
 
-> v3.0版本已上线！支持多语言，评论区，chatBase机器人，每日精选，投稿等多种新功能，欢迎👏大家探索
+> v3.0版本已上线！支持多语言，评论区，每日精选，投稿等多种新功能，欢迎👏大家探索
 
 [![Twitter](https://img.shields.io/twitter/url?label=Follow%20%40aiwarts&style=social&url=https%3A%2F%2Ftwitter.com%2Flearnprompting)](https://twitter.com/aiwarts?s=21&t=bh5DcWYZX2rSeis-DiWzvA)
 ![Website](https://img.shields.io/website?down_message=offline%20%3A%28&up_message=learnprompt.pro&url=https%3A%2F%2Flearnprompting.org)
+
+## 更新日志 0205
+
+- [每日精选](https://www.learnprompt.pro/article/Daily)更新篇章破百！
+- 新增声音克隆模块，colab实现GPT-SoVits实践
+- 新增RAG模块
+- 更新评论区模块，现在不需要用githun账号登录，直接输入评论
 
 ## 更新计划 RoadMap
 
@@ -20,7 +27,7 @@
 - [X] LLMs大模型微调
 - [X] AI Agents知识体系
 - [X] AI数字人
-- [ ] AI声音&音乐
+- [X] AI声音&音乐
 - [ ] Llama2-index 个人文档问答
 
 对后续内容感兴趣的话，不妨点一个star！

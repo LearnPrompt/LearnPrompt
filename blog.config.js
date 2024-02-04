@@ -26,7 +26,7 @@ const BLOG = {
       CONTACT_EMAIL: process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'learnprompt2023@gmail.com', // 邮箱地址
       CONTACT_WEIBO: process.env.NEXT_PUBLIC_CONTACT_WEIBO || '', // 你的微博个人主页
       CONTACT_TWITTER: process.env.NEXT_PUBLIC_CONTACT_TWITTER || 'https://twitter.com/aiwarts', // 你的twitter个人主页
-      CONTACT_GITHUB: process.env.NEXT_PUBLIC_CONTACT_GITHUB || 'https://github.com/LearnPrompt2', // 你的github个人主页 
+      CONTACT_GITHUB: process.env.NEXT_PUBLIC_CONTACT_GITHUB || 'https://github.com/LearnPrompt', // 你的github个人主页 
       CONTACT_TELEGRAM: process.env.NEXT_PUBLIC_CONTACT_TELEGRAM || 'https://t.me/aiwarts', // 你的telegram 地址 
       CONTACT_LINKEDIN: process.env.NEXT_PUBLIC_CONTACT_LINKEDIN || '', // 你的linkedIn 首页
       CONTACT_INSTAGRAM: process.env.NEXT_PUBLIC_CONTACT_INSTAGRAM || '', // 您的instagram地址
@@ -241,7 +241,7 @@ const BLOG = {
     
       // utterance
       COMMENT_UTTERRANCES_REPO:
-            process.env.NEXT_PUBLIC_COMMENT_UTTERRANCES_REPO || 'LearnPrompt/LP_comment', // 你的代码仓库名， 更多文档参考 https://utteranc.es/
+            process.env.NEXT_PUBLIC_COMMENT_UTTERRANCES_REPO || '', // 你的代码仓库名， 更多文档参考 https://utteranc.es/
     
       // giscus @see https://giscus.app/
       COMMENT_GISCUS_REPO: process.env.NEXT_PUBLIC_COMMENT_GISCUS_REPO || '', // 你的Github仓库名 

@@ -30,7 +30,7 @@ export default function LogoBar(props) {
                 }}
               />
                 {/* <LazyImage src={siteInfo?.icon} width={24} height={24} alt={BLOG.AUTHOR} className='mr-2 hidden md:block' /> */}
-                Learn Prompt
+                LearnPrompt
             </Link>
         </div>
   )

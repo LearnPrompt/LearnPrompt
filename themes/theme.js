@@ -1,9 +1,14 @@
-import cookie from 'react-cookies'
-import BLOG from '@/blog.config'
+import * as ThemeComponents from '@theme-components'
+
 import { getQueryParam, getQueryVariable } from '../lib/utils'
+
+import BLOG from '@/blog.config'
+import cookie from 'react-cookies'
 import dynamic from 'next/dynamic'
 import getConfig from 'next/config'
-import * as ThemeComponents from '@theme-components'
+import {useEffect} from 'react'
+import { useRouter } from 'next/router';
+
 // 所有主题在next.config.js中扫描
 export const { THEMES = [] } = getConfig().publicRuntimeConfig
 /**
@@ -13,7 +18,7 @@ export const { THEMES = [] } = getConfig().publicRuntimeConfig
  * @returns
  */
 
-import { useRouter } from 'next/router';  // Ensure useRouter is imported at the beginning of the file.
+ // Ensure useRouter is imported at the beginning of the file.
 
 // ... (other imports and code)
 
@@ -25,6 +30,31 @@ export const getLayoutByTheme = (router) => {
   const isZhHomePage = currentPath === '/zh';
   const is404 = currentPath === '/404'
   console.log('------------------------------------',currentPath)
+
+  useEffect(() => {
+    function jump() {
+      const path = window.location.hash
+      if (path && path.includes('#')) {
+        const id = path.replace('#', '')
+        const el = window.document.getElementById(id)
+        if(el) {
+          const r = el.getBoundingClientRect()
+        
+          window.scrollTo({
+            top: r.top,
+            behavior: 'smooth'
+          })
+        }
+      }
+    }
+
+    window.addEventListener('hashchange', jump);  
+
+    return ()=>{
+      window.removeEventListener('hashchange', jump);  
+    }
+  }, []);
+
   // Choose the theme based on the page.
   if (isHomePage || isZhHomePage) {
     // If it's the homepage, use the 'landing' theme (or whatever your homepage theme is called).
