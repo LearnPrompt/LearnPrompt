@@ -47,8 +47,8 @@ We are very happy to get your feedback, including but not limited to:
 - New content contributions (feel free to join us!)
 
 If you have any questions, comments or suggestions, you can:
-  - Raise an [issue] on GitHub (https://github.com/LearnPrompt/LearnPrompt/issues)
-  - Email us at [LearnPrompt2023@gmail.com](mailto:LearnPrompt2023@gmail.com)
+- Raise an [issue] on GitHub (https://github.com/LearnPrompt/LearnPrompt/issues)
+- Email us at [LearnPrompt2023@gmail.com](mailto:LearnPrompt2023@gmail.com)
 
 ## Reference
 
