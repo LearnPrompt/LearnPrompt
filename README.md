@@ -53,8 +53,8 @@
 - 新内容贡献（欢迎加入我们！）
 
 如果你有任何问题、意见或建议，你可以：
-  - 在GitHub上提出一个[issue](https://github.com/LearnPrompt/LearnPrompt/issues)
-  - Email us at [LearnPrompt2023@gmail.com](mailto:LearnPrompt2023@gmail.com)
+- 在GitHub上提出一个[issue](https://github.com/LearnPrompt/LearnPrompt/issues)
+- Email us at [LearnPrompt2023@gmail.com](mailto:LearnPrompt2023@gmail.com)
 
 ## Reference
 
