@@ -18,7 +18,7 @@ function Footer() {
     },
     {
       name: "GitHub",
-      link: "https://github.com/LearnPrompt/LearnPrompt2",
+      link: "https://github.com/LearnPrompt/LearnPrompt",
     },
     {
       name: "Contact",
