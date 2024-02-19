@@ -4,7 +4,7 @@ const BLOG = {
       NOTION_PAGE_ID:
             process.env.NOTION_PAGE_ID || '731bcbe5dc6942919ed9ed46c2ac1eb8',
       PSEUDO_STATIC: process.env.NEXT_PUBLIC_PSEUDO_STATIC || false, // 伪静态路径，开启后所有文章URL都以 .html 结尾。
-      NEXT_REVALIDATE_SECOND: process.env.NEXT_PUBLIC_REVALIDATE_SECOND || 3, // 更新内容缓存间隔 单位(秒)；即每个页面有5秒的纯静态期、此期间无论多少次访问都不会抓取notion数据；调大该值有助于节省Vercel资源、同时提升访问速率，但也会使文章更新有延迟。
+      NEXT_REVALIDATE_SECOND: process.env.NEXT_PUBLIC_REVALIDATE_SECOND || 2, // 更新内容缓存间隔 单位(秒)；即每个页面有5秒的纯静态期、此期间无论多少次访问都不会抓取notion数据；调大该值有助于节省Vercel资源、同时提升访问速率，但也会使文章更新有延迟。
       THEME: process.env.NEXT_PUBLIC_THEME || 'landing', // 当前主题，在themes文件夹下可找到所有支持的主题；主题名称就是文件夹名，例如 example,fukasawa,gitbook,heo,hexo,landing,matery,medium,next,nobelium,plog,simple
       THEME_SWITCH: process.env.NEXT_PUBLIC_THEME_SWITCH || false, // 是否显示切换主题按钮
       LANG: process.env.NEXT_PUBLIC_LANG || 'zh-CN', // e.g 'zh-CN','en-US'  see /lib/lang.js for more.
@@ -18,7 +18,7 @@ const BLOG = {
       CUSTOM_MENU: process.env.NEXT_PUBLIC_CUSTOM_MENU || false, // 支持Menu 类型，从3.12.0版本起，各主题将逐步支持灵活的二级菜单配置，替代了原来的Page类型，此配置是试验功能、默认关闭。
     
       AUTHOR: process.env.NEXT_PUBLIC_AUTHOR || 'AiWarts', // 您的昵称 
-      BIO: process.env.NEXT_PUBLIC_BIO || 'Open-source AIGC community', // 作者简介
+      BIO: process.env.NEXT_PUBLIC_BIO || 'AIGC community', // 作者简介
       LINK: process.env.NEXT_PUBLIC_LINK || 'https://learnprompt.pro', // 网站地址
       KEYWORDS: process.env.NEXT_PUBLIC_KEYWORD || 'AI, Prompt Engineering, GPT4, GPTs, ChatGPT, Agent, Midjourney, Runway, Stable Diffusion, Learning Prompt, How to use ChatGPT', // 网站关键词 英文逗号隔开
     
@@ -36,6 +36,9 @@ const BLOG = {
       NOTION_HOST: process.env.NEXT_PUBLIC_NOTION_HOST || 'https://www.notion.so', // Notion域名，您可以选择用自己的域名进行反向代理，如果不懂得什么是反向代理，请勿修改此项
     
       BLOG_FAVICON: process.env.NEXT_PUBLIC_FAVICON || '/favicon.ico', // blog favicon 配置, 默认使用 /public/favicon.ico，支持在线图片，如 https://img.imesong.com/favicon.png
+
+      IMAGE_COMPRESS_WIDTH: process.env.NEXT_PUBLIC_IMAGE_COMPRESS_WIDTH || 800, // 图片压缩宽度默认值，作用于博客封面和文章内容 越小加载图片越快
+      IMAGE_ZOOM_IN_WIDTH: process.env.NEXT_PUBLIC_IMAGE_ZOOM_IN_WIDTH || 1200, // 文章图片点击放大后的画质宽度，不代表在网页中的实际展示宽度
     
       // START ************网站字体*****************
     
@@ -137,7 +140,7 @@ const BLOG = {
       // 例：如想連結改成前綴 article + 時間戳記，可變更為： 'article/%year%/%month%/%day%'
     
       POST_LIST_STYLE: process.env.NEXT_PUBLIC_POST_LIST_STYLE || 'page', // ['page','scroll] 文章列表样式:页码分页、单页滚动加载
-      POST_LIST_PREVIEW: process.env.NEXT_PUBLIC_POST_PREVIEW || false, //  是否在列表加载文章预览
+      POST_LIST_PREVIEW: process.env.NEXT_PUBLIC_POST_PREVIEW || 'false', //  是否在列表加载文章预览
       POST_PREVIEW_LINES: 12, // 预览博客行数
       POST_RECOMMEND_COUNT: 6, // 推荐文章数量
       POSTS_PER_PAGE: 12, // post counts per page
@@ -178,12 +181,14 @@ const BLOG = {
     
       //   ********挂件组件相关********
       // Chatbase 是否显示chatbase机器人 https://www.chatbase.co/
-      CHATBASE_ID: process.env.NEXT_PUBLIC_CHATBASE_ID || "",
+      CHATBASE_ID: process.env.NEXT_PUBLIC_CHATBASE_ID || null,
       // WebwhizAI 机器人 @see https://github.com/webwhiz-ai/webwhiz
       WEB_WHIZ_ENABLED: process.env.NEXT_PUBLIC_WEB_WHIZ_ENABLED || false, // 是否显示
       WEB_WHIZ_BASE_URL: process.env.NEXT_PUBLIC_WEB_WHIZ_BASE_URL || 'https://api.webwhiz.ai', // 可以自建服务器
       WEB_WHIZ_CHAT_BOT_ID: process.env.NEXT_PUBLIC_WEB_WHIZ_CHAT_BOT_ID || null, // 在后台获取ID
-    
+      DIFY_CHATBOT_ENABLED: process.env.NEXT_PUBLIC_DIFY_CHATBOT_ENABLED || false,
+      DIFY_CHATBOT_BASE_URL: process.env.NEXT_PUBLIC_DIFY_CHATBOT_BASE_URL || '',
+      DIFY_CHATBOT_TOKEN: process.env.NEXT_PUBLIC_DIFY_CHATBOT_TOKEN || '',    
       // 悬浮挂件
       WIDGET_PET: process.env.NEXT_PUBLIC_WIDGET_PET || false, // 是否显示宠物挂件
       WIDGET_PET_LINK:
@@ -302,13 +307,11 @@ const BLOG = {
       // HOSTNAME: Webmention绑定之网域，通常即为本站网址
       // TWITTER_USERNAME: 评论显示区域需要的资讯
       // TOKEN: Webmention的API token
-      COMMENT_WEBMENTION: {
-        ENABLE: process.env.NEXT_PUBLIC_WEBMENTION_ENABLE || false,
-        AUTH: process.env.NEXT_PUBLIC_WEBMENTION_AUTH || '',
-        HOSTNAME: process.env.NEXT_PUBLIC_WEBMENTION_HOSTNAME || '',
-        TWITTER_USERNAME: process.env.NEXT_PUBLIC_TWITTER_USERNAME || '',
-        TOKEN: process.env.NEXT_PUBLIC_WEBMENTION_TOKEN || ''
-      },
+      COMMENT_WEBMENTION_ENABLE: process.env.NEXT_PUBLIC_WEBMENTION_ENABLE || false,
+      COMMENT_WEBMENTION_AUTH: process.env.NEXT_PUBLIC_WEBMENTION_AUTH || '',
+      COMMENT_WEBMENTION_HOSTNAME: process.env.NEXT_PUBLIC_WEBMENTION_HOSTNAME || '',
+      COMMENT_WEBMENTION_TWITTER_USERNAME: process.env.NEXT_PUBLIC_TWITTER_USERNAME || '',
+      COMMENT_WEBMENTION_TOKEN: process.env.NEXT_PUBLIC_WEBMENTION_TOKEN || '',
     
       // <---- 评论插件
     
@@ -318,7 +321,14 @@ const BLOG = {
       ANALYTICS_BAIDU_ID: process.env.NEXT_PUBLIC_ANALYTICS_BAIDU_ID || '15cfa719c5212aa0ef474deb2e953196', // e.g 只需要填写百度统计的id，[baidu_id] -> https://hm.baidu.com/hm.js?[baidu_id]
       ANALYTICS_CNZZ_ID: process.env.NEXT_PUBLIC_ANALYTICS_CNZZ_ID || '', // 只需要填写站长统计的id, [cnzz_id] -> https://s9.cnzz.com/z_stat.php?id=[cnzz_id]&web_id=[cnzz_id]
       ANALYTICS_GOOGLE_ID: process.env.NEXT_PUBLIC_ANALYTICS_GOOGLE_ID || 'G-LV7H9L9JQ3', // 谷歌Analytics的id e.g: G-XXXXXXXXXX
-    
+
+      // 51la 站点统计 https://www.51.la/
+      ANALYTICS_51LA_ID: process.env.NEXT_PUBLIC_ANALYTICS_51LA_ID || '', // id，在51la后台获取 参阅 https://docs.tangly1024.com/article/notion-next-51-la
+      ANALYTICS_51LA_CK: process.env.NEXT_PUBLIC_ANALYTICS_51LA_CK || '', // ck，在51la后台获取
+      
+      // Matomo 网站统计
+      MATOMO_HOST_URL: process.env.NEXT_PUBLIC_MATOMO_HOST_URL || '', // Matomo服务器地址，不带斜杠
+      MATOMO_SITE_ID: process.env.NEXT_PUBLIC_MATOMO_SITE_ID || '', // Matomo网站ID
       // ACKEE网站访客统计工具
       ANALYTICS_ACKEE_TRACKER: process.env.NEXT_PUBLIC_ANALYTICS_ACKEE_TRACKER || '', 
       ANALYTICS_ACKEE_DATA_SERVER: process.env.NEXT_PUBLIC_ANALYTICS_ACKEE_DATA_SERVER || '',  
@@ -329,7 +339,10 @@ const BLOG = {
     
       SEO_BAIDU_SITE_VERIFICATION:
             process.env.NEXT_PUBLIC_SEO_BAIDU_SITE_VERIFICATION || '', // Remove the value or replace it with your own google site verification code
-    
+
+      // 微软 Clarity 站点分析
+      CLARITY_ID: process.env.NEXT_PUBLIC_CLARITY_ID || 'l49aqbvm0n', // 只需要复制Clarity脚本中的ID部分，ID是一个十位的英文数字组合
+
       // <---- 站点统计
     
       // START---->营收相关
@@ -374,7 +387,7 @@ const BLOG = {
       },
     
       // RSS订阅
-      ENABLE_RSS: process.env.NEXT_PUBLIC_ENABLE_RSS || false, // 是否开启RSS订阅功能
+      ENABLE_RSS: process.env.NEXT_PUBLIC_ENABLE_RSS || true, // 是否开启RSS订阅功能
       MAILCHIMP_LIST_ID: process.env.MAILCHIMP_LIST_ID || null, // 开启mailichimp邮件订阅 客户列表ID ，具体使用方法参阅文档
       MAILCHIMP_API_KEY: process.env.MAILCHIMP_API_KEY || null, // 开启mailichimp邮件订阅 APIkey
     
@@ -390,12 +403,14 @@ const BLOG = {
       IMG_LAZY_LOAD_PLACEHOLDER: process.env.NEXT_PUBLIC_IMG_LAZY_LOAD_PLACEHOLDER || 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==', // 懒加载占位图片地址，支持base64或url
       IMG_URL_TYPE: process.env.NEXT_PUBLIC_IMG_TYPE || 'Notion', // 此配置已失效，请勿使用；AMAZON方案不再支持，仅支持Notion方案。 ['Notion','AMAZON'] 站点图片前缀 默认 Notion:(https://notion.so/images/xx) ， AMAZON(https://s3.us-west-2.amazonaws.com/xxx)
       IMG_SHADOW: process.env.NEXT_PUBLIC_IMG_SHADOW || false, // 文章图片是否自动添加阴影
+      IMG_COMPRESS_WIDTH: process.env.NEXT_PUBLIC_IMG_COMPRESS_WIDTH || 800, // Notion图片压缩宽度
     
       // 开发相关
       NOTION_ACCESS_TOKEN: process.env.NOTION_ACCESS_TOKEN || '', // Useful if you prefer not to make your database public
       DEBUG: process.env.NEXT_PUBLIC_DEBUG || false, // 是否显示调试按钮
-      ENABLE_CACHE: process.env.ENABLE_CACHE || process.env.npm_lifecycle_event === 'build', // 缓存在开发调试和打包过程中选择性开启，正式部署开启此功能意义不大。
+      ENABLE_CACHE: process.env.ENABLE_CACHE || process.env.npm_lifecycle_event === 'build' || process.env.npm_lifecycle_event === 'export', // 在打包过程中默认开启缓存，开发或运行时开启此功能意义不大。
       isProd: process.env.VERCEL_ENV === 'production', // distinguish between development and production environment (ref: https://vercel.com/docs/environment-variables#system-environment-variables)  isProd: process.env.VERCEL_ENV === 'production' // distinguish between development and production environment (ref: https://vercel.com/docs/environment-variables#system-environment-variables)
+      BUNDLE_ANALYZER: process.env.ANALYZE === 'true' || false, // 是否展示编译依赖内容与大小
       VERSION: process.env.NEXT_PUBLIC_VERSION // 版本号
     }
     

@@ -1,16 +1,16 @@
 {
   "name": "notion-next",
   "version": "4.0.16",
-  "homepage": "https://github.com/tangly1024/NotionNext.git",
+  "homepage": "https://github.com/LearnPrompt/LearnPrompt.git",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tangly1024/NotionNext.git"
+    "url": "https://github.com/LearnPrompt/LearnPrompt.git"
   },
   "author": {
-    "name": "tangly",
-    "email": "mail@tangly1024.com",
-    "url": "http://tangly1024.com"
+    "name": "aiwarts",
+    "email": "learnprompt2023@gmail.com",
+    "url": "https://www.learnprompt.pro/"
   },
   "scripts": {
     "dev": "next dev",
@@ -73,7 +73,7 @@
     "axios": ">=0.21.1"
   },
   "bugs": {
-    "url": "https://github.com/tangly/NotionNext/issues",
-    "email": "tlyong1992@hotmail.com"
+    "url": "https://github.com/LearnPrompt/LearnPrompt/issues",
+    "email": "learnprompt2023@gmail.com"
   }
 }
