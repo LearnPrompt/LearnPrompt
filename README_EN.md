@@ -27,6 +27,8 @@ ChatGPT, Agent, Midjourney, Runway, Stable Diffusion, AI Digital People, AI Soun
 - [X] AI Digital People
 - [X] AI Sound & Music
 - [ ] Llama2-index RAG
+- [X] GPT-SoVits Voice Clone
+- [X] OpenAI Sora
 
 If you are interested in the follow-up content, you may want to click a STAR!
 

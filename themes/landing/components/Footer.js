@@ -13,10 +13,6 @@ function Footer() {
       link: "https://twitter.com/aiwarts",
     },
     {
-      name: "Discord",
-      link: "https://discord.gg/zBsQyq7MHA",
-    },
-    {
       name: "GitHub",
       link: "https://github.com/LearnPrompt/LearnPrompt",
     },
