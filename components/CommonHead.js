@@ -65,5 +65,3 @@ const CommonHead = ({ meta, children }) => {
   )
 }
 export default CommonHead
-
-Translate
