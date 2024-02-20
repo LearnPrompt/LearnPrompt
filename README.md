@@ -30,6 +30,8 @@
 - [X] AI数字人
 - [X] AI声音&音乐
 - [ ] Llama2-index 个人文档问答
+- [X] GPT-SoVits声音克隆
+- [X] OpenAI Sora世界模型
 
 对后续内容感兴趣的话，不妨点一个star！
 
