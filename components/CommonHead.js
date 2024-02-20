@@ -1,6 +1,5 @@
 import BLOG from '@/blog.config'
 import Head from 'next/head'
-
 const CommonHead = ({ meta, children }) => {
   let url = BLOG?.PATH?.length ? `${BLOG.LINK}/${BLOG.SUB_PATH}` : BLOG.LINK
   let image
@@ -14,7 +13,6 @@ const CommonHead = ({ meta, children }) => {
   const keywords = meta?.tags || BLOG.KEYWORDS
   const lang = BLOG.LANG.replace('-', '_') // Facebook OpenGraph 要 zh_CN 這樣的格式才抓得到語言
   const category = meta?.category || BLOG.KEYWORDS // section 主要是像是 category 這樣的分類，Facebook 用這個來抓連結的分類
-
   return (
         <Head>
             <title>{title}</title>
@@ -41,18 +39,15 @@ const CommonHead = ({ meta, children }) => {
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:description" content={description} />
             <meta name="twitter:title" content={title} />
-
             {BLOG.COMMENT_WEBMENTION.ENABLE && (
                 <>
                     <link rel="webmention" href={`https://webmention.io/${BLOG.COMMENT_WEBMENTION.HOSTNAME}/webmention`} />
                     <link rel="pingback" href={`https://webmention.io/${BLOG.COMMENT_WEBMENTION.HOSTNAME}/xmlrpc`} />
                 </>
             )}
-
             {BLOG.COMMENT_WEBMENTION.ENABLE && BLOG.COMMENT_WEBMENTION.AUTH !== '' && (
                 <link href={BLOG.COMMENT_WEBMENTION.AUTH} rel="me" />
             )}
-
             {JSON.parse(BLOG.ANALYTICS_BUSUANZI_ENABLE) && <meta name="referrer" content="no-referrer-when-downgrade" />}
             {meta?.type === 'Post' && (
                 <>
@@ -69,5 +64,4 @@ const CommonHead = ({ meta, children }) => {
         </Head>
   )
 }
-
 export default CommonHead
