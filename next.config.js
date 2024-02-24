@@ -93,6 +93,9 @@ module.exports = withBundleAnalyzer({
     //   })
     // }
     // 动态主题：添加 resolve.alias 配置，将动态路径映射到实际路径
+    if (!isServer) {
+      console.log('[加载主题]', path.resolve(__dirname, 'themes', THEME))
+    }
     config.resolve.alias['@theme-components'] = path.resolve(__dirname, 'themes', THEME)
     return config
   },
