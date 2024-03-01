@@ -16,7 +16,7 @@
 - [每日精选](https://www.learnprompt.pro/article/Daily)更新篇章破百！
 - 新增声音克隆模块，colab实现GPT-SoVits实践
 - 新增RAG模块
-- 更新评论区模块，现在不需要用githun账号登录，直接输入评论
+- 更新评论区模块，现在不需要用github账号登录，直接输入评论
 
 ## 更新计划 RoadMap
 
