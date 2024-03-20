@@ -15,7 +15,7 @@ import dynamic from 'next/dynamic'
 import { isBrowser, loadExternalResource } from '@/lib/utils'
 import BLOG from '@/blog.config'
 
-import '../public/css/index.css';
+import '../public/css/index.css'
 
 // 各种扩展插件 动画等
 const ExternalPlugins = dynamic(() => import('@/components/ExternalPlugins'))
@@ -50,10 +50,10 @@ const MyApp = ({ Component, pageProps }) => {
   }
 
   return (
-        <GlobalContextProvider {...pageProps}>
-            <Component {...pageProps} />
-            <ExternalPlugins {...pageProps} />
-        </GlobalContextProvider>
+    <GlobalContextProvider {...pageProps}>
+      <Component {...pageProps} />
+      <ExternalPlugins {...pageProps} />
+    </GlobalContextProvider>
   )
 }
 

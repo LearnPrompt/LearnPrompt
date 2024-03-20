@@ -1,104 +1,85 @@
-import * as ThemeComponents from '@theme-components'
-
-import { getQueryParam, getQueryVariable } from '../lib/utils'
-
-import BLOG from '@/blog.config'
-import cookie from 'react-cookies'
+import BLOG, { LAYOUT_MAPPINGS } from '@/blog.config'
+import { getQueryParam, getQueryVariable, isBrowser } from '../lib/utils'
 import dynamic from 'next/dynamic'
 import getConfig from 'next/config'
-import {useEffect} from 'react'
-import { useRouter } from 'next/router';
+import * as ThemeComponents from '@theme-components'
 
-// 所有主题在next.config.js中扫描
+// Scan all themes in next.config.js
 export const { THEMES = [] } = getConfig().publicRuntimeConfig
+
 /**
- * 加载主题文件
- * 如果是
- * @param {*} router
+ * Load global layout based on the theme query
+ * @param {*} themeQuery
  * @returns
  */
-
- // Ensure useRouter is imported at the beginning of the file.
-
-// ... (other imports and code)
-
-export const getLayoutByTheme = (router) => {
-  const currentPath = router.asPath;  // Current URL path.
-  const layout = getLayoutNameByPath(router.pathname)
-  // Check if it's the homepage based on the provided URL.
-  const isHomePage = currentPath === "/";
-  const isZhHomePage = currentPath === '/zh';
-  const is404 = currentPath === '/404'
-  console.log('------------------------------------',currentPath)
-
-  useEffect(() => {
-    function jump() {
-      const path = window.location.hash
-      if (path && path.includes('#')) {
-        const id = path.replace('#', '')
-        const el = window.document.getElementById(id)
-        if(el) {
-          const r = el.getBoundingClientRect()
-        
-          window.scrollTo({
-            top: r.top,
-            behavior: 'smooth'
-          })
-        }
-      }
-    }
-
-    window.addEventListener('hashchange', jump);  
-
-    return ()=>{
-      window.removeEventListener('hashchange', jump);  
-    }
-  }, []);
-
-  // Choose the theme based on the page.
-  if (isHomePage || isZhHomePage) {
-    // If it's the homepage, use the 'landing' theme (or whatever your homepage theme is called).
-    return dynamic(() => import('@/themes/landing').then(m => m.LayoutIndex), { ssr: true });
-  } else if (is404) {
-    return ThemeComponents[layout]
+export const getGlobalLayoutByTheme = themeQuery => {
+  if (themeQuery !== BLOG.THEME) {
+    return dynamic(() => import(`@/themes/${themeQuery}`).then(m => m[getLayoutNameByPath(-1)]), { ssr: true })
   } else {
-    // For other pages, use the 'gitbook' theme (or your alternative theme for other pages).
-    return dynamic(() => import('@/themes/gitbook').then(m => {
-      return m.LayoutSlug
-    }), { ssr: true });
-    // return ThemeComponents[layout]  
+    return ThemeComponents[getLayoutNameByPath('-1')]
   }
 }
 
 /**
- * 根据路径 获取对应的layout
+ * Load the theme file
+ * @param {*} router
+ * @param {*} theme
+ * @returns
+ */
+export const getLayoutByTheme = ({ router, theme }) => {
+  const themeQuery = getQueryParam(router.asPath, 'theme') || theme
+  const isHomePage = router.pathname === '/'
+
+  // For homepage, use the 'landing' theme; for others, use 'gitbook' theme
+  const themeToLoad = isHomePage ? 'landing' : 'gitbook'
+
+  return dynamic(
+    () =>
+      import(`@/themes/${themeToLoad}`).then(m => {
+        setTimeout(() => {
+          checkThemeDOM()
+        }, 500)
+
+        const layoutName = isHomePage ? 'LayoutIndex' : getLayoutNameByPath(router.pathname, router.asPath)
+        const components = m[layoutName]
+        if (components) {
+          return components
+        } else {
+          // Fallback to LayoutSlug if no specific component is found
+          return m.LayoutSlug
+        }
+      }),
+    { ssr: true }
+  )
+}
+
+/**
+ * Get corresponding layout by path
  * @param {*} path
  * @returns
  */
-export const getLayoutNameByPath = (path) => {
-  switch (path) {
-    case '/':
-      return 'LayoutIndex'
-    case '/archive':
-      return 'LayoutArchive'
-    case '/page/[page]':
-    case '/category/[category]':
-    case '/category/[category]/page/[page]':
-    case '/tag/[tag]':
-    case '/tag/[tag]/page/[page]':
-      return 'LayoutPostList'
-    case '/search':
-    case '/search/[keyword]':
-    case '/search/[keyword]/page/[page]':
-      return 'LayoutSearch'
-    case '/404':
-      return 'Layout404'
-    case '/tag':
-      return 'LayoutTagIndex'
-    case '/category':
-      return 'LayoutCategoryIndex'
-    default:
-      return 'LayoutSlug'
+const getLayoutNameByPath = path => {
+  if (LAYOUT_MAPPINGS[path]) {
+    return LAYOUT_MAPPINGS[path]
+  } else {
+    // Default layout name for paths without special handling
+    return 'LayoutSlug'
+  }
+}
+
+/**
+ * Special handling when switching themes
+ */
+const checkThemeDOM = () => {
+  if (isBrowser) {
+    const elements = document.querySelectorAll('[id^="theme-"]')
+    if (elements?.length > 1) {
+      elements[elements.length - 1].scrollIntoView()
+      // Remove previous elements, keep only the last one
+      for (let i = 0; i < elements.length - 1; i++) {
+        elements[i].parentNode.removeChild(elements[i])
+      }
+    }
   }
 }
 
@@ -108,14 +89,20 @@ export const getLayoutNameByPath = (path) => {
  * @param updateDarkMode 更改主题ChangeState函数
  * @description 读取cookie中存的用户主题
  */
-export const initDarkMode = (updateDarkMode) => {
+export const initDarkMode = (updateDarkMode, defaultDarkMode) => {
   // 查看用户设备浏览器是否深色模型
   let newDarkMode = isPreferDark()
 
-  // 查看cookie中是否用户强制设置深色模式
-  const cookieDarkMode = loadDarkModeFromCookies()
-  if (cookieDarkMode) {
-    newDarkMode = JSON.parse(cookieDarkMode)
+  // 查看localStorage中用户记录的是否深色模式
+  const userDarkMode = loadDarkModeFromLocalStorage()
+  console.log('深色模式', userDarkMode)
+  if (userDarkMode) {
+    newDarkMode = userDarkMode === 'dark' || userDarkMode === 'true'
+  }
+
+  // 如果站点强制设置默认深色，则优先级改过用
+  if (defaultDarkMode === 'true') {
+    newDarkMode = true
   }
 
   // url查询条件中是否深色模式
@@ -125,7 +112,7 @@ export const initDarkMode = (updateDarkMode) => {
   }
 
   updateDarkMode(newDarkMode)
-  saveDarkModeToCookies(newDarkMode)
+  saveDarkModeToLocalStorage(newDarkMode)
   document.getElementsByTagName('html')[0].setAttribute('class', newDarkMode ? 'dark' : 'light')
 }
 
@@ -141,7 +128,11 @@ export function isPreferDark() {
     // 系统深色模式或时间是夜间时，强行置为夜间模式
     const date = new Date()
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
-    return prefersDarkMode || (BLOG.APPEARANCE_DARK_TIME && (date.getHours() >= BLOG.APPEARANCE_DARK_TIME[0] || date.getHours() < BLOG.APPEARANCE_DARK_TIME[1]))
+    return (
+      prefersDarkMode ||
+      (BLOG.APPEARANCE_DARK_TIME &&
+        (date.getHours() >= BLOG.APPEARANCE_DARK_TIME[0] || date.getHours() < BLOG.APPEARANCE_DARK_TIME[1]))
+    )
   }
   return false
 }
@@ -150,30 +141,14 @@ export function isPreferDark() {
  * 读取深色模式
  * @returns {*}
  */
-export const loadDarkModeFromCookies = () => {
-  return cookie.load('darkMode')
+export const loadDarkModeFromLocalStorage = () => {
+  return localStorage.getItem('darkMode')
 }
 
 /**
-   * 保存深色模式
-   * @param newTheme
-   */
-export const saveDarkModeToCookies = (newTheme) => {
-  cookie.save('darkMode', newTheme, { path: '/' })
-}
-
-/**
- * 读取默认主题
- * @returns {*}
+ * 保存深色模式
+ * @param newTheme
  */
-export const loadThemeFromCookies = () => {
-  return cookie.load('theme')
-}
-
-/**
-   * 保存默认主题
-   * @param newTheme
-   */
-export const saveThemeToCookies = (newTheme) => {
-  cookie.save('theme', newTheme, { path: '/' })
+export const saveDarkModeToLocalStorage = newTheme => {
+  localStorage.setItem('darkMode', newTheme)
 }
