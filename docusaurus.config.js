@@ -46,6 +46,17 @@ async function createConfig() {
     plugins: [
       '@docusaurus/plugin-ideal-image',
       ['mindmap', {}],
+      [
+        "@docusaurus/plugin-client-redirects",
+        {
+          redirects: [
+            {
+              to: "/blog",
+              from: "/daily",
+            },
+          ],
+        },
+      ],
       async function myPlugin(context, options) {
         return {
           name: "docusaurus-tailwindcss",
