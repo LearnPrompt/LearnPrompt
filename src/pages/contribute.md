@@ -21,7 +21,7 @@ For ideas on content that we are still looking to cover, you can check our open 
 
 ## 3. Translation
 
-We are looking for help translating the site into other languages. If you are interested, please join the [Discord](https://discord.gg/w6ZjEc2g) and mention you are interested in the respective language channel. If the channel does not exist, please message @ carl@aiwarts. Around 2 languages are currently being translated, so you will likely find people to work with! 
+We are looking for help translating the site into other languages. If you are interested, please join the [Discord](https://discord.gg/zBsQyq7MHA) and mention you are interested in the respective language channel. If the channel does not exist, please message @ carl@aiwarts. Around 2 languages are currently being translated, so you will likely find people to work with! 
 
 :::note
 When you run the website locally, make sure to follow [Docusaurus instructions](https://docusaurus.io/docs/i18n/tutorial#start-your-site) on running it in your language (e.g. `npm run start -- --locale fr`).

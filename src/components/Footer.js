@@ -6,7 +6,7 @@ function Footer() {
   const rightLinks = [
     {
       name: "Discord",
-      link: "https://discord.gg/w6ZjEc2g",
+      link: "https://discord.gg/zBsQyq7MHA",
     },
     {
       name: "GitHub",

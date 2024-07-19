@@ -266,7 +266,7 @@ async function createConfig() {
       announcementBar: {
         id: "announcement",
         content:
-          '🌟 If you have any questions, feel free to join our <a href="https://discord.gg/w6ZjEc2g">Discord</a> 🌟',
+          '🌟 If you have any questions, feel free to join our <a href="https://discord.gg/zBsQyq7MHA">Discord</a> 🌟',
         backgroundColor: "#8f77b5",
         textColor: "#000",
         isCloseable: true,

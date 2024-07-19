@@ -1,9 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import React, { useEffect, useRef, useState } from 'react';
+
 import ClassicPadding from "@site/src/components/layouts/ClassicPadding";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { RxArrowTopRight } from "react-icons/rx";
 import { Transition } from "@headlessui/react";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 
 function Navbar(props) {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,7 +50,7 @@ function Navbar(props) {
   const rightLinks = [
     {
       name: "Discord",
-      link: "https://discord.gg/w6ZjEc2g",
+      link: "https://discord.gg/zBsQyq7MHA",
     },
     {
       name: "GitHub",
