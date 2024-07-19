@@ -1,68 +1,73 @@
-# LearnPrompt
+# Learn Prompt
 
-中文文档 | [README in English](./README_EN.md)
-
-永久免费开源的 AIGC 课程 https://www.learnprompt.pro
-
-目前已支持 ChatGPT, Agent, Midjourney, Runway, Stable Diffusion, AI数字人，AI声音&音乐，大模型微调
-
-> v3.0版本已上线！支持多语言，评论区，每日精选，投稿等多种新功能，欢迎👏大家探索
-
-[![Twitter](https://img.shields.io/twitter/url?label=Follow%20%40aiwarts&style=social&url=https%3A%2F%2Ftwitter.com%2Flearnprompting)](https://twitter.com/aiwarts?s=21&t=bh5DcWYZX2rSeis-DiWzvA)
-![Website](https://img.shields.io/website?down_message=offline%20%3A%28&up_message=learnprompt.pro&url=https%3A%2F%2Flearnprompting.org)
-
-## 更新日志 0205
-
-- [每日精选](https://www.learnprompt.pro/article/Daily)更新篇章破百！
-- 新增声音克隆模块，colab实现GPT-SoVits实践
-- 新增RAG模块
-- 更新评论区模块，现在不需要用githun账号登录，直接输入评论
-
-## 更新计划 RoadMap
-
-- [X] 持续迭代 ChatGPT 的优秀案例
-- [X] Runway AI视频制作教程的案例更新
-- [X] Stable Diffusion 文生图教程
-- [X] GPT4插件 & API应用开发
-- [X] GPTs教程
-- [X] LLMs大模型微调
-- [X] AI Agents知识体系
-- [X] AI数字人
-- [X] AI声音&音乐
-- [ ] Llama2-index 个人文档问答
-- [X] GPT-SoVits声音克隆
-- [X] OpenAI Sora世界模型
-
-对后续内容感兴趣的话，不妨点一个star！
-
-### Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=LearnPrompt/LearnPrompt&type=Date)](https://star-history.com/#LearnPrompt/LearnPrompt&Date)
+[![Twitter](https://img.shields.io/twitter/url?label=Follow%20%40learnprompting&style=social&url=https%3A%2F%2Ftwitter.com%2Flearnprompting)](https://twitter.com/learnprompting)
+[![](https://dcbadge.vercel.app/api/server/7enStJXQzD?compact=true&style=flat)](https://discord.gg/7enStJXQzD)
+![Website](https://img.shields.io/website?down_message=offline%20%3A%28&up_message=learnprompting.org&url=https%3A%2F%2Flearnprompting.org)
 
 
-## 进群交流 & 支持我们
+[https://learnprompting.org](https://learnprompting.org)
 
-感谢大家对课程内容的热烈支持！「AI沃茨」正在不断成长！目前交流群40+，供大家自由分享和探讨知识。欢迎扫描下方二维码直接加入我们的学习社区！如果微信二维码失效，你也可以直接添加我们开发者的微信：
+Prompt Engineering, Generative AI, and LLM Guide by Learn Prompting | Join our discord for the largest Prompt Engineering learning community
 
-![contact](public/scan.png)
+## Contribution Guidelines
 
-## 提交反馈
+We welcome contributions in any form.
 
-我们十分高兴能得到你们的反馈，包括但不限于：
+We are actively looking for:
 
-- 内容上的建议
-- 格式修改
-- 新内容贡献（欢迎加入我们！）
+- content suggestions
+- translation
+- content/art contributions
+- typos :)
 
-如果你有任何问题、意见或建议，你可以：
-- 在GitHub上提出一个[issue](https://github.com/LearnPrompt/LearnPrompt/issues)
-- Email us at [LearnPrompt2023@gmail.com](mailto:LearnPrompt2023@gmail.com)
 
-## Reference
 
-编写本教程时参考了以下教程或文档的内容和示例，感谢创作者们的付出！
+## Local Development
 
-1. [Learn Prompting](https://learnprompting.org/zh-Hans/)
-2. [Midjourney Documentation](https://docs.midjourney.com/)
-3. [Aituts](https://aituts.com/)
-4. [notion-next](https://github.com/tangly1024/NotionNext)
+First, install [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [node](https://nodejs.org/en/download/).
+
+Make sure you are using Node 18.0.0 or higher (`node -v`). Then, run the following commands in a terminal:
+```
+# download the website code with git
+git clone https://github.com/trigaten/Learn_Prompting.git
+# enter the project directory
+cd Learn_Prompting
+# install node modules
+npm i
+# run the website locally
+npm start
+```
+
+If you get an error related to the node version, you probably are using an older version of node.
+
+Make sure the newer version appears higher in your path than any older versions. 
+
+Alternatively, you can use [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) to install the latest version of node. Install nvm, then do the following:
+```
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+nvm install-latest-npm
+```
+
+
+`npm start` starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+
+## Thanks to all contributors ❤
+
+ <a href = "https://github.com/trigaten/Learn_Prompting/graphs/contributors">
+   <LazyLoadImage src = "https://contrib.rocks/image?repo=trigaten/Learn_Prompting"/>
+ </a>
+
+## Cite
+
+Use the provided GitHub citation in this repository:
+
+```
+@software{Schulhoff_Learn_Prompting_2022,
+ author = {Schulhoff, Sander and Community Contributors},
+ month = dec,
+ title = {{Learn Prompting}},
+ url = {https://github.com/trigaten/Learn_Prompting},
+ year = {2022}
+}
+```

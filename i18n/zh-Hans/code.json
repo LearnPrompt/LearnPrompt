@@ -1,0 +1,32 @@
+{
+    "Friends": {
+      "message": "友情链接"
+    },
+    "Free Prompt Engineering Online Course": {
+      "message": "免费的 Prompt Engineering 教程"
+    },
+    "ChatGPT and Midjourney tutorials are now included!": {
+      "message": "现已包含 ChatGPT 和 Midjourney 教程"
+    },
+    "About This Tutorial": {
+      "message": "关于本教程"
+    },
+    "If you don't know how to use ChatGPT or Midjourney, this tutorial should help you. This is a free tutorial teaching you how to better use ChatGPT and Midjourney.": {
+      "message": "如果你不知道如何使用 ChatGPT 或者 Midjourney。那本教程应该能帮到你。这是一份教你如何更好地使用 ChatGPT 和 Midjourney 的免费教程。"
+    },
+    "What It Is Not": {
+      "message": "它不是什么？"
+    },
+    "This tutorial is not a collection of prompts that you can directly use. If you expect to find ready-made prompts to use, I suggest you Google them. This tutorial focuses more on teaching methods and explaining why they are effective.": {
+      "message": "本教程不是 prompt 大全，如果你预期是找到能直接用的 prompt，建议你谷歌找一找。本教程更多地是教你方法，以及解释这些方法为何有效。本教程也不是权威指南，在这个领域我也只是学生。"
+    },
+    "Why I Created This Tutorial": {
+      "message": "为什么会有这个教程？"
+    },
+    "Recently I've been studying prompt engineering knowledge. I found most tutorials are in English and the content is great, but as a beginner it's still challenging for me to read. So I had the idea to write my own tutorial, using output to drive input and learn through the process.": {
+      "message": "我最近一直在研究 PE 相关的知识，然后发现大多数教程都是英文的，内容都非常好，但对我这种初学者来说，阅读起来还是有点吃力。所以我就萌生出了自己写一份教程的想法，想着通过输出倒逼输入的方式去学习。"
+    },
+    "Introduction": {
+      "message": "基本介绍"
+    }
+  }

@@ -1,5 +1,5 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "headers": []
+    "rewrites": [
+    { "source": "/:path*", "destination": "/" }
+    ]
 }

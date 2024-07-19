@@ -1,0 +1,8 @@
+{
+    "label": "🪐 Stable Diffusion",
+    "position": 60,
+    "link": {
+        "type": "generated-index",
+        "description": "This chapter is dedicated to Stable Diffusion, including detailed guides on ControlNet, installation and deployment, understanding parameters and samplers, using the sd-webui, working with stable diffusion models, crafting prompts, and training with LoRa."
+    }
+}

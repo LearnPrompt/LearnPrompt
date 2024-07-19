@@ -1,0 +1,8 @@
+{
+    "label": "📚 RAG",
+    "position": 35,
+    "link": {
+        "type": "generated-index",
+        "description": "This chapter focuses on Retrieval-Augmented Generation (RAG) for large language models, detailing 12 tuning strategies for RAG applications, development practices, and practical implementation from theory to LangChain."
+    }
+}
