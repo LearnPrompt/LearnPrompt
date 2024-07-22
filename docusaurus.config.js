@@ -258,7 +258,7 @@ async function createConfig() {
           { to: '/blog', label: '📰 What\'s Hot', position: 'right' },
           { to: '/friends', label: '👬 Friends', position: 'right'},
           {
-            to: "/project",
+            to: "/aiMarket",
             label: "🚀 AiStore",
             position: "right",
           },
