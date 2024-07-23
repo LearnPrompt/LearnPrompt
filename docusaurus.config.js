@@ -54,6 +54,10 @@ async function createConfig() {
               to: "/blog",
               from: "/daily",
             },
+            {
+              to: "/project",
+              from: "/aiMarket",
+            },
           ],
         },
       ],
@@ -258,7 +262,7 @@ async function createConfig() {
           { to: '/blog', label: '📰 What\'s Hot', position: 'right' },
           { to: '/friends', label: '👬 Friends', position: 'right'},
           {
-            to: "/aiMarket",
+            to: "/project",
             label: "🚀 AiStore",
             position: "right",
           },
