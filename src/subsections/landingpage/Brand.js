@@ -16,10 +16,22 @@ const STARTER_BRANDS = [
     TITLE: '智谱AI'
 },
 {
+  IMAGE: 'img/brands/hailuo.svg',
+  IMAGE_WHITE: 'img/brands/hailuo.svg',
+  URL: 'https://hailuoai.com/',
+  TITLE: '海螺AI'
+},
+{
   IMAGE: 'img/brands/openai.svg',
   IMAGE_WHITE: 'img/brands/openai.svg',
   URL: 'https://www.doubao.com/chat/',
   TITLE: '豆包'
+},
+{
+    IMAGE: 'img/brands/302ai.svg',
+    IMAGE_WHITE: 'img/brands/302ai.svg',
+    URL: 'https://carlai-all.tools302.com?region=1&confirm=true&pwd=9433',
+    TITLE: '302AI'
 },
 {
     IMAGE: 'img/brands/dreamina.svg',
@@ -48,7 +60,7 @@ function Brand () {
           <h2 className='text-center mb-12 text-3xl font-bold leading-[1.2] text-dark dark:text-white sm:text-4xl md:text-[40px]'>
           Brand Partners
           </h2>
-        <div className={`grid grid-cols-6 gap-8 xl:gap-11 justify-items-center`}>
+        <div className={`grid grid-cols-8 gap-8 xl:gap-11 justify-items-center`}>
           {STARTER_BRANDS.map((item, index) => {
             return <a key={index} href={item.URL}>
               <img
