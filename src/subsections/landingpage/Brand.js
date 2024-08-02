@@ -28,8 +28,8 @@ const STARTER_BRANDS = [
   TITLE: '豆包'
 },
 {
-    IMAGE: 'img/brands/302ai.svg',
-    IMAGE_WHITE: 'img/brands/302ai.svg',
+    IMAGE: 'img/brands/apiai.svg',
+    IMAGE_WHITE: 'img/brands/apiai.svg',
     URL: 'https://carlai-all.tools302.com?region=1&confirm=true&pwd=9433',
     TITLE: '302AI'
 },
