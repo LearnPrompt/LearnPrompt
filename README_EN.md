@@ -40,7 +40,7 @@ Thank you for your enthusiastic support of the course content! "AI Warts" is gro
 
 Welcome to join our learning community by scanning the QR code below! If the QR code on WeChat doesn't work, you can also add our developer's WeChat directly:
 
-! [contact](public/scan.png)
+![contact](static/img/concat.jpg)
 
 ## Submit Feedback
 
