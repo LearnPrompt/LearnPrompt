@@ -1,6 +1,6 @@
 ---
 sidebar_position: 15
-title: Knowledge Prompting in AI
+title: 知识提示
 description: This page explains how integrating external knowledge can improve commonsense reasoning through knowledge prompting, without needing task-specific supervision or access to structured knowledge bases.
 keywords: [knowledge prompting, AI, commonsense reasoning, language model, knowledge integration]
 slug: /advanced-prompting/knowledge-prompting/

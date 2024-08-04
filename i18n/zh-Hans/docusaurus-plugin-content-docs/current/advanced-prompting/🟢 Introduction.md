@@ -1,6 +1,6 @@
 ---
 sidebar_position: 0
-title: Introduction to Advanced AI Techniques
+title: 高级提示技术盘点
 description: An introduction to advanced AI techniques such as Chain-of-thoughts, Zero Shot Chain of Thought, Knowledge Prompting, ToT, ART, and APE.
 keywords: [AI, advanced AI techniques, Chain-of-thoughts, Zero Shot Chain of Thought, Knowledge Prompting, ToT, ART, APE]
 slug: /advanced-prompting/introduction/

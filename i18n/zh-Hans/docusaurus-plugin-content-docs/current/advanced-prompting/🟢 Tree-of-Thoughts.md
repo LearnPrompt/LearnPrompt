@@ -1,6 +1,6 @@
 ---
 sidebar_position: 20
-title: Tree of Thoughts (ToT) A Framework for Complex Task Reasoning
+title: 思维树
 description: This page introduces the Tree of Thoughts (ToT) framework, which enhances language models' ability to reason through complex tasks by using intermediate steps.
 keywords: [Tree of Thoughts, ToT, language models, complex task reasoning, AI, AI frameworks]
 slug: /advanced-prompting/tree-of-thoughts/

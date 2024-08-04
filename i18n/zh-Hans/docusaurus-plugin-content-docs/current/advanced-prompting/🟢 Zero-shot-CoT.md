@@ -1,6 +1,6 @@
 ---
 sidebar_position: 10
-title: Zero-shot Chain of Thought (CoT) in AI Prompting
+title: 零样本思维链
 description: Explore the concept of Zero-shot Chain of Thought (CoT) in AI, a task-agnostic method to guide models to think step-by-step.
 keywords: [AI, artificial intelligence, zero-shot, chain of thought, CoT, step-by-step reasoning]
 slug: /advanced-prompting/zero-shot-cot/

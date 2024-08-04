@@ -2,8 +2,26 @@
   "sidebar.tutorialSidebar.category.😃 Basics": {
     "message": "😃 基础"
   },
-  "sidebar.tutorialSidebar.category.💼 Basic Applications": {
-    "message": "💼 基础应用"
+  "sidebar.tutorialSidebar.category.🧪 Advanced Prompting": {
+    "message": "🧪 提示技术"
+  },
+  "sidebar.tutorialSidebar.category.🦾 AI Humans": {
+    "message": "🦾 数字人"
+  },
+  "sidebar.tutorialSidebar.category.🎹 AI Music": {
+    "message": "🎹 AI音乐"
+  },
+  "sidebar.tutorialSidebar.category.🧰 Basic Applications": {
+    "message": "🧰 基础应用"
+  },
+  "sidebar.tutorialSidebar.category.🖌️ Midjourney Cases": {
+    "message": "🖌️ MJ使用案例"
+  },
+  "sidebar.tutorialSidebar.category.🦙 Models": {
+    "message": "🦙 大模型"
+  },
+  "sidebar.tutorialSidebar.category.🧙‍♂️ Prompt Engineering": {
+    "message": "🧙‍♂️ 提示工程"
   },
   "sidebar.tutorialSidebar.category.😃 Basics.link.generated-index.description": {
     "message": "本章介绍了生成式 AI、提示、提示工程以及Chatbots等基础知识。"

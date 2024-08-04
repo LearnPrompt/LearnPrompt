@@ -1,6 +1,6 @@
 ---
 sidebar_position: 25
-title: Automatic Reasoning and Tool-use (ART)
+title: 自动推理并使用工具 (ART)
 description: This article introduces the concept of Automatic Reasoning and Tool-use (ART) and its applications in using LLMs for task completion.
 keywords: [ART, Automatic Reasoning and Tool-use, LLM, CoT, task completion, Paranjape et al., 2023]
 slug: /advanced-prompting/automatic-reasoning-and-tool-use/

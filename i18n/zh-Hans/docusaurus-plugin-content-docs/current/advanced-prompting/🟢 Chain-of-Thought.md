@@ -1,6 +1,6 @@
 ---
 sidebar_position: 5
-title: Chain of Thought Prompting in AI
+title: 思维链
 description: This page explains the concept of Chain of Thought Prompting, its importance in enhancing reasoning capabilities of large language models, and provides examples.
 keywords: [Chain of Thought Prompting, AI reasoning, LLM, complex problem solving, arithmetic reasoning, Jason Wei]
 slug: /advanced-prompting/chain-of-thought/

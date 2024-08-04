@@ -1,6 +1,6 @@
 ---
 sidebar_position: 30
-title: Automated Prompt Engineer (APE)
+title: 自动提示工程师（APE）
 description: This page provides an overview of the Automated Prompt Engineer (APE) framework for automatic instruction generation and selection.
 keywords: [APE, automated prompt engineer, instruction generation, LLM, CoT prompt, natural language synthesis]
 slug: /advanced-prompting/automated-prompt-engineer/
