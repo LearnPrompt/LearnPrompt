@@ -55,6 +55,10 @@ async function createConfig() {
               from: "/daily",
             },
             {
+              to: "/blog",
+              from: "/article/Daily",
+            },
+            {
               to: "/project",
               from: "/aiMarket",
             },
