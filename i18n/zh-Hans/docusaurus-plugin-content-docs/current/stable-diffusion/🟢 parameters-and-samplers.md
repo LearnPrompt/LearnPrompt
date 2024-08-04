@@ -1,6 +1,6 @@
 ---
 sidebar_position: 25
-title: Parameters and Sampling Techniques in Image Generation
+title: Stable Diffusion常用参数和采样技术
 description: This page details different parameters and samplers used in image generation, explaining their effects and optimal settings.
 keywords: [Image generation, samplers, Euler, DDIM, LMS, PLMS, DPM2, tiling, high-resolution, CFG scale, random seed]
 slug: /stable-diffusion/parameters-and-samplers/

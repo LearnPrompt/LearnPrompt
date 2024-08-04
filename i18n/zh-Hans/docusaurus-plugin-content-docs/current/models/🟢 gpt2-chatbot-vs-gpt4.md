@@ -1,6 +1,6 @@
 ---
 sidebar_position: 40
-title: GPT5 Wrapped in GPT2-Chatbot's Shell Mysteriously Launched? - Comparative Abilities & Free Trial
+title: GPT5 伪装 gpt2-chatbot 神秘上线？
 description: This page compares the mysterious gpt2-chatbot with GPT4, exploring its reasoning, math skills, coding ability, and ASCII art capabilities.
 keywords: [GPT5, gpt2-chatbot, AI comparison, GPT4, AI abilities, free trial, artificial intelligence]
 slug: /models/gpt2-chatbot-vs-gpt4/

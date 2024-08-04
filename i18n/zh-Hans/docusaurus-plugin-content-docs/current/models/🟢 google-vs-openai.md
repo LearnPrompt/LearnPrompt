@@ -1,6 +1,6 @@
 ---
 sidebar_position: 50
-title: Google's Response to OpenAI - What Did They Reveal?
+title: 谷歌对OpenAI的回击 - 发布会上透露了什么？
 description: This page provides a detailed analysis of Google's recent counter to OpenAI's advancements, including new projects, models, and tools.
 keywords: [Google, OpenAI, AI advancements, AI competition, Project Astra, Gemini 1.5 Pro, AI models, AI tools]
 slug: /models/google-vs-openai/

@@ -1,6 +1,6 @@
 ---
 sidebar_position: 10
-title: How to Create Effective Advertisements with ChatGPT
+title: AI写广告文案
 description: This page explains how ChatGPT can help generate compelling advertising copy and promotional images for products, using a hiking shoe as an example.
 keywords: [ChatGPT, advertising copy, promotional images, hiking shoes, marketing]
 slug: /basic-applications/how-to-create-effective-advertisements-with-chatgpt/

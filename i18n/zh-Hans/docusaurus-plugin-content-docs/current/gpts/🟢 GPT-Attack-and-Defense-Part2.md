@@ -1,6 +1,6 @@
 ---
 sidebar_position: 10
-title: GPT Defenses - Protect Your Prompts (Part 2)
+title: GPTs攻防 - 保护你的创意（下）
 description: Learn how to protect your GPT prompts from various attacks with detailed strategies.
 keywords: [GPT, AI, prompt protection, AI security, prompt engineering, GPT defenses]
 slug: /gpts/gpt-attack-defense-part2/

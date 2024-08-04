@@ -1,6 +1,6 @@
 ---
 sidebar_position: 10
-title: Logo Design Basics
+title: 用Midjourney做Logo设计
 description: This guide explores the challenges and solutions in creating effective logos that encapsulate brand values.
 keywords: [logo design, brand identity, pictorial marks, minimal line marks, gradient marks, geometric logos, mascot logos]
 slug: /midjourney-applications/logo-design/

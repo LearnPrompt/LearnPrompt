@@ -1,6 +1,6 @@
 ---
 sidebar_position: 60
-title: Common Parameters
+title: Midjourney常用参数
 description: This page details commonly used parameters in Midjourney for customizing image generation settings.
 keywords: [Midjourney, image parameters, aspect ratio, chaos, image weight, upscaler, stylize, tile, seed, stop]
 slug: /midjourney/common-parameters/

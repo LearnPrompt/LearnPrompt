@@ -1,6 +1,6 @@
 ---
 sidebar_position: 30
-title: ControlNet - Enhancing Stable Diffusion with Powerful Plugins
+title: ControlNet - 使用插件“固定”stable diffusion
 description: Discover how ControlNet plugins revolutionize image generation with Stable Diffusion by integrating shapes and structures right at the start, facilitating AI to complete the masterpiece.
 keywords: [ControlNet, Stable Diffusion, AI Plugins, Image Generation, AI Art, Plugin Installation, ControlNet Models]
 slug: /stable-diffusion/controlnet/

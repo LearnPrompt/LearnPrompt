@@ -1,6 +1,6 @@
 ---
 sidebar_position: 35
-title: Understanding Sora - A Middle School Student's Guide
+title: 中学生能看懂 - Sora 原理解读
 description: An in-depth look at Sora, OpenAI's powerful video generation AI, including its principles, technology, and limitations.
 keywords: [Sora, OpenAI, video generation, AI, technology, visual models]
 slug: /models/sora-ai/

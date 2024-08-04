@@ -1,6 +1,6 @@
 ---
 sidebar_position: 15
-title: Anime Design Techniques 2023
+title: 用Midjourney做动漫设计
 description: Explore the innovative methods and tools in anime design with a focus on Midjourney's Niji model advancements in 2023.
 keywords: [Anime Design, Midjourney Niji, Anime Art, Digital Illustration, Anime Characters, 2023 Design Techniques]
 slug: /midjourney-applications/anime-design/

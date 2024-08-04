@@ -1,6 +1,6 @@
 ---
 sidebar_position: 5
-title: Detailed Explanation of Agents Components
+title: Agents 组件详解
 description: This article provides an in-depth look at the components of LLM-driven Agent systems, focusing on planning, memory, and tool usage.
 keywords: [LLM, Agent systems, planning, memory, tool usage, AI, autonomous agents]
 slug: /llm-agents/agents-components/

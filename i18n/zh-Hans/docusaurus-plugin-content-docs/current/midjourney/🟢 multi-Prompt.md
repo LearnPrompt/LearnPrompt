@@ -1,6 +1,6 @@
 ---
 sidebar_position: 25
-title: Multi-prompt Techniques
+title: Midjourney 多提示
 description: A guide on how to use multi-prompts and their weights in Midjourney Bot.
 keywords: [Midjourney, multi-prompt, prompt weight, AI image generation, hot dog example]
 slug: /midjourney/multi-prompts/

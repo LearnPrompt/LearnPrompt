@@ -1,6 +1,6 @@
 ---
 sidebar_position: 35
-title: API-Bank & AgentBench
+title: Agent能力评估 - API-Bank & AgentBench
 description: This article explores the evaluation of Agent capabilities using API-Bank and AgentBench, including key methodologies and performance metrics.
 keywords: [API-Bank, AgentBench, AI evaluation, LLM performance, autonomous agents, machine learning]
 slug: /llm-agents/api-bank-and-agentbench/

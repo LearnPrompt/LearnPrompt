@@ -1,11 +1,11 @@
 ---
 sidebar_position: 35
-title: Large Language Models and the Illusion Problem - A Misconception
+title: 大模型幻觉问题是伪命题[译]
 description: This article discusses the so-called "illusion problem" in large language models (LLMs) and presents Andrej Karpathy's perspective on the matter.
 keywords: [LLMs, large language models, illusion problem, AI, Andrej Karpathy, ChatGPT, artificial intelligence]
 slug: /basics/illusion-problem-in-LLMs/
 ---
-# 🟢大模型幻觉问题是伪命题[译]
+# 🟢 大模型幻觉问题是伪命题[译]
 
 > ☝ **Andrej Karpathy** 曾任 Tesla 人工智能总监、斯坦福大学博士，提出了对大模型幻觉的新思路，这里提供译文跟大家分享一下
 

@@ -1,6 +1,6 @@
 ---
 sidebar_position: 50
-title: Basic Settings and Version Comparison
+title: 基本设置和版本比较
 description: This page provides an overview of common options like model version, style values, quality values, and upgrader version settings.
 keywords: [Midjourney, MJ Version, model settings, style values, quality settings, MJ upgrade]
 slug: /midjourney/settings-version-comparison/

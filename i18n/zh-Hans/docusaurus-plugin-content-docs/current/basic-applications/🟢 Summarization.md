@@ -1,6 +1,6 @@
 ---
 sidebar_position: 15
-title: Summarization
+title: 使用AI完成内容总结
 description: This page explains how ChatGPT can summarize text, save time, and provide concise versions of long articles, research papers, or reports.
 keywords: [ChatGPT, text summarization, content summary, AI tools, article summarization, research paper summary]
 slug: /basic-applications/gpt-summarization/

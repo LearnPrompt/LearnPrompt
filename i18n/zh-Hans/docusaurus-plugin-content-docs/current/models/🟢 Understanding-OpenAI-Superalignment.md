@@ -1,6 +1,6 @@
 ---
 sidebar_position: 5
-title: Understanding OpenAI's Superalignment Team's First Achievement - Using GPT-2 to Supervise GPT-4
+title: 一文读懂 OpenAI超级对齐团队首个成果 - 用GPT2监督GPT-4
 description: This page summarizes OpenAI's latest research on using a weaker model, GPT-2, to enhance the performance of a stronger model, GPT-4, as part of their superalignment initiative.
 keywords: [OpenAI, GPT-4, GPT-2, AI alignment, Weak-to-strong Generalization, AI research]
 slug: /models/openai-superalignment/

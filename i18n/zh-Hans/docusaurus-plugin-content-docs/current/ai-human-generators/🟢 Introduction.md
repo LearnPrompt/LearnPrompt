@@ -1,6 +1,6 @@
 ---
 sidebar_position: 0
-title: Introduction to AI Digital Humans
+title: 数字人简介
 description: Explore the world of AI Digital Humans, virtual intelligences created using artificial intelligence that simulate human thought processes and decision-making.
 keywords: [AI Digital Humans, Virtual Assistants, Siri, Xiaoi, Tmall Genie, AI technology, virtual beings]
 slug: /ai-digital-humans/introduction/

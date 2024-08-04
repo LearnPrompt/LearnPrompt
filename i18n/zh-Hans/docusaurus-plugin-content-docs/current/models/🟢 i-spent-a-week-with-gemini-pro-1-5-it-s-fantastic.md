@@ -1,6 +1,6 @@
 ---
 sidebar_position: 15
-title: I Spent a Week With Gemini Pro 1.5—It's Fantastic
+title: 我花了一周时间体验GeminiPro 1.5—太棒了
 description: This page summarizes the experiences and significant advancements of the Gemini Pro 1.5 language model.
 keywords: [Gemini Pro 1.5, AI, language model, Google, GPT-4 Turbo, context window, machine learning]
 slug: /experiences/gemini-pro-1-5/

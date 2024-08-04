@@ -1,6 +1,6 @@
 ---
 sidebar_position: 70
-title: Midjourney V6 Alpha Review - Enhancing Chinese Artistic Style, Crafting New Prompts
+title: Midjourney v6 Alpha评测
 description: This review highlights the new features of Midjourney V6 Alpha and provides a guide for creating effective prompts to utilize its enhanced capabilities.
 keywords: [Midjourney V6, Alpha, prompt crafting, artistic style, new features, image generation]
 slug: /midjourney/v6-alpha-review/

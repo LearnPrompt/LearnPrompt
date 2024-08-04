@@ -1,6 +1,6 @@
 ---
 sidebar_position: 0
-title: Introduction to Stable Diffusion
+title: Stable Diffusion 简介
 description: An overview of Stable Diffusion, a deep learning-based text-to-image generation model, including its main functions and features.
 keywords: [Stable Diffusion, text-to-image, deep learning, AI, image generation, diffusion model]
 slug: /stable-diffusion/introduction/

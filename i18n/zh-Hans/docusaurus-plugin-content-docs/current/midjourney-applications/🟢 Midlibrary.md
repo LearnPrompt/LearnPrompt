@@ -1,6 +1,6 @@
 ---
 sidebar_position: 35
-title: Explore Midlibrary - A Comprehensive Keyword Resource for Midjourney
+title: Midjourney 关键词参考库 Midlibrary
 description: Discover Midlibrary, a valuable resource curated by international artist Andrei Kovalev, featuring an extensive collection of keywords applicable to Midjourney's genres, artistic movements, techniques, and more.
 keywords: [Midlibrary, Midjourney, Keyword Resource, Artistic Keywords, Digital Art, Photography, Film, Sculpture, Printmaking]
 slug: /midjourney-applications/explore-midlibrary-keyword-resource/

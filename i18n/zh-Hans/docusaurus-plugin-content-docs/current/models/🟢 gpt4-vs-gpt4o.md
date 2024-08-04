@@ -1,6 +1,6 @@
 ---
 sidebar_position: 45
-title: Comprehensive Evaluation of GPT-4o's Ten Capabilities in Chinese Context - Surpassing GPT-4
+title:  一手测评GPT4o十项能力 - 中文场景下轻松超过GPT4
 description: An in-depth assessment of GPT-4o's performance across ten key capabilities in the Chinese context, demonstrating its superiority over GPT-4.
 keywords: [GPT-4o, GPT-4, AI capabilities, Chinese language, AI performance, AI evaluation, AI comparison]
 slug: /models/gpt4-vs-gpt4o/

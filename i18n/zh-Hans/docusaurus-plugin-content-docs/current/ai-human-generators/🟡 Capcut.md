@@ -1,6 +1,6 @@
 ---
 sidebar_position: 25
-title: Personalized Digital Human Creation with Capcut - Free and Unlimited
+title: 剪映数字人“个性化“—无限免费私模数字人
 description: Explore the unlimited possibilities of creating personalized digital humans using Capcut's advanced AI capabilities, including voice cloning and face fusion techniques.
 keywords: [digital human, Capcut, AI video editing, voice cloning, face fusion, personalization]
 slug: /ai-human-generators/capcut/

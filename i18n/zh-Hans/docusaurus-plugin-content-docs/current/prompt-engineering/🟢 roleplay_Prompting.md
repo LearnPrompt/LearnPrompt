@@ -1,6 +1,6 @@
 ---
 sidebar_position: 10
-title: Role-Playing with ChatGPT
+title: GPT技巧 - 角色扮演
 description: This page explores how to set different roles for ChatGPT, such as interviewers, teachers, and more, to get professional and scenario-specific answers.
 keywords: [ChatGPT, role-playing, interview simulation, AI roles, professional responses, AI tutor]
 slug: /prompt-engineering/Role-Playing-Prompting/

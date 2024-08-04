@@ -1,6 +1,6 @@
 ---
 sidebar_position: 30
-title: Digital Human Sample Video Shooting Guide | Save Thousands
+title: 数字人样本视频拍摄指南
 description: This document aims to help customers create better sample videos for optimal digital human creation.
 keywords: [Digital Human, Video Shooting, Sample Video, AI Human]
 slug: /ai-human-generators/digital-human-sample-video shooting-guide/

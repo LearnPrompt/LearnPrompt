@@ -1,6 +1,6 @@
 ---
 sidebar_position: 10
-title: AutoGPT - Revolutionizing Task Automation with AI
+title: AutoGPT - AI实现任务自动化
 description: An overview of AutoGPT, its components, capabilities, and quick start guide for task automation using AI.
 keywords: [AutoGPT, AI, task automation, GPT-4, langchain, Toran Richards, AI tools]
 slug: /llm-agents/autogpt/

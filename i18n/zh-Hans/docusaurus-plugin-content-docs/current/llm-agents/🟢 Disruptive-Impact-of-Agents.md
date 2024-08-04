@@ -1,6 +1,6 @@
 ---
 sidebar_position: 0
-title: The Disruptive Impact of Agents
+title: Agent的颠覆性影响
 description: This article explores the insights shared by OpenAI's co-founder Andrej Karpathy on the potential and future of AI Agents, comparing past difficulties with new opportunities brought by modern technologies.
 keywords: [AI Agents, OpenAI, Andrej Karpathy, AI development, LLM, autonomous agents, AutoGPT, BabyAGI, MetaGPT]
 slug: /llm-agents/agents-disruptive-impact/

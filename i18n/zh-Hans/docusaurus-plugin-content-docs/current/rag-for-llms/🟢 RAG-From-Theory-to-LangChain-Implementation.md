@@ -1,10 +1,11 @@
 ---
 sidebar_position: 0
-title: From Theory to LangChain Implementation
+title: RAG - 从理论到langchain实现
 description: This page covers the concept of Retrieval-Augmented Generation (RAG) and demonstrates how to implement it using LangChain, OpenAI language models, and Weaviate vector database.
 keywords: [RAG, Retrieval-Augmented Generation, LangChain, OpenAI, Weaviate, machine learning, AI]
 slug: /rag-for-llms/rag-langchain-implementation/
 ---
+
 # 🟢 RAG: 从理论到langchain实现
 
 > 😀 [原文](https://towardsdatascience.com/retrieval-augmented-generation-rag-from-theory-to-langchain-implementation-4e9bd5f6a4f2)

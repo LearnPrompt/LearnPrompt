@@ -1,6 +1,6 @@
 ---
 sidebar_position: 10
-title: Mastering Digital Personas - Comprehensive AI Course
+title: 数字人课程《克隆你自己》
 description: Explore the comprehensive course on mastering digital personas with continuous updates and expert community support.
 keywords: [digital persona, AI course, digital avatars, AI community, mastering digital personas]
 slug: /ai-human-generators/clone-yourself-digital-human course/

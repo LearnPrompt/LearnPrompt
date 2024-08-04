@@ -1,6 +1,6 @@
 ---
 sidebar_position: 0
-title: Basics of Artificial Intelligence
+title: 人工智能基础
 description: This page introduces the fundamental concepts and methodologies of artificial intelligence, including machine learning, deep learning, and various learning techniques.
 keywords: [AI, artificial intelligence, machine learning, deep learning, supervised learning, unsupervised learning, reinforcement learning]
 slug: /basics/introduction-to-ai/

@@ -1,6 +1,6 @@
 ---
 sidebar_position: 20
-title: HuggingGPT - Solving AI Tasks with ChatGPT
+title: HuggingGPT - 使用多模型解决复杂任务
 description: An overview of HuggingGPT, an agent framework leveraging ChatGPT and Hugging Face for task execution.
 keywords: [HuggingGPT, ChatGPT, AI tasks, Hugging Face, AI models, JARVIS, AI framework]
 slug: /llm-agents/hugginggpt/

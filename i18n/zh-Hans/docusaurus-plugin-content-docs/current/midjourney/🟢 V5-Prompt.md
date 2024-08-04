@@ -1,6 +1,6 @@
 ---
 sidebar_position: 65
-title: V5 Prompt Template
+title: Midjourney V5 提示语模版
 description: This guide provides a comprehensive template for crafting prompts in Midjourney V5, emphasizing the importance of style and structure.
 keywords: [Midjourney, prompt template, V5, style, artistic movements, media types, parameters]
 slug: /midjourney,/v5-prompt-template/

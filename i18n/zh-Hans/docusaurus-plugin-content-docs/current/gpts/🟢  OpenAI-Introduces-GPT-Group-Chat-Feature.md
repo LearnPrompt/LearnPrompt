@@ -1,6 +1,6 @@
 ---
 sidebar_position: 20
-title: OpenAI Introduces "GPT Group Chat" Feature
+title: OpenAI 推出“GPT 群聊”功能
 description: This page introduces and explores the new "GPT Group Chat" feature launched by OpenAI, allowing users to mention multiple GPTs in a single conversation.
 keywords: [OpenAI, GPT Group Chat, AI collaboration, GPT mentions, ChatGPT features, productivity, AI tools]
 slug: /features/gpt-group-chat/

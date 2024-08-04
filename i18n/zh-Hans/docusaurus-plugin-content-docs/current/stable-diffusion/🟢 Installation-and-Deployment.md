@@ -1,6 +1,6 @@
 ---
 sidebar_position: 5
-title: Installation and Deployment of Stable Diffusion
+title: Stable Diffusion 的安装和部署
 description: This page provides instructions on how to install and deploy Stable Diffusion on various platforms, including Google Colab, Windows, and Mac.
 keywords: [Stable Diffusion, installation, deployment, Google Colab, Windows, Mac, AI tools]
 slug: /stable-diffusion/installation/

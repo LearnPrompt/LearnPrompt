@@ -1,6 +1,6 @@
 ---
 sidebar_position: 40
-title: Prompt Auto-Generation with Midjourney
+title: 自动生成Midjourney Prompt
 description: Learn how to use Midjourney's image-to-prompt feature for generating new prompts based on existing images.
 keywords: [Midjourney, AI, prompt generation, image-to-prompt, AI art, Midlibrary]
 slug: /midjourney/midjourney-prompt-auto-generation/

@@ -1,6 +1,6 @@
 ---
 sidebar_position: 30
-title: Enhancing Photography Workflow with Midjourney V5
+title: 用Midjourney做摄影艺术
 description: Dive into how Midjourney V5 revolutionizes the photography workflow, enhancing creativity and realism in portrait photography.
 keywords: [Photography Art, Midjourney V5, Digital Photography, Creative Process, Portrait Photography, Photography Techniques]
 slug: /midjourney-applications/enhancing-photography-workflow/

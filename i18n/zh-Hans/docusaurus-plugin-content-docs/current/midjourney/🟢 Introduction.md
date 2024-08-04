@@ -1,6 +1,6 @@
 ---
 sidebar_position: 0
-title: Introduction to AI Image Generation with Midjourney
+title: AI图片生成和Midjourney简介
 description: Learn the basics of AI image generation using Midjourney, including its capabilities and examples.
 keywords: [AI, image generation, Midjourney, AI tools, Midjourney V6, Midjourney examples]
 slug: /midjourney/introduction/

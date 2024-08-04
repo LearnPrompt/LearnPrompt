@@ -1,10 +1,11 @@
 ---
 sidebar_position: 5
-title: 12 Tuning Strategies for RAG Applications
+title: RAG 应用的12种调优策略指南
 description: This page provides a comprehensive guide on 12 tuning strategies to optimize the performance of Retrieval-Augmented Generation (RAG) applications.
 keywords: [RAG, Retrieval-Augmented Generation, tuning strategies, machine learning, data science, performance optimization]
 slug: /rag-for-llms/rag-tuning-strategies/
 ---
+
 # 🟡  RAG应用的12种调优策略指南
 
 > 😀 [原文](https://towardsdatascience.com/a-guide-on-12-tuning-strategies-for-production-ready-rag-applications-7ca646833439#a5e2)

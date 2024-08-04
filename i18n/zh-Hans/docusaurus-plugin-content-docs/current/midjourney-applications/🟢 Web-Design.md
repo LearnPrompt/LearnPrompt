@@ -1,6 +1,6 @@
 ---
 sidebar_position: 5
-title: Web Design Techniques
+title: 用Midjourney做网页设计
 description: Learn essential web design tips for modern brands, including techniques for negating unwanted elements in your design.
 keywords: [Web Design, Modern Web Design, SaaS, Flight Discount Service, Plant Database, Minimal Design]
 slug: /midjourney-applications/web-design

@@ -1,6 +1,6 @@
 ---
 sidebar_position: 25
-title: MetaGPT - A New Framework for Multi-Agent Collaboration
+title: MetaGPT - 多Agents协作新框架
 description: This page introduces MetaGPT, a framework integrating workflows with multi-agent collaboration, ensuring a structured approach to problem-solving.
 keywords: [MetaGPT, multi-agent collaboration, AI framework, structured problem-solving, SOP in AI, MetaGPT software development]
 slug: /llm-agents/metagpt/

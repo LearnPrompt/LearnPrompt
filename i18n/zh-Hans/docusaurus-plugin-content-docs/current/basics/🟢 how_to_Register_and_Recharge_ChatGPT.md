@@ -1,6 +1,6 @@
 ---
 sidebar_position: 20
-title: How to Register & Recharge ChatGPT
+title: ChatGPT 注册 & 充值
 description: This page provides a detailed guide on how to register for ChatGPT and recharge using various methods, including virtual numbers, VISA, and Apple gift cards.
 keywords: [ChatGPT, registration, recharge, virtual number, VISA, Apple gift card, GPT-4]
 slug: /basics/chatgpt-registration-recharge/

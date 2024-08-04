@@ -1,6 +1,6 @@
 ---
 sidebar_position: 20
-title: Introduction to Stable Diffusion Models 2023
+title: Stable Diffusion常用模型介绍
 description: Explore how to leverage various models to enhance the quality and style of generated images using Stable Diffusion.
 keywords: [Stable Diffusion, AI models, image generation, style transfer, machine learning]
 slug: /stable-diffusion/models/

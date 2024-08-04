@@ -1,6 +1,6 @@
 ---
 sidebar_position: 5
-title: Few shot for ChatGPT
+title: GPT技巧 - 提供示例
 description: This page provides examples of prompts to effectively interact with ChatGPT, including 1-shot and few-shot techniques.
 keywords: [ChatGPT, AI prompts, 1-shot, few-shot, AI interaction, examples]
 slug: /prompt-engineering/example-prompts-for-chatgpt/

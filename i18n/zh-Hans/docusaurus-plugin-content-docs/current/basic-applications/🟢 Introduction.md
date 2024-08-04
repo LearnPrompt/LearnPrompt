@@ -1,6 +1,6 @@
 ---
 sidebar_position: 0
-title: Introduction to Prompt Writing
+title: 如何写提示语
 description: Learn how to use prompts effectively to handle daily and work tasks. This section provides practical examples and step-by-step instructions for breaking down complex tasks.
 keywords: [prompt writing, task management, AI, ChatGPT, PPT creation, prompt engineering]
 slug: /basic-applications/prompt-writing-introduction/

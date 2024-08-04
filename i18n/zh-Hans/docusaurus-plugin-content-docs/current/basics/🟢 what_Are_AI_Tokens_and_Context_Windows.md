@@ -1,6 +1,6 @@
 ---
 sidebar_position: 10
-title: What are AI Tokens and Context Windows (and Why You Should Care)?
+title:  什么是 AI Tokens 和上下文窗口（Context Windows）
 description: An introduction to AI tokens and context windows in large language models, explaining their significance and how they impact AI performance.
 keywords: [AI tokens, context windows, large language models, GPT, AI, artificial intelligence, OpenAI, language processing]
 slug: /basics/what-are-ai-tokens-and-context-windows/

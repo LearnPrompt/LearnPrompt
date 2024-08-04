@@ -1,6 +1,6 @@
 ---
 sidebar_position: 25
-title: Language Learning with ChatGPT
+title: 用GPT学习各国语言
 description: This page provides a guide on how to use ChatGPT for language learning, specifically focusing on IELTS speaking and writing practice.
 keywords: [language learning, ChatGPT, IELTS, speaking practice, writing practice, AI language assistant]
 slug: /basic-applications/language-learning-with-chatgpt/

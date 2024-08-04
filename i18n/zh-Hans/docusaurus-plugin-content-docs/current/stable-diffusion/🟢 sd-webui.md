@@ -1,6 +1,6 @@
 ---
 sidebar_position: 10
-title: Understanding SD_WebUI
+title: Stable Diffusion的可视化界面WebUI
 description: This page provides a detailed guide on using and switching between different Stable Diffusion models in SD_WebUI.
 keywords: [SD_WebUI, Stable Diffusion, AI model, VAE, image generation, presets]
 slug: /stable-diffusion/sd-webui-guide/

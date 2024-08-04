@@ -1,6 +1,6 @@
 ---
 sidebar_position: 20
-title: Ten Strategies for Getting Better Results with ChatGPT
+title: 使用 ChatGPT 获得更好结果的十个策略
 description: This page outlines key strategies to effectively use ChatGPT and achieve optimal results.
 keywords: [ChatGPT, AI strategies, prompt engineering, chatbot tips, effective prompts, AI guidelines]
 slug: /prompt-engineering/ten-strategies-chatgpt/

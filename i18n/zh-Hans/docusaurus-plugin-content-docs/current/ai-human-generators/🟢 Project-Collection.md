@@ -1,6 +1,6 @@
 ---
 sidebar_position: 5
-title: Comprehensive Collection of Digital Human Projects
+title: 数字人项目合集
 description: Discover a comprehensive collection of projects for creating digital humans, covering everything from appearance to voice synthesis and intelligent dialogues.
 keywords: [Digital Humans, AI Projects, Virtual Assistants, Voice Cloning, Image Generation, Video Synthesis]
 slug: /ai-human-generators/project-collection/

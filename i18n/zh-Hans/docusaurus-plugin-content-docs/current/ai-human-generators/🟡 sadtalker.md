@@ -1,6 +1,6 @@
 ---
 sidebar_position: 15
-title: SadTalker - Bringing Photos to Life with Speech
+title: SadTalker - 让照片说话
 description: Explore how SadTalker leverages photos and audio to create speaking images, including installation guides and troubleshooting.
 keywords: [SadTalker, photo animation, speech synthesis, AI communication, setup guide, troubleshooting]
 slug: /ai-human-generators/sadtalker-speaking-photos/

@@ -1,6 +1,6 @@
 ---
 sidebar_position: 0
-title: Basic Usage of ChatGPT
+title: ChatGPT 基础用法
 description: This page explains the basic principles and examples of constructing prompts for ChatGPT to improve output quality.
 keywords: [ChatGPT, prompt engineering, AI prompts, effective prompts, AI tips, basic usage]
 slug: /prompt-engineering/basic-usage/

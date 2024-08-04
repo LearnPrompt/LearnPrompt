@@ -1,6 +1,6 @@
 ---
 sidebar_position: 25
-title: AI Code Assistant
+title: AI版代码助理
 description: Use ChatGPT for code generation, test case generation, commenting, reviewing, and vulnerability detection.
 keywords: [AI, code assistant, code generation, test cases, code comments, code review, vulnerability detection, ChatGPT]
 slug: /basic-applications/ai-code-assistant/

@@ -1,6 +1,6 @@
 ---
 sidebar_position: 25
-title: Latest News on Claude 3
+title: Claude3 最新消息
 description: Stay updated with the latest information about Claude 3 and its challenge to OpenAI's dominance.
 keywords: [Claude 3, AI, Anthropic, artificial intelligence, OpenAI, GPT-4]
 slug: /models/claude-3-news/

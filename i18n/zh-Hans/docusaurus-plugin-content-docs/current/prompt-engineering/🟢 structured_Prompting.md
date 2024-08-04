@@ -1,6 +1,6 @@
 ---
 sidebar_position: 15
-title: Structured Prompting
+title: GPT技巧 - 结构化提示
 description: This page introduces the concept of structured prompting in AI, providing detailed techniques and examples.
 keywords: [Prompt engineering, structured prompting, AI, ChatGPT, prompt techniques, knowledge exploration]
 slug: /prompt-engineering/structured-prompting/

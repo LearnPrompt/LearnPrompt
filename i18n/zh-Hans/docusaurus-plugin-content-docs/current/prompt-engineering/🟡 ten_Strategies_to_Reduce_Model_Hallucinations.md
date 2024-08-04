@@ -1,6 +1,6 @@
 ---
 sidebar_position: 25
-title: Ten Strategies to Reduce Large Model Hallucinations - GPT Reliability +100
+title: 十大策略减轻大模型整体幻觉
 description: This page explores the phenomenon of large model hallucinations in GPT models and provides ten strategies to mitigate them.
 keywords: [GPT, AI hallucinations, large models, ChatGPT, AI reliability, machine learning strategies]
 slug: /prompt-engineering/reducing-gpt-hallucinations/

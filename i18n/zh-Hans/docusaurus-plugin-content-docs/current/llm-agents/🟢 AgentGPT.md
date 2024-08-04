@@ -1,6 +1,6 @@
 ---
 sidebar_position: 15
-title: AgentGPT - Autonomous AI Agent Platform
+title: AgentGPT - 自主AI Agent平台
 description: This page introduces AgentGPT, a platform for creating and deploying autonomous AI agents easily via a website.
 keywords: [AgentGPT, autonomous AI, AI agent, AutoGPT, Langchain, OpenAI, AI platform]
 slug: /llm-agents/agentgpt/

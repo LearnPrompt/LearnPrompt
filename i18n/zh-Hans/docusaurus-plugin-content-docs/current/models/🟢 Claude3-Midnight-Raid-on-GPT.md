@@ -1,6 +1,6 @@
 ---
 sidebar_position: 20
-title: Claude3's Midnight "Raid" on GPT
+title: Claude3 深夜“奇袭” GPT
 description: This page details the launch of the Claude3 family and compares its features and performance to GPT-4.
 keywords: [Claude3, GPT-4, AI models, AI comparison, Anthropic, machine learning]
 slug: /models/claude3-vs-gpt4/

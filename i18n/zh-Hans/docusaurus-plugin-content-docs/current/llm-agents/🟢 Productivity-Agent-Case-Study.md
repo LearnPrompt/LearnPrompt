@@ -1,6 +1,6 @@
 ---
 sidebar_position: 40
-title: Productivity Agents Case Study
+title: 生产力Agent案例盘点
 description: An overview of various productivity agents added to the awesome-ai-agents repository, highlighting their features and use cases.
 keywords: [productivity agents, AI agents, Adala, Questflow, Sweep, AI automation, data processing, no-code]
 slug: /llm-agents/productivity-agents-case-study/

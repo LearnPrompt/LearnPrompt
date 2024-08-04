@@ -1,6 +1,6 @@
 ---
 sidebar_position: 0
-title: Architectural Design in V5
+title: 用Midjourney做建筑设计
 description: Explore key structures and templates for production buildings in V5, including styles and inspirations from renowned architects and photographers.
 keywords: [Architectural Design, V5, Production Buildings, Modern Architecture, Photography, Zaha Hadid, Le Corbusier, Kengo Kuma]
 slug: /midjourney-applications/architectural-design/

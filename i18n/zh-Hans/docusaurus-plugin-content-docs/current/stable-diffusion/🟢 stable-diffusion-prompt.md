@@ -1,6 +1,6 @@
 ---
 sidebar_position: 15
-title: SD Prompt Template Syntax Guide
+title: Stable Diffusion 提示语语法
 description: This guide provides a detailed overview of syntax and techniques for creating high-quality image prompts using SD models.
 keywords: [SD prompt, image generation, prompt techniques, syntax, high-quality images]
 slug: /stable-diffusion/sd-prompt-syntax/

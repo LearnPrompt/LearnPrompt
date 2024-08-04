@@ -1,6 +1,6 @@
 ---
 sidebar_position: 10
-title: Who Hasn't Used the Fastest Large Model in History, Currently Free!
+title: 史上最快大模型 Groq
 description: Explore Groq, the new large model offering super-fast response speeds based on the open-source Mixtral 8x7B-32k model, boasting speeds of 500 tokens per second!
 keywords: [Groq, AI model, fast large model, Mixtral 8x7B-32k, 500 tokens per second, AI response speed, free AI model]
 slug: /models/groq/

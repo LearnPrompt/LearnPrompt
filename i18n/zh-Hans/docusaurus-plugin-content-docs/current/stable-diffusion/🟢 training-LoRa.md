@@ -1,6 +1,6 @@
 ---
 sidebar_position: 40
-title: Training LoRa
+title: 如何用自己的图片训练Stable Diffusion的LoRa
 description: A comprehensive guide on training LoRa using tools and tutorials from popular online resources.
 keywords: [LoRa, AI training, Python scripts, stable diffusion, image preprocessing, AI model training]
 slug: /stable-diffusion/train-lora/

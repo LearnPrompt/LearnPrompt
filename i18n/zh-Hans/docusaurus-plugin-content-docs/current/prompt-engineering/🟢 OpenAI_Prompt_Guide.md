@@ -1,6 +1,6 @@
 ---
 sidebar_position: 25
-title: OpenAI Official Prompt Engineering Guide
+title: OpenAI 官方提示功能指南
 description: This page summarizes the official guidelines for prompt engineering released by OpenAI, focusing on six core principles.
 keywords: [OpenAI, prompt engineering, guidelines, AI, artificial intelligence, prompt optimization, prompt principles]
 slug: /prompt-engineering/openai-prompt-engineering/

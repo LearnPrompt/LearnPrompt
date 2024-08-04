@@ -1,6 +1,6 @@
 ---
 sidebar_position: 25
-title: What is GPT-4?
+title: 什么是GPT-4?
 description: This page introduces GPT-4, the latest milestone in deep learning by OpenAI, explaining its capabilities, limitations, and training process.
 keywords: [GPT-4, OpenAI, AI, artificial intelligence, deep learning, multimodal model, text generation, image recognition]
 slug: /basics/what-is-gpt4/

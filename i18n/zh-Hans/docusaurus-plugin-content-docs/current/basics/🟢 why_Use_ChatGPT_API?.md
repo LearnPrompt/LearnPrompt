@@ -1,6 +1,6 @@
 ---
 sidebar_position: 30
-title: Why Use ChatGPT API?
+title: 为什么用 ChatGPT API?
 description: This article explains the advantages of using the ChatGPT API for deeper integration, personalized responses, batch processing, and security compliance.
 keywords: [ChatGPT API, API integration, personalized responses, batch processing, security compliance, AI tools]
 slug: /basics/why-use-chatgpt-api/

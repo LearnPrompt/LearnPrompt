@@ -1,6 +1,6 @@
 ---
 sidebar_position: 45
-title: Common Commands for Midjourney Bot
+title: Midjourney常用指令
 description: A guide on how to interact with the Midjourney Bot on Discord using various commands.
 keywords: [Midjourney, Discord, bot commands, image creation, AI tools]
 slug: /midjourney/commands/

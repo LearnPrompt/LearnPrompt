@@ -1,6 +1,6 @@
 ---
 sidebar_position: 15
-title: Basic Skills of ChatGPT - Prompt
+title: ChatGPT基本功 - Prompt提示语
 description: This article explains the core skill of setting prompts for ChatGPT, including its applications and functionalities.
 keywords: [ChatGPT, prompt, AI, artificial intelligence, ChatGPT functionalities, AI tools, GPT-4]
 slug: /basics/chatgpt-prompt/

@@ -1,6 +1,6 @@
 ---
 sidebar_position: 30
-title: Differences Between Sora and Runway in Architecture
+title: Sora 和之前 Runway 那些在架构上有啥区别？
 description: This article explores the architectural differences between Sora and previous models like Runway.
 keywords: [Sora, Runway, Diffusion Model, Diffusion Transformer, AI, machine learning]
 slug: /models/sora-vs-runway/

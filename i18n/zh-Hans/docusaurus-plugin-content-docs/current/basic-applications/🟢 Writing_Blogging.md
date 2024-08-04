@@ -1,6 +1,6 @@
 ---
 sidebar_position: 5
-title: Using ChatGPT for Writing and Blogging
+title: AI写作就是那么简单
 description: This page demonstrates how ChatGPT can simplify the process of writing and generating content, particularly for blog posts.
 keywords: [ChatGPT, writing, blogging, AI writing assistant, content creation, AI tools]
 slug: /basic-applications/blogging-with-chatgpt/

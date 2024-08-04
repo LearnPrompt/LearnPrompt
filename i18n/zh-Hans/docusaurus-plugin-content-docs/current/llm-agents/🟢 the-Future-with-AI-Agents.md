@@ -1,6 +1,6 @@
 ---
 sidebar_position: 35
-title: Exploring the Future with OpenAI Agents
+title: Agents的未来
 description: This article discusses the potential and challenges of OpenAI's Agent, an integration of LLM, memory, planning skills, and tool usage, aiming to reshape application scenarios.
 keywords: [OpenAI, ChatGPT, AI Agent, LLM, artificial intelligence, future technology]
 slug: /llm-agents/agent-future/

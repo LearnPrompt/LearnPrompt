@@ -1,3 +1,11 @@
+---
+sidebar_position: 0
+title: In-Depth Review of 11Labs AI Sound Effects - The End of Silent AI Shorts?
+description: This page provides an in-depth review of 11Labs AI sound effects, exploring its potential to revolutionize AI-generated videos by adding realistic audio.
+keywords: [AI sound effects, 11Labs, AI-generated videos, sound synchronization, AI advancements]
+slug: /ai-music-generators/11labs-ai-sound-effects/
+---
+
 # 🟡 11Labs AI Sound Effects In-Depth Review: Farewell to the Silent Film Era?
 
 > 😀 I got the beta access to ElevenLabs' AI sound effects!

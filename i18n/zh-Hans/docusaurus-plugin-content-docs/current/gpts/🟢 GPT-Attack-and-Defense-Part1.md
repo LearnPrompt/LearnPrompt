@@ -1,6 +1,6 @@
 ---
 sidebar_position: 5
-title: GPT Attack and Defense - Protecting Your Creativity (Part 1)
+title: GPTs攻防 - 保护你的创意（上）
 description: This article discusses various techniques to protect your GPT creations from being hacked and misused, highlighting key events and providing a comprehensive guide on defensive strategies.
 keywords: [GPT, AI security, prompt protection, AI defense, creative protection, AI hacking, GPT prompts]
 slug: /gpts/gpt-attack-defense/

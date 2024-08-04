@@ -1,6 +1,6 @@
 ---
 sidebar_position: 15
-title: Guide to Creating Effective Prompts for Midjourney
+title: 如何写 Midjourney 提示语
 description: A comprehensive guide on how to create effective prompts for generating images with Midjourney.
 keywords: [Midjourney, prompt, image generation, AI, guide, tutorial, art]
 slug: /midjourney/prompt-guide/

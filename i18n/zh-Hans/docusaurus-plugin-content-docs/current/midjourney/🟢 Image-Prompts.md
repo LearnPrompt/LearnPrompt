@@ -1,6 +1,6 @@
 ---
 sidebar_position: 20
-title: Image Prompts for AI Art Generation
+title: 图片提示
 description: This page provides guidelines on how to use image prompts effectively for AI art generation, including uploading images, using V5 effects, and applying weight parameters.
 keywords: [AI art, image prompts, art generation, V5 effects, weight parameters, image upload]
 slug: /midjourney/image-prompts-ai-art/

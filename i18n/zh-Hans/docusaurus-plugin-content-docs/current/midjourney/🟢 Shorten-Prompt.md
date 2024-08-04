@@ -1,6 +1,6 @@
 ---
 sidebar_position: 35
-title: Shorten Command - Optimizing Prompts for Midjourney
+title: 如何“缩短”Midjourney提示
 description: Learn how to use the /shorten command to optimize prompts for better results in Midjourney.
 keywords: [Midjourney, AI prompts, prompt optimization, /shorten command, token analysis]
 slug: /midjourney/shorten-command/

@@ -1,6 +1,6 @@
 ---
 sidebar_position: 20
-title: Game Art Evolution with Midjourney
+title: 用Midjourney做游戏艺术
 description: Discover how Midjourney is revolutionizing game asset creation with pixel art and iconic game styles from classic consoles.
 keywords: [Game Art, Midjourney, Pixel Art, Classic Consoles, NES, SNES, PlayStation, Sega Genesis, Sega Dreamcast, Retro Gaming]
 slug: /midjourney-applications/game-art/

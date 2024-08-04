@@ -1,6 +1,6 @@
 ---
 sidebar_position: 0
-title: Grok1 Released by Elon Musk - A 314B Parameter Model
+title: 马斯克发布的Grok1 - 314B参数模型
 description: This article discusses the release of Grok1 by Elon Musk's xAI, a 314 billion parameter open-source model known for its humor and interactivity.
 keywords: [Elon Musk, xAI, Grok1, open-source AI, 314B parameter model, AI humor, real-time information]
 slug: /model/grok-1/

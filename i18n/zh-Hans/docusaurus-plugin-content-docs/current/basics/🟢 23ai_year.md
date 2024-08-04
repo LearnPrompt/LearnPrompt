@@ -1,6 +1,6 @@
 ---
 sidebar_position: 45
-title: 2023, A Year of AI
+title: 2023, AI 的一年 [译]
 description: This page summarizes significant advancements and events in artificial intelligence in 2023.
 keywords: [AI, artificial intelligence, 2023, AI advancements, AI events, machine learning]
 slug: /basics/ai-in-2023/

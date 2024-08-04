@@ -1,6 +1,6 @@
 ---
 sidebar_position: 5
-title: Quick Start Guide
+title: Midjourney 快速入门
 description: This page provides a quick start guide for using Midjourney on Discord, including registration, subscription plans, and basic commands.
 keywords: [Midjourney, Discord, quick start, image generation, AI tools]
 slug: /midjourney/quick-start-guide/

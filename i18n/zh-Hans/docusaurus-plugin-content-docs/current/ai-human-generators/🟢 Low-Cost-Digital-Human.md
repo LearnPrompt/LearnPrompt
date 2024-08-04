@@ -1,6 +1,6 @@
 ---
 sidebar_position: 20
-title: Low-Cost Digital Human Experience - HeyGen, D-ID, Silicon Intelligence and More - 10+ Practical Tutorials
+title: 低成本体验数字人
 description: Explore practical tutorials for creating digital humans with HeyGen, D-ID, Silicon Intelligence, and other platforms, featuring a comprehensive course on cloning yourself using AI.
 keywords: [digital human, AI tutorials, HeyGen, D-ID, Silicon Intelligence, AI video translation, AI personal avatars]
 slug: /ai-human-generators/low-cost-digital-humans/

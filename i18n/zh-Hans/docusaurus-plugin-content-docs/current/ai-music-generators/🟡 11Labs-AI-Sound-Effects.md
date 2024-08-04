@@ -1,3 +1,11 @@
+---
+sidebar_position: 0
+title: 11Labs AI音效深度评测
+description: This page provides an in-depth review of 11Labs AI sound effects, exploring its potential to revolutionize AI-generated videos by adding realistic audio.
+keywords: [AI sound effects, 11Labs, AI-generated videos, sound synchronization, AI advancements]
+slug: /ai-music-generators/11labs-ai-sound-effects/
+---
+
 # 🟡 11Labs AI音效深度评测：AI短片告别默片时代?
 
 > 😀 我拿到 llElevenLabs 的 AI音效（sound effect） 内测资格啦！

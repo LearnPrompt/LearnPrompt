@@ -1,6 +1,6 @@
 ---
 sidebar_position: 30
-title: AI Virtual Town
+title: AI-town 虚拟小镇
 description: This page discusses one of the most inspiring AI agent experiments in 2023, AI-town, and explores various virtual AI towns developed by different teams.
 keywords: [AI, AI town, AI agents, virtual town, 2023, Stanford, Google, a16z, AgentSims]
 slug: /llm-agents/ai-town/

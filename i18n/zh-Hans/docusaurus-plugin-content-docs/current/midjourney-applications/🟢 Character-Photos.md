@@ -1,6 +1,6 @@
 ---
 sidebar_position: 25
-title: Advances in Character Photo Realism in Midjourney V5
+title: 用Midjourney拍人物照片
 description: Explore the significant enhancements in character photo realism in Midjourney's latest V5 model compared to V4, including celebrity and fictional character generation.
 keywords: [Midjourney V5, Photo Realism, Character Generation, Celebrity Photos, Fictional Characters, Photographic Detail]
 slug: /midjourney-applications/character-photo-realism/

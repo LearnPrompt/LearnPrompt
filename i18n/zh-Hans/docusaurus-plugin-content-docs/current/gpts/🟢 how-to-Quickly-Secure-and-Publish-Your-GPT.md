@@ -1,6 +1,6 @@
 ---
 sidebar_position: 15
-title: How to Launch and Promote Your GPT in GPT Store
+title: GPTs商店这周上线 - 如何抢先定位&发布你的GPT
 description: A guide to quickly securing a domain and launching your GPT in the new GPT store, with tips on SEO optimization and category selection.
 keywords: [GPT store, domain purchase, SEO, GPT launch, GPT marketing, AI tools]
 slug: /gpts/launch-your-gpt/

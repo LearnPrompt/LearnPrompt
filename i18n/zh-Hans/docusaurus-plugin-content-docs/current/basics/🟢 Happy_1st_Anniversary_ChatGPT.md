@@ -1,6 +1,6 @@
 ---
 sidebar_position: 40
-title: Happy 1st Anniversary, ChatGPT
+title: ChatGPT一周年快乐
 description: This page highlights the major events and advancements in artificial intelligence since the launch of ChatGPT by OpenAI.
 keywords: [ChatGPT, AI, artificial intelligence, OpenAI, Bard, Claude, Llama 2, Microsoft CoPilot, Grok, Mistral AI, 2023 AI events]
 slug: /basics/chatgpt-anniversary/

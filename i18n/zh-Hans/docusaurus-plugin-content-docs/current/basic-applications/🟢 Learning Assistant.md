@@ -1,6 +1,6 @@
 ---
 sidebar_position: 20
-title: Learning Assistant with ChatGPT
+title: 让GPT当你的学习助理
 description: This article discusses how to use ChatGPT as a learning assistant, explaining its applications in building knowledge networks, providing real-time feedback, and creating study plans.
 keywords: [ChatGPT, learning assistant, AI, study plan, natural language processing, language models]
 slug: /basic-applications/learning-assistant-with-chatgpt/

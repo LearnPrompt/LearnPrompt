@@ -1,6 +1,6 @@
 ---
 sidebar_position: 0
-title: VoxScript Action for GPTs - Unlimited URL Integration!
+title: VoxScript action版GPTs - 无限URL都能包进gpts
 description: Learn how to integrate multiple URLs into GPTs using VoxScript action modules, enhancing your AI's capabilities with access to various search engines and full-text documents.
 keywords: [VoxScript, GPTs, URL integration, AI tools, action modules, Pubmed, Google patents, PMC, Zapier]
 slug: /gpts/voxscript-action-for-gpts/

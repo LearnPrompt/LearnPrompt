@@ -1,6 +1,6 @@
 ---
 sidebar_position: 5
-title: What is ChatGPT?
+title: 什么是ChatGPT?
 description: This page explains the basics of ChatGPT, including its underlying technologies and how it works.
 keywords: [ChatGPT, GPT-3.5, OpenAI, machine learning, natural language processing, AI chatbot]
 slug: /basics/what-is-chatgpt/

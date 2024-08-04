@@ -1,6 +1,6 @@
 ---
 sidebar_position: 75
-title: Advanced Prompt Tools - Permutation Prompts, Repeat, and Seed
+title: Midjourney高级提示工具
 description: This guide introduces three tools to accelerate AI visual exploration, Permutation Prompts, Repeat, and Seed.
 keywords: [Midjourney, permutation prompts, repeat, seed, image generation, advanced tools]
 slug: /midjourney/advanced-prompt/

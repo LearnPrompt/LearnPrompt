@@ -1,12 +1,11 @@
 ---
 sidebar_position: 35
-title: ChatTTS - A Generative Speech Synthesis Model for Conversations
+title: ChatTTS增强版整合包
 description: This page explores the impressive features and functionalities of ChatTTS, a cutting-edge generative speech synthesis model optimized for conversational tasks.
 keywords: [ChatTTS, speech synthesis, AI voice generation, TTS model, conversational AI]
 slug: /ai-human-generators/chattts/
 ---
-
-## 终于蹲到ChatTTS增强版整合包，AI视频配角们有了自己的声音～
+# 🟡 终于蹲到ChatTTS增强版整合包，AI视频配角们有了自己的声音～
 
 ChatTTS，一个用于对话的生成式语音合成模型。
 
