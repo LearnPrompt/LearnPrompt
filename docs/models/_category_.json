@@ -1,0 +1,8 @@
+{
+    "label": "🦙 Models",
+    "position": 22,
+    "link": {
+        "type": "generated-index",
+        "description": "This chapter reviews various AI models, including detailed comparisons and analyses of Claude 3, GPT-4, Grok, and others. It covers topics such as the latest developments, head-to-head comparisons, user experiences with models like Gemini Pro, and insights into superalignment techniques by OpenAI."
+    }
+}

@@ -2,19 +2,20 @@
 
 Permanent free and open source AIGC course https://www.learnprompt.pro
 
-ChatGPT, Agent, Midjourney, Runway, Stable Diffusion, AI Digital People, AI Sound & Music, Large Model Fine-tuning are now supported!
+Prompt Engineering, ChatGPT, RAG, Agent, Midjourney, Runway, Stable Diffusion, AI Digital Human, AI Sound & Music, Large Model Fine-tuning are now supported!
 
-> Version v3.0 is now live! Multi-language support, comment section, chatBase bots, daily picks, creator submissions, and many other new features are welcome 👏 Everyone is welcome to explore!
+> 0804 Update
+> V4.0 version! Support new UI, multilingual, comment area, daily newspaper, contribution and other new functions. Welcome 👏 everyone to explore
 
 [![Twitter](https://img.shields.io/twitter/url?label=Follow%20%40aiwarts&style=social&url=https%3A%2F%2Ftwitter.com%2Flearnprompting)](https://twitter.com/aiwarts?s=21&t=bh5DcWYZX2rSeis-DiWzvA)
 ![Website](https://img.shields.io/website?down_message=offline%20%3A%28&up_message=learnprompt.pro&url=https%3A%2F%2Flearnprompting.org)
 
-## Update Log 0205
+## ChangeLog 0804
 
-- [Daily Pick](https://www.learnprompt.pro/article/Daily) Breaking 100 new posts!
-- New sound cloning module, colab implementation of GPT-SoVits practice
-- New RAG module
-- Update comment section module, now you don't need to log in with githun account, just type in your comment directly.
+- [Daily](https://www.learnprompt.pro/article/Daily) Breaking 200 new posts!
+- Update the comment area module
+- The new UI is basically adapted to the mobile terminal
+- New large language model module
 
 ## RoadMap
 
@@ -26,9 +27,10 @@ ChatGPT, Agent, Midjourney, Runway, Stable Diffusion, AI Digital People, AI Soun
 - [X] AI Agents Knowledge
 - [X] AI Digital People
 - [X] AI Sound & Music
-- [ ] Llama2-index RAG
+- [X] Llama2-index RAG
 - [X] GPT-SoVits Voice Clone
 - [X] OpenAI Sora
+- [ ] More AI tutorials!
 
 If you are interested in the follow-up content, you may want to click a STAR!
 
@@ -38,7 +40,7 @@ Thank you for your enthusiastic support of the course content! "AI Warts" is gro
 
 Welcome to join our learning community by scanning the QR code below! If the QR code on WeChat doesn't work, you can also add our developer's WeChat directly:
 
-! [contact](public/scan.png)
+![contact](static/img/concat.jpg)
 
 ## Submit Feedback
 
@@ -59,4 +61,3 @@ The following tutorials or documents were used as references and examples in the
 1. [Learn Prompting](https://learnprompting.org/zh-Hans/)
 2. [Midjourney Documentation](https://docs.midjourney.com/)
 3. [Aituts](https://aituts.com/)
-4. [notion-next](https://github.com/tangly1024/NotionNext)

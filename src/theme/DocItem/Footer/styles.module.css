@@ -1,0 +1,25 @@
+.lastUpdated {
+  margin-top: 0.2rem;
+  font-style: italic;
+  font-size: smaller;
+}
+
+@media (min-width: 997px) {
+  .lastUpdated {
+    text-align: right;
+  }
+}
+
+.courses {
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+
+@media screen and (max-width: 1400px) {
+  .courses {
+   flex-direction: column;
+  }
+}

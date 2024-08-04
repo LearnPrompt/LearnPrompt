@@ -1,0 +1,36 @@
+---
+sidebar_position: 40
+title: Happy 1st Anniversary, ChatGPT
+description: This page highlights the major events and advancements in artificial intelligence since the launch of ChatGPT by OpenAI.
+keywords: [ChatGPT, AI, artificial intelligence, OpenAI, Bard, Claude, Llama 2, Microsoft CoPilot, Grok, Mistral AI, 2023 AI events]
+slug: /basics/chatgpt-anniversary/
+---
+# 🟢 Happy 1st Anniversary, ChatGPT
+
+> 😀 Author: [BOJAN TUNGUZ](https://substack.com/@bojan)
+
+November 30 marks the first anniversary of the release of ChatGPT, created and operated by OpenAI. ChatGPT has swept the globe, with its popularity and rapid spread even surprising its creators. The significance of ChatGPT for the subsequent interest and work in the field of artificial intelligence cannot be overstated. Almost everything that has happened in this field since then has been largely driven by this product. The pace of AI development has been fast, making it difficult for those of us in the industry to keep up with everything happening. Although overall expectations have become somewhat more "rational," especially in the second half of 2023, overall growth has continued. OpenAI has been continuously innovating and releasing products, but many collaborators and competitors have also been developing their fair share. In this article, I will attempt to highlight some of the most important events since the release of ChatGPT. This is not meant to be an exhaustive list, just my personal impressions of significant events during this period. As people often say, things are constantly changing and evolving.
+
+- Google introduced an AI chatbot named Bard as a direct competitor to OpenAI's ChatGPT. Bard was initially based on the LaMDA series of large language models and later upgraded to PaLM and Gemini.
+    
+    This chatbot was first announced on February 6, 2023, and partially opened access on March 21, 2023. The initial market reaction to Bard was somewhat lukewarm, but it opened up to more countries in May.
+    
+- On February 7, 2023, Microsoft launched new AI-powered Bing and Edge. New Bing aims to improve how the world benefits from the web by redesigning the tools billions of people use every day—search engines and browsers. It provides more relevant results for simple things like sports scores, stock prices, and weather, and includes a new sidebar for more comprehensive answers if you want them. For more complex searches, Bing offers a new chat experience.
+- On March 14, the startup Anthropic, co-founded by former OpenAI employees, launched a new AI chatbot named Claude. This chatbot is seen as a competitor to OpenAI's ChatGPT. Claude can perform various tasks such as cross-document search, summarization, writing, coding, and answering questions on specific topics. Anthropic claims that Claude is less likely to produce harmful outputs, easier to converse with, and easier to control compared to ChatGPT. They consider Claude a suitable tool for various customers and use cases.
+- On May 2, Inflection AI launched a new AI chatbot named Pi, designed to act as a personal assistant. Inflection AI is a startup co-founded by LinkedIn co-founder Reid Hoffman and DeepMind co-founder Mustafa Suleyman.
+    
+    Pi, which stands for "personal intelligence," aims to engage in conversations and provide emotional support. It prompts users to seek advice or answers or talk about what's on their minds. Suleyman describes Pi as a "neutral listener" that asks follow-up questions and offers suggestions.
+    
+- On July 18, Meta and Microsoft introduced Llama 2, an advanced open-source large language model. Llama 2 is available for research and commercial use and is the result of expanded collaboration between these two tech giants. It aims to democratize access to AI technology and drive innovation across industries. Emphasizing responsible AI development, Meta has integrated safety measures such as red team exercises and transparency diagrams. Llama 2 is available on Microsoft Azure and other platforms, supporting various applications and AI development.
+- Microsoft CoPilot was announced on September 21, 2023, and fully opened to enterprise customers on November 1, 2023. Microsoft CoPilot is a digital companion that creates a unified user experience across Bing, Edge, Microsoft 365, and Windows. It is designed to empower users to complete tasks more quickly and easily. Microsoft 365 Copilot includes enterprise-level security, privacy, compliance, and responsible AI to ensure all data handling remains within your Microsoft 365 tenant. It also features Microsoft 365 Chat, which goes beyond simple Q&A by traversing your entire data universe—emails, meetings, chats, documents, and more—plus the web to solve your most complex work issues. It is integrated into Microsoft 365 apps used by millions every day—Word, Excel, PowerPoint, Outlook, Teams, and more.
+- On November 4, 2023, xAI, a company co-founded by Elon Musk, announced the launch of a chatbot named Grok. Inspired by "The Hitchhiker's Guide to the Galaxy," Grok is designed to answer almost any question. It even suggests what questions users should ask and responds with some wit.
+    
+    Grok is powered by Grok-1, a large-scale language model (LLM) developed over four months. The initial prototype Grok-0 had 33 billion parameters. Over the past two months, Grok has made significant improvements in reasoning and coding capabilities, culminating in the development of Grok-1.
+    
+    Grok was initially released to some testers on November 4 and then opened to users of X's top subscription service, Premium+. Grok aims to be a powerful research assistant, helping users quickly retrieve relevant information, process data, and generate new ideas.
+    
+- Mistral AI, a French artificial intelligence company, made significant progress in 2023. In December 2023, the company announced that it had completed a second round of financing in just seven months, raising 385 million euros (approximately 414.41 million USD). This round of financing was led by renowned investors such as Andreessen-Horowitz and LightSpeed Ventures, bringing Mistral AI's valuation to about 2 billion euros. The company was founded by former researchers from Meta and Google and raised 105 million euros just one month after its founding.
+    
+    Alongside this financial milestone, Mistral AI launched the Mixtral 8x7B model and opened beta access to its platform services. This move provides developers with easy access to its top-notch generative and embedding models. The platform launch includes three main services: Mistral-tiny, Mistral-small, and Mistral-medium, catering to different needs and performance levels. Additionally, Mistral AI launched Mistral-embed, an embedding model designed for data retrieval and analysis.
+    
+    Mistral AI's development represents significant progress in the AI industry, positioning it as a strong competitor to other AI platforms like OpenAI's ChatGPT and Google's Bard. The company's goal is to achieve cutting-edge AI capabilities and develop products for developers and enterprises. Mistral AI's efforts also extend to influencing legislation, as it has been lobbying for modifications to the EU AI Act and has received support from the French government.

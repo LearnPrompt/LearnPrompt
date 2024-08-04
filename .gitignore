@@ -17,6 +17,7 @@
 
 # misc
 .DS_Store
+*.pem
 
 # debug
 npm-debug.log*
@@ -24,10 +25,28 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env.local
+# .env.local # 版本号放在此环境变量中
 .env.development.local
 .env.test.local
 .env.production.local
+.env
 
-/.docusaurus
-./node_modules
+# vercel
+.vercel
+
+# dev
+/data.json
+/pnpm-lock.yaml
+.idea
+.vscode
+
+
+# sitemap
+/public/robots.txt
+/public/sitemap.xml
+/public/rss/*
+
+
+# yarn
+package-lock.json
+# yarn.lock

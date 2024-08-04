@@ -1,0 +1,8 @@
+{
+    "label": "🤖 Agents",
+    "position": 30,
+    "link": {
+        "type": "generated-index",
+        "description": "This chapter provides a comprehensive overview of LLM agents, including detailed discussions on MetaGPT, AgentGPT, AutoGPT, and HuggingGPT. It covers topics such as the components of AI agents, their disruptive impacts, productivity case studies, and the future prospects with AI agents."
+    }
+}

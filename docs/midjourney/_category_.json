@@ -1,0 +1,8 @@
+{
+    "label": "🎨 Midjourney",
+    "position": 45,
+    "link": {
+        "type": "generated-index",
+        "description": "This chapter is a comprehensive guide to using Midjourney, covering advanced prompting techniques, basic settings, common commands and parameters, image prompts, multi-prompting, and prompt auto-generation. It includes quick start guides, prompt shortening, reviews of V5 and V6 Alpha, and instructions on creating variations and image changes."
+    }
+}

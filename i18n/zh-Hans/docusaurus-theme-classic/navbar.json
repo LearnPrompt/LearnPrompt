@@ -1,0 +1,29 @@
+{
+  "title": {
+    "message": "Learn Prompt"
+  },
+  "item.label.Learn": {
+    "message": "学习"
+  },
+  "item.label.Contribute": {
+    "message": "贡献"
+  },
+  "item.label.Supporters": {
+    "message": "支持者"
+  },
+  "item.label.Consulting": {
+    "message": "咨询"
+  },
+  "item.label.📰 What's Hot": {
+    "message": "📰 科技抢鲜看"
+  },
+  "item.label.👬 Friends": {
+    "message": "👬 友链"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub"
+  },
+  "item.label.🚀  AiStore": {
+    "message": "🚀 有号"
+  }
+}

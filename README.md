@@ -4,19 +4,20 @@
 
 永久免费开源的 AIGC 课程 https://www.learnprompt.pro
 
-目前已支持 ChatGPT, Agent, Midjourney, Runway, Stable Diffusion, AI数字人，AI声音&音乐，大模型微调
+目前已支持 提示语工程，ChatGPT，RAG，Agent，Midjourney，Runway，Stable Diffusion，数字人，AI声音&音乐，大模型微调
 
-> v3.0版本已上线！支持多语言，评论区，每日精选，投稿等多种新功能，欢迎👏大家探索
+> 0804全量更新
+> v4.0版本！支持全新UI，多语言，评论区，日报，投稿等多种新功能，欢迎👏大家探索
 
 [![Twitter](https://img.shields.io/twitter/url?label=Follow%20%40aiwarts&style=social&url=https%3A%2F%2Ftwitter.com%2Flearnprompting)](https://twitter.com/aiwarts?s=21&t=bh5DcWYZX2rSeis-DiWzvA)
 ![Website](https://img.shields.io/website?down_message=offline%20%3A%28&up_message=learnprompt.pro&url=https%3A%2F%2Flearnprompting.org)
 
-## 更新日志 0205
+## 更新日志 0804
 
-- [每日精选](https://www.learnprompt.pro/article/Daily)更新篇章破百！
-- 新增声音克隆模块，colab实现GPT-SoVits实践
-- 新增RAG模块
-- 更新评论区模块，现在不需要用githun账号登录，直接输入评论
+- [每日精选](https://www.learnprompt.pro/article/Daily)更新篇章破二百天！
+- 更新评论区模块
+- 新UI基本适配移动端
+- 新增大模型模块
 
 ## 更新计划 RoadMap
 
@@ -29,9 +30,10 @@
 - [X] AI Agents知识体系
 - [X] AI数字人
 - [X] AI声音&音乐
-- [ ] Llama2-index 个人文档问答
+- [X] Llama2-index 个人文档问答
 - [X] GPT-SoVits声音克隆
 - [X] OpenAI Sora世界模型
+- [ ] 更多系统教程！
 
 对后续内容感兴趣的话，不妨点一个star！
 
@@ -44,7 +46,7 @@
 
 感谢大家对课程内容的热烈支持！「AI沃茨」正在不断成长！目前交流群40+，供大家自由分享和探讨知识。欢迎扫描下方二维码直接加入我们的学习社区！如果微信二维码失效，你也可以直接添加我们开发者的微信：
 
-![contact](public/scan.png)
+![contact](static/img/concat.jpg)
 
 ## 提交反馈
 
@@ -65,4 +67,3 @@
 1. [Learn Prompting](https://learnprompting.org/zh-Hans/)
 2. [Midjourney Documentation](https://docs.midjourney.com/)
 3. [Aituts](https://aituts.com/)
-4. [notion-next](https://github.com/tangly1024/NotionNext)

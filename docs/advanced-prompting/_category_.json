@@ -1,0 +1,8 @@
+{
+    "label": "🧪 Advanced Prompting",
+    "position": 19,
+    "link": {
+        "type": "generated-index",
+        "description": "This chapter delves into advanced prompting techniques, including automatic reasoning, automated prompting, chain-of-thought prompting, knowledge prompting, and zero-shot prompting, providing a deep dive into sophisticated AI prompting methods."
+    }
+}
