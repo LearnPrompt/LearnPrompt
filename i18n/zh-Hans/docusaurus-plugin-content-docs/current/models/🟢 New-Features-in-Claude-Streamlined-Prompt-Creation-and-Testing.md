@@ -1,6 +1,6 @@
 ---
 sidebar_position: 65
-title: 
+title: 带着70页Prompt挑战Claude提示语平台新功能，完事儿我把报告扔了
 description: An in-depth review of Claude's latest features that enhance prompt creation, testing, and evaluation within the Anthropic console, highlighting key benefits and comparisons with other models.
 keywords: [Claude, prompt engineering, AI, Anthropic, GPT, model comparison, prompt testing]
 slug: /basics/claude-new-features/
