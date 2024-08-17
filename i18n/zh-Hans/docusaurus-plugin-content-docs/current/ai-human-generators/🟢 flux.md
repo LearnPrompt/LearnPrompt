@@ -3,7 +3,7 @@ sidebar_position: 40
 title: 4 steps for AI-generated influencer creation - Flux with Kling AI
 description: An exploration of the latest AI tools like FLUX Dev and Runway Gen3 that are making AI-generated videos indistinguishable from real-life speeches.
 keywords: [AI, Flux, Runway Gen3, digital humans, AI-generated video, LoRA, Stable Diffusion]
-slug: /ai-generated-real-speeches/
+slug: /ai-human-generators/flux-kling-ai-influencer-guide/
 ---
 
 ## 🟢 我用Flux开了场TED“真人”演讲，AI生图开启新赛季“谁是真人”
