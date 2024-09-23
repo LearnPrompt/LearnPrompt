@@ -16,7 +16,7 @@ const TITLE = translate({
 })
 const DESCRIPTION = translate({
   id: 'theme.project.description',
-  message: '🔊 在你探寻AI路上，任何需要的工具帐号，我们都会尽可能的为你提供。\n👬你尽管探索，剩下的我们来帮你解决！   \n📱 收藏店铺地址｜新号一键直达',
+  message: '🔊 在你探寻AI路上，任何需要的工具帐号，我们都会尽可能的为你提供。\n👬服务人数过多，无法往下滑记得刷新一下  \n📱 收藏店铺地址｜新号一键直达',
 })
 const CONTACT = translate({
   id: 'theme.project.contact',
