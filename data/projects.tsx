@@ -167,14 +167,14 @@ export const projects: Project[] = [
     tags: [],
     type: 'API服务',
   },
-  {
-    title: 'MidJourney API',
-    description: '绘画 	$0.05/次',
-    preview: '/img/project/mjapi.png',
-    website: 'https://share.302.ai/aiwarts101',
-    tags:[],
-    type: 'API服务',
-  },
+  // {
+  //   title: 'MidJourney API',
+  //   description: '绘画 	$0.05/次',
+  //   preview: '/img/project/midjourney.png',
+  //   website: 'https://share.302.ai/aiwarts101',
+  //   tags:[],
+  //   type: 'API服务',
+  // },
   {
     title: 'Kling可灵 API',
     description: 'Top1AI视频生成模型｜文生视频1.0-快速-5秒 $0.15/次',
@@ -226,7 +226,7 @@ export const projects: Project[] = [
   },
   {
     title: 'WildCard - 虚拟VISA卡',
-    description: '支持OpenAI、Claude、Cursor、Gemini、Perplexity、Grok、Manus、Poe、Notion、HeyGen、X、Telegram等全部 AI 账号 & API 等海外自订阅服务。',
+    description: '支持OpenAI、Claude、Cursor、Gemini、Perplexity、Grok、Manus、Poe、Notion、HeyGen、X、Telegram、Midjourney等全部 AI 账号 & API 等海外自订阅服务。',
     website: 'https://bewildcard.com/i/AIWARTS',
     preview: '/img/project/card.png',
     tags: [],
