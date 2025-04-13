@@ -2,7 +2,7 @@ export const Medias: Media[] = [
   {
     title: 'Wechat 微信 ｜卡尔',
     description: '链接好友｜互相交流｜学习群主力',
-    website: '',
+    website: 'https://aiwarts101.feishu.cn/wiki/ViZXwflaHivqjQk5Purckrjlnpb?from=from_copylink',
     avatar: '/img/multiMedia/wechat.png',
   },
   {
@@ -36,10 +36,10 @@ export const Medias: Media[] = [
     avatar: '/img/multiMedia/zhihu.png',
   },
   {
-    title: '马上上线',
-    description: 'Medium｜Youtube ｜ 少数派',
-    website: 'https://www.youtube.com/channel/UCg9CRIZt2ByjtR_l0Z7OY3w',
-    avatar: '/img/multiMedia/medium.png',
+    title: 'X（推特）',
+    description: '超级话痨｜AI工具收集癖 ｜ 科技行动派',
+    website: 'https://x.com/aiwarts',
+    avatar: '/img/multiMedia/twitter.png',
   }
 ]
 

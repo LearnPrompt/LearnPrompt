@@ -3,7 +3,7 @@ sidebar_position: 10
 title: 数字人课程《克隆你自己》
 description: Explore the comprehensive course on mastering digital personas with continuous updates and expert community support.
 keywords: [digital persona, AI course, digital avatars, AI community, mastering digital personas]
-slug: /ai-human-generators/clone-yourself-digital-human course/
+slug: /ai-human-generators/clone-yourself-digital-human-course/
 ---
 
 # 🟢 强推：卡尔-数字人课程《克隆你自己》
@@ -12,7 +12,7 @@ slug: /ai-human-generators/clone-yourself-digital-human course/
 
 第一节课的完整版，直接点击链接就可以观看 ⬇️
 
-[https://player.bilibili.com/player.html?aid=326109122&bvid=BV1yw411E7Rt&cid=1400815385&p=1&high_quality=1](https://player.bilibili.com/player.html?aid=326109122&bvid=BV1yw411E7Rt&cid=1400815385&p=1&high_quality=1)
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=326109122&bvid=BV1yw411E7Rt&cid=1500809876&p=1&high_quality=1&autoplay=0"  style={{width: "100%", height: "500px"}} scrolling="no" border="0" frameborder="no" framespacing="0" allowFullScreen={true}></iframe>
 
 关于卡尔，从创建 AIGC 开源学习网站 learnpromptl.pro，到建立 **卡尔的AI沃茨** 万人社群，他一直致力于 AI 学习圈。这一次，他建立了一套**完整的数字人学习体系**，放在这门**《克隆你自己》**的课程中，带领大家全方位掌握数字人各技能💪
 
@@ -20,27 +20,27 @@ slug: /ai-human-generators/clone-yourself-digital-human course/
 
 同时，他详细回顾了 2023 年数字人领域的破圈事件 ⬇️
 
-[https://player.bilibili.com/player.html?aid=655063132&bvid=BV1ua4y1K762&cid=1098404561&p=1&high_quality=1&autoplay=0](https://player.bilibili.com/player.html?aid=655063132&bvid=BV1ua4y1K762&cid=1098404561&p=1&high_quality=1&autoplay=0)
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=655063132&bvid=BV1ua4y1K762&cid=1098404561&p=1&high_quality=1&autoplay=0" style={{width: "100%", height: "500px"}} scrolling="no" border="0" frameborder="no" framespacing="0" allowFullScreen={true}></iframe>
 
 **A马斯克对谈A1乔布斯超331.9k播放**
 
-[https://player.bilibili.com/player.html?aid=962840969&bvid=BV12H4y1r71p&cid=1314828905&p=1&high_quality=1&autoplay=0](https://player.bilibili.com/player.html?aid=962840969&bvid=BV12H4y1r71p&cid=1314828905&p=1&high_quality=1&autoplay=0)
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=962840969&bvid=BV12H4y1r71p&cid=1314828905&p=1&high_quality=1&autoplay=0" style={{width: "100%", height: "500px"}} scrolling="no" border="0" frameborder="no" framespacing="0" allowFullScreen={true}></iframe>
 
 **AI 郭德纲讲英文相声**
 
-[https://player.bilibili.com/player.html?aid=1951130940&bvid=BV15C411s7wt&cid=1453012072&p=1&high_quality=1&autoplay=0](https://player.bilibili.com/player.html?aid=1951130940&bvid=BV15C411s7wt&cid=1453012072&p=1&high_quality=1&autoplay=0)
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=1951130940&bvid=BV15C411s7wt&cid=1453012072&p=1&high_quality=1&autoplay=0" style={{width: "100%", height: "500px"}} scrolling="no" border="0" frameborder="no" framespacing="0" allowFullScreen={true}></iframe>
 
 **阿根廷新总统用HeyGen做演讲**
 
-[https://player.bilibili.com/player.html?aid=1301025310&bvid=BV1vu4m1c7RA&cid=1453011970&p=1&high_quality=1&autoplay=0](https://player.bilibili.com/player.html?aid=1301025310&bvid=BV1vu4m1c7RA&cid=1453011970&p=1&high_quality=1&autoplay=0)
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=1301025310&bvid=BV1vu4m1c7RA&cid=1453011970&p=1&high_quality=1&autoplay=0" style={{width: "100%", height: "500px"}} scrolling="no" border="0" frameborder="no" framespacing="0" allowFullScreen={true}></iframe>
 
 **霉霉说中文火遍全网，HeyGen再破圈**
 
-[https://player.bilibili.com/player.html?aid=1151209276&bvid=BV1rZ421y7YU&cid=1453011966&p=1&autoplay=0](https://player.bilibili.com/player.html?aid=1151209276&bvid=BV1rZ421y7YU&cid=1453011966&p=1&autoplay=0)
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=1151209276&bvid=BV1rZ421y7YU&cid=1453011966&p=1&high_quality=1&autoplay=0" style={{width: "100%", height: "500px"}} scrolling="no" border="0" frameborder="no" framespacing="0" allowFullScreen={true}></iframe>
 
 **硅语翻译|海外明星送出中文新年祝福**
 
-[https://player.bilibili.com/player.html?aid=1101008174&bvid=BV1Xw4m1Z7oX&cid=1453012069&p=1&high_quality=1&autoplay=0](https://player.bilibili.com/player.html?aid=1101008174&bvid=BV1Xw4m1Z7oX&cid=1453012069&p=1&high_quality=1&autoplay=0)
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=1101008174&bvid=BV1Xw4m1Z7oX&cid=1453012069&p=1&high_quality=1&autoplay=0" style={{width: "100%", height: "500px"}} scrolling="no" border="0" frameborder="no" framespacing="0" allowFullScreen={true}></iframe>
 
 **小冰推出支持交互的多模态数字人**
 
@@ -62,9 +62,9 @@ slug: /ai-human-generators/clone-yourself-digital-human course/
 
 业内 KOL 数字人发言 💬
 
-[https://player.bilibili.com/player.html?aid=1951452263&bvid=BV15C411a7cE&cid=1461191858&p=1&high_quality=1&autoplay=0](https://player.bilibili.com/player.html?aid=1951452263&bvid=BV15C411a7cE&cid=1461191858&p=1&high_quality=1&autoplay=0)
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=1951452263&bvid=BV15C411a7cE&cid=1461191858&p=1&high_quality=1&autoplay=0" style={{width: "100%", height: "500px"}} scrolling="no" border="0" frameborder="no" framespacing="0" allowFullScreen={true}></iframe>
 
-[https://player.bilibili.com/player.html?aid=1101319168&bvid=BV1qw4m1o7U2&cid=1461167179&p=1&high_quality=1&autoplay=0](https://player.bilibili.com/player.html?aid=1101319168&bvid=BV1qw4m1o7U2&cid=1461167179&p=1&high_quality=1&autoplay=0)
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=1101319168&bvid=BV1qw4m1o7U2&cid=1461167179&p=1&high_quality=1&autoplay=0" style={{width: "100%", height: "500px"}} scrolling="no" border="0" frameborder="no" framespacing="0" allowFullScreen={true}></iframe>
 
 ## 课程大纲
 
@@ -100,25 +100,23 @@ slug: /ai-human-generators/clone-yourself-digital-human course/
 
 以下为本门课程部分学员作业
 
-[https://player.bilibili.com/player.html?aid=1251185495&bvid=BV1NJ4m1v7iC&cid=1453012066&p=1&high_quality=1&autoplay=0](https://player.bilibili.com/player.html?aid=1251185495&bvid=BV1NJ4m1v7iC&cid=1453012066&p=1&high_quality=1&autoplay=0)
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=1251185495&bvid=BV1NJ4m1v7iC&cid=1453012066&p=1&high_quality=1&autoplay=0" style={{width: "100%", height: "500px"}} scrolling="no" border="0" frameborder="no" framespacing="0" allowFullScreen={true}></iframe>
 
-![Untitled](https://cdn.jsdelivr.net/gh/donttal/imgbed/img/3fb963e8873fb89a16da4831f6fb9521.png)
+![](https://cdn.jsdelivr.net/gh/donttal/imgbed/img/3fb963e8873fb89a16da4831f6fb9521.png)
 
-![Untitled](https://cdn.jsdelivr.net/gh/donttal/imgbed/img/72207983bf507a8563d29df38ae427f3.png)
+![](https://cdn.jsdelivr.net/gh/donttal/imgbed/img/72207983bf507a8563d29df38ae427f3.png)
 
-[https://player.bilibili.com/player.html?aid=1801002819&bvid=BV1tt421b7pY&cid=1453003337&p=1&high_quality=1&autoplay=0](https://player.bilibili.com/player.html?aid=1801002819&bvid=BV1tt421b7pY&cid=1453003337&p=1&high_quality=1&autoplay=0)
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=1801002819&bvid=BV1tt421b7pY&cid=1453003337&p=1&high_quality=1&autoplay=0" style={{width: "100%", height: "500px"}} scrolling="no" border="0" frameborder="no" framespacing="0" allowFullScreen={true}></iframe>
 
-[https://player.bilibili.com/player.html?aid=1401106369&bvid=BV1Qr421s7pd&cid=1453003339&p=1&high_quality=1&autoplay=0](https://player.bilibili.com/player.html?aid=1401106369&bvid=BV1Qr421s7pd&cid=1453003339&p=1&high_quality=1&autoplay=0)
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=1401106369&bvid=BV1Qr421s7pd&cid=1453003339&p=1&high_quality=1&autoplay=0" style={{width: "100%", height: "500px"}} scrolling="no" border="0" frameborder="no" framespacing="0" allowFullScreen={true}></iframe>
 
-[https://player.bilibili.com/player.html?aid=1301112644&bvid=BV1Qu4m1c78V&cid=1453003335&p=1&high_quality=1&autoplay=0](https://player.bilibili.com/player.html?aid=1301112644&bvid=BV1Qu4m1c78V&cid=1453003335&p=1&high_quality=1&autoplay=0)
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=1301112644&bvid=BV1Qu4m1c78V&cid=1453003335&p=1&high_quality=1&autoplay=0" style={{width: "100%", height: "500px"}} scrolling="no" border="0" frameborder="no" framespacing="0" allowFullScreen={true}></iframe>
 
-[https://player.bilibili.com/player.html?aid=1501075710&bvid=BV1pS421A7VA&cid=1453003412&p=1&high_quality=1&autoplay=0](https://player.bilibili.com/player.html?aid=1501075710&bvid=BV1pS421A7VA&cid=1453003412&p=1&high_quality=1&autoplay=0)
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=1701144944&bvid=BV1mK421t71A&cid=1453003516&p=1&high_quality=1&autoplay=0" style={{width: "100%", height: "500px"}} scrolling="no" border="0" frameborder="no" framespacing="0" allowFullScreen={true}></iframe>
 
-[https://player.bilibili.com/player.html?aid=1701144944&bvid=BV1mK421t71A&cid=1453003516&p=1&high_quality=1&autoplay=0](https://player.bilibili.com/player.html?aid=1701144944&bvid=BV1mK421t71A&cid=1453003516&p=1&high_quality=1&autoplay=0)
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=1101008174&bvid=BV1Xw4m1Z7oX&cid=1453012069&p=1&high_quality=1&autoplay=0" style={{width: "100%", height: "500px"}} scrolling="no" border="0" frameborder="no" framespacing="0" allowFullScreen={true}></iframe>
 
-[https://player.bilibili.com/player.html?aid=1101008174&bvid=BV1Xw4m1Z7oX&cid=1453012069&p=1&high_quality=1&autoplay=0](https://player.bilibili.com/player.html?aid=1101008174&bvid=BV1Xw4m1Z7oX&cid=1453012069&p=1&high_quality=1&autoplay=0)
-
-[https://player.bilibili.com/player.html?aid=1351024499&bvid=BV17z421R7Sb&cid=1453003522&p=1&high_quality=1&autoplay=0](https://player.bilibili.com/player.html?aid=1351024499&bvid=BV17z421R7Sb&cid=1453003522&p=1&high_quality=1&autoplay=0)
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=1351024499&bvid=BV17z421R7Sb&cid=1453003522&p=1&high_quality=1&autoplay=0" style={{width: "100%", height: "500px"}} scrolling="no" border="0" frameborder="no" framespacing="0" allowFullScreen={true}></iframe>
 
 ![Course Assignments](https://cdn.jsdelivr.net/gh/donttal/imgbed/img/5bd7e0a58d150caead9a3b888f724c39.JPG)
 

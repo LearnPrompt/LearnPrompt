@@ -31,7 +31,7 @@ class NewsletterSignupForm extends Component {
               Join the Newsletter
             </div>
             <div className="text-center text-white opacity-60 text-sm font-vietnam font-light tracking-tight px-16 md:px-28 pt-4">
-              Stay up to date with the latest content delivered to your inbox.
+              Stay up to date with the latest content.
             </div>
             <div className="pt-10 flex flex-row">
             {/* <iframe 
@@ -44,7 +44,7 @@ class NewsletterSignupForm extends Component {
   style={{margin: 0, borderRadius: 0, backgroundColor: 'transparent'}}
   className="rounded-l-md bg-white text-dark/500 text-sm font-medium tracking-tight ring-0 focus:outline-none w-[250px] md:w-[450px] focus:ring-0"
 /> */}
-            <a href="https://quail.ink/aiwarts101" style={{ fontSize: '20px', color: 'white', fontWeight: 'bold', textDecoration: 'underline' }}>🎉 Subscribe for unique insights 🎉</a>
+            <a href="/blog" style={{ fontSize: '20px', color: 'white', fontWeight: 'bold', textDecoration: 'underline' }}>🎉 Bookmark for unique insights 🎉</a>
             </div>
           </>
         )}

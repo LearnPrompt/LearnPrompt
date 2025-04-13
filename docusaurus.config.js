@@ -34,6 +34,11 @@ async function createConfig() {
     },
     scripts: [
       {
+        src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7658394488756677',
+        async: true,
+        crossorigin: 'anonymous',
+      },
+      {
         src:
           "https://tag.clearbitscripts.com/v1/pk_5621ff511ea83a6ec015bee0a0b5dd79/tags.js",
         async: true,

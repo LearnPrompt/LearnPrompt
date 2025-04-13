@@ -13,7 +13,7 @@ export default function SignUp() {
               <h3 style={{ marginBottom: 4 }}>Don't get left behind on AI</h3>
             </strong>
             <strong style={{ fontSize: 16 }}>
-              <a href="https://quail.ink/aiwarts101" style={{ color: 'black', fontWeight: 'bold', textDecoration: 'underline' }}>📮 Subscribe Our Newsletter and get the latest AI news, prompts, and tools.</a>
+              <a href="/blog" style={{ color: 'black', fontWeight: 'bold', textDecoration: 'underline' }}>📮 Bookmark Our Newsletter and get the latest AI news, prompts, and tools.</a>
             </strong>
           </div>
         </div>
