@@ -1,0 +1,38 @@
+---
+title: Agent 框架的部署、渠道接入与成本控制
+description: 从上线角度评估一个 Agent 框架是否可持续。
+sidebar:
+  order: 3
+difficulty: advanced
+source_repo: alchaincyf/openclaw-orange-book
+source_url: https://github.com/alchaincyf/openclaw-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/openclaw-orange-book" url="https://github.com/alchaincyf/openclaw-orange-book" updatedFrom="2026-05" note="许可证不明确，仅做高层架构导读并保留来源链接。" />
+
+## 上线前检查
+
+- 部署方式：本地、VPS、serverless 还是容器。
+- 渠道：网页、飞书、Telegram、Slack、邮件。
+- 模型：成本、速率、上下文和失败降级。
+- 日志：能否定位一次失败的完整链路。
+- 权限：谁能触发高风险任务。
+
+## 成本控制
+
+1. 给不同任务分配不同模型。
+2. 缓存可复用结果。
+3. 对长上下文做摘要和索引。
+4. 为批量任务设置每日上限。
+
+## 常见错误
+
+只在单人本地跑通，就认为可以公开使用。公开使用后，失败输入、成本峰值和滥用风险都会变多。
+
+## 实战案例
+
+给普通用户发布“淘金”Skill 时，要默认支持无 API Key 的公开网页抓取；X、邮箱等需要密钥或授权的能力应作为进阶模块。

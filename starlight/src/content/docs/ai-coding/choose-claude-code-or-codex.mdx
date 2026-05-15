@@ -1,0 +1,46 @@
+---
+title: Claude Code 与 Codex 怎么选
+description: 用任务类型、权限边界和协作方式选择 AI 编程路线。
+sidebar:
+  order: 1
+difficulty: beginner
+source_repo: alchaincyf/codex-orange-book
+source_url: https://github.com/alchaincyf/codex-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/codex-orange-book / claude-code-orange-book" url="https://github.com/alchaincyf/codex-orange-book" updatedFrom="2026-05" />
+
+## 你会学到什么
+
+你会用任务类型判断该用 Claude Code、Codex，还是两者组合。
+
+## 适合谁
+
+已经会写简单需求，但不确定应该把项目交给哪个 AI 编程工具的人。
+
+## 核心概念
+
+- Claude Code 更适合长上下文、项目内连续协作和本地开发习惯。
+- Codex 更适合明确任务、代码审查、云端执行和可追踪分支。
+- 真正重要的不是工具名，而是任务是否有清楚的验收标准。
+
+## 操作步骤
+
+1. 先写出项目目标和验收命令。
+2. 如果任务需要持续读写本地上下文，优先 Claude Code。
+3. 如果任务能拆成明确 issue、PR 或 review，优先 Codex。
+4. 如果任务复杂，先用一个工具做计划，再让另一个工具验收。
+
+## 常见错误
+
+- 用工具热度代替任务分析。
+- 在没有 git 分支和验收标准时开启高权限自动执行。
+- 同时开多个 Agent 改同一批文件，造成冲突。
+
+## 实战案例
+
+迁移文档站时，可以让 Codex 建分支、跑构建、提交可审查 diff；让 Claude Code 深读某个模块或生成内容草稿，再由 Codex 做工程验收。

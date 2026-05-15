@@ -1,0 +1,37 @@
+---
+title: 用 Claude Code 做内容自动化流水线
+description: 把抓取、筛选、摘要、发布拆成可维护步骤。
+sidebar:
+  order: 8
+difficulty: intermediate
+source_repo: alchaincyf/claude-code-orange-book
+source_url: https://github.com/alchaincyf/claude-code-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/claude-code-orange-book" url="https://github.com/alchaincyf/claude-code-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+
+## 核心概念
+
+内容自动化不要一开始做成“全自动发布”。先把每一步结果落盘，允许人工检查，再逐步自动化。
+
+## 流水线
+
+1. 抓取：保存原始数据和时间戳。
+2. 清洗：统一字段，不丢弃异常。
+3. 筛选：记录规则和命中原因。
+4. 摘要：保留来源链接。
+5. 发布：先生成草稿，再人工确认。
+
+## 常见错误
+
+- 把抓取失败当作“今日无内容”。
+- 摘要没有来源，无法追溯。
+- 没有历史快照，无法做增量榜单。
+
+## 实战案例
+
+ClawHub 榜单日报应保存当天 JSON 快照，再和前一日比较。缺少历史切片时，日报必须写明“不能做严格日环比”。

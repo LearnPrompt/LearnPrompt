@@ -1,0 +1,34 @@
+---
+title: OpenClaw 的 Gateway-Node-Channel 架构导读
+description: 用高层结构理解 OpenClaw 的接入方式。
+sidebar:
+  order: 2
+difficulty: advanced
+source_repo: alchaincyf/openclaw-orange-book
+source_url: https://github.com/alchaincyf/openclaw-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/openclaw-orange-book" url="https://github.com/alchaincyf/openclaw-orange-book" updatedFrom="2026-05" note="许可证不明确，仅做高层架构导读并保留来源链接。" />
+
+## 核心概念
+
+Agent 框架通常要解决三件事：用户从哪里进来、任务在哪里执行、结果发回哪里。Gateway、Node、Channel 可以分别对应入口、执行和渠道。
+
+## 读法
+
+1. Gateway：看它如何接收请求和鉴权。
+2. Node：看任务如何被调度、执行和隔离。
+3. Channel：看它如何接入 IM、网页或其他客户端。
+4. Skill：看可复用能力如何被加载。
+
+## 常见错误
+
+只看模型配置，不看消息链路。真实系统的稳定性往往取决于队列、重试、权限和日志。
+
+## 实战案例
+
+把 Claude Code 接到飞书时，问题可能不在模型，而在进程退出、消息桥接、权限或超时策略。

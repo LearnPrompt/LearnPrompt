@@ -1,0 +1,38 @@
+---
+title: LearnPrompt AI 实战 Wiki
+description: 中文 AI 编程、Agent、Skills 与知识工作台学习地图。
+template: splash
+hero:
+  tagline: 从 Prompt 基础升级到 AI 编程、Agent 工程和个人知识工作台。
+  actions:
+    - text: 从学习地图开始
+      link: /start-here/ai-practice-map/
+      icon: right-arrow
+    - text: 查看来源边界
+      link: /sources/orange-book-source-index/
+      icon: external
+---
+
+import LearningPathCard from "../../components/LearningPathCard.astro";
+
+## 学习路径
+
+<div class="lp-grid">
+  <LearningPathCard title="AI 编程入门" href="/ai-coding/choose-claude-code-or-codex/" difficulty="beginner" description="理解 Codex、Claude Code 和 Agentic Coding 的基本工作流。" topics={["MVP", "验收", "协作"]} />
+  <LearningPathCard title="Claude Code 实战" href="/claude-code/install-and-first-project/" difficulty="beginner" description="从第一个项目到 CLAUDE.md、Skills、Hooks 和多 Agent 协作。" topics={["CLAUDE.md", "MCP", "Skills"]} />
+  <LearningPathCard title="Codex 实战" href="/codex/codex-cli-workflow/" difficulty="beginner" description="掌握 Codex CLI、权限、云端任务和多形态开发心智模型。" topics={["CLI", "权限", "Review"]} />
+  <LearningPathCard title="Agent 工程" href="/agent-engineering/what-is-harness/" difficulty="intermediate" description="把模型能力放进可运行、可回滚、可验收的工程系统。" topics={["Harness", "记忆", "反馈"]} />
+  <LearningPathCard title="Agent Skills" href="/agent-skills/what-are-agent-skills/" difficulty="beginner" description="把稳定工作流包装成可复用的 SKILL.md。" topics={["触发", "模板", "测试"]} />
+  <LearningPathCard title="Obsidian AI" href="/obsidian-ai/markdown-as-agent-memory/" difficulty="beginner" description="用 Markdown vault 做 Agent 可读、可维护的长期记忆。" topics={["Vault", "检索", "同步"]} />
+</div>
+
+## 当前迁移状态
+
+- 新站使用 Astro Starlight，目标是更轻的静态输出和更快的文档阅读体验。
+- 第一批内容来自公开 Orange Book 项目，但全部重写成教程，不做书库页。
+- 旧 Docusaurus 内容暂不删除；后续会按“更新、过时、归档”三类逐步处理。
+- 本迁移站不包含 Google Analytics、PostHog、广告脚本或额外 telemetry。
+
+## 下一步
+
+先完成核心学习路径，再迁移旧 Prompt / RAG / Agent 基础页，并为过时页面加新版入口。

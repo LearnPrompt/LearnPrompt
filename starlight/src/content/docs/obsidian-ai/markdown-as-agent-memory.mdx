@@ -1,0 +1,36 @@
+---
+title: 为什么 Markdown 适合作为 Agent 记忆接口
+description: 用普通文件承载可读、可搜索、可迁移的长期上下文。
+sidebar:
+  order: 1
+difficulty: beginner
+source_repo: alchaincyf/obsidian-ai-orange-book
+source_url: https://github.com/alchaincyf/obsidian-ai-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/obsidian-ai-orange-book" url="https://github.com/alchaincyf/obsidian-ai-orange-book" updatedFrom="2026-05" note="参考主题结构，正文重新组织。" />
+
+## 核心概念
+
+Markdown 是 Agent 友好的记忆接口：人能读，git 能跟踪，搜索工具能索引，AI 能直接引用。
+
+## 适合保存
+
+- 项目背景和决策。
+- 常用命令和失败记录。
+- 选题卡和资料链接。
+- Skill 使用说明。
+
+## 不适合保存
+
+- API Key、token、私钥。
+- 需要数据库事务的一致性数据。
+- 大量二进制文件。
+
+## 实战案例
+
+把 AI 新闻聚合项目的源、筛选规则、发布流程写进 Markdown，Agent 下次就能接着维护，而不是重新问一遍。

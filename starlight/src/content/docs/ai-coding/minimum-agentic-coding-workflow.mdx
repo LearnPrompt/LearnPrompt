@@ -1,0 +1,40 @@
+---
+title: Agentic Coding 的最小工作流
+description: 把 AI 编程压缩成计划、改动、验证、复盘四步。
+sidebar:
+  order: 2
+difficulty: beginner
+source_repo: alchaincyf/harness-engineering-orange-book
+source_url: https://github.com/alchaincyf/harness-engineering-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/harness-engineering-orange-book" url="https://github.com/alchaincyf/harness-engineering-orange-book" updatedFrom="2026-05" />
+
+## 核心概念
+
+Agentic Coding 不是“让 AI 一直写”。它是一个闭环：明确目标，限制范围，执行改动，用客观信号验证，再把经验写回项目规则。
+
+## 操作步骤
+
+1. 计划：写清楚要改哪些文件、不能改什么、如何验收。
+2. 改动：一次只做一个可审查的切片。
+3. 验证：优先跑最快相关检查，再跑完整构建。
+4. 复盘：把失败原因写入 README、AGENTS 或 Skill。
+
+## 常见错误
+
+- 没有计划就开始大规模重构。
+- 把测试失败解释成“小问题”，没有追到具体文件。
+- 只问模型“是否完成”，不跑真实命令。
+
+## 实战案例
+
+给文档站加组件时，先只实现 `SourceCard` 和 `VideoCard`，跑一次构建，再继续填内容。这样能更早发现 MDX 或 Astro 语法问题。
+
+## 延伸阅读
+
+- [Harness Engineering Orange Book](https://github.com/alchaincyf/harness-engineering-orange-book)

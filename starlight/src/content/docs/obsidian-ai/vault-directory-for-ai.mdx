@@ -1,0 +1,43 @@
+---
+title: Obsidian Vault 的 AI 友好目录设计
+description: 让人和 Agent 都能快速找到项目、资料和任务。
+sidebar:
+  order: 2
+difficulty: beginner
+source_repo: alchaincyf/obsidian-ai-orange-book
+source_url: https://github.com/alchaincyf/obsidian-ai-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/obsidian-ai-orange-book" url="https://github.com/alchaincyf/obsidian-ai-orange-book" updatedFrom="2026-05" note="参考主题结构，正文重新组织。" />
+
+## 推荐结构
+
+```text
+00_收件箱/
+10_项目/
+20_知识库/
+30_输出/
+50_资源/
+99_系统/
+```
+
+## 设计原则
+
+- 收件箱用于临时输入。
+- 项目目录保存可执行上下文。
+- 资源目录保存外部资料和快照。
+- 系统目录保存脚本、配置和自动化。
+
+## 常见错误
+
+- 所有内容都放在收件箱。
+- 项目资料和个人日记混在一起。
+- 目录名经常变化，Agent 找不到稳定路径。
+
+## 实战案例
+
+ClawHub 快照可放在 `50_资源/产品发布/ClawHub快照/`，日报放在 `00_收件箱/`，脚本放在 `99_系统/工具配置/`。

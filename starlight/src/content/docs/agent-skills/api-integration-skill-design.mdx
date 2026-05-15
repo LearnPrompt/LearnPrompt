@@ -1,0 +1,37 @@
+---
+title: API 集成型 Skill 设计
+description: 接入外部 API 时如何控制密钥、失败和版本变化。
+sidebar:
+  order: 6
+difficulty: advanced
+source_repo: alchaincyf/agent-skills-orange-book
+source_url: https://github.com/alchaincyf/agent-skills-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/agent-skills-orange-book" url="https://github.com/alchaincyf/agent-skills-orange-book" updatedFrom="2026-05" note="仅参考主题结构，正文重新组织。" />
+
+## 核心原则
+
+API Skill 的重点不是“能请求”，而是密钥安全、错误处理、限流、字段变化和可替换方案。
+
+## 操作步骤
+
+1. 密钥只从环境变量读取。
+2. 保存原始响应样例。
+3. 对空数据、限流、字段变化做显式错误。
+4. 把主接口和备用接口分开记录。
+5. 不把失败误写成“无内容”。
+
+## 常见错误
+
+- 把 token 写进 README 或日志。
+- 假设 API 字段永远稳定。
+- 没有记录请求参数，导致榜单不可复现。
+
+## 实战案例
+
+X 信息源如果使用 API，应要求用户自己提供 token，并在 Skill 中写清权限、速率限制和失败时的降级策略。

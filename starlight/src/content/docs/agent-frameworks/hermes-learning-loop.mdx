@@ -1,0 +1,36 @@
+---
+title: Hermes Agent 的学习循环、记忆和 Skill
+description: 从长期协作角度理解 Hermes 的价值。
+sidebar:
+  order: 1
+difficulty: intermediate
+source_repo: alchaincyf/hermes-agent-orange-book
+source_url: https://github.com/alchaincyf/hermes-agent-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/hermes-agent-orange-book" url="https://github.com/alchaincyf/hermes-agent-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+
+## 核心概念
+
+Hermes 的价值在于把对话、记忆、工具和 Skill 放进一个持续协作环境。它更像长期工作台，而不是一次性问答窗口。
+
+## 使用方法
+
+1. 把稳定偏好写入配置。
+2. 把项目上下文放进可读文件。
+3. 把重复流程写成 Skill。
+4. 对外部工具保持可替换。
+
+## 常见错误
+
+- 让 Hermes 承担所有检索和生成，导致卡顿。
+- 没有区分本地文件问题、模型问题和工具问题。
+- 把临时失败写成永久配置。
+
+## 实战案例
+
+Obsidian 检索卡顿时，先检查 iCloud 文件是否完整下载，再决定是否换 VaultSearch 或本地索引方案。

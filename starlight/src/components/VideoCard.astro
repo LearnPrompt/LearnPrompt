@@ -1,0 +1,58 @@
+---
+interface Props {
+  type?: "youtube" | "bilibili" | "github-video" | "github-gif" | "official-demo";
+  title?: string;
+  url?: string;
+  note?: string;
+}
+
+const { type = "official-demo", title = "推荐媒体", url, note } = Astro.props;
+
+function youtubeEmbed(input: string) {
+  const match =
+    input.match(/youtu\.be\/([^?]+)/) ||
+    input.match(/[?&]v=([^&]+)/) ||
+    input.match(/youtube\.com\/embed\/([^?]+)/);
+  return match ? `https://www.youtube.com/embed/${match[1]}` : input;
+}
+
+function bilibiliEmbed(input: string) {
+  if (input.includes("player.bilibili.com")) return input;
+  const match = input.match(/(BV[0-9A-Za-z]+)/);
+  return match
+    ? `https://player.bilibili.com/player.html?bvid=${match[1]}&page=1`
+    : input;
+}
+
+const shouldRender = Boolean(url);
+const embedUrl =
+  url && type === "youtube"
+    ? youtubeEmbed(url)
+    : url && type === "bilibili"
+      ? bilibiliEmbed(url)
+      : url;
+---
+
+{
+  shouldRender && (
+    <aside class="lp-media" aria-label={title}>
+      {type === "youtube" || type === "bilibili" ? (
+        <iframe
+          src={embedUrl}
+          title={title}
+          loading="lazy"
+          allow="accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen"
+          allowfullscreen
+        />
+      ) : type === "github-video" || type === "official-demo" ? (
+        <video controls preload="metadata" src={embedUrl} />
+      ) : (
+        <img src={embedUrl} alt={title} loading="lazy" />
+      )}
+      <div class="lp-media-body">
+        <strong>{title}</strong>
+        {note && <p class="lp-meta">{note}</p>}
+      </div>
+    </aside>
+  )
+}

@@ -1,0 +1,36 @@
+---
+title: 编排层：单 Agent、多 Agent 与流水线
+description: 选择最简单的 Agent 编排方式。
+sidebar:
+  order: 6
+difficulty: advanced
+source_repo: alchaincyf/harness-engineering-orange-book
+source_url: https://github.com/alchaincyf/harness-engineering-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/harness-engineering-orange-book" url="https://github.com/alchaincyf/harness-engineering-orange-book" updatedFrom="2026-05" />
+
+## 选择顺序
+
+1. 单 Agent：任务短、边界清楚、文件范围小。
+2. 多 Agent：可并行探索或分模块实现。
+3. 流水线：任务重复出现，需要稳定产物。
+
+## 操作步骤
+
+1. 先判断是否真需要并行。
+2. 给每个 Agent 明确责任和文件边界。
+3. 汇总结果时只采纳有证据的结论。
+4. 对重复流程沉淀成 Skill 或脚本。
+
+## 常见错误
+
+把复杂问题拆给多个 Agent，但没有汇总标准。这样得到的是更多文本，不是更稳定结果。
+
+## 实战案例
+
+信息源日报适合流水线：抓取、快照、对比、摘要、发布。每一步都可单独重跑，失败也可定位。

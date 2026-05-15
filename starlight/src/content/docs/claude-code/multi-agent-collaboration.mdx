@@ -1,0 +1,39 @@
+---
+title: 多 Agent 协作适合解决什么问题
+description: 判断什么时候该拆成多个 Agent，而不是一个 Agent 一直做。
+sidebar:
+  order: 6
+difficulty: intermediate
+source_repo: alchaincyf/claude-code-orange-book
+source_url: https://github.com/alchaincyf/claude-code-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/claude-code-orange-book" url="https://github.com/alchaincyf/claude-code-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+
+## 适合拆分的任务
+
+- 一个 Agent 写代码，另一个 Agent 查资料。
+- 不同模块有明确文件边界。
+- 一个 Agent 实现，另一个 Agent 做 review。
+- 多个独立数据源需要并行盘点。
+
+## 不适合拆分的任务
+
+- 需求还没想清楚。
+- 多个 Agent 会改同一批文件。
+- 下一步依赖某个关键结论，不能并行。
+
+## 操作步骤
+
+1. 先定义主 Agent 的责任。
+2. 只把 sidecar 任务交给子 Agent。
+3. 明确文件所有权。
+4. 汇总时只采纳可验证结果。
+
+## 常见错误
+
+为了“并行”而并行。多 Agent 的收益来自边界清楚，不来自数量。

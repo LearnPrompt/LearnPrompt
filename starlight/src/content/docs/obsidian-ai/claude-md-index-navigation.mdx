@@ -1,0 +1,35 @@
+---
+title: "CLAUDE.md + index.md 知识库导航法"
+description: 用一个入口文件降低 Agent 读取 vault 的成本。
+sidebar:
+  order: 3
+difficulty: intermediate
+source_repo: alchaincyf/obsidian-ai-orange-book
+source_url: https://github.com/alchaincyf/obsidian-ai-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/obsidian-ai-orange-book" url="https://github.com/alchaincyf/obsidian-ai-orange-book" updatedFrom="2026-05" note="参考主题结构，正文重新组织。" />
+
+## 分工
+
+- `CLAUDE.md`：告诉 Agent 工作规则、禁止事项和常用命令。
+- `index.md`：告诉 Agent 重要目录、项目入口和资料索引。
+
+## 操作步骤
+
+1. 在 vault 根目录写一个轻量 `index.md`。
+2. 每个长期项目维护自己的项目索引。
+3. 把脚本和自动化入口写成可复制命令。
+4. 过期项目标记归档，不删除历史。
+
+## 常见错误
+
+让 Agent 递归读取整个 vault。1000 个文件并不大，但没有索引仍会浪费上下文。
+
+## 实战案例
+
+AI 新闻雷达项目应有项目索引，记录源类型、部署地址、GitHub 仓库、日报生成脚本和未完成任务。

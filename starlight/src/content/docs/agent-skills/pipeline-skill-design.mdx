@@ -1,0 +1,34 @@
+---
+title: 流水线型 Skill 设计
+description: 把重复工作拆成可重跑、可检查的阶段。
+sidebar:
+  order: 5
+difficulty: intermediate
+source_repo: alchaincyf/agent-skills-orange-book
+source_url: https://github.com/alchaincyf/agent-skills-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/agent-skills-orange-book" url="https://github.com/alchaincyf/agent-skills-orange-book" updatedFrom="2026-05" note="仅参考主题结构，正文重新组织。" />
+
+## 适用场景
+
+日报、榜单、资料整理、批量迁移、课程生成，都可以做成流水线型 Skill。
+
+## 设计方法
+
+1. 每一步都落盘。
+2. 每一步都有输入和输出。
+3. 失败时能从中间继续。
+4. 最终报告要写清限制。
+
+## 常见错误
+
+把整条流水线写成一个巨大 prompt。这样失败后无法定位，也无法单独重跑。
+
+## 实战案例
+
+ClawHub 日报流水线：抓 Top100 快照、保存 JSON、读取前一日、计算增量、生成 Markdown、写入收件箱。

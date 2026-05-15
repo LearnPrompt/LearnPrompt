@@ -1,0 +1,12 @@
+---
+interface Props {
+  title?: string;
+}
+
+const { title = "媒体资源" } = Astro.props;
+---
+
+<section class="lp-card" aria-label={title}>
+  <h3>{title}</h3>
+  <slot />
+</section>

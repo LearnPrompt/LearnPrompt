@@ -1,0 +1,36 @@
+---
+title: Obsidian + Git 的版本控制工作流
+description: 用 Git 给知识库和项目自动化保留回滚路径。
+sidebar:
+  order: 5
+difficulty: intermediate
+source_repo: alchaincyf/obsidian-ai-orange-book
+source_url: https://github.com/alchaincyf/obsidian-ai-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/obsidian-ai-orange-book" url="https://github.com/alchaincyf/obsidian-ai-orange-book" updatedFrom="2026-05" note="参考主题结构，正文重新组织。" />
+
+## 为什么需要 Git
+
+iCloud 适合同步设备，但不适合解释“哪次自动化改坏了什么”。Git 适合保留 diff、分支和回滚点。
+
+## 操作步骤
+
+1. 把需要自动化维护的子目录纳入 git。
+2. 不提交密钥、缓存和大二进制。
+3. Agent 批量改笔记前先建分支或提交快照。
+4. 每次自动化后检查 diff。
+
+## 常见错误
+
+- iCloud 和 git 同时处理大量移动，产生冲突。
+- 把 `.obsidian` 插件缓存全部提交。
+- 没有 `.gitignore`。
+
+## 实战案例
+
+如果 Mac Mini 空间有限，可以先让 iCloud 保持同步，再把关键项目目录单独 git 化，避免把整个 vault 当代码仓库。

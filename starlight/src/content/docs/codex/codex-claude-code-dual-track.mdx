@@ -1,0 +1,35 @@
+---
+title: Codex 与 Claude Code 双线开发心智模型
+description: 让两个 AI 编程工具分工，而不是互相覆盖。
+sidebar:
+  order: 6
+difficulty: intermediate
+source_repo: alchaincyf/codex-orange-book
+source_url: https://github.com/alchaincyf/codex-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/codex-orange-book / claude-code-orange-book" url="https://github.com/alchaincyf/codex-orange-book" updatedFrom="2026-05" />
+
+## 推荐分工
+
+- Claude Code：长上下文探索、产品草图、知识库协作。
+- Codex：仓库级改动、分支、构建、验证和提交。
+
+## 操作步骤
+
+1. 让一个工具负责主线执行。
+2. 另一个工具只做独立审查或资料盘点。
+3. 不让两个工具同时改同一文件。
+4. 结果必须回到 git diff 和验收命令。
+
+## 常见错误
+
+把两个工具都开成高权限执行者。这样容易重复改动、互相覆盖，也会让问题定位变难。
+
+## 实战案例
+
+可以让 Claude Code 检查 README 是否像真人写的，让 Codex 实际改文件、跑构建、提交分支。

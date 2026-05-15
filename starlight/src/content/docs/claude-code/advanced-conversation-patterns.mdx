@@ -1,0 +1,39 @@
+---
+title: Claude Code 进阶对话技巧
+description: 用更好的对话结构减少返工。
+sidebar:
+  order: 4
+difficulty: intermediate
+source_repo: alchaincyf/claude-code-orange-book
+source_url: https://github.com/alchaincyf/claude-code-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/claude-code-orange-book" url="https://github.com/alchaincyf/claude-code-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+
+## 有效句式
+
+- “先只读盘点，不要编辑。”
+- “列出你要改的文件和验收命令。”
+- “如果发现不相关改动，不要回滚，先说明。”
+- “先实现最小可运行版本，再做视觉优化。”
+
+## 工作流
+
+1. 用一条消息给背景、目标、限制。
+2. 让 Claude Code 输出计划，不急着写代码。
+3. 执行时限制文件范围。
+4. 验收时要求它报告命令、结果和剩余风险。
+
+## 常见错误
+
+- 每轮都改变目标，导致上下文漂移。
+- 让它解释太多，却不给它运行检查的机会。
+- 把失败当成“模型不行”，没有收紧任务。
+
+## 实战案例
+
+做 README 优化时，先让 Claude Code列出读者、卖点、安装路径和 FAQ，再改文案。这样比直接说“写得好一点”稳定。

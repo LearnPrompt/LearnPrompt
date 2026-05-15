@@ -1,0 +1,43 @@
+---
+title: Plan、Auto 与人工审批边界
+description: 什么时候让 Agent 自动执行，什么时候必须人工确认。
+sidebar:
+  order: 4
+difficulty: beginner
+source_repo: alchaincyf/codex-orange-book
+source_url: https://github.com/alchaincyf/codex-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/codex-orange-book" url="https://github.com/alchaincyf/codex-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+
+## 核心概念
+
+Plan 模式负责把任务变清楚，Auto 模式负责执行已经清楚的任务。审批边界不是形式，而是风险控制。
+
+## 可以自动执行
+
+- 只读搜索、读取文件、运行测试。
+- 新建小文件或局部改动。
+- 格式化、lint、构建。
+
+## 需要人工确认
+
+- 删除或移动大量文件。
+- 修改生产部署、账单、密钥、权限。
+- 把未验证分支发布到线上。
+- 对外发送邮件、消息或交易指令。
+
+## 实战步骤
+
+1. 先让 Agent 输出 3-6 条计划。
+2. 对每条标注“只读、可写、高风险”。
+3. 只把可写低风险任务交给自动执行。
+4. 高风险任务必须先有回滚方案。
+
+## 常见错误
+
+把“我信任这个模型”当成权限策略。权限应该由任务风险决定，而不是由模型名字决定。

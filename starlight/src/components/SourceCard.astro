@@ -1,0 +1,32 @@
+---
+interface Props {
+  repo: string;
+  url: string;
+  title?: string;
+  updatedFrom?: string;
+  license?: string;
+  note?: string;
+}
+
+const {
+  repo,
+  url,
+  title = "来源说明",
+  updatedFrom,
+  license,
+  note = "本文根据公开资料重新组织为 LearnPrompt 教程，不搬运原文或整章内容。",
+} = Astro.props;
+---
+
+<aside class="lp-card" aria-label={title}>
+  <h3>{title}</h3>
+  <p>
+    <strong>{repo}</strong>
+  </p>
+  <p class="lp-meta">{note}</p>
+  <p>
+    <a href={url} target="_blank" rel="noreferrer">查看来源</a>
+    {updatedFrom && <span class="lp-badge">资料时间：{updatedFrom}</span>}
+    {license && <span class="lp-badge">许可：{license}</span>}
+  </p>
+</aside>

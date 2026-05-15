@@ -1,0 +1,39 @@
+---
+title: Codex Cloud 适合什么任务
+description: 判断哪些任务适合交给云端异步 Agent。
+sidebar:
+  order: 4
+difficulty: intermediate
+source_repo: alchaincyf/codex-orange-book
+source_url: https://github.com/alchaincyf/codex-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/codex-orange-book" url="https://github.com/alchaincyf/codex-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+
+## 适合云端
+
+- 明确 issue。
+- 可通过测试或构建验收。
+- 不依赖本机私有文件。
+- 可以通过 PR review 合并。
+
+## 不适合云端
+
+- 需要本机 App、iCloud 或登录态。
+- 需要用户实时判断方向。
+- 依赖未上传的私密资料。
+
+## 操作步骤
+
+1. 把任务写成独立 issue。
+2. 写清仓库、分支、文件范围和验收命令。
+3. 不把密钥写进任务描述。
+4. 让云端 Agent 开 PR，而不是直接改主分支。
+
+## 实战案例
+
+文档站的内容页、组件和构建修复适合云端；Obsidian iCloud 同步、Mac 本机权限和浏览器登录态问题更适合本地 Agent。

@@ -1,0 +1,26 @@
+---
+title: Starlight 迁移报告
+description: 当前分支的迁移范围、设计依据和验收状态。
+sidebar:
+  order: 1
+difficulty: intermediate
+legacy_status: current
+---
+
+## 当前范围
+
+- 新建 `starlight/` 子项目。
+- 使用 Astro Starlight 作为高速中文 AI 实战 Wiki。
+- 添加来源卡片、媒体卡片、学习路径卡片和过时提示组件。
+- 第一批教程控制在 40 篇，覆盖 Codex、Claude Code、Agent Skills、Harness、Hermes、OpenClaw 和 Obsidian AI。
+
+## 设计依据
+
+UI 使用 `nexu-io/open-design` 的 docs-page、web-prototype 和 critique 工作流约束：高信息密度、三栏阅读心智、少装饰、移动端可读、组件语义清楚。
+
+## 验收口径
+
+- `npm run build` 必须通过。
+- 不新增 analytics、telemetry 或广告脚本。
+- 不删除旧 Docusaurus 内容。
+- Orange Book 内容只做教程化重写，并保留来源链接。

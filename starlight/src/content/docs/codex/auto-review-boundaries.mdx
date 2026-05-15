@@ -1,0 +1,39 @@
+---
+title: Codex Auto-review 的适用边界
+description: 让 Codex 做审查时应该看什么、不看什么。
+sidebar:
+  order: 3
+difficulty: intermediate
+source_repo: alchaincyf/codex-orange-book
+source_url: https://github.com/alchaincyf/codex-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/codex-orange-book" url="https://github.com/alchaincyf/codex-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+
+## 适合审查
+
+- 行为回归。
+- 缺少错误处理。
+- 测试覆盖缺口。
+- 构建、类型和边界条件。
+
+## 不适合只靠审查
+
+- 产品方向是否正确。
+- 文案是否符合品牌。
+- 需要真实用户数据才能判断的体验。
+
+## 操作步骤
+
+1. 先提供 diff 或 PR 范围。
+2. 要求按严重程度列问题。
+3. 让审查意见必须带文件和行号。
+4. 对每条意见跑验证或人工判断。
+
+## 常见错误
+
+把 review 变成摘要。真正有用的 review 应该指出具体风险，而不是复述改了什么。

@@ -1,0 +1,24 @@
+---
+interface Props {
+  status?: "outdated" | "archived";
+  replacementUrl?: string;
+  reason?: string;
+}
+
+const {
+  status = "outdated",
+  replacementUrl,
+  reason = "部分工具界面、模型能力或产品名称可能已经变化。",
+} = Astro.props;
+const title = status === "archived" ? "历史归档" : "内容状态";
+const body =
+  status === "archived"
+    ? "这篇内容保留为历史参考，不再作为当前最佳实践。"
+    : "这篇内容仍保留旧 URL，但建议优先阅读新版教程。";
+---
+
+<aside class="lp-card" aria-label={title}>
+  <h3>{title}</h3>
+  <p>{body} {reason}</p>
+  {replacementUrl && <p><a href={replacementUrl}>阅读新版教程</a></p>}
+</aside>

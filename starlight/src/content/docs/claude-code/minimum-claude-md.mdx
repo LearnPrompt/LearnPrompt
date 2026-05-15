@@ -1,0 +1,43 @@
+---
+title: "CLAUDE.md 最小可用模板"
+description: 用少量规则让 Claude Code 理解项目边界。
+sidebar:
+  order: 2
+difficulty: beginner
+source_repo: alchaincyf/claude-code-orange-book
+source_url: https://github.com/alchaincyf/claude-code-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/claude-code-orange-book" url="https://github.com/alchaincyf/claude-code-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+
+## 模板结构
+
+一个可用的 `CLAUDE.md` 不需要很长。它至少包含：运行命令、代码风格、测试要求、安全边界和输出格式。
+
+## 建议内容
+
+```md
+# Project Rules
+
+- Read README and package files before editing.
+- Prefer small, reviewable diffs.
+- Run the fastest relevant check after behavior changes.
+- Never commit secrets or .env values.
+- Summarize changed files and verification commands.
+```
+
+## 使用方法
+
+1. 把模板放在项目根目录。
+2. 每次发现重复错误，就把规则写得更具体。
+3. 删除空泛规则，保留能改变行为的规则。
+
+## 常见错误
+
+- 写成价值观口号，而不是可执行规则。
+- 把所有个人偏好都塞进去，导致模型抓不住重点。
+- 不随着项目变化更新。
