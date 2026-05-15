@@ -19,6 +19,12 @@ npm run build
 
 ## GitHub Pages 预览构建
 
+公开预览地址：
+
+```text
+https://learnprompt.github.io/LearnPrompt/
+```
+
 ```bash
 cd starlight
 npm run build:pages
