@@ -85,3 +85,420 @@ body {
 .lp-media-body {
   padding: 0.85rem 1rem;
 }
+
+.lp-home {
+  --lp-home-ink: var(--sl-color-white);
+  --lp-home-muted: color-mix(in srgb, var(--sl-color-gray-2), transparent 8%);
+  --lp-home-panel: color-mix(in srgb, var(--sl-color-bg), var(--sl-color-gray-6) 18%);
+  --lp-home-line: color-mix(in srgb, var(--sl-color-gray-5), transparent 30%);
+  --lp-home-warm: #e6b450;
+  --lp-home-blue: #7ab7ff;
+  width: min(1120px, calc(100vw - 2rem));
+  margin: 0 auto 4rem;
+}
+
+main:has(.lp-home) > .content-panel:first-child {
+  display: none;
+}
+
+.lp-home-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(22rem, 0.88fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: center;
+  min-height: min(720px, calc(100vh - 6rem));
+  padding: clamp(3rem, 7vw, 6rem) 0 clamp(2rem, 5vw, 4rem);
+  border-bottom: 1px solid var(--lp-home-line);
+}
+
+.lp-eyebrow {
+  margin: 0 0 0.9rem;
+  color: var(--lp-home-warm);
+  font-family: var(--sl-font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.lp-home h1,
+.lp-home h2 {
+  margin: 0;
+  color: var(--lp-home-ink);
+  font-family: Iowan Old Style, Charter, Georgia, serif;
+  letter-spacing: 0;
+}
+
+.lp-home h1 {
+  max-width: 11ch;
+  font-size: clamp(3.2rem, 8vw, 6.4rem);
+  line-height: 0.92;
+}
+
+.lp-lede {
+  max-width: 42rem;
+  margin: 1.4rem 0 0;
+  color: var(--lp-home-muted);
+  font-size: clamp(1.05rem, 2vw, 1.24rem);
+  line-height: 1.8;
+}
+
+.lp-home-actions,
+.lp-home-proof {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.lp-home-actions {
+  margin-top: 2rem;
+}
+
+.lp-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.8rem;
+  border: 1px solid var(--lp-home-line);
+  border-radius: 8px;
+  padding: 0 1rem;
+  color: var(--sl-color-text);
+  background: color-mix(in srgb, var(--sl-color-bg), var(--sl-color-gray-6) 18%);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.lp-button:hover,
+.lp-path-item:hover,
+.lp-featured-list a:hover {
+  border-color: var(--sl-color-accent);
+  color: var(--sl-color-accent-high);
+}
+
+.lp-button-primary {
+  border-color: transparent;
+  color: #06251f;
+  background: var(--sl-color-accent);
+}
+
+.lp-home-proof {
+  margin-top: 1.25rem;
+  color: var(--sl-color-gray-3);
+  font-family: var(--sl-font-mono);
+  font-size: 0.8rem;
+}
+
+.lp-home-proof span {
+  border-inline-start: 2px solid var(--lp-home-warm);
+  padding-inline-start: 0.55rem;
+}
+
+.lp-home-preview {
+  overflow: hidden;
+  border: 1px solid var(--lp-home-line);
+  border-radius: 10px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--sl-color-accent-low), transparent 55%), transparent 42%),
+    var(--lp-home-panel);
+  box-shadow: 0 30px 90px color-mix(in srgb, #000, transparent 62%);
+}
+
+.lp-preview-topbar {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  border-bottom: 1px solid var(--lp-home-line);
+  padding: 0.8rem 1rem;
+  color: var(--sl-color-gray-3);
+  font-family: var(--sl-font-mono);
+  font-size: 0.78rem;
+}
+
+.lp-preview-topbar span {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+  background: var(--sl-color-gray-5);
+}
+
+.lp-preview-topbar span:nth-child(1) {
+  background: #f26d6d;
+}
+
+.lp-preview-topbar span:nth-child(2) {
+  background: var(--lp-home-warm);
+}
+
+.lp-preview-topbar span:nth-child(3) {
+  background: var(--sl-color-accent);
+}
+
+.lp-preview-topbar strong {
+  margin-inline-start: 0.45rem;
+}
+
+.lp-preview-board {
+  display: grid;
+  grid-template-columns: 5.8rem minmax(0, 1fr);
+  min-height: 23rem;
+}
+
+.lp-preview-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  border-inline-end: 1px solid var(--lp-home-line);
+  padding: 1rem;
+  font-family: var(--sl-font-mono);
+  font-size: 0.76rem;
+}
+
+.lp-preview-rail span {
+  border-radius: 999px;
+  padding: 0.4rem 0.55rem;
+  color: var(--sl-color-gray-3);
+}
+
+.lp-preview-rail .is-active {
+  color: #06251f;
+  background: var(--sl-color-accent);
+}
+
+.lp-preview-main {
+  padding: clamp(1.25rem, 4vw, 2rem);
+}
+
+.lp-preview-label {
+  margin: 0 0 0.85rem;
+  color: var(--lp-home-blue);
+  font-family: var(--sl-font-mono);
+  font-size: 0.78rem;
+}
+
+.lp-preview-main h2 {
+  max-width: 12ch;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  line-height: 1;
+}
+
+.lp-preview-main ol {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lp-preview-main li {
+  display: grid;
+  grid-template-columns: 2.2rem minmax(0, 1fr);
+  gap: 0.8rem;
+  align-items: start;
+  border: 1px solid var(--lp-home-line);
+  border-radius: 8px;
+  padding: 0.85rem;
+  color: var(--sl-color-gray-2);
+  background: color-mix(in srgb, var(--sl-color-bg), transparent 26%);
+}
+
+.lp-preview-main li span {
+  color: var(--lp-home-warm);
+  font-family: var(--sl-font-mono);
+}
+
+.lp-home-section {
+  display: grid;
+  gap: 1.3rem;
+  padding: clamp(2.5rem, 6vw, 4.5rem) 0;
+  border-bottom: 1px solid var(--lp-home-line);
+}
+
+.lp-section-heading {
+  display: grid;
+  gap: 0.55rem;
+  max-width: 42rem;
+}
+
+.lp-home-section h2 {
+  font-size: clamp(2rem, 4.2vw, 3.25rem);
+  line-height: 1.05;
+}
+
+.lp-path-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.lp-path-item {
+  min-height: 15rem;
+  border: 1px solid var(--lp-home-line);
+  border-radius: 8px;
+  padding: 1rem;
+  color: var(--sl-color-text);
+  background: var(--lp-home-panel);
+  text-decoration: none;
+}
+
+.lp-path-item span,
+.lp-featured-list span {
+  color: var(--lp-home-warm);
+  font-family: var(--sl-font-mono);
+  font-size: 0.76rem;
+}
+
+.lp-path-item h3 {
+  margin: 3.4rem 0 0.75rem;
+  color: var(--lp-home-ink);
+  font-size: 1.1rem;
+}
+
+.lp-path-item p {
+  margin: 0;
+  color: var(--sl-color-gray-3);
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.lp-featured {
+  grid-template-columns: minmax(16rem, 0.6fr) minmax(0, 1fr);
+  align-items: start;
+}
+
+.lp-featured-list {
+  display: grid;
+  border-top: 1px solid var(--lp-home-line);
+}
+
+.lp-featured-list a {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr);
+  gap: 1rem;
+  align-items: center;
+  min-height: 4rem;
+  border-bottom: 1px solid var(--lp-home-line);
+  color: var(--sl-color-text);
+  text-decoration: none;
+}
+
+.lp-use {
+  grid-template-columns: minmax(16rem, 0.55fr) minmax(0, 1fr);
+}
+
+.lp-use-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.lp-use-grid div {
+  border: 1px solid var(--lp-home-line);
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--lp-home-panel);
+}
+
+.lp-use-grid strong {
+  color: var(--lp-home-ink);
+}
+
+.lp-use-grid p {
+  margin: 0.75rem 0 0;
+  color: var(--sl-color-gray-3);
+  line-height: 1.65;
+}
+
+@media (max-width: 980px) {
+  .lp-home-hero,
+  .lp-featured,
+  .lp-use {
+    grid-template-columns: 1fr;
+  }
+
+  .lp-path-grid,
+  .lp-use-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .lp-home {
+    width: min(100% - 1rem, 1120px);
+  }
+
+  .lp-home-hero {
+    min-height: auto;
+    gap: 1.4rem;
+    padding: 2rem 0 1.5rem;
+  }
+
+  .lp-home h1 {
+    font-size: clamp(2.85rem, 15vw, 3.8rem);
+  }
+
+  .lp-lede {
+    font-size: 1rem;
+    line-height: 1.62;
+  }
+
+  .lp-home-actions {
+    margin-top: 1.4rem;
+  }
+
+  .lp-home-proof {
+    display: none;
+  }
+
+  .lp-button {
+    min-height: 2.55rem;
+  }
+
+  .lp-home-preview {
+    max-height: 16rem;
+  }
+
+  .lp-preview-board,
+  .lp-path-grid,
+  .lp-use-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lp-preview-rail {
+    flex-direction: row;
+    overflow-x: auto;
+    border-inline-end: 0;
+    border-bottom: 1px solid var(--lp-home-line);
+  }
+
+  .lp-preview-main {
+    padding: 1rem;
+  }
+
+  .lp-preview-main h2 {
+    max-width: none;
+    font-size: 1.6rem;
+  }
+
+  .lp-preview-main ol {
+    gap: 0.45rem;
+    margin-top: 0.85rem;
+  }
+
+  .lp-preview-main li {
+    grid-template-columns: 1.9rem minmax(0, 1fr);
+    padding: 0.6rem;
+    font-size: 0.84rem;
+  }
+
+  .lp-preview-main li:nth-child(3) {
+    display: none;
+  }
+
+  .lp-path-item {
+    min-height: 11rem;
+  }
+
+  .lp-path-item h3 {
+    margin-top: 2rem;
+  }
+}

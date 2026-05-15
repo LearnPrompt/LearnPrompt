@@ -1,0 +1,152 @@
+---
+const base = import.meta.env.BASE_URL === "/" ? "" : import.meta.env.BASE_URL.replace(/\/$/, "");
+const withBase = (href: string) => (href.startsWith("/") ? `${base}${href}` : href);
+
+const paths = [
+  {
+    title: "AI 编程入门",
+    href: "/ai-coding/choose-claude-code-or-codex/",
+    description: "从需求、计划、实现到验收，建立第一个 AI 编程闭环。",
+    meta: "5 篇",
+  },
+  {
+    title: "Claude Code / Codex",
+    href: "/claude-code/install-and-first-project/",
+    description: "理解两条 AI 编程路线，学会本地、云端和 review 分工。",
+    meta: "14 篇",
+  },
+  {
+    title: "Agent 工程",
+    href: "/agent-engineering/what-is-harness/",
+    description: "把模型能力放进可运行、可回滚、可验收的工程系统。",
+    meta: "6 篇",
+  },
+  {
+    title: "Agent Skills",
+    href: "/agent-skills/what-are-agent-skills/",
+    description: "把稳定工作流包装成可复用的 Skill，而不是每次重新提示。",
+    meta: "7 篇",
+  },
+  {
+    title: "Obsidian AI",
+    href: "/obsidian-ai/markdown-as-agent-memory/",
+    description: "把 Markdown vault 变成 Agent 可读、可维护的长期工作台。",
+    meta: "5 篇",
+  },
+];
+
+const featured = [
+  ["Claude Code 与 Codex 怎么选", "/ai-coding/choose-claude-code-or-codex/"],
+  ["Agentic Coding 的最小工作流", "/ai-coding/minimum-agentic-coding-workflow/"],
+  ["CLAUDE.md 最小可用模板", "/claude-code/minimum-claude-md/"],
+  ["Codex 沙箱与权限模式怎么理解", "/codex/sandbox-and-permissions/"],
+  ["什么是 Harness", "/agent-engineering/what-is-harness/"],
+  ["第一个 SKILL.md 怎么写", "/agent-skills/first-skill-md/"],
+  ["Obsidian Vault 的 AI 友好目录设计", "/obsidian-ai/vault-directory-for-ai/"],
+  ["OpenClaw 的 Gateway-Node-Channel 架构导读", "/agent-frameworks/openclaw-architecture-guide/"],
+];
+---
+
+<div class="lp-home">
+  <section class="lp-home-hero" data-od-id="home-hero">
+    <div class="lp-home-copy">
+      <p class="lp-eyebrow">LearnPrompt v2</p>
+      <h1>AI 实战学习地图</h1>
+      <p class="lp-lede">
+        从会提问，走到会做项目、会搭 Agent、会沉淀自己的知识工作台。新版 LearnPrompt
+        不是工具清单，而是一套面向真实产出的中文 AI 实战 Wiki。
+      </p>
+      <div class="lp-home-actions">
+        <a class="lp-button lp-button-primary" href={withBase("/start-here/ai-practice-map/")}>
+          开始学习
+        </a>
+        <a class="lp-button" href={withBase("/ai-coding/choose-claude-code-or-codex/")}>
+          进入 AI 编程路径
+        </a>
+      </div>
+      <div class="lp-home-proof" aria-label="站点状态">
+        <span>40 篇首批教程</span>
+        <span>5 条学习路径</span>
+        <span>无广告脚本</span>
+      </div>
+    </div>
+
+    <div class="lp-home-preview" aria-label="LearnPrompt 学习路径预览">
+      <div class="lp-preview-topbar">
+        <span></span>
+        <span></span>
+        <span></span>
+        <strong>learning-map.md</strong>
+      </div>
+      <div class="lp-preview-board">
+        <div class="lp-preview-rail">
+          <span class="is-active">Start</span>
+          <span>Code</span>
+          <span>Agent</span>
+          <span>Skill</span>
+        </div>
+        <div class="lp-preview-main">
+          <p class="lp-preview-label">Today’s route</p>
+          <h2>从一个想法到可验收项目</h2>
+          <ol>
+            <li><span>01</span> 写清任务、上下文和验收标准</li>
+            <li><span>02</span> 选择 Claude Code 或 Codex 的执行边界</li>
+            <li><span>03</span> 把复用流程沉淀成 Skill</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="lp-home-section" data-od-id="learning-paths">
+    <div class="lp-section-heading">
+      <p class="lp-eyebrow">Paths</p>
+      <h2>按目标进入，而不是从目录硬读</h2>
+    </div>
+    <div class="lp-path-grid">
+      {paths.map((path) => (
+        <a class="lp-path-item" href={withBase(path.href)}>
+          <span>{path.meta}</span>
+          <h3>{path.title}</h3>
+          <p>{path.description}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="lp-home-section lp-featured" data-od-id="featured-guides">
+    <div class="lp-section-heading">
+      <p class="lp-eyebrow">Editor’s picks</p>
+      <h2>第一次访问，先读这 8 篇</h2>
+    </div>
+    <div class="lp-featured-list">
+      {featured.map(([title, href], index) => (
+        <a href={withBase(href)}>
+          <span>{String(index + 1).padStart(2, "0")}</span>
+          <strong>{title}</strong>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="lp-home-section lp-use" data-od-id="how-to-use">
+    <div>
+      <p class="lp-eyebrow">Workflow</p>
+      <h2>每篇教程都服务一个可执行动作</h2>
+    </div>
+    <div class="lp-use-grid">
+      <div>
+        <strong>先定任务</strong>
+        <p>明确要做什么、不能改什么、如何验收。</p>
+      </div>
+      <div>
+        <strong>再选工具</strong>
+        <p>按场景选择 Codex、Claude Code、Agent 或 Skill。</p>
+      </div>
+      <div>
+        <strong>最后沉淀</strong>
+        <p>把可复用流程写回知识库、项目规则或 Skill。</p>
+      </div>
+    </div>
+  </section>
+</div>

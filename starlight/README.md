@@ -33,6 +33,6 @@ npm run build:pages
 ## 迁移原则
 
 - 不新增 analytics、telemetry 或广告脚本。
-- Orange Book 内容只做教程化改写，不全文搬运。
+- 公开资料只做教程化改写，不全文搬运。
 - 旧 Docusaurus 内容暂不删除，后续逐步迁移、过时标记和重定向。
 - UI 按 `nexu-io/open-design` 的 docs-page / web-prototype / critique 工作流约束实现。
