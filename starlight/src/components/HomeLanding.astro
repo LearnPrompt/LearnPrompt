@@ -9,6 +9,7 @@ const paths = [
     description: "从需求、计划、实现到验收，建立第一个可复用的 AI 编程闭环。",
     meta: "5 篇",
     tone: "violet",
+    output: "产出任务卡",
   },
   {
     title: "Claude Code / Codex",
@@ -16,6 +17,7 @@ const paths = [
     description: "理解本地执行、云端任务、代码审查之间的边界和分工。",
     meta: "14 篇",
     tone: "blue",
+    output: "产出可审查 diff",
   },
   {
     title: "Agent 工程",
@@ -23,6 +25,7 @@ const paths = [
     description: "把模型能力放进可运行、可回滚、可观察、可验收的系统。",
     meta: "6 篇",
     tone: "mint",
+    output: "产出反馈闭环",
   },
   {
     title: "Agent Skills",
@@ -30,6 +33,7 @@ const paths = [
     description: "把稳定工作流包装成可复用的 Skill，而不是每次重新提示。",
     meta: "7 篇",
     tone: "amber",
+    output: "产出 SKILL.md",
   },
   {
     title: "Obsidian AI",
@@ -37,6 +41,7 @@ const paths = [
     description: "把 Markdown vault 变成 Agent 可读、可维护的长期工作台。",
     meta: "5 篇",
     tone: "rose",
+    output: "产出长期上下文",
   },
 ];
 
@@ -79,13 +84,18 @@ const outputs = [
   ["Skill 草稿", "把稳定流程拆成触发、输入、步骤、验收"],
   ["复盘记录", "把失败原因沉淀为下一次能复用的规则"],
 ];
+
+const contrasts = [
+  ["不是", "工具清单", "不按热度堆模型、插件和链接。"],
+  ["而是", "产出系统", "每条路径都指向一个能交付、能验收、能复用的结果。"],
+];
 ---
 
 <div class="lp-home">
   <section class="lp-home-hero" data-od-id="home-hero">
     <div class="lp-home-copy">
-      <p class="lp-eyebrow">LearnPrompt v2</p>
-      <h1>把 AI 用进真实项目</h1>
+      <p class="lp-eyebrow">LearnPrompt v2 · Learning workbench</p>
+      <h1><span>把 AI 用进</span><span>真实项目</span></h1>
       <p class="lp-lede">
         从会提问，走到会做项目、会搭 Agent、会沉淀自己的知识工作台。
         新版 LearnPrompt 是一套面向普通 AI 爱好者的中文实战课程，而不是工具链接集合。
@@ -105,57 +115,39 @@ const outputs = [
       </div>
     </div>
 
-    <div class="lp-home-preview" aria-label="LearnPrompt 学习路径预览">
-      <div class="lp-preview-topbar">
-        <span></span>
-        <span></span>
-        <span></span>
-        <strong>LearnPrompt Studio</strong>
+    <div class="lp-home-studio" aria-label="LearnPrompt 学习工作台预览">
+      <div class="lp-studio-top">
+        <span>Route planner</span>
+        <strong>从一个想法到可发布项目</strong>
       </div>
-      <div class="lp-preview-board">
-        <div class="lp-preview-rail">
-          <span class="is-active">Start</span>
-          <span>Code</span>
-          <span>Agent</span>
-          <span>Skill</span>
+      <div class="lp-studio-body">
+        <div class="lp-studio-query">
+          <span>Input</span>
+          <strong>“我想用 AI 做一个可发布项目”</strong>
         </div>
-        <div class="lp-preview-main">
-          <div class="lp-search-line">
-            <span>Search</span>
-            <strong>“我想用 AI 做一个可发布项目”</strong>
-          </div>
-          <div class="lp-route-card is-main">
-            <p class="lp-preview-label">Recommended route</p>
-            <h2>想法 → 任务卡 → PR → Skill</h2>
-            <p>先做一个最小闭环，再把稳定步骤沉淀成别人也能复用的能力。</p>
-          </div>
-          <div class="lp-mini-grid">
-            <div>
-              <span>01</span>
-              <strong>写清需求</strong>
-            </div>
-            <div>
-              <span>02</span>
-              <strong>选择工具</strong>
-            </div>
-            <div>
-              <span>03</span>
-              <strong>验收发布</strong>
-            </div>
-          </div>
+        <div class="lp-studio-route">
+          <span>Recommended route</span>
+          <h2>想法 → 任务卡 → PR → Skill</h2>
+          <p>先做一个最小闭环，再把稳定步骤沉淀成别人也能复用的能力。</p>
+        </div>
+        <div class="lp-studio-steps">
+          <span><strong>01</strong> 写清需求</span>
+          <span><strong>02</strong> 选择工具</span>
+          <span><strong>03</strong> 验收发布</span>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="lp-home-section lp-manifesto" data-od-id="learning-promise">
+  <section class="lp-home-section lp-contrast" data-od-id="learning-promise">
     <div class="lp-section-heading">
       <p class="lp-eyebrow">Learning promise</p>
       <h2>每一页都要帮你多做出一步</h2>
     </div>
-    <div class="lp-output-grid">
-      {outputs.map(([title, description]) => (
-        <div class="lp-output-item">
+    <div class="lp-contrast-grid">
+      {contrasts.map(([label, title, description]) => (
+        <div class="lp-contrast-item">
+          <span>{label}</span>
           <strong>{title}</strong>
           <p>{description}</p>
         </div>
@@ -169,11 +161,12 @@ const outputs = [
       <h2>按目标进入，不用从目录硬读</h2>
     </div>
     <div class="lp-path-grid">
-      {paths.map((path) => (
-        <a class="lp-path-item" data-tone={path.tone} href={withBase(path.href)}>
+      {paths.map((path, index) => (
+        <a class:list={["lp-path-item", index === 0 && "is-featured"]} data-tone={path.tone} href={withBase(path.href)}>
           <span>{path.meta}</span>
           <h3>{path.title}</h3>
           <p>{path.description}</p>
+          <em>{path.output}</em>
         </a>
       ))}
     </div>
@@ -200,22 +193,14 @@ const outputs = [
       <p class="lp-eyebrow">Workflow</p>
       <h2>一条适合新人的实战顺序</h2>
     </div>
-    <div class="lp-use-grid">
-      <div>
-        <span>1</span>
-        <strong>先跑通一个小项目</strong>
-        <p>不要先研究所有工具。先选一个能在当天完成的小目标。</p>
-      </div>
-      <div>
-        <span>2</span>
-        <strong>再建立协作边界</strong>
-        <p>明确哪些交给 Agent，哪些由你审查，哪些必须用命令验证。</p>
-      </div>
-      <div>
-        <span>3</span>
-        <strong>最后包装成方法</strong>
-        <p>把反复出现的流程写成项目规则、笔记模板或 Skill。</p>
-      </div>
+    <div class="lp-workbench-grid">
+      {outputs.map(([title, description], index) => (
+        <div class="lp-workbench-item">
+          <span>{String(index + 1).padStart(2, "0")}</span>
+          <strong>{title}</strong>
+          <p>{description}</p>
+        </div>
+      ))}
     </div>
   </section>
 </div>
