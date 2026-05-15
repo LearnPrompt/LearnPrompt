@@ -18,6 +18,28 @@ import SourceCard from "../../../components/SourceCard.astro";
 
 一个可用的 `CLAUDE.md` 不需要很长。它至少包含：运行命令、代码风格、测试要求、安全边界和输出格式。
 
+它的目标不是“写给人看的项目愿景”，而是“让 Claude Code 在每一轮执行时少犯同类错误”。
+
+## 什么时候需要 CLAUDE.md
+
+如果你只是在空目录里做一次小实验，可以不用写。但出现下面任一情况，就应该补一个：
+
+- 项目有固定构建、测试或启动命令。
+- 有些目录不能随便改。
+- 你经常要求 AI 先计划、后执行。
+- 项目里有私密配置、iCloud 同步目录、本地脚本或部署限制。
+- 你已经发现同一个错误被 AI 重复犯了两次。
+
+## 最小原则
+
+一份好的 `CLAUDE.md` 有三个特点：
+
+1. 短：先控制在 30 行以内。
+2. 具体：告诉它做什么、不能做什么、怎么验收。
+3. 可更新：每次失败只补一条能改变行为的规则。
+
+不要把它写成公司文化手册，也不要塞满抽象价值观。AI 更需要可执行边界。
+
 ## 建议内容
 
 ```md
@@ -30,14 +52,90 @@ import SourceCard from "../../../components/SourceCard.astro";
 - Summarize changed files and verification commands.
 ```
 
+## 更完整的模板
+
+```md
+# Project Rules
+
+## Before Editing
+- Read README, package files, and relevant config before editing.
+- State the files you plan to change.
+- Prefer small, reviewable diffs.
+
+## Commands
+- Use the fastest relevant check first.
+- If a command fails, stop and explain the error before changing more files.
+
+## Safety
+- Never print, edit, or commit secrets, tokens, private keys, or .env values.
+- Do not run destructive git commands unless explicitly asked.
+- Do not change deployment settings unless the task is about deployment.
+
+## Output
+- Summarize changed files.
+- List verification commands and results.
+- Mention any remaining risk.
+```
+
+这份模板可以直接复制，然后替换成项目自己的命令和禁区。
+
 ## 使用方法
 
 1. 把模板放在项目根目录。
 2. 每次发现重复错误，就把规则写得更具体。
 3. 删除空泛规则，保留能改变行为的规则。
 
+## 怎么写运行命令
+
+不要只写“运行测试”。要写成项目真实命令：
+
+```md
+## Commands
+- Install: npm install
+- Dev server: npm run dev
+- Build: npm run build
+- Lint: npm run lint
+```
+
+如果你不确定命令是否存在，就先让 AI 读 `package.json`，不要凭空编。
+
+## 怎么写禁区
+
+禁区越具体越有用：
+
+```md
+## Do Not Edit
+- Do not edit files under `secrets/`.
+- Do not modify `.env` or `.env.local`.
+- Do not change GitHub Actions unless asked.
+- Do not touch generated files in `dist/`.
+```
+
+如果你的项目在 iCloud 或 Obsidian 里，还可以写：
+
+```md
+- Treat the Obsidian vault as user data. Do not bulk rename or delete notes.
+- For automation scripts, prefer dry-run mode first.
+```
+
+## 维护方式
+
+`CLAUDE.md` 不是一次写完的。更好的方式是每次复盘只补一条。
+
+| 失败现象 | 应该补的规则 |
+| --- | --- |
+| AI 没读 README 就改文件 | Before editing, read README first. |
+| AI 改了无关样式 | Only edit files listed in the plan. |
+| AI 跑了不存在的命令 | Inspect package scripts before proposing commands. |
+| AI 输出太散 | End with changed files and verification results. |
+
 ## 常见错误
 
 - 写成价值观口号，而不是可执行规则。
 - 把所有个人偏好都塞进去，导致模型抓不住重点。
 - 不随着项目变化更新。
+- 把失败经历写成抱怨，而不是写成下一次能执行的规则。
+
+## 完成标准
+
+读完这篇以后，你应该能给自己的项目写出一份 20-40 行的 `CLAUDE.md`，并且知道每条规则解决哪一种具体失败。

@@ -6,44 +6,78 @@ const paths = [
   {
     title: "AI 编程入门",
     href: "/ai-coding/choose-claude-code-or-codex/",
-    description: "从需求、计划、实现到验收，建立第一个 AI 编程闭环。",
+    description: "从需求、计划、实现到验收，建立第一个可复用的 AI 编程闭环。",
     meta: "5 篇",
+    tone: "violet",
   },
   {
     title: "Claude Code / Codex",
     href: "/claude-code/install-and-first-project/",
-    description: "理解两条 AI 编程路线，学会本地、云端和 review 分工。",
+    description: "理解本地执行、云端任务、代码审查之间的边界和分工。",
     meta: "14 篇",
+    tone: "blue",
   },
   {
     title: "Agent 工程",
     href: "/agent-engineering/what-is-harness/",
-    description: "把模型能力放进可运行、可回滚、可验收的工程系统。",
+    description: "把模型能力放进可运行、可回滚、可观察、可验收的系统。",
     meta: "6 篇",
+    tone: "mint",
   },
   {
     title: "Agent Skills",
     href: "/agent-skills/what-are-agent-skills/",
     description: "把稳定工作流包装成可复用的 Skill，而不是每次重新提示。",
     meta: "7 篇",
+    tone: "amber",
   },
   {
     title: "Obsidian AI",
     href: "/obsidian-ai/markdown-as-agent-memory/",
     description: "把 Markdown vault 变成 Agent 可读、可维护的长期工作台。",
     meta: "5 篇",
+    tone: "rose",
   },
 ];
 
 const featured = [
-  ["Claude Code 与 Codex 怎么选", "/ai-coding/choose-claude-code-or-codex/"],
-  ["Agentic Coding 的最小工作流", "/ai-coding/minimum-agentic-coding-workflow/"],
-  ["CLAUDE.md 最小可用模板", "/claude-code/minimum-claude-md/"],
-  ["Codex 沙箱与权限模式怎么理解", "/codex/sandbox-and-permissions/"],
-  ["什么是 Harness", "/agent-engineering/what-is-harness/"],
-  ["第一个 SKILL.md 怎么写", "/agent-skills/first-skill-md/"],
-  ["Obsidian Vault 的 AI 友好目录设计", "/obsidian-ai/vault-directory-for-ai/"],
-  ["OpenClaw 的 Gateway-Node-Channel 架构导读", "/agent-frameworks/openclaw-architecture-guide/"],
+  {
+    title: "Claude Code 与 Codex 怎么选",
+    href: "/ai-coding/choose-claude-code-or-codex/",
+    note: "先确定任务归属，避免一开始就把工具用错。",
+  },
+  {
+    title: "Agentic Coding 的最小工作流",
+    href: "/ai-coding/minimum-agentic-coding-workflow/",
+    note: "把 AI 编程压成计划、改动、验证、复盘四步。",
+  },
+  {
+    title: "CLAUDE.md 最小可用模板",
+    href: "/claude-code/minimum-claude-md/",
+    note: "让项目规则真的影响模型行为，而不是只写口号。",
+  },
+  {
+    title: "Codex 沙箱与权限模式怎么理解",
+    href: "/codex/sandbox-and-permissions/",
+    note: "知道什么时候可以放权，什么时候必须保守。",
+  },
+  {
+    title: "第一个 SKILL.md 怎么写",
+    href: "/agent-skills/first-skill-md/",
+    note: "把常用流程包装成别人也能加载的稳定能力。",
+  },
+  {
+    title: "Obsidian Vault 的 AI 友好目录设计",
+    href: "/obsidian-ai/vault-directory-for-ai/",
+    note: "让笔记库变成 Agent 能读、能维护的长期上下文。",
+  },
+];
+
+const outputs = [
+  ["任务卡", "把想法写成目标、边界、验收命令"],
+  ["项目规则", "把反复踩坑的偏好写进 AGENTS 或 CLAUDE"],
+  ["Skill 草稿", "把稳定流程拆成触发、输入、步骤、验收"],
+  ["复盘记录", "把失败原因沉淀为下一次能复用的规则"],
 ];
 ---
 
@@ -51,10 +85,10 @@ const featured = [
   <section class="lp-home-hero" data-od-id="home-hero">
     <div class="lp-home-copy">
       <p class="lp-eyebrow">LearnPrompt v2</p>
-      <h1>AI 实战学习地图</h1>
+      <h1>把 AI 用进真实项目</h1>
       <p class="lp-lede">
-        从会提问，走到会做项目、会搭 Agent、会沉淀自己的知识工作台。新版 LearnPrompt
-        不是工具清单，而是一套面向真实产出的中文 AI 实战 Wiki。
+        从会提问，走到会做项目、会搭 Agent、会沉淀自己的知识工作台。
+        新版 LearnPrompt 是一套面向普通 AI 爱好者的中文实战课程，而不是工具链接集合。
       </p>
       <div class="lp-home-actions">
         <a class="lp-button lp-button-primary" href={withBase("/start-here/ai-practice-map/")}>
@@ -65,9 +99,9 @@ const featured = [
         </a>
       </div>
       <div class="lp-home-proof" aria-label="站点状态">
-        <span>40 篇首批教程</span>
-        <span>5 条学习路径</span>
-        <span>无广告脚本</span>
+        <span><strong>40+</strong> 首批教程</span>
+        <span><strong>5</strong> 条学习路径</span>
+        <span><strong>0</strong> 广告脚本</span>
       </div>
     </div>
 
@@ -76,7 +110,7 @@ const featured = [
         <span></span>
         <span></span>
         <span></span>
-        <strong>learning-map.md</strong>
+        <strong>LearnPrompt Studio</strong>
       </div>
       <div class="lp-preview-board">
         <div class="lp-preview-rail">
@@ -86,26 +120,57 @@ const featured = [
           <span>Skill</span>
         </div>
         <div class="lp-preview-main">
-          <p class="lp-preview-label">Today’s route</p>
-          <h2>从一个想法到可验收项目</h2>
-          <ol>
-            <li><span>01</span> 写清任务、上下文和验收标准</li>
-            <li><span>02</span> 选择 Claude Code 或 Codex 的执行边界</li>
-            <li><span>03</span> 把复用流程沉淀成 Skill</li>
-          </ol>
+          <div class="lp-search-line">
+            <span>Search</span>
+            <strong>“我想用 AI 做一个可发布项目”</strong>
+          </div>
+          <div class="lp-route-card is-main">
+            <p class="lp-preview-label">Recommended route</p>
+            <h2>想法 → 任务卡 → PR → Skill</h2>
+            <p>先做一个最小闭环，再把稳定步骤沉淀成别人也能复用的能力。</p>
+          </div>
+          <div class="lp-mini-grid">
+            <div>
+              <span>01</span>
+              <strong>写清需求</strong>
+            </div>
+            <div>
+              <span>02</span>
+              <strong>选择工具</strong>
+            </div>
+            <div>
+              <span>03</span>
+              <strong>验收发布</strong>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="lp-home-section lp-manifesto" data-od-id="learning-promise">
+    <div class="lp-section-heading">
+      <p class="lp-eyebrow">Learning promise</p>
+      <h2>每一页都要帮你多做出一步</h2>
+    </div>
+    <div class="lp-output-grid">
+      {outputs.map(([title, description]) => (
+        <div class="lp-output-item">
+          <strong>{title}</strong>
+          <p>{description}</p>
+        </div>
+      ))}
     </div>
   </section>
 
   <section class="lp-home-section" data-od-id="learning-paths">
     <div class="lp-section-heading">
       <p class="lp-eyebrow">Paths</p>
-      <h2>按目标进入，而不是从目录硬读</h2>
+      <h2>按目标进入，不用从目录硬读</h2>
     </div>
     <div class="lp-path-grid">
       {paths.map((path) => (
-        <a class="lp-path-item" href={withBase(path.href)}>
+        <a class="lp-path-item" data-tone={path.tone} href={withBase(path.href)}>
           <span>{path.meta}</span>
           <h3>{path.title}</h3>
           <p>{path.description}</p>
@@ -117,13 +182,14 @@ const featured = [
   <section class="lp-home-section lp-featured" data-od-id="featured-guides">
     <div class="lp-section-heading">
       <p class="lp-eyebrow">Editor’s picks</p>
-      <h2>第一次访问，先读这 8 篇</h2>
+      <h2>第一次访问，先读这 6 篇</h2>
     </div>
     <div class="lp-featured-list">
-      {featured.map(([title, href], index) => (
-        <a href={withBase(href)}>
+      {featured.map((item, index) => (
+        <a href={withBase(item.href)}>
           <span>{String(index + 1).padStart(2, "0")}</span>
-          <strong>{title}</strong>
+          <strong>{item.title}</strong>
+          <p>{item.note}</p>
         </a>
       ))}
     </div>
@@ -132,20 +198,23 @@ const featured = [
   <section class="lp-home-section lp-use" data-od-id="how-to-use">
     <div>
       <p class="lp-eyebrow">Workflow</p>
-      <h2>每篇教程都服务一个可执行动作</h2>
+      <h2>一条适合新人的实战顺序</h2>
     </div>
     <div class="lp-use-grid">
       <div>
-        <strong>先定任务</strong>
-        <p>明确要做什么、不能改什么、如何验收。</p>
+        <span>1</span>
+        <strong>先跑通一个小项目</strong>
+        <p>不要先研究所有工具。先选一个能在当天完成的小目标。</p>
       </div>
       <div>
-        <strong>再选工具</strong>
-        <p>按场景选择 Codex、Claude Code、Agent 或 Skill。</p>
+        <span>2</span>
+        <strong>再建立协作边界</strong>
+        <p>明确哪些交给 Agent，哪些由你审查，哪些必须用命令验证。</p>
       </div>
       <div>
-        <strong>最后沉淀</strong>
-        <p>把可复用流程写回知识库、项目规则或 Skill。</p>
+        <span>3</span>
+        <strong>最后包装成方法</strong>
+        <p>把反复出现的流程写成项目规则、笔记模板或 Skill。</p>
       </div>
     </div>
   </section>
