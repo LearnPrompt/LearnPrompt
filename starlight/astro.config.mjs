@@ -2,8 +2,11 @@ import mdx from "@astrojs/mdx";
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
 
+const isGitHubPages = process.env.DEPLOY_TARGET === "github-pages";
+
 export default defineConfig({
-  site: "https://www.learnprompt.pro",
+  site: isGitHubPages ? "https://learnprompt.github.io" : "https://www.learnprompt.pro",
+  base: isGitHubPages ? "/LearnPrompt" : undefined,
   integrations: [
     starlight({
       title: "LearnPrompt AI 实战 Wiki",

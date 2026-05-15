@@ -17,6 +17,13 @@ cd starlight
 npm run build
 ```
 
+## GitHub Pages 预览构建
+
+```bash
+cd starlight
+npm run build:pages
+```
+
 ## 迁移原则
 
 - 不新增 analytics、telemetry 或广告脚本。
