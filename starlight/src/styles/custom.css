@@ -1837,3 +1837,75 @@ main:has(.lp-home) {
     transition: none;
   }
 }
+
+/* Readability fixes for dark theme auto mode and pressed cards. */
+:root[data-theme="dark"] .lp-home {
+  --lp-primitive-ink: #21112f;
+  --lp-primitive-muted: #665a76;
+  --lp-color-ink: #21112f;
+  --lp-color-muted: #665a76;
+  --lp-color-surface: rgba(255, 255, 255, 0.82);
+  --lp-color-surface-strong: #ffffff;
+  --lp-button-fg: #ffffff;
+}
+
+:root[data-theme="dark"] main:has(.lp-home) {
+  background:
+    linear-gradient(128deg, rgba(36, 5, 80, 0.1) 0%, rgba(108, 75, 150, 0.08) 32%, rgba(213, 189, 237, 0.34) 62%, rgba(255, 255, 255, 0.88) 100%),
+    linear-gradient(180deg, #fcfbff 0%, #f3eef8 100%);
+}
+
+:root[data-theme="dark"] .lp-home h1,
+:root[data-theme="dark"] .lp-home h2,
+:root[data-theme="dark"] .lp-home h3,
+:root[data-theme="dark"] .lp-home strong {
+  color: #21112f;
+}
+
+:root[data-theme="dark"] .lp-lede,
+:root[data-theme="dark"] .lp-home p,
+:root[data-theme="dark"] .lp-home-proof {
+  color: #665a76;
+}
+
+:root[data-theme="dark"] .lp-button-primary {
+  color: #ffffff;
+}
+
+.lp-featured-list a:hover strong,
+.lp-featured-list a:focus-visible strong,
+.lp-featured-list a:active strong,
+.lp-featured-list a:hover p,
+.lp-featured-list a:focus-visible p,
+.lp-featured-list a:active p,
+.lp-featured-list a:hover strong em,
+.lp-featured-list a:focus-visible strong em,
+.lp-featured-list a:active strong em {
+  color: #ffffff;
+}
+
+.lp-featured-list a:hover p,
+.lp-featured-list a:focus-visible p,
+.lp-featured-list a:active p {
+  opacity: 0.82;
+}
+
+:root[data-theme="dark"] .lp-studio-route h2,
+:root[data-theme="dark"] .lp-studio-route p,
+:root[data-theme="dark"] .lp-contrast h2,
+:root[data-theme="dark"] .lp-contrast p,
+:root[data-theme="dark"] .lp-path-item.is-featured h3,
+:root[data-theme="dark"] .lp-path-item.is-featured p,
+:root[data-theme="dark"] .lp-path-item.is-featured span,
+:root[data-theme="dark"] .lp-path-item.is-featured em,
+:root[data-theme="dark"] .lp-featured-list a:hover strong,
+:root[data-theme="dark"] .lp-featured-list a:focus-visible strong,
+:root[data-theme="dark"] .lp-featured-list a:active strong,
+:root[data-theme="dark"] .lp-featured-list a:hover p,
+:root[data-theme="dark"] .lp-featured-list a:focus-visible p,
+:root[data-theme="dark"] .lp-featured-list a:active p,
+:root[data-theme="dark"] .lp-featured-list a:hover strong em,
+:root[data-theme="dark"] .lp-featured-list a:focus-visible strong em,
+:root[data-theme="dark"] .lp-featured-list a:active strong em {
+  color: #ffffff;
+}
