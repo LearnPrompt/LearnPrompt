@@ -1838,47 +1838,18 @@ main:has(.lp-home) {
   }
 }
 
-/* Readability fixes for dark theme auto mode and pressed cards. */
-:root[data-theme="dark"] .lp-home {
-  --lp-primitive-ink: #21112f;
-  --lp-primitive-muted: #665a76;
-  --lp-color-ink: #21112f;
-  --lp-color-muted: #665a76;
-  --lp-color-surface: rgba(255, 255, 255, 0.82);
-  --lp-color-surface-strong: #ffffff;
-  --lp-button-fg: #ffffff;
-}
-
-:root[data-theme="dark"] main:has(.lp-home) {
-  background:
-    linear-gradient(128deg, rgba(36, 5, 80, 0.1) 0%, rgba(108, 75, 150, 0.08) 32%, rgba(213, 189, 237, 0.34) 62%, rgba(255, 255, 255, 0.88) 100%),
-    linear-gradient(180deg, #fcfbff 0%, #f3eef8 100%);
-}
-
-:root[data-theme="dark"] .lp-home h1,
-:root[data-theme="dark"] .lp-home h2,
-:root[data-theme="dark"] .lp-home h3,
-:root[data-theme="dark"] .lp-home strong {
-  color: #21112f;
-}
-
+/* LearnPrompt homepage formal light/dark theme layer. */
 .lp-home .lp-home-copy h1,
-.lp-home .lp-home-copy h1 span,
-:root[data-theme="dark"] .lp-home .lp-home-copy h1,
-:root[data-theme="dark"] .lp-home .lp-home-copy h1 span {
+.lp-home .lp-home-copy h1 span {
   background: none;
-  color: #21112f;
-  -webkit-text-fill-color: #21112f;
+  color: var(--lp-color-ink);
+  -webkit-text-fill-color: currentColor;
 }
 
-:root[data-theme="dark"] .lp-lede,
-:root[data-theme="dark"] .lp-home p,
-:root[data-theme="dark"] .lp-home-proof {
-  color: #665a76;
-}
-
-:root[data-theme="dark"] .lp-button-primary {
-  color: #ffffff;
+.lp-featured-list a:hover,
+.lp-featured-list a:focus-visible,
+.lp-featured-list a:active {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .lp-featured-list a:hover strong,
@@ -1891,24 +1862,121 @@ main:has(.lp-home) {
 .lp-featured-list a:focus-visible strong em,
 .lp-featured-list a:active strong em {
   color: #ffffff;
-}
-
-.lp-featured-list a:hover,
-.lp-featured-list a:focus-visible,
-.lp-featured-list a:active {
-  background: rgba(255, 255, 255, 0.08);
+  -webkit-text-fill-color: #ffffff;
 }
 
 .lp-featured-list a:hover p,
 .lp-featured-list a:focus-visible p,
 .lp-featured-list a:active p {
-  opacity: 0.82;
+  opacity: 0.86;
 }
 
-.lp-featured-list a:hover strong,
-.lp-featured-list a:focus-visible strong,
-.lp-featured-list a:active strong {
-  -webkit-text-fill-color: #ffffff;
+:root[data-theme="dark"] .lp-home {
+  --lp-primitive-paper: #100b1b;
+  --lp-primitive-paper-deep: #191026;
+  --lp-primitive-ink: #fbf7ff;
+  --lp-primitive-muted: #cfc4df;
+  --lp-primitive-hairline: rgba(213, 189, 237, 0.2);
+  --lp-primitive-lavender: #d5bded;
+  --lp-primitive-lavender-soft: #261736;
+  --lp-primitive-violet-deep: #f7f1ff;
+  --lp-primitive-violet-mid: #d5bded;
+  --lp-primitive-silver: #ffffff;
+  --lp-primitive-blue: #9cc7ff;
+  --lp-primitive-mint: #8de7d2;
+  --lp-primitive-amber: #ffd27a;
+  --lp-primitive-rose: #ff9ec0;
+  --lp-color-canvas: var(--lp-primitive-paper);
+  --lp-color-surface: rgba(32, 24, 46, 0.78);
+  --lp-color-surface-strong: rgba(25, 17, 39, 0.92);
+  --lp-color-ink: var(--lp-primitive-ink);
+  --lp-color-muted: var(--lp-primitive-muted);
+  --lp-color-border: var(--lp-primitive-hairline);
+  --lp-color-accent: var(--lp-primitive-lavender);
+  --lp-card-bg: rgba(255, 255, 255, 0.055);
+  --lp-card-border: rgba(213, 189, 237, 0.16);
+  --lp-button-fg: #ffffff;
+  --lp-button-bg: linear-gradient(135deg, #7c4dff 0%, #a885df 56%, #f1e5ff 100%);
+}
+
+:root[data-theme="dark"] main:has(.lp-home) {
+  background:
+    radial-gradient(circle at 78% 8%, rgba(213, 189, 237, 0.16), transparent 28rem),
+    linear-gradient(128deg, rgba(36, 5, 80, 0.52) 0%, rgba(19, 11, 31, 0.92) 44%, rgba(8, 7, 16, 1) 100%),
+    #0b0712;
+}
+
+:root[data-theme="dark"] .lp-home h1,
+:root[data-theme="dark"] .lp-home h2,
+:root[data-theme="dark"] .lp-home h3,
+:root[data-theme="dark"] .lp-home strong,
+:root[data-theme="dark"] .lp-home .lp-home-copy h1,
+:root[data-theme="dark"] .lp-home .lp-home-copy h1 span {
+  color: var(--lp-color-ink);
+  -webkit-text-fill-color: currentColor;
+}
+
+:root[data-theme="dark"] .lp-home p,
+:root[data-theme="dark"] .lp-lede,
+:root[data-theme="dark"] .lp-home-proof,
+:root[data-theme="dark"] .lp-studio-top span,
+:root[data-theme="dark"] .lp-studio-query p,
+:root[data-theme="dark"] .lp-path-item p,
+:root[data-theme="dark"] .lp-workbench-item p,
+:root[data-theme="dark"] .lp-featured-list p {
+  color: var(--lp-color-muted);
+}
+
+:root[data-theme="dark"] .lp-button {
+  border-color: rgba(213, 189, 237, 0.2);
+  color: var(--lp-color-ink);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+:root[data-theme="dark"] .lp-button-primary {
+  color: var(--lp-button-fg);
+  background: var(--lp-button-bg);
+  box-shadow: 0 18px 56px rgba(168, 133, 223, 0.22);
+}
+
+:root[data-theme="dark"] .lp-home-studio {
+  border-color: rgba(213, 189, 237, 0.18);
+  background:
+    linear-gradient(145deg, rgba(35, 24, 54, 0.92) 0%, rgba(18, 12, 30, 0.92) 100%),
+    linear-gradient(135deg, rgba(213, 189, 237, 0.13), rgba(108, 75, 150, 0.28));
+  box-shadow: 0 34px 94px rgba(0, 0, 0, 0.38);
+}
+
+:root[data-theme="dark"] .lp-studio-body {
+  background:
+    linear-gradient(90deg, rgba(213, 189, 237, 0.08) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(213, 189, 237, 0.08) 1px, transparent 1px);
+  background-size: 4.6rem 4.6rem;
+}
+
+:root[data-theme="dark"] .lp-studio-top strong,
+:root[data-theme="dark"] .lp-studio-query strong {
+  color: var(--lp-color-ink);
+}
+
+:root[data-theme="dark"] .lp-studio-steps span,
+:root[data-theme="dark"] .lp-path-item,
+:root[data-theme="dark"] .lp-workbench-item,
+:root[data-theme="dark"] .lp-featured-list a {
+  border-color: var(--lp-card-border);
+  background: var(--lp-card-bg);
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.2);
+}
+
+:root[data-theme="dark"] .lp-featured-list span {
+  border-color: rgba(213, 189, 237, 0.2);
+  background: linear-gradient(135deg, rgba(213, 189, 237, 0.12), rgba(124, 77, 255, 0.18));
+}
+
+:root[data-theme="dark"] .lp-path-item.is-featured,
+:root[data-theme="dark"] .lp-studio-route,
+:root[data-theme="dark"] .lp-contrast {
+  background: linear-gradient(135deg, #2b0b63 0%, #7446a5 56%, #d5bded 100%);
 }
 
 :root[data-theme="dark"] .lp-studio-route h2,
@@ -1929,4 +1997,5 @@ main:has(.lp-home) {
 :root[data-theme="dark"] .lp-featured-list a:focus-visible strong em,
 :root[data-theme="dark"] .lp-featured-list a:active strong em {
   color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
 }
