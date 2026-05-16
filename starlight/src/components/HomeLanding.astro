@@ -85,16 +85,12 @@ const outputs = [
   ["复盘记录", "把失败原因沉淀为下一次能复用的规则"],
 ];
 
-const contrasts = [
-  ["不是", "工具清单", "不按热度堆模型、插件和链接。"],
-  ["而是", "产出系统", "每条路径都指向一个能交付、能验收、能复用的结果。"],
-];
 ---
 
 <div class="lp-home">
   <section class="lp-home-hero" data-od-id="home-hero">
     <div class="lp-home-copy">
-      <p class="lp-eyebrow">LearnPrompt v2 · Learning workbench</p>
+      <p class="lp-eyebrow">LearnPrompt v2</p>
       <h1><span>把 AI 用进</span><span>真实项目</span></h1>
       <p class="lp-lede">
         从会提问，走到会做项目、会搭 Agent、会沉淀自己的知识工作台。
@@ -117,18 +113,17 @@ const contrasts = [
 
     <div class="lp-home-studio" aria-label="LearnPrompt 学习工作台预览">
       <div class="lp-studio-top">
-        <span>Route planner</span>
         <strong>从一个想法到可发布项目</strong>
+        <span>需求会被拆成能执行、能验收、能复用的路径。</span>
       </div>
       <div class="lp-studio-body">
         <div class="lp-studio-query">
-          <span>Input</span>
           <strong>“我想用 AI 做一个可发布项目”</strong>
+          <p>先别急着选工具，先让问题变清楚。</p>
         </div>
         <div class="lp-studio-route">
-          <span>Recommended route</span>
-          <h2>想法 → 任务卡 → PR → Skill</h2>
-          <p>先做一个最小闭环，再把稳定步骤沉淀成别人也能复用的能力。</p>
+          <h2>想法变成任务卡</h2>
+          <p>再交给 Codex / Claude Code 执行、审查、发布，最后沉淀为自己的 Skill。</p>
         </div>
         <div class="lp-studio-steps">
           <span><strong>01</strong> 写清需求</span>
@@ -140,24 +135,22 @@ const contrasts = [
   </section>
 
   <section class="lp-home-section lp-contrast" data-od-id="learning-promise">
-    <div class="lp-section-heading">
-      <p class="lp-eyebrow">Learning promise</p>
+    <div class="lp-promise-copy">
       <h2>每一页都要帮你多做出一步</h2>
+      <p>
+        不是把模型、插件和链接按热度堆起来，而是把一次 AI 实战拆成清楚的目标、边界、验收和复盘。
+        你读完一页，就应该更接近一个能交付的结果。
+      </p>
     </div>
-    <div class="lp-contrast-grid">
-      {contrasts.map(([label, title, description]) => (
-        <div class="lp-contrast-item">
-          <span>{label}</span>
-          <strong>{title}</strong>
-          <p>{description}</p>
-        </div>
-      ))}
+    <div class="lp-promise-mark" aria-label="学习路径">
+      <span>Prompt</span>
+      <span>Project</span>
+      <span>Skill</span>
     </div>
   </section>
 
   <section class="lp-home-section" data-od-id="learning-paths">
     <div class="lp-section-heading">
-      <p class="lp-eyebrow">Paths</p>
       <h2>按目标进入，不用从目录硬读</h2>
     </div>
     <div class="lp-path-grid">
@@ -174,7 +167,6 @@ const contrasts = [
 
   <section class="lp-home-section lp-featured" data-od-id="featured-guides">
     <div class="lp-section-heading">
-      <p class="lp-eyebrow">Editor’s picks</p>
       <h2>第一次访问，先读这 6 篇</h2>
     </div>
     <div class="lp-featured-list">
@@ -190,7 +182,6 @@ const contrasts = [
 
   <section class="lp-home-section lp-use" data-od-id="how-to-use">
     <div>
-      <p class="lp-eyebrow">Workflow</p>
       <h2>一条适合新人的实战顺序</h2>
     </div>
     <div class="lp-workbench-grid">

@@ -1,17 +1,17 @@
 :root {
   --sl-font: Inter, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
   --sl-font-mono: "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", monospace;
-  --sl-color-accent-low: #efe4ff;
-  --sl-color-accent: #8b5cf6;
-  --sl-color-accent-high: #3f1d78;
+  --sl-color-accent-low: #f0e7f7;
+  --sl-color-accent: #6c4b96;
+  --sl-color-accent-high: #240550;
   --lp-border: color-mix(in srgb, var(--sl-color-gray-5), transparent 20%);
   --lp-surface: color-mix(in srgb, var(--sl-color-bg), var(--sl-color-gray-7) 8%);
 }
 
 :root[data-theme="dark"] {
-  --sl-color-accent-low: #2a1b46;
-  --sl-color-accent: #b89cff;
-  --sl-color-accent-high: #f4edff;
+  --sl-color-accent-low: #241632;
+  --sl-color-accent: #d5bded;
+  --sl-color-accent-high: #f7f1ff;
   --lp-surface: color-mix(in srgb, var(--sl-color-bg), var(--sl-color-gray-6) 20%);
 }
 
@@ -1305,5 +1305,276 @@ main:has(.lp-home) {
 
   .lp-featured-list p {
     grid-column: 2;
+  }
+}
+
+/* LearnPrompt homepage v4 effective overrides. */
+.lp-home {
+  --lp-primitive-violet-deep: #240550;
+  --lp-primitive-violet-mid: #6c4b96;
+  --lp-primitive-silver: #d5bded;
+  --lp-color-accent: var(--lp-primitive-violet-mid);
+  --lp-color-border: rgba(108, 75, 150, 0.2);
+  --lp-button-bg: linear-gradient(135deg, #240550 0%, #6c4b96 58%, #d5bded 100%);
+}
+
+main:has(.lp-home) {
+  background:
+    linear-gradient(128deg, rgba(36, 5, 80, 0.1) 0%, rgba(108, 75, 150, 0.08) 32%, rgba(213, 189, 237, 0.34) 62%, rgba(255, 255, 255, 0.88) 100%),
+    linear-gradient(180deg, #fcfbff 0%, #f3eef8 100%);
+}
+
+.lp-button-primary {
+  background: var(--lp-button-bg);
+  box-shadow: 0 18px 48px rgba(108, 75, 150, 0.28);
+}
+
+.lp-home-studio {
+  border: 1px solid rgba(108, 75, 150, 0.18);
+  border-radius: 18px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.86) 0%, rgba(245, 240, 250, 0.7) 100%),
+    linear-gradient(135deg, rgba(36, 5, 80, 0.12), rgba(213, 189, 237, 0.36));
+  box-shadow: 0 34px 94px rgba(108, 75, 150, 0.22);
+}
+
+.lp-studio-top {
+  display: block;
+  grid-template-columns: none;
+  border-bottom: 0;
+  padding: 1.5rem 1.6rem 0;
+  font-family: var(--sl-font);
+}
+
+.lp-studio-top strong {
+  display: block;
+  overflow: visible;
+  color: #21112f;
+  font-family: Iowan Old Style, Charter, Georgia, "Noto Serif SC", serif;
+  font-size: 2.25rem;
+  line-height: 1.06;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.lp-studio-top span {
+  display: block;
+  max-width: 28rem;
+  margin-top: 0.8rem;
+  color: #665a76;
+  font-family: var(--sl-font);
+  font-weight: 600;
+  text-transform: none;
+}
+
+.lp-studio-body {
+  grid-template-columns: 0.82fr 1.18fr;
+  gap: 1rem;
+  min-height: 23rem;
+  padding: 1.2rem;
+  background:
+    linear-gradient(90deg, rgba(213, 189, 237, 0.12) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(213, 189, 237, 0.12) 1px, transparent 1px);
+  background-size: 4.6rem 4.6rem;
+}
+
+.lp-studio-query,
+.lp-studio-route,
+.lp-studio-steps {
+  background: transparent;
+}
+
+.lp-studio-query {
+  align-content: end;
+  border: 0;
+  border-radius: 16px;
+  padding: 1.35rem;
+}
+
+.lp-studio-query strong {
+  margin-top: 0;
+  color: #21112f;
+  font-family: Iowan Old Style, Charter, Georgia, "Noto Serif SC", serif;
+  font-size: 1.7rem;
+  line-height: 1.18;
+}
+
+.lp-studio-query p {
+  margin: 0.9rem 0 0;
+  color: #665a76;
+  line-height: 1.68;
+}
+
+.lp-studio-route {
+  display: block;
+  align-self: center;
+  margin: 0;
+  border: 0;
+  border-radius: 22px;
+  padding: 2rem;
+  background: linear-gradient(135deg, #240550 0%, #6c4b96 58%, #d5bded 100%);
+  box-shadow: 0 28px 70px rgba(36, 5, 80, 0.22);
+}
+
+.lp-studio-route h2 {
+  max-width: 9ch;
+  margin: 0;
+  color: #ffffff;
+  font-size: 3.4rem;
+  line-height: 0.98;
+  -webkit-text-fill-color: #ffffff;
+}
+
+.lp-studio-route p {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.lp-studio-steps {
+  display: grid;
+  gap: 0.7rem;
+  border-top: 0;
+}
+
+.lp-studio-steps span {
+  min-height: auto;
+  border: 1px solid rgba(108, 75, 150, 0.18);
+  border-radius: 999px;
+  padding: 0.75rem 0.9rem;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.lp-contrast {
+  grid-template-columns: minmax(0, 1.05fr) minmax(18rem, 0.95fr);
+  align-items: center;
+  margin: 0 0 1.2rem;
+  border-radius: 24px;
+  padding: 3.6rem;
+  color: #ffffff;
+  background: linear-gradient(135deg, #240550 0%, #6c4b96 54%, #d5bded 100%);
+  box-shadow: 0 30px 80px rgba(108, 75, 150, 0.18);
+}
+
+.lp-promise-copy h2 {
+  max-width: 11ch;
+  color: #ffffff;
+  font-size: 4.2rem;
+  line-height: 1;
+  -webkit-text-fill-color: #ffffff;
+}
+
+.lp-promise-copy p {
+  max-width: 38rem;
+  margin: 1.4rem 0 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.08rem;
+  line-height: 1.82;
+}
+
+.lp-promise-mark {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: end;
+  color: rgba(255, 255, 255, 0.2);
+  font-family: Iowan Old Style, Charter, Georgia, "Noto Serif SC", serif;
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 0.92;
+}
+
+.lp-promise-mark span:nth-child(2) {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.lp-promise-mark span:nth-child(3) {
+  color: #ffffff;
+}
+
+.lp-path-grid,
+.lp-workbench-grid {
+  gap: 0.9rem;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+}
+
+.lp-path-item,
+.lp-workbench-item,
+.lp-featured-list a {
+  border: 1px solid rgba(108, 75, 150, 0.15);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: 0 18px 54px rgba(108, 75, 150, 0.08);
+}
+
+.lp-path-item.is-featured {
+  background: linear-gradient(140deg, rgba(36, 5, 80, 0.96) 0%, rgba(108, 75, 150, 0.9) 58%, rgba(213, 189, 237, 0.86) 100%);
+}
+
+.lp-path-item.is-featured h3,
+.lp-path-item.is-featured p,
+.lp-path-item.is-featured span,
+.lp-path-item.is-featured em {
+  color: #ffffff;
+}
+
+@media (max-width: 720px) {
+  .lp-studio-top {
+    display: block;
+    padding: 1.1rem 1rem 0;
+  }
+
+  .lp-studio-top strong {
+    font-size: 1.55rem;
+  }
+
+  .lp-studio-top span {
+    font-size: 0.92rem;
+  }
+
+  .lp-studio-body {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding: 0.8rem;
+  }
+
+  .lp-studio-query {
+    border: 0;
+    padding: 0.9rem;
+  }
+
+  .lp-studio-query strong {
+    font-size: 1.15rem;
+  }
+
+  .lp-studio-query p {
+    margin-top: 0.55rem;
+    font-size: 0.92rem;
+  }
+
+  .lp-studio-route,
+  .lp-studio-steps {
+    display: none;
+  }
+
+  .lp-contrast {
+    grid-template-columns: 1fr;
+    margin-top: 0.5rem;
+    border-radius: 18px;
+    padding: 2rem 1.1rem;
+  }
+
+  .lp-promise-copy h2 {
+    max-width: 10ch;
+    font-size: 2.55rem;
+  }
+
+  .lp-promise-copy p {
+    font-size: 0.98rem;
+    line-height: 1.72;
+  }
+
+  .lp-promise-mark {
+    justify-items: start;
+    font-size: 2.35rem;
   }
 }
