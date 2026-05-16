@@ -1862,6 +1862,15 @@ main:has(.lp-home) {
   color: #21112f;
 }
 
+.lp-home .lp-home-copy h1,
+.lp-home .lp-home-copy h1 span,
+:root[data-theme="dark"] .lp-home .lp-home-copy h1,
+:root[data-theme="dark"] .lp-home .lp-home-copy h1 span {
+  background: none;
+  color: #21112f;
+  -webkit-text-fill-color: #21112f;
+}
+
 :root[data-theme="dark"] .lp-lede,
 :root[data-theme="dark"] .lp-home p,
 :root[data-theme="dark"] .lp-home-proof {
@@ -1884,10 +1893,22 @@ main:has(.lp-home) {
   color: #ffffff;
 }
 
+.lp-featured-list a:hover,
+.lp-featured-list a:focus-visible,
+.lp-featured-list a:active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
 .lp-featured-list a:hover p,
 .lp-featured-list a:focus-visible p,
 .lp-featured-list a:active p {
   opacity: 0.82;
+}
+
+.lp-featured-list a:hover strong,
+.lp-featured-list a:focus-visible strong,
+.lp-featured-list a:active strong {
+  -webkit-text-fill-color: #ffffff;
 }
 
 :root[data-theme="dark"] .lp-studio-route h2,
