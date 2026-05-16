@@ -1527,11 +1527,21 @@ main:has(.lp-home) {
   background: linear-gradient(140deg, rgba(36, 5, 80, 0.96) 0%, rgba(108, 75, 150, 0.9) 58%, rgba(213, 189, 237, 0.86) 100%);
 }
 
+.lp-path-item.is-featured h3 {
+  max-width: none;
+  font-size: clamp(2.15rem, 3.3vw, 3.1rem);
+  line-height: 1.04;
+}
+
 .lp-path-item.is-featured h3,
 .lp-path-item.is-featured p,
 .lp-path-item.is-featured span,
 .lp-path-item.is-featured em {
   color: #ffffff;
+}
+
+.lp-path-item.is-featured em {
+  display: none;
 }
 
 @media (max-width: 720px) {

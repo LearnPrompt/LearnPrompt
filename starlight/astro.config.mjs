@@ -9,8 +9,12 @@ export default defineConfig({
   base: isGitHubPages ? "/LearnPrompt" : undefined,
   integrations: [
     starlight({
-      title: "LearnPrompt AI 实战 Wiki",
+      title: "LearnPrompt",
       description: "面向普通 AI 爱好者和实践者的中文 AI 编程、Agent、Skills 与知识工作台教程。",
+      logo: {
+        src: "./src/assets/learnprompt-logo.png",
+        alt: "LearnPrompt",
+      },
       customCss: ["./src/styles/custom.css"],
       editLink: {
         baseUrl:
