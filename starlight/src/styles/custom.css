@@ -1506,6 +1506,23 @@ main:has(.lp-home) {
   box-shadow: 0 18px 54px rgba(108, 75, 150, 0.08);
 }
 
+.lp-featured-list a {
+  grid-template-columns: 3.4rem minmax(0, 0.52fr) minmax(0, 0.82fr);
+  gap: 1.2rem;
+  padding: 1.05rem 1.2rem;
+}
+
+.lp-featured-list span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border: 1px solid rgba(108, 75, 150, 0.18);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(36, 5, 80, 0.08), rgba(213, 189, 237, 0.18));
+}
+
 .lp-path-item.is-featured {
   background: linear-gradient(140deg, rgba(36, 5, 80, 0.96) 0%, rgba(108, 75, 150, 0.9) 58%, rgba(213, 189, 237, 0.86) 100%);
 }
@@ -1576,5 +1593,17 @@ main:has(.lp-home) {
   .lp-promise-mark {
     justify-items: start;
     font-size: 2.35rem;
+  }
+
+  .lp-featured-list a {
+    grid-template-columns: 3rem minmax(0, 1fr);
+    gap: 0.85rem;
+    padding: 1.05rem 1rem;
+  }
+
+  .lp-featured-list span {
+    width: 2.15rem;
+    height: 2.15rem;
+    justify-self: center;
   }
 }
