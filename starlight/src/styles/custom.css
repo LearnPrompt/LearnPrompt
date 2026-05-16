@@ -2009,3 +2009,188 @@ main:has(.lp-home) {
   color: #ffffff;
   -webkit-text-fill-color: #ffffff;
 }
+
+/* Homepage contact and legacy blocks. */
+.lp-contact,
+.lp-legacy {
+  grid-template-columns: minmax(0, 0.82fr) minmax(20rem, 1.18fr);
+  align-items: center;
+}
+
+.lp-contact {
+  margin-top: 0.5rem;
+  border-radius: 24px;
+  padding: clamp(2rem, 5vw, 4rem);
+  background:
+    linear-gradient(135deg, rgba(36, 5, 80, 0.94) 0%, rgba(108, 75, 150, 0.88) 54%, rgba(213, 189, 237, 0.9) 100%);
+  box-shadow: 0 30px 80px rgba(108, 75, 150, 0.18);
+}
+
+.lp-contact .lp-eyebrow,
+.lp-contact h2,
+.lp-contact p {
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
+.lp-contact h2,
+.lp-legacy h2 {
+  font-size: clamp(2.7rem, 5.5vw, 5.2rem);
+  line-height: 0.98;
+}
+
+.lp-legacy h2 {
+  font-size: clamp(2.7rem, 4.4vw, 4.5rem);
+  overflow-wrap: normal;
+  word-break: keep-all;
+}
+
+.lp-contact p,
+.lp-legacy p {
+  max-width: 37rem;
+  margin: 1.1rem 0 0;
+  font-size: 1.04rem;
+  line-height: 1.78;
+}
+
+.lp-contact p {
+  color: rgba(255, 255, 255, 0.82);
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.82);
+}
+
+.lp-contact-actions,
+.lp-legacy .lp-button {
+  margin-top: 1.6rem;
+}
+
+.lp-contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.72rem;
+}
+
+.lp-contact .lp-button {
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+  -webkit-text-fill-color: #ffffff;
+}
+
+.lp-contact .lp-button-primary {
+  color: #21112f;
+  background: #ffffff;
+  -webkit-text-fill-color: #21112f;
+}
+
+.lp-copy-button {
+  cursor: pointer;
+  font-family: var(--sl-font);
+}
+
+.lp-contact-panel {
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 24px 64px rgba(36, 5, 80, 0.2);
+}
+
+.lp-contact-row {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.lp-contact-row span {
+  color: rgba(255, 255, 255, 0.68);
+  font-family: var(--sl-font-mono);
+  font-size: 0.74rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.lp-contact-row a {
+  overflow-wrap: anywhere;
+  color: #ffffff;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.lp-contact-panel img,
+.lp-legacy-preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.lp-contact-panel img {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.lp-legacy {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.lp-legacy p {
+  color: var(--lp-color-muted);
+}
+
+.lp-legacy-preview {
+  display: block;
+  overflow: hidden;
+  border: 1px solid rgba(108, 75, 150, 0.16);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.58);
+  box-shadow: 0 22px 70px rgba(108, 75, 150, 0.14);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.lp-legacy-preview:hover,
+.lp-legacy-preview:focus-visible {
+  box-shadow: 0 28px 80px rgba(108, 75, 150, 0.22);
+  outline: 0;
+  transform: translateY(-3px);
+}
+
+.lp-legacy-preview img {
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+
+:root[data-theme="dark"] .lp-contact {
+  background: linear-gradient(135deg, #2b0b63 0%, #7446a5 56%, #d5bded 100%);
+}
+
+:root[data-theme="dark"] .lp-legacy-preview {
+  border-color: rgba(213, 189, 237, 0.16);
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.28);
+}
+
+@media (max-width: 980px) {
+  .lp-contact,
+  .lp-legacy {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .lp-contact {
+    border-radius: 18px;
+    padding: 2rem 1.1rem;
+  }
+
+  .lp-contact h2,
+  .lp-legacy h2 {
+    font-size: 2.55rem;
+  }
+
+  .lp-contact-row {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+}
