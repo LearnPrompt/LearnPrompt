@@ -90,6 +90,22 @@ const outputs = [
 <div class="lp-home">
   <section class="lp-home-hero" data-od-id="home-hero">
     <div class="lp-home-copy">
+      <svg class="lp-brand-ribbon" viewBox="0 0 320 52" role="presentation" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="lp-ribbon-gradient" x1="0" x2="320" y1="0" y2="52" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#240550" />
+            <stop offset="0.48" stop-color="#6c4b96" />
+            <stop offset="1" stop-color="#d5bded" />
+          </linearGradient>
+          <linearGradient id="lp-ribbon-glint" x1="0" x2="320" y1="0" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#ffffff" stop-opacity="0" />
+            <stop offset="0.52" stop-color="#ffffff" stop-opacity="0.95" />
+            <stop offset="1" stop-color="#ffffff" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+        <path class="lp-ribbon-track" d="M6 31 C 62 4 115 47 170 23 S 263 11 314 30" />
+        <path class="lp-ribbon-shine" d="M6 31 C 62 4 115 47 170 23 S 263 11 314 30" />
+      </svg>
       <p class="lp-eyebrow">LearnPrompt v2</p>
       <h1><span>把 AI 用进</span><span>真实项目</span></h1>
       <p class="lp-lede">
@@ -123,6 +139,15 @@ const outputs = [
         </div>
         <div class="lp-studio-route">
           <h2>想法变成任务卡</h2>
+          <svg class="lp-route-flow" viewBox="0 0 320 92" role="presentation" aria-hidden="true" focusable="false">
+            <path class="lp-route-flow-line" d="M23 54 C 78 16 128 78 177 43 S 257 20 297 52" />
+            <g class="lp-route-node-group">
+              <circle cx="23" cy="54" r="7" />
+              <circle cx="108" cy="48" r="7" />
+              <circle cx="206" cy="39" r="7" />
+              <circle cx="297" cy="52" r="7" />
+            </g>
+          </svg>
           <p>再交给 Codex / Claude Code 执行、审查、发布，最后沉淀为自己的 Skill。</p>
         </div>
         <div class="lp-studio-steps">
@@ -173,7 +198,7 @@ const outputs = [
       {featured.map((item, index) => (
         <a href={withBase(item.href)}>
           <span>{String(index + 1).padStart(2, "0")}</span>
-          <strong>{item.title}</strong>
+          <strong>{item.title}<em>开始读</em></strong>
           <p>{item.note}</p>
         </a>
       ))}

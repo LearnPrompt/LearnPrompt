@@ -1607,3 +1607,233 @@ main:has(.lp-home) {
     justify-self: center;
   }
 }
+
+/* LearnPrompt homepage interaction layer. */
+.lp-home-copy::before {
+  display: none;
+}
+
+.lp-brand-ribbon {
+  display: block;
+  width: min(15rem, 72%);
+  height: auto;
+  margin-bottom: 0.7rem;
+  overflow: visible;
+}
+
+.lp-ribbon-track,
+.lp-ribbon-shine {
+  fill: none;
+  stroke-linecap: round;
+  stroke-width: 7;
+}
+
+.lp-ribbon-track {
+  filter: drop-shadow(0 12px 24px rgba(108, 75, 150, 0.22));
+  stroke: url(#lp-ribbon-gradient);
+}
+
+.lp-ribbon-shine {
+  opacity: 0;
+  stroke: url(#lp-ribbon-glint);
+  stroke-dasharray: 36 340;
+  stroke-dashoffset: 260;
+}
+
+.lp-home-copy:hover .lp-ribbon-shine,
+.lp-home-copy:focus-within .lp-ribbon-shine {
+  animation: lp-ribbon-sweep 950ms ease-out both;
+}
+
+.lp-route-flow {
+  display: block;
+  width: min(100%, 19rem);
+  height: auto;
+  margin: 1.05rem 0 1.2rem;
+  overflow: visible;
+}
+
+.lp-route-flow-line {
+  fill: none;
+  opacity: 0.72;
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-dasharray: 420;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  stroke-width: 3.5;
+}
+
+.lp-route-node-group circle {
+  fill: #ffffff;
+  opacity: 0.84;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.lp-home-studio:hover .lp-route-flow-line,
+.lp-home-studio:focus-within .lp-route-flow-line {
+  animation: lp-route-draw 1200ms ease-out both;
+}
+
+.lp-home-studio:hover .lp-route-node-group circle,
+.lp-home-studio:focus-within .lp-route-node-group circle {
+  animation: lp-route-node 820ms ease-out both;
+}
+
+.lp-route-node-group circle:nth-child(2) {
+  animation-delay: 90ms;
+}
+
+.lp-route-node-group circle:nth-child(3) {
+  animation-delay: 180ms;
+}
+
+.lp-route-node-group circle:nth-child(4) {
+  animation-delay: 270ms;
+}
+
+.lp-featured-list a {
+  position: relative;
+  isolation: isolate;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease, background 180ms ease;
+}
+
+.lp-featured-list a::before {
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #240550 0%, #6c4b96 52%, #d5bded 100%);
+  content: "";
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.lp-featured-list strong {
+  position: relative;
+  display: block;
+  padding-inline-end: 4.2rem;
+}
+
+.lp-featured-list strong em {
+  position: absolute;
+  inset-block-start: 0.1rem;
+  inset-inline-end: 0;
+  color: var(--lp-primitive-violet-mid);
+  font-family: var(--sl-font);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 900;
+  opacity: 0;
+  transform: translateX(-0.35rem);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.lp-featured-list a:hover,
+.lp-featured-list a:focus-visible {
+  border-color: transparent;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 24px 64px rgba(108, 75, 150, 0.18);
+  outline: 0;
+  transform: translateY(-3px);
+}
+
+.lp-featured-list a:hover::before,
+.lp-featured-list a:focus-visible::before,
+.lp-featured-list a:active::before {
+  opacity: 1;
+}
+
+.lp-featured-list a:hover span,
+.lp-featured-list a:focus-visible span,
+.lp-featured-list a:active span {
+  border-color: transparent;
+  color: #ffffff;
+  background: linear-gradient(135deg, #240550 0%, #6c4b96 58%, #d5bded 100%);
+  transform: scale(1.06);
+}
+
+.lp-featured-list a:hover strong,
+.lp-featured-list a:focus-visible strong {
+  color: var(--lp-primitive-violet-deep);
+}
+
+.lp-featured-list a:hover strong em,
+.lp-featured-list a:focus-visible strong em,
+.lp-featured-list a:active strong em {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.lp-featured-list a:active {
+  transform: translateY(-1px) scale(0.995);
+}
+
+@keyframes lp-ribbon-sweep {
+  0% {
+    opacity: 0;
+    stroke-dashoffset: 280;
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    stroke-dashoffset: -120;
+  }
+}
+
+@keyframes lp-route-draw {
+  0% {
+    stroke-dashoffset: 420;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes lp-route-node {
+  0% {
+    opacity: 0.28;
+    transform: scale(0.72);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.16);
+  }
+  100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 720px) {
+  .lp-brand-ribbon {
+    width: 8.8rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .lp-featured-list strong {
+    padding-inline-end: 3.7rem;
+  }
+
+  .lp-featured-list strong em {
+    inset-block-start: 0;
+    font-size: 0.68rem;
+  }
+
+  .lp-featured-list a:active {
+    background: rgba(255, 255, 255, 0.9);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-ribbon-shine,
+  .lp-route-flow-line,
+  .lp-route-node-group circle,
+  .lp-featured-list a,
+  .lp-featured-list strong em {
+    animation: none;
+    transition: none;
+  }
+}
