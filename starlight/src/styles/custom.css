@@ -2013,17 +2013,34 @@ main:has(.lp-home) {
 /* Homepage contact and legacy blocks. */
 .lp-contact,
 .lp-legacy {
-  grid-template-columns: minmax(0, 0.82fr) minmax(20rem, 1.18fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
   align-items: center;
 }
 
 .lp-contact {
+  position: relative;
+  overflow: hidden;
   margin-top: 0.5rem;
   border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
   padding: clamp(2rem, 5vw, 4rem);
   background:
-    linear-gradient(135deg, rgba(36, 5, 80, 0.94) 0%, rgba(108, 75, 150, 0.88) 54%, rgba(213, 189, 237, 0.9) 100%);
-  box-shadow: 0 30px 80px rgba(108, 75, 150, 0.18);
+    radial-gradient(circle at 86% 12%, rgba(255, 255, 255, 0.34), transparent 28rem),
+    linear-gradient(135deg, rgba(39, 9, 86, 0.94) 0%, rgba(109, 70, 158, 0.88) 48%, rgba(203, 174, 238, 0.84) 100%);
+  box-shadow: 0 34px 90px rgba(87, 54, 136, 0.2);
+  isolation: isolate;
+}
+
+.lp-contact::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.2), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 44%);
+  pointer-events: none;
 }
 
 .lp-contact .lp-eyebrow,
@@ -2035,14 +2052,19 @@ main:has(.lp-home) {
 
 .lp-contact h2,
 .lp-legacy h2 {
-  font-size: clamp(2.7rem, 5.5vw, 5.2rem);
+  font-size: clamp(2.7rem, 5vw, 5rem);
   line-height: 0.98;
 }
 
 .lp-legacy h2 {
-  font-size: clamp(2.7rem, 4.4vw, 4.5rem);
+  max-width: 11.5ch;
+  font-size: clamp(2.65rem, 4.15vw, 4.45rem);
   overflow-wrap: normal;
   word-break: keep-all;
+}
+
+.lp-legacy h2 span {
+  display: block;
 }
 
 .lp-contact p,
@@ -2070,16 +2092,53 @@ main:has(.lp-home) {
 }
 
 .lp-contact .lp-button {
-  border-color: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.32);
   color: #ffffff;
-  background: rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(134, 92, 185, 0.22)),
+    rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    0 16px 34px rgba(36, 5, 80, 0.18);
   -webkit-text-fill-color: #ffffff;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
-.lp-contact .lp-button-primary {
+.lp-legacy .lp-button-primary {
+  border-color: rgba(255, 255, 255, 0.34);
+  color: #ffffff;
+  background:
+    linear-gradient(135deg, rgba(38, 17, 78, 0.96), rgba(108, 75, 150, 0.84), rgba(186, 148, 226, 0.74)),
+    rgba(108, 75, 150, 0.78);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 16px 34px rgba(36, 5, 80, 0.16);
+  -webkit-text-fill-color: #ffffff;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.lp-contact .lp-button-primary,
+.lp-contact .lp-button:hover,
+.lp-contact .lp-button:focus-visible,
+.lp-contact .lp-button:active {
   color: #21112f;
-  background: #ffffff;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(229, 214, 248, 0.86)),
+    rgba(255, 255, 255, 0.86);
   -webkit-text-fill-color: #21112f;
+}
+
+.lp-legacy .lp-button-primary:hover,
+.lp-legacy .lp-button-primary:focus-visible,
+.lp-legacy .lp-button-primary:active {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.42);
+  background:
+    linear-gradient(135deg, rgba(71, 24, 132, 0.92), rgba(173, 124, 224, 0.78)),
+    rgba(108, 75, 150, 0.78);
+  -webkit-text-fill-color: #ffffff;
 }
 
 .lp-copy-button {
@@ -2088,19 +2147,29 @@ main:has(.lp-home) {
 }
 
 .lp-contact-panel {
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.12);
+  display: grid;
+  gap: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 22px;
+  padding: 0.9rem;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08)),
+    rgba(255, 255, 255, 0.12);
   box-shadow: 0 24px 64px rgba(36, 5, 80, 0.2);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
 }
 
 .lp-contact-row {
   display: grid;
   grid-template-columns: 5.5rem minmax(0, 1fr);
+  align-items: center;
   gap: 1rem;
-  padding: 1rem 1.1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  min-height: 5.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+  padding: 1.05rem 1.1rem;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .lp-contact-row span {
@@ -2116,21 +2185,38 @@ main:has(.lp-home) {
   color: #ffffff;
   font-weight: 800;
   text-decoration: none;
+  -webkit-text-fill-color: #ffffff;
 }
 
-.lp-contact-panel img,
+.lp-contact-value {
+  justify-self: start;
+  border: 0;
+  padding: 0;
+  color: #ffffff;
+  background: transparent;
+  font-family: var(--sl-font);
+  font-size: 1.08rem;
+  font-weight: 900;
+  text-align: left;
+  -webkit-text-fill-color: #ffffff;
+}
+
+.lp-contact-value:hover,
+.lp-contact-value:focus-visible {
+  color: #ffffff;
+  outline: 2px solid rgba(255, 255, 255, 0.42);
+  outline-offset: 4px;
+  -webkit-text-fill-color: #ffffff;
+}
+
 .lp-legacy-preview img {
   display: block;
   width: 100%;
   height: auto;
 }
 
-.lp-contact-panel img {
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-}
-
 .lp-legacy {
+  overflow: hidden;
   padding-bottom: 0;
   border-bottom: 0;
 }
@@ -2142,11 +2228,15 @@ main:has(.lp-home) {
 .lp-legacy-preview {
   display: block;
   overflow: hidden;
-  border: 1px solid rgba(108, 75, 150, 0.16);
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.58);
-  box-shadow: 0 22px 70px rgba(108, 75, 150, 0.14);
+  border: 1px solid rgba(108, 75, 150, 0.18);
+  border-radius: 22px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(221, 205, 244, 0.46)),
+    rgba(255, 255, 255, 0.58);
+  box-shadow: 0 24px 76px rgba(108, 75, 150, 0.14);
   transition: transform 180ms ease, box-shadow 180ms ease;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 .lp-legacy-preview:hover,
@@ -2162,12 +2252,16 @@ main:has(.lp-home) {
 }
 
 :root[data-theme="dark"] .lp-contact {
-  background: linear-gradient(135deg, #2b0b63 0%, #7446a5 56%, #d5bded 100%);
+  background:
+    radial-gradient(circle at 86% 12%, rgba(255, 255, 255, 0.22), transparent 28rem),
+    linear-gradient(135deg, rgba(28, 7, 62, 0.98) 0%, rgba(95, 56, 141, 0.92) 58%, rgba(169, 131, 210, 0.84) 100%);
 }
 
 :root[data-theme="dark"] .lp-legacy-preview {
   border-color: rgba(213, 189, 237, 0.16);
-  background: rgba(255, 255, 255, 0.055);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(128, 92, 177, 0.08)),
+    rgba(255, 255, 255, 0.055);
   box-shadow: 0 22px 70px rgba(0, 0, 0, 0.28);
 }
 

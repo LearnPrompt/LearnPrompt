@@ -85,8 +85,8 @@ const outputs = [
   ["复盘记录", "把失败原因沉淀为下一次能复用的规则"],
 ];
 
-const contactEmail = "LearnPrompt2023@gmail.com";
-const wechatUrl = "https://aiwarts101.feishu.cn/wiki/ViZXwflaHivqjQk5Purckrjlnpb?from=from_copylink";
+const contactEmail = "carl@goodcase.ai";
+const wechatId = "aiwarts101";
 const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
 
 ---
@@ -235,12 +235,12 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
         <a class="lp-button lp-button-primary" href={`mailto:${contactEmail}?subject=${mailSubject}`}>
           Send Email
         </a>
-        <button class="lp-button lp-copy-button" type="button" data-copy-value={contactEmail}>
+        <button class="lp-button lp-copy-button" type="button" data-copy-value={contactEmail} data-copy-success="已复制邮箱">
           复制邮箱
         </button>
-        <a class="lp-button" href={wechatUrl} target="_blank" rel="noreferrer">
-          WeChat
-        </a>
+        <button class="lp-button lp-copy-button" type="button" data-copy-value={wechatId} data-copy-success="已复制微信">
+          复制微信
+        </button>
       </div>
     </div>
     <div class="lp-contact-panel" aria-label="联系方式">
@@ -250,16 +250,17 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
       </div>
       <div class="lp-contact-row">
         <span>WeChat</span>
-        <a href={wechatUrl} target="_blank" rel="noreferrer">扫码添加 / 查看微信入口</a>
+        <button class="lp-contact-value lp-copy-button" type="button" data-copy-value={wechatId} data-copy-success="已复制微信">
+          {wechatId}
+        </button>
       </div>
-      <img src={withBase("/images/learnprompt-contact.jpg")} alt="LearnPrompt 微信与公众号二维码" loading="lazy" />
     </div>
   </section>
 
   <section class="lp-home-section lp-legacy" data-od-id="legacy-site">
     <div class="lp-legacy-copy">
       <p class="lp-eyebrow">Legacy</p>
-      <h2>旧版 LearnPrompt</h2>
+      <h2><span>旧版</span><span>LearnPrompt</span></h2>
       <p>
         如果你想回看旧版课程首页、旧导航和历史内容，可以从这里进入原来的 LearnPrompt。
       </p>
@@ -277,12 +278,13 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
   document.querySelectorAll<HTMLButtonElement>(".lp-copy-button").forEach((button) => {
     const value = button.dataset.copyValue;
     const originalText = button.textContent || "复制";
+    const successText = button.dataset.copySuccess || "已复制";
     if (!value) return;
 
     button.addEventListener("click", async () => {
       try {
         await navigator.clipboard.writeText(value);
-        button.textContent = "已复制";
+        button.textContent = successText;
         window.setTimeout(() => {
           button.textContent = originalText;
         }, 1800);
