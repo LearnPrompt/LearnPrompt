@@ -91,78 +91,16 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
 
 ---
 
+<section class="lp-video-hero" data-od-id="video-hero">
+  <video class="lp-video-bg" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_155101_f2540600-6fe9-433e-8e48-b3f4b72f0727.mp4" autoplay loop muted playsinline></video>
+  <div class="lp-video-content">
+    <h1>把 AI 用进<br />真实项目</h1>
+    <p>从会提问，走到会做项目、会搭 Agent、会沉淀自己的知识工作台。</p>
+    <a class="lp-video-cta" href={withBase("/start-here/ai-practice-map/")}>开始学习</a>
+  </div>
+</section>
+
 <div class="lp-home">
-  <section class="lp-home-hero" data-od-id="home-hero">
-    <div class="lp-home-copy">
-      <svg class="lp-brand-ribbon" viewBox="0 0 320 52" role="presentation" aria-hidden="true" focusable="false">
-        <defs>
-          <linearGradient id="lp-ribbon-gradient" x1="0" x2="320" y1="0" y2="52" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#240550" />
-            <stop offset="0.48" stop-color="#6c4b96" />
-            <stop offset="1" stop-color="#d5bded" />
-          </linearGradient>
-          <linearGradient id="lp-ribbon-glint" x1="0" x2="320" y1="0" y2="0" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#ffffff" stop-opacity="0" />
-            <stop offset="0.52" stop-color="#ffffff" stop-opacity="0.95" />
-            <stop offset="1" stop-color="#ffffff" stop-opacity="0" />
-          </linearGradient>
-        </defs>
-        <path class="lp-ribbon-track" d="M6 31 C 62 4 115 47 170 23 S 263 11 314 30" />
-        <path class="lp-ribbon-shine" d="M6 31 C 62 4 115 47 170 23 S 263 11 314 30" />
-      </svg>
-      <p class="lp-eyebrow">LearnPrompt v2</p>
-      <h1><span>把 AI 用进</span><span>真实项目</span></h1>
-      <p class="lp-lede">
-        从会提问，走到会做项目、会搭 Agent、会沉淀自己的知识工作台。
-        新版 LearnPrompt 是一套面向普通 AI 爱好者的中文实战课程，而不是工具链接集合。
-      </p>
-      <div class="lp-home-actions">
-        <a class="lp-button lp-button-primary" href={withBase("/start-here/ai-practice-map/")}>
-          开始学习
-        </a>
-        <a class="lp-button" href={withBase("/ai-coding/choose-claude-code-or-codex/")}>
-          进入 AI 编程路径
-        </a>
-      </div>
-      <div class="lp-home-proof" aria-label="站点状态">
-        <span><strong>40+</strong> 首批教程</span>
-        <span><strong>5</strong> 条学习路径</span>
-        <span><strong>0</strong> 广告脚本</span>
-      </div>
-    </div>
-
-    <div class="lp-home-studio" aria-label="LearnPrompt 学习工作台预览">
-      <div class="lp-studio-top">
-        <strong>从一个想法到可发布项目</strong>
-        <span>需求会被拆成能执行、能验收、能复用的路径。</span>
-      </div>
-      <div class="lp-studio-body">
-        <div class="lp-studio-query">
-          <strong>“我想用 AI 做一个可发布项目”</strong>
-          <p>先别急着选工具，先让问题变清楚。</p>
-        </div>
-        <div class="lp-studio-route">
-          <h2>想法变成任务卡</h2>
-          <svg class="lp-route-flow" viewBox="0 0 320 92" role="presentation" aria-hidden="true" focusable="false">
-            <path class="lp-route-flow-line" d="M23 54 C 78 16 128 78 177 43 S 257 20 297 52" />
-            <g class="lp-route-node-group">
-              <circle cx="23" cy="54" r="7" />
-              <circle cx="108" cy="48" r="7" />
-              <circle cx="206" cy="39" r="7" />
-              <circle cx="297" cy="52" r="7" />
-            </g>
-          </svg>
-          <p>再交给 Codex / Claude Code 执行、审查、发布，最后沉淀为自己的 Skill。</p>
-        </div>
-        <div class="lp-studio-steps">
-          <span><strong>01</strong> 写清需求</span>
-          <span><strong>02</strong> 选择工具</span>
-          <span><strong>03</strong> 验收发布</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <section class="lp-home-section lp-contrast" data-od-id="learning-promise">
     <div class="lp-promise-copy">
       <h2>每一页都要帮你多做出一步</h2>
@@ -180,7 +118,11 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
 
   <section class="lp-home-section" data-od-id="learning-paths">
     <div class="lp-section-heading">
-      <h2>按目标进入，不用从目录硬读</h2>
+      <h2>
+        <span>按目标进入，</span>
+        <span>不用按目录顺序，</span>
+        <span>就从不熟的开始。</span>
+      </h2>
     </div>
     <div class="lp-path-grid">
       {paths.map((path, index) => (
@@ -264,11 +206,11 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
       <p>
         如果你想回看旧版课程首页、旧导航和历史内容，可以从这里进入原来的 LearnPrompt。
       </p>
-      <a class="lp-button lp-button-primary" href="https://www.learnprompt.pro/" target="_blank" rel="noreferrer">
+      <a class="lp-button lp-button-primary" href="https://v1.learnprompt.pro/" target="_blank" rel="noreferrer">
         访问旧版 LearnPrompt
       </a>
     </div>
-    <a class="lp-legacy-preview" href="https://www.learnprompt.pro/" target="_blank" rel="noreferrer" aria-label="访问旧版 LearnPrompt">
+    <a class="lp-legacy-preview" href="https://v1.learnprompt.pro/" target="_blank" rel="noreferrer" aria-label="访问旧版 LearnPrompt">
       <img src={withBase("/images/legacy-learnprompt-home.jpg")} alt="旧版 LearnPrompt 首页截图" loading="lazy" />
     </a>
   </section>

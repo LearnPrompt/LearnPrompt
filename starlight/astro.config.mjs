@@ -36,8 +36,6 @@ export default defineConfig({
         { label: "Agent Skills", items: [{ autogenerate: { directory: "agent-skills" } }] },
         { label: "Obsidian AI", items: [{ autogenerate: { directory: "obsidian-ai" } }] },
         { label: "Hermes / OpenClaw", items: [{ autogenerate: { directory: "agent-frameworks" } }] },
-        { label: "来源与归档", items: [{ autogenerate: { directory: "sources" } }] },
-        { label: "旧内容归档", items: [{ autogenerate: { directory: "archive" } }] },
       ],
       head: [
         {

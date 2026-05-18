@@ -5,3 +5,9 @@ dist/
 .env.*
 !.env.example
 !package-lock.json
+
+# Local development notes
+LearnPrompt-Starlight-Migration-Brief.md
+*-sources.md
+*-attribution.md
+SOURCES.md
