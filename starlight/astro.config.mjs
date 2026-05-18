@@ -11,6 +11,7 @@ export default defineConfig({
     starlight({
       title: "LearnPrompt",
       description: "面向普通 AI 爱好者和实践者的中文 AI 编程、Agent、Skills 与知识工作台教程。",
+      favicon: "/favicon.svg?v=transparent-circle",
       logo: {
         src: "./src/assets/learnprompt-logo.png",
         alt: "LearnPrompt",
