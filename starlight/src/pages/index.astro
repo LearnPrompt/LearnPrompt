@@ -88,7 +88,15 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
         </div>
 
         <div class="lp-hero-frame" aria-label="LearnPrompt visual reel">
-          <video src={withBase("/wiki-transition.mp4")} autoplay loop muted playsinline></video>
+          <video
+            src={withBase("/videos/wiki-transition-v1.mp4")}
+            autoplay
+            loop
+            muted
+            playsinline
+            preload="metadata"
+            poster={withBase("/images/wiki-transition-poster-v1.jpg")}
+          ></video>
           <div class="lp-frame-overlay">
             <span>Scene 001</span>
             <strong>Prompt → Project → Skill</strong>
