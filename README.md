@@ -2,65 +2,116 @@
 
 中文文档 | [README in English](./README_EN.md)
 
-永久免费开源的 AIGC 课程 https://www.learnprompt.pro
+LearnPrompt 是一个永久免费开源的中文 AI 实战教程站，覆盖提示语工程、ChatGPT、RAG、Agent、AI 编程、Agent Skills、Obsidian AI、Midjourney、Runway、Stable Diffusion、数字人、AI 声音与音乐、大模型微调等主题。
 
-目前已支持 提示语工程，ChatGPT，RAG，Agent，Midjourney，Runway，Stable Diffusion，数字人，AI声音&音乐，大模型微调
+官网：https://www.learnprompt.pro
 
-> 0804全量更新
-> v4.0版本！支持全新UI，多语言，评论区，日报，投稿等多种新功能，欢迎👏大家探索
+## 当前站点架构
 
-[![Twitter](https://img.shields.io/twitter/url?label=Follow%20%40aiwarts&style=social&url=https%3A%2F%2Ftwitter.com%2Flearnprompting)](https://twitter.com/aiwarts?s=21&t=bh5DcWYZX2rSeis-DiWzvA)
-![Website](https://img.shields.io/website?down_message=offline%20%3A%28&up_message=learnprompt.pro&url=https%3A%2F%2Flearnprompting.org)
+当前主站已经迁移到 Astro Starlight，站点源码位于：
 
-## 更新日志 0804
+```text
+starlight/
+```
 
-- [每日精选](https://www.learnprompt.pro/article/Daily)更新篇章破二百天！
-- 更新评论区模块
-- 新UI基本适配移动端
-- 新增大模型模块
+仓库根目录中仍保留旧版 Docusaurus 相关内容，作为历史内容与迁移参考；Vercel 生产构建入口以根目录 `vercel.json` 为准，实际构建 `starlight/` 子项目。
 
-## 更新计划 RoadMap
+## 本地运行
 
-- [X] 持续迭代 ChatGPT 的优秀案例
-- [X] Runway AI视频制作教程的案例更新
-- [X] Stable Diffusion 文生图教程
-- [X] GPT4插件 & API应用开发
-- [X] GPTs教程
-- [X] LLMs大模型微调
-- [X] AI Agents知识体系
-- [X] AI数字人
-- [X] AI声音&音乐
-- [X] Llama2-index 个人文档问答
-- [X] GPT-SoVits声音克隆
-- [X] OpenAI Sora世界模型
-- [ ] 更多系统教程！
+```bash
+cd starlight
+npm ci
+npm run dev -- --host 0.0.0.0
+```
 
-对后续内容感兴趣的话，不妨点一个star！
+默认本地地址：
 
-### Star History
+```text
+http://localhost:4321/
+```
 
-[![Star History Chart](https://api.star-history.com/svg?repos=LearnPrompt/LearnPrompt&type=Date)](https://star-history.com/#LearnPrompt/LearnPrompt&Date)
+## 构建验收
 
+```bash
+cd starlight
+npm run build
+```
+
+构建产物输出到：
+
+```text
+starlight/dist/
+```
+
+## Vercel 部署设置
+
+本仓库使用根目录 `vercel.json` 固定 Vercel 构建配置，避免 Vercel 默认从旧 Docusaurus 根项目构建。
+
+当前配置为：
+
+```json
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "cd starlight && npm ci",
+  "buildCommand": "cd starlight && npm run build",
+  "outputDirectory": "starlight/dist"
+}
+```
+
+如果在 Vercel Dashboard 中手动核对，请确保：
+
+- Install Command：`cd starlight && npm ci`
+- Build Command：`cd starlight && npm run build`
+- Output Directory：`starlight/dist`
+- 不要为 Starlight 添加旧 Docusaurus 的全量 SPA rewrite。
+
+## GitHub Pages 预览
+
+Starlight 预览站点也可以通过 GitHub Pages 构建：
+
+```bash
+cd starlight
+npm run build:pages
+```
+
+公开预览地址：
+
+```text
+https://learnprompt.github.io/LearnPrompt/
+```
+
+## 迁移原则
+
+- 不新增 analytics、telemetry 或广告脚本。
+- 公开资料只做教程化改写，不全文搬运。
+- 旧 Docusaurus 内容暂不删除，后续逐步迁移、过时标记和重定向。
+- UI 与内容结构优先服务真实学习路径，而不是简单堆目录。
 
 ## 进群交流 & 支持我们
 
-感谢大家对课程内容的热烈支持！「AI沃茨」正在不断成长！目前交流群40+，供大家自由分享和探讨知识。你可以直接添加我们开发者的微信：`aiwarts101`。
+感谢大家对课程内容的支持。「AI 沃茨」正在不断成长，交流群供大家自由分享和探讨 AI 实战经验。你可以添加开发者微信：`aiwarts101`。
 
 ## 提交反馈
 
-我们十分高兴能得到你们的反馈，包括但不限于：
+欢迎反馈：
 
-- 内容上的建议
+- 内容建议
 - 格式修改
-- 新内容贡献（欢迎加入我们！）
+- 新内容贡献
+- 站点体验问题
 
-如果你有任何问题、意见或建议，你可以：
-- 在GitHub上提出一个[issue](https://github.com/LearnPrompt/LearnPrompt/issues)
-- Email us at [carl@goodcase.ai](mailto:carl@goodcase.ai)
+你可以通过以下方式联系：
+
+- 在 GitHub 提交 [issue](https://github.com/LearnPrompt/LearnPrompt/issues)
+- Email：[carl@goodcase.ai](mailto:carl@goodcase.ai)
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=LearnPrompt/LearnPrompt&type=Date)](https://star-history.com/#LearnPrompt/LearnPrompt&Date)
 
 ## Reference
 
-编写本教程时参考了以下教程或文档的内容和示例，感谢创作者们的付出！
+编写本教程时参考了以下教程或文档的内容和示例，感谢创作者们的付出：
 
 1. [Learn Prompting](https://learnprompting.org/zh-Hans/)
 2. [Midjourney Documentation](https://docs.midjourney.com/)
