@@ -1,0 +1,36 @@
+---
+title: 检查清单型 Skill 设计
+description: 把经验变成稳定可执行的审查步骤。
+sidebar:
+  order: 4
+difficulty: intermediate
+source_repo: alchaincyf/agent-skills-orange-book
+source_url: https://github.com/alchaincyf/agent-skills-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/agent-skills-orange-book" url="https://github.com/alchaincyf/agent-skills-orange-book" updatedFrom="2026-05" note="仅参考主题结构，正文重新组织。" />
+
+## 适用场景
+
+代码审查、发布前检查、README 验收、文章去 AI 味，都适合检查清单型 Skill。
+
+## 写法
+
+1. 列出检查项。
+2. 每项说明通过标准。
+3. 要求发现问题时给证据。
+4. 明确“没有问题”也要输出残余风险。
+
+## 常见错误
+
+- 检查项太多，Agent 无法优先级排序。
+- 每项都很抽象，例如“专业”“好看”“完整”。
+- 没有要求输出证据。
+
+## 实战案例
+
+README 验收 Skill 可以检查：目标用户是否清楚、安装命令是否可复制、示例是否能跑、FAQ 是否覆盖失败场景。

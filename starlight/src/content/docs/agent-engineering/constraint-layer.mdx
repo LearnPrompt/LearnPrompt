@@ -1,0 +1,36 @@
+---
+title: 约束层：权限、沙箱和风险分级
+description: 把 Agent 的能力限制在任务需要的范围内。
+sidebar:
+  order: 3
+difficulty: intermediate
+source_repo: alchaincyf/harness-engineering-orange-book
+source_url: https://github.com/alchaincyf/harness-engineering-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/harness-engineering-orange-book" url="https://github.com/alchaincyf/harness-engineering-orange-book" updatedFrom="2026-05" />
+
+## 核心概念
+
+约束层决定 Agent 能做什么、什么时候需要确认、失败后如何回滚。它比“信任模型”更可靠。
+
+## 风险分级
+
+1. 观察：读文件、搜索、截图、请求公开网页。
+2. 修改：写代码、生成文件、格式化。
+3. 发布：部署、发消息、交易、修改账号设置。
+
+## 操作步骤
+
+1. 给每类工具标注风险。
+2. 高风险操作写入人工确认点。
+3. 所有写操作都要可追踪。
+4. 生产操作必须有回滚方案。
+
+## 常见错误
+
+把“本地运行”误认为没有风险。本地 Agent 同样可能删除文件、泄露日志或误改配置。

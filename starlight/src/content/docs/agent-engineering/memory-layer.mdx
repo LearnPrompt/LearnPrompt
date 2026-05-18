@@ -1,0 +1,36 @@
+---
+title: 记忆层：偏好、事实和项目上下文怎么分开
+description: 避免把所有信息都塞进同一个长期记忆。
+sidebar:
+  order: 5
+difficulty: intermediate
+source_repo: alchaincyf/harness-engineering-orange-book
+source_url: https://github.com/alchaincyf/harness-engineering-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/harness-engineering-orange-book" url="https://github.com/alchaincyf/harness-engineering-orange-book" updatedFrom="2026-05" />
+
+## 三类记忆
+
+- 偏好：用户喜欢的表达、流程和默认选择。
+- 事实：账号、项目名、仓库、环境状态。
+- 项目上下文：架构、运行命令、文件边界、历史决策。
+
+## 操作步骤
+
+1. 偏好写进用户级配置。
+2. 项目规则写进仓库。
+3. 临时事实写进任务记录。
+4. 定期清理过期信息。
+
+## 常见错误
+
+把临时状态写成永久记忆。比如“今天 iCloud 没同步好”不一定永远成立，应记录时间和限制。
+
+## 实战案例
+
+Obsidian vault 可作为项目上下文来源，但 Agent 不能默认所有 iCloud 文件都已完整下载；需要先检查本地可用性。

@@ -1,0 +1,38 @@
+---
+title: Codex CLI 入门工作流
+description: 用 Codex CLI 完成计划、编辑、验证和汇报。
+sidebar:
+  order: 1
+difficulty: beginner
+source_repo: alchaincyf/codex-orange-book
+source_url: https://github.com/alchaincyf/codex-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/codex-orange-book" url="https://github.com/alchaincyf/codex-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+
+## 最小闭环
+
+Codex CLI 的核心不是聊天，而是把工程任务推进到可验证状态：读代码、定计划、改文件、跑检查、说明结果。
+
+## 操作步骤
+
+1. 进入项目根目录，先看 `git status`。
+2. 让 Codex 搜索相关文件，不急着编辑。
+3. 要求它列出 3-6 条计划和预计文件。
+4. 执行最小改动。
+5. 跑最快相关检查，再跑完整构建。
+6. 查看 diff，决定是否提交。
+
+## 常见错误
+
+- 在错误目录启动。
+- 没有告诉 Codex 哪些文件不能改。
+- 只看回答，不看真实 diff。
+
+## 实战案例
+
+迁移 LearnPrompt 时，Codex 先新建分支和 `starlight/` 子目录，保留旧站文件，让每个阶段都能单独 review。

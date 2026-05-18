@@ -1,0 +1,156 @@
+---
+title: Claude Code 安装与第一个项目
+description: 用一个小项目建立 Claude Code 的基本工作流。
+sidebar:
+  order: 1
+difficulty: beginner
+source_repo: alchaincyf/claude-code-orange-book
+source_url: https://github.com/alchaincyf/claude-code-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/claude-code-orange-book" url="https://github.com/alchaincyf/claude-code-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+
+## 学习目标
+
+你要完成的不是安装本身，而是跑通“读项目、做小改动、验证、提交”的闭环。
+
+安装命令可能随官方版本变化，所以这篇不把重点放在背命令。你真正要建立的是一个安全的本地工作方式：让 Claude Code 能读项目、能提出计划、能做小改动，但不能在没有你确认时乱改一大片。
+
+## 开始前准备
+
+先准备一个可以放心试错的小项目。最理想的项目满足这些条件：
+
+- 已经是 git 仓库。
+- 有 README 或 `package.json` 这类入口文件。
+- 有一个能跑的检查命令，比如 build、test、lint。
+- 没有真实密钥、生产配置、私密数据。
+
+如果你没有项目，可以新建一个最小网页、脚本或文档站。第一天不要选公司核心仓库。
+
+## 第一个项目的目标
+
+你的第一个 Claude Code 项目不应该是“让它帮我重构”。更好的目标是：
+
+```md
+给 README 增加一段本地启动说明，并确保现有构建命令仍然通过。
+```
+
+这个目标足够小，但包含完整闭环：
+
+1. 读项目。
+2. 提计划。
+3. 改文件。
+4. 跑检查。
+5. 看 diff。
+
+## 操作步骤
+
+1. 准备一个已有 git 项目或新建小项目。
+2. 打开 Claude Code，让它先只读盘点目录、运行命令和测试。
+3. 要求它提出 3-6 条改动计划。
+4. 选择一个最小改动执行。
+5. 跑测试或构建，并检查 `git diff`。
+
+## 第一次对话怎么开
+
+不要一上来就说“帮我优化这个项目”。用下面这段更稳：
+
+```md
+你先不要改文件。请先阅读项目根目录的 README、package 文件和目录结构。
+
+然后告诉我：
+1. 这个项目是什么。
+2. 本地启动或构建命令可能是什么。
+3. 如果我要做一个最小改动，你建议从哪里开始。
+4. 你预计会读哪些文件，不要超过 8 个。
+```
+
+这段话的目的，是让 AI 先建立地图，而不是立刻动手。
+
+## 让它做第一个小改动
+
+等它读完项目后，再给一个明确任务：
+
+```md
+现在只做一个小改动：补充 README 的本地启动说明。
+
+要求：
+- 不要改代码逻辑。
+- 不要新增依赖。
+- 保持现有文风。
+- 改完后告诉我需要跑哪个命令验证。
+```
+
+如果项目没有 README，可以换成“给首页增加一个简短说明”或“给脚本增加 usage 输出”。
+
+## 验收方式
+
+改完以后，至少做三件事：
+
+1. 看 `git diff`，确认它没有改无关文件。
+2. 跑它建议的检查命令。
+3. 让它解释每个改动的原因。
+
+如果检查失败，不要直接让它“继续修”。先要求它复述错误：
+
+```md
+先不要继续改。请解释刚才的错误：
+
+1. 哪一行或哪个文件报错？
+2. 你认为根因是什么？
+3. 最小修复是什么？
+4. 你会如何验证修复有效？
+```
+
+## 建议写进项目规则
+
+跑完第一轮以后，可以把下面这段放进项目根目录的 `CLAUDE.md`：
+
+```md
+# Claude Code Rules
+
+- Before editing, read README and package files.
+- Prefer small, reviewable diffs.
+- State the exact files you plan to change before editing.
+- Run the fastest relevant check after behavior changes.
+- Never print or modify secrets, tokens, or .env values.
+- Summarize changed files and verification commands at the end.
+```
+
+这份规则不需要长。它的作用是减少重复提醒。
+
+## 常见错误
+
+- 一上来让它“重构整个项目”。
+- 没有让它先读 README 和 package 文件。
+- 没有保留失败输出，导致下一轮重复踩坑。
+- 在没有 git 状态的情况下连续改很多轮。
+- 把安装成功误认为工作流成功。真正的成功是能完成一次可验收小改动。
+
+## 安全边界
+
+第一次使用时，建议默认保守：
+
+- 不让它处理真实密钥和生产配置。
+- 不让它自动提交或推送，除非你已经看过 diff。
+- 不让它改系统级配置。
+- 不让它批量删除文件。
+
+等你熟悉项目规则、命令和回滚方式后，再逐步放宽权限。
+
+## 完成标准
+
+你完成这篇教程，不是因为工具打开了，而是因为你已经拿到这些东西：
+
+- 一个小改动。
+- 一次真实验收命令。
+- 一份 `git diff`。
+- 一条写回项目规则的经验。
+
+## 延伸阅读
+
+- [Claude Code 公开资料](https://github.com/alchaincyf/claude-code-orange-book)

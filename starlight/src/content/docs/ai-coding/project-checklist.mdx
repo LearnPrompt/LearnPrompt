@@ -1,0 +1,41 @@
+---
+title: AI 编程项目的任务和验收清单
+description: 开始项目之前先写好的最小工程清单。
+sidebar:
+  order: 5
+difficulty: beginner
+source_repo: alchaincyf/harness-engineering-orange-book
+source_url: https://github.com/alchaincyf/harness-engineering-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/harness-engineering-orange-book" url="https://github.com/alchaincyf/harness-engineering-orange-book" updatedFrom="2026-05" />
+
+## 最小清单
+
+- 仓库地址和当前分支。
+- 运行方式和最快检查命令。
+- 主要目录和不能碰的目录。
+- 密钥提供方式。
+- 用户验收路径。
+- 回滚方式。
+
+## 操作步骤
+
+1. 在项目根目录写 `AGENTS.md` 或等价说明。
+2. 把“偏好”和“硬约束”分开。
+3. 给每个大任务建立分支。
+4. 每轮改动后记录命令输出和失败原因。
+
+## 常见错误
+
+- 只有口头偏好，没有写进项目。
+- 让 Agent 猜运行命令。
+- 没有指定“不要改”的文件。
+
+## 实战案例
+
+本迁移任务把新站放在 `starlight/`，旧 Docusaurus 文件只读盘点，不在第一阶段删除。这就是“不能碰的目录”和“验收范围”同时写清楚。

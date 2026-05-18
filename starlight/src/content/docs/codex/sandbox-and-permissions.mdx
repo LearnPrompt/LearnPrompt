@@ -1,0 +1,36 @@
+---
+title: Codex 沙箱与权限模式怎么理解
+description: 用风险分级理解本地 Agent 的读写边界。
+sidebar:
+  order: 2
+difficulty: beginner
+source_repo: alchaincyf/codex-orange-book
+source_url: https://github.com/alchaincyf/codex-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/codex-orange-book" url="https://github.com/alchaincyf/codex-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+
+## 核心概念
+
+沙箱不是为了限制效率，而是为了让高权限任务有清楚边界。权限越高，越要依赖 git、计划、验收和日志。
+
+## 风险分级
+
+- 低风险：只读、测试、构建、格式化。
+- 中风险：局部新增或修改文件。
+- 高风险：删除、迁移、部署、修改密钥或账单。
+
+## 操作步骤
+
+1. 根据任务风险选择权限。
+2. 高权限前先创建分支。
+3. 让 Codex 明确哪些命令会写文件。
+4. 每轮结束检查 `git status`。
+
+## 常见错误
+
+把高权限当成默认模式。高权限适合明确任务，不适合模糊探索。

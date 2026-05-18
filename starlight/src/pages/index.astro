@@ -1,0 +1,774 @@
+---
+const base = import.meta.env.BASE_URL === "/" ? "" : import.meta.env.BASE_URL.replace(/\/$/, "");
+const withBase = (href: string) => (href.startsWith("/") ? `${base}${href}` : href);
+
+const paths = [
+  {
+    index: "01",
+    title: "AI 编程入门",
+    href: "/ai-coding/choose-claude-code-or-codex/",
+    body: "从需求、计划、实现到验收，建立第一个可复用的 AI 编程闭环。",
+    meta: "5 篇 · 任务卡",
+  },
+  {
+    index: "02",
+    title: "Claude Code / Codex",
+    href: "/claude-code/install-and-first-project/",
+    body: "理解本地执行、云端任务、代码审查之间的边界和分工。",
+    meta: "14 篇 · 可审查 diff",
+  },
+  {
+    index: "03",
+    title: "Agent 工程",
+    href: "/agent-engineering/what-is-harness/",
+    body: "把模型能力放进可运行、可回滚、可观察、可验收的系统。",
+    meta: "6 篇 · 反馈闭环",
+  },
+  {
+    index: "04",
+    title: "Agent Skills",
+    href: "/agent-skills/what-are-agent-skills/",
+    body: "把稳定工作流包装成可复用的 Skill，而不是每次重新提示。",
+    meta: "7 篇 · SKILL.md",
+  },
+  {
+    index: "05",
+    title: "Obsidian AI",
+    href: "/obsidian-ai/markdown-as-agent-memory/",
+    body: "把 Markdown vault 变成 Agent 可读、可维护的长期工作台。",
+    meta: "5 篇 · 长期上下文",
+  },
+];
+
+const featured = [
+  ["Claude Code 与 Codex 怎么选", "/ai-coding/choose-claude-code-or-codex/", "先确定任务归属，避免一开始就把工具用错。"],
+  ["Agentic Coding 的最小工作流", "/ai-coding/minimum-agentic-coding-workflow/", "把 AI 编程压成计划、改动、验证、复盘四步。"],
+  ["CLAUDE.md 最小可用模板", "/claude-code/minimum-claude-md/", "让项目规则真的影响模型行为，而不是只写口号。"],
+  ["第一个 SKILL.md 怎么写", "/agent-skills/first-skill-md/", "把常用流程包装成别人也能加载的稳定能力。"],
+];
+
+const contactEmail = "carl@goodcase.ai";
+const wechatId = "aiwarts101";
+const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LearnPrompt｜把 AI 用进真实项目</title>
+    <meta name="description" content="LearnPrompt 是面向真实项目的中文 AI 编程、Agent、Skills 与知识工作台教程。" />
+  </head>
+  <body>
+    <main class="lp-site">
+      <nav class="lp-nav" aria-label="主导航">
+        <a class="lp-brand" href={withBase("/")} aria-label="LearnPrompt 首页">
+          <span>LearnPrompt</span>
+          <small>AI Practice Wiki</small>
+        </a>
+        <div class="lp-nav-links">
+          <a href={withBase("/start-here/")}>开始</a>
+          <a href="#paths">路径</a>
+          <a href="#guides">精选</a>
+          <a href="#contact">联系</a>
+        </div>
+      </nav>
+
+      <section class="lp-hero" aria-labelledby="hero-title">
+        <div class="lp-hero-copy">
+          <p class="lp-kicker">REEL 01 · LEARNPROMPT / 2026</p>
+          <h1 id="hero-title"><span>把AI</span><span>用进真实项目。</span></h1>
+          <p class="lp-hero-meta">AI Coding · Agent Engineering · Skills · Obsidian Workflow</p>
+          <p class="lp-hero-lede">不是提示词收藏夹，而是一套从想法、任务卡、代码交付到知识沉淀的实战路线。</p>
+          <div class="lp-actions">
+            <a class="lp-button lp-button-primary" href={withBase("/start-here/ai-practice-map/")}>开始学习</a>
+            <a class="lp-button" href="#paths">查看路径</a>
+          </div>
+        </div>
+
+        <div class="lp-hero-frame" aria-label="LearnPrompt visual reel">
+          <video src={withBase("/wiki-transition.mp4")} autoplay loop muted playsinline></video>
+          <div class="lp-frame-overlay">
+            <span>Scene 001</span>
+            <strong>Prompt → Project → Skill</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="lp-metrics" aria-label="核心学习产出">
+        <div>
+          <span>01</span>
+          <strong>任务卡</strong>
+          <p>把想法写成目标、边界和验收命令。</p>
+        </div>
+        <div>
+          <span>02</span>
+          <strong>项目规则</strong>
+          <p>把反复踩坑的偏好写进 AGENTS 或 CLAUDE。</p>
+        </div>
+        <div>
+          <span>03</span>
+          <strong>Skill 草稿</strong>
+          <p>把稳定流程拆成触发、输入、步骤和验收。</p>
+        </div>
+        <div>
+          <span>04</span>
+          <strong>复盘记录</strong>
+          <p>把失败原因沉淀为下次能复用的规则。</p>
+        </div>
+      </section>
+
+      <section class="lp-quote" aria-label="LearnPrompt promise">
+        <p>“每一页都要帮你多做出一步。”</p>
+        <span>不是把模型、插件和链接按热度堆起来，而是把一次 AI 实战拆成清楚的目标、边界、验收和复盘。</span>
+      </section>
+
+      <section id="paths" class="lp-section lp-paths">
+        <div class="lp-section-head">
+          <p>Selected Tracks · 2026</p>
+          <h2 class="lp-heading-lines">
+            <span>按目标进入，</span>
+            <span>不用按目录顺序，</span>
+            <span>就从不熟的开始。</span>
+          </h2>
+        </div>
+        <div class="lp-path-list">
+          {paths.map((path) => (
+            <a class="lp-path-card" href={withBase(path.href)}>
+              <span>{path.index}</span>
+              <div>
+                <h3>{path.title}</h3>
+                <p>{path.body}</p>
+              </div>
+              <em>{path.meta}</em>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section id="guides" class="lp-section lp-guides">
+        <div class="lp-section-head">
+          <p>First Reading · 入门顺序</p>
+          <h2>第一次访问，先读这几篇。</h2>
+        </div>
+        <div class="lp-guide-grid">
+          {featured.map(([title, href, note], index) => (
+            <a class="lp-guide-card" href={withBase(href)}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <h3>{title}</h3>
+              <p>{note}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section class="lp-section lp-legacy">
+        <div>
+          <p class="lp-kicker">Archive · Legacy Site</p>
+          <h2 class="lp-heading-lines">
+            <span>旧版 LearnPrompt</span>
+            <span>依然保留。</span>
+          </h2>
+          <p>如果你想回看旧版课程首页、旧导航和历史内容，可以从这里进入原来的 LearnPrompt。</p>
+          <a class="lp-button lp-button-primary" href="https://v1.learnprompt.pro/" target="_blank" rel="noreferrer">访问旧版</a>
+        </div>
+        <a class="lp-legacy-shot" href="https://v1.learnprompt.pro/" target="_blank" rel="noreferrer" aria-label="访问旧版 LearnPrompt">
+          <img src={withBase("/images/legacy-learnprompt-home.jpg")} alt="旧版 LearnPrompt 首页截图" loading="lazy" />
+        </a>
+      </section>
+
+      <section id="contact" class="lp-section lp-contact">
+        <div>
+          <p class="lp-kicker">Get in Touch · 联系</p>
+          <h2>有想法，找我聊聊吧。</h2>
+          <p>想一起做 AI 教程、Agent 工作流、Skill 包装，或者只是想反馈这个新版站点，都可以直接联系我。</p>
+        </div>
+        <div class="lp-contact-panel">
+          <a href={`mailto:${contactEmail}?subject=${mailSubject}`}>{contactEmail}</a>
+          <span>WeChat · {wechatId}</span>
+          <a class="lp-button lp-button-primary" href={`mailto:${contactEmail}?subject=${mailSubject}`}>Send Email</a>
+        </div>
+      </section>
+
+      <footer class="lp-footer">
+        <span>© 2026 LearnPrompt</span>
+        <a href="https://github.com/LearnPrompt/LearnPrompt" target="_blank" rel="noreferrer">GitHub</a>
+      </footer>
+    </main>
+  </body>
+</html>
+
+<style>
+  :global(*) {
+    box-sizing: border-box;
+  }
+
+  :global(html) {
+    scroll-behavior: smooth;
+    background: #0a070d;
+  }
+
+  :global(body) {
+    margin: 0;
+    min-width: 320px;
+    background:
+      radial-gradient(circle at 76% 10%, rgba(196, 171, 130, 0.15), transparent 30rem),
+      radial-gradient(circle at 12% 36%, rgba(112, 88, 165, 0.18), transparent 26rem),
+      #0a070d;
+    color: #f5efe5;
+    font-family: "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  }
+
+  :global(a) {
+    color: inherit;
+  }
+
+  .lp-site {
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 4rem 4rem;
+  }
+
+  .lp-site::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.14;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+    mix-blend-mode: screen;
+  }
+
+  .lp-site > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .lp-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    width: min(1080px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 1.15rem 0;
+  }
+
+  .lp-brand {
+    display: grid;
+    gap: 0.12rem;
+    text-decoration: none;
+  }
+
+  .lp-brand span {
+    font-size: 0.98rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+
+  .lp-brand small,
+  .lp-kicker,
+  .lp-section-head p,
+  .lp-path-card span,
+  .lp-guide-card span,
+  .lp-metrics span,
+  .lp-footer {
+    color: rgba(245, 239, 229, 0.54);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  .lp-nav-links {
+    display: flex;
+    gap: 0.35rem;
+    padding: 0.32rem;
+    border: 1px solid rgba(245, 239, 229, 0.11);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.035);
+    backdrop-filter: blur(18px);
+  }
+
+  .lp-nav-links a {
+    padding: 0.52rem 0.82rem;
+    border-radius: 999px;
+    color: rgba(245, 239, 229, 0.72);
+    font-size: 0.86rem;
+    text-decoration: none;
+  }
+
+  .lp-nav-links a:hover {
+    color: #fffaf0;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .lp-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.66fr);
+    align-items: center;
+    gap: clamp(2rem, 5vw, 5.5rem);
+    min-height: calc(100vh - 7rem);
+    width: min(1080px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: clamp(2rem, 4vw, 4.2rem) 0 clamp(3rem, 5vw, 5.2rem);
+  }
+
+  .lp-kicker {
+    margin: 0 0 1.4rem;
+  }
+
+  .lp-hero h1 {
+    margin: 0;
+    max-width: 12ch;
+    color: #fff8ec;
+    font-family: "Avenir Next Condensed", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    font-size: clamp(3.5rem, 7.2vw, 7.2rem);
+    font-weight: 820;
+    letter-spacing: -0.075em;
+    line-height: 0.98;
+  }
+
+  .lp-hero h1 span {
+    display: block;
+    white-space: nowrap;
+  }
+
+  .lp-hero-meta {
+    max-width: 40rem;
+    margin: 1.6rem 0 0;
+    color: rgba(245, 239, 229, 0.64);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+  }
+
+  .lp-hero-lede {
+    max-width: 38rem;
+    margin: 1.2rem 0 0;
+    color: rgba(245, 239, 229, 0.78);
+    font-size: clamp(1.05rem, 1.7vw, 1.38rem);
+    line-height: 1.85;
+  }
+
+  .lp-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 2rem;
+  }
+
+  .lp-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.9rem;
+    border: 1px solid rgba(245, 239, 229, 0.2);
+    border-radius: 999px;
+    padding: 0 1.18rem;
+    color: #f7efe4;
+    background: rgba(255, 255, 255, 0.045);
+    font-size: 0.92rem;
+    font-weight: 760;
+    text-decoration: none;
+    transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+  }
+
+  .lp-button:hover {
+    transform: translateY(-2px);
+    border-color: rgba(245, 239, 229, 0.42);
+    background: rgba(255, 255, 255, 0.085);
+  }
+
+  .lp-button-primary {
+    border-color: rgba(228, 196, 139, 0.55);
+    color: #17100b;
+    background: linear-gradient(135deg, #fff2c8, #caa86f);
+  }
+
+  .lp-button-primary:hover {
+    background: linear-gradient(135deg, #fff8dc, #d7b77d);
+  }
+
+  .lp-hero-frame {
+    position: relative;
+    min-height: clamp(26rem, 58vh, 38rem);
+    overflow: hidden;
+    border: 1px solid rgba(245, 239, 229, 0.16);
+    border-radius: 2rem;
+    background:
+      radial-gradient(circle at 50% 42%, rgba(224, 194, 141, 0.13), transparent 17rem),
+      #151018;
+    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.52);
+  }
+
+  .lp-hero-frame video {
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    object-fit: contain;
+    padding: clamp(0.85rem, 2vw, 1.7rem);
+    filter: grayscale(0.15) contrast(1.08) brightness(0.82);
+  }
+
+  .lp-hero-frame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(10, 7, 13, 0.05), rgba(10, 7, 13, 0.72)),
+      radial-gradient(circle at 50% 16%, transparent, rgba(0, 0, 0, 0.46));
+    pointer-events: none;
+  }
+
+  .lp-frame-overlay {
+    position: absolute;
+    left: 1.2rem;
+    right: 1.2rem;
+    bottom: 1.2rem;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border: 1px solid rgba(245, 239, 229, 0.16);
+    border-radius: 1.2rem;
+    padding: 0.92rem 1rem;
+    background: rgba(10, 7, 13, 0.56);
+    backdrop-filter: blur(16px);
+  }
+
+  .lp-frame-overlay span {
+    color: rgba(245, 239, 229, 0.55);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .lp-frame-overlay strong {
+    color: #fff8ec;
+    font-size: 0.92rem;
+  }
+
+  .lp-metrics,
+  .lp-section,
+  .lp-quote,
+  .lp-footer {
+    width: min(1180px, calc(100% - 2rem));
+    margin-inline: auto;
+  }
+
+  .lp-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-top: 1px solid rgba(245, 239, 229, 0.13);
+    border-bottom: 1px solid rgba(245, 239, 229, 0.13);
+  }
+
+  .lp-metrics div {
+    min-height: 13.5rem;
+    padding: 1.4rem;
+    border-right: 1px solid rgba(245, 239, 229, 0.1);
+  }
+
+  .lp-metrics div:last-child {
+    border-right: 0;
+  }
+
+  .lp-metrics strong {
+    display: block;
+    margin-top: 3.6rem;
+    color: #fff8ec;
+    font-size: 1.28rem;
+  }
+
+  .lp-metrics p {
+    margin: 0.85rem 0 0;
+    color: rgba(245, 239, 229, 0.62);
+    line-height: 1.72;
+  }
+
+  .lp-quote {
+    padding: clamp(4.5rem, 8vw, 8rem) 0;
+    text-align: center;
+  }
+
+  .lp-quote p {
+    margin: 0;
+    color: #fff8ec;
+    font-family: "Avenir Next Condensed", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    font-size: clamp(2.8rem, 6vw, 6.4rem);
+    font-weight: 700;
+    letter-spacing: -0.07em;
+    line-height: 1;
+  }
+
+  .lp-quote span {
+    display: block;
+    max-width: 46rem;
+    margin: 1.4rem auto 0;
+    color: rgba(245, 239, 229, 0.66);
+    font-size: 1.04rem;
+    line-height: 1.85;
+  }
+
+  .lp-section {
+    padding: clamp(4rem, 7vw, 7rem) 0;
+    border-top: 1px solid rgba(245, 239, 229, 0.11);
+  }
+
+  .lp-section-head {
+    display: grid;
+    grid-template-columns: minmax(12rem, 0.36fr) minmax(0, 1fr);
+    gap: 2rem;
+    align-items: end;
+    margin-bottom: 2rem;
+  }
+
+  .lp-section-head h2,
+  .lp-legacy h2,
+  .lp-contact h2 {
+    margin: 0;
+    color: #fff8ec;
+    font-size: clamp(2.3rem, 4.6vw, 5.2rem);
+    letter-spacing: -0.065em;
+    line-height: 0.98;
+  }
+
+  .lp-heading-lines span {
+    display: block;
+  }
+
+  .lp-path-list {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid rgba(245, 239, 229, 0.12);
+  }
+
+  .lp-path-card {
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr) minmax(8rem, 0.26fr);
+    gap: 1.4rem;
+    align-items: center;
+    min-height: 9.2rem;
+    border-bottom: 1px solid rgba(245, 239, 229, 0.12);
+    color: inherit;
+    text-decoration: none;
+    transition: background 180ms ease, padding 180ms ease;
+  }
+
+  .lp-path-card:hover {
+    padding-inline: 1rem;
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .lp-path-card h3,
+  .lp-guide-card h3 {
+    margin: 0;
+    color: #fff8ec;
+    font-size: clamp(1.45rem, 2.5vw, 2.4rem);
+    letter-spacing: -0.045em;
+  }
+
+  .lp-path-card p,
+  .lp-guide-card p,
+  .lp-legacy p,
+  .lp-contact p {
+    margin: 0.75rem 0 0;
+    color: rgba(245, 239, 229, 0.64);
+    line-height: 1.78;
+  }
+
+  .lp-path-card em {
+    justify-self: end;
+    color: rgba(228, 196, 139, 0.82);
+    font-style: normal;
+    font-size: 0.9rem;
+    font-weight: 760;
+  }
+
+  .lp-guide-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+
+  .lp-guide-card {
+    min-height: 18rem;
+    border: 1px solid rgba(245, 239, 229, 0.13);
+    border-radius: 1.1rem;
+    padding: 1.2rem;
+    color: inherit;
+    background:
+      radial-gradient(circle at 18% 0%, rgba(228, 196, 139, 0.13), transparent 16rem),
+      rgba(255, 255, 255, 0.035);
+    text-decoration: none;
+    transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+  }
+
+  .lp-guide-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(228, 196, 139, 0.35);
+    background: rgba(255, 255, 255, 0.055);
+  }
+
+  .lp-guide-card h3 {
+    margin-top: 4.5rem;
+    font-size: 1.45rem;
+    line-height: 1.18;
+  }
+
+  .lp-legacy,
+  .lp-contact {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(18rem, 1fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+  }
+
+  .lp-legacy-shot {
+    display: block;
+    overflow: hidden;
+    border: 1px solid rgba(245, 239, 229, 0.13);
+    border-radius: 1.4rem;
+    background: rgba(255, 255, 255, 0.04);
+    box-shadow: 0 32px 90px rgba(0, 0, 0, 0.34);
+  }
+
+  .lp-legacy-shot img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+
+  .lp-contact {
+    margin-bottom: 2rem;
+    border: 1px solid rgba(245, 239, 229, 0.13);
+    border-radius: 1.6rem;
+    padding: clamp(1.5rem, 4vw, 3rem);
+    background:
+      radial-gradient(circle at 82% 20%, rgba(228, 196, 139, 0.14), transparent 24rem),
+      rgba(255, 255, 255, 0.035);
+  }
+
+  .lp-contact-panel {
+    display: grid;
+    gap: 0.95rem;
+    justify-self: end;
+    width: min(100%, 28rem);
+    border: 1px solid rgba(245, 239, 229, 0.13);
+    border-radius: 1.2rem;
+    padding: 1rem;
+    background: rgba(10, 7, 13, 0.58);
+  }
+
+  .lp-contact-panel a:not(.lp-button) {
+    color: #fff8ec;
+    font-size: 1.2rem;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+  }
+
+  .lp-contact-panel span {
+    color: rgba(245, 239, 229, 0.62);
+  }
+
+  .lp-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 2rem 0 2.6rem;
+    border-top: 1px solid rgba(245, 239, 229, 0.11);
+  }
+
+  .lp-footer a {
+    text-decoration: none;
+  }
+
+  @media (max-width: 980px) {
+    .lp-nav {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .lp-nav-links {
+      max-width: 100%;
+      overflow-x: auto;
+    }
+
+    .lp-hero,
+    .lp-legacy,
+    .lp-contact,
+    .lp-section-head {
+      grid-template-columns: 1fr;
+    }
+
+    .lp-hero-frame {
+      min-height: 28rem;
+      border-radius: 2rem;
+    }
+
+    .lp-metrics,
+    .lp-guide-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .lp-path-card {
+      grid-template-columns: 3.2rem minmax(0, 1fr);
+    }
+
+    .lp-path-card em {
+      grid-column: 2;
+      justify-self: start;
+    }
+
+    .lp-contact-panel {
+      justify-self: stretch;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .lp-nav-links a {
+      padding-inline: 0.72rem;
+      white-space: nowrap;
+    }
+
+    .lp-hero h1 {
+      font-size: clamp(4.1rem, 19vw, 6.2rem);
+    }
+
+    .lp-metrics,
+    .lp-guide-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .lp-metrics div {
+      min-height: 10.5rem;
+      border-right: 0;
+      border-bottom: 1px solid rgba(245, 239, 229, 0.1);
+    }
+
+    .lp-metrics div:last-child {
+      border-bottom: 0;
+    }
+
+    .lp-path-card {
+      min-height: 10.5rem;
+    }
+
+    .lp-frame-overlay {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+</style>

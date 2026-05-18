@@ -1,0 +1,37 @@
+---
+title: Skills、Hooks、MCP 的分工
+description: 理解 Claude Code 扩展能力的三种边界。
+sidebar:
+  order: 5
+difficulty: intermediate
+source_repo: alchaincyf/claude-code-orange-book
+source_url: https://github.com/alchaincyf/claude-code-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/claude-code-orange-book" url="https://github.com/alchaincyf/claude-code-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+
+## 核心概念
+
+- Skill：把一套稳定工作流写成说明和脚本。
+- Hook：在特定时机自动触发检查或动作。
+- MCP：让 Agent 调用外部系统或本地服务。
+
+## 怎么选
+
+1. 只是教 Agent 怎么做：用 Skill。
+2. 每次保存、提交、运行前都要触发：用 Hook。
+3. 需要访问外部数据或工具：用 MCP。
+
+## 常见错误
+
+- 把所有能力都写成 MCP，增加维护成本。
+- 用 Hook 做复杂业务逻辑，导致难调试。
+- Skill 只有概念，没有可执行步骤和验收。
+
+## 实战案例
+
+“淘金小镇 Skill”适合写成 Skill：用户提供信息源，Agent 抓取榜单、生成快照、产出日报。只有当它需要稳定访问外部 API 时，才考虑 MCP。

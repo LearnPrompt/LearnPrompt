@@ -1,0 +1,156 @@
+---
+title: 第一个 SKILL.md 怎么写
+description: 写出一个能被 Agent 稳定触发和执行的 Skill。
+sidebar:
+  order: 2
+difficulty: beginner
+source_repo: alchaincyf/agent-skills-orange-book
+source_url: https://github.com/alchaincyf/agent-skills-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/agent-skills-orange-book" url="https://github.com/alchaincyf/agent-skills-orange-book" updatedFrom="2026-05" note="仅参考主题结构，正文重新组织。" />
+
+## 最小结构
+
+```md
+# Skill Name
+
+## When to use
+说明触发场景。
+
+## Inputs
+列出用户需要提供什么。
+
+## Workflow
+按顺序列步骤。
+
+## Verification
+列出如何判断完成。
+
+## Safety
+列出不能做什么。
+```
+
+Skill 的价值不是“把提示词写长”，而是把一个稳定流程变成 Agent 能识别、能调用、能验收的能力。
+
+## 什么时候应该写 Skill
+
+不要把所有提示词都做成 Skill。满足下面任一条件时，才值得写：
+
+- 这个流程你已经重复做过三次。
+- 每次输入不同，但步骤大致相同。
+- 需要读取固定格式的文件、目录或网页。
+- 有明确的完成标准。
+- 其他人也可能复用这套流程。
+
+如果只是一次性聊天，普通提示词就够了。
+
+## 一个好 Skill 的四个问题
+
+写之前先回答：
+
+1. 什么时候应该触发？
+2. 用户必须提供什么输入？
+3. Agent 应该按什么顺序做？
+4. 怎么判断结果合格？
+
+这四个问题回答不清，Skill 就会变成“看起来很强，但执行时很飘”的说明书。
+
+## 操作步骤
+
+1. 先写触发场景，避免 Skill 被误用。
+2. 再写输入和输出。
+3. 把工作流拆成 5-9 步。
+4. 最后写验收和安全边界。
+
+## 可复制模板
+
+```md
+---
+name: example-skill
+description: 当用户需要把一组资料整理成可发布教程时使用。
+---
+
+# Example Skill
+
+## When to use
+
+Use this skill when the user provides source notes, links, or drafts and asks to turn them into a structured tutorial.
+
+## Inputs
+
+- Source material: notes, links, transcript, or draft.
+- Target audience.
+- Output format.
+
+## Workflow
+
+1. Identify the user's goal and audience.
+2. Extract the key claims and examples from the source material.
+3. Build an outline with sections and learning outcomes.
+4. Rewrite into a tutorial with concrete steps.
+5. Add a checklist or template the reader can reuse.
+6. Flag missing source material or uncertain claims.
+
+## Verification
+
+- The tutorial has a clear audience.
+- Each section teaches one action.
+- Claims are grounded in the provided material.
+- The final output includes a reusable checklist or template.
+
+## Safety
+
+- Do not invent source claims.
+- Do not include secrets or private information.
+- Ask before publishing or committing changes.
+```
+
+## 结构解释
+
+`description` 是触发器。它要具体到 Agent 能判断“什么时候该用”。
+`Inputs` 是前置条件。缺输入时，Agent 应该先问，而不是硬做。
+`Workflow` 是执行路径。步骤太少会飘，步骤太多会难维护。
+`Verification` 是验收标准。没有验收，Skill 就只是一段长提示词。
+`Safety` 是边界。尤其是涉及账号、密钥、本地文件、发布操作时必须写。
+
+## 从提示词迁移到 Skill
+
+如果你已经有一段常用提示词，可以按这个方式拆：
+
+| 原提示词内容 | Skill 里放哪里 |
+| --- | --- |
+| “当我给你一篇文章时” | When to use |
+| “你需要知道目标读者” | Inputs |
+| “先总结，再改写，再给标题” | Workflow |
+| “输出必须包含小红书标题和正文” | Verification |
+| “不要编造链接” | Safety |
+
+## 验收清单
+
+写完以后，检查这五项：
+
+- 触发场景是否足够具体？
+- 输入缺失时是否知道该问什么？
+- 工作流是否能按顺序执行？
+- 输出是否有明确格式？
+- 是否写了不能做的事？
+
+## 常见错误
+
+只写理念，不写输入输出。Agent 读完仍不知道何时触发、怎么执行。
+
+另外几个常见问题：
+
+- 把 Skill 写成一篇文章，没有步骤。
+- 触发场景过宽，导致任何任务都想调用它。
+- 验收标准只写“高质量”，没有可检查条目。
+- 安全边界缺失，发布、删除、改配置时容易出事。
+
+## 下一步
+
+先用一个你自己每天都在做的流程练手。比如“把链接保存成 Obsidian 笔记”“把选题资料整理成教程卡”“抓取榜单并生成日报”。这些流程稳定、输入明确、容易验收，最适合做第一个 Skill。

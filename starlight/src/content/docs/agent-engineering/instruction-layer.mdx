@@ -1,0 +1,37 @@
+---
+title: 指令层：如何写少而有效的规则
+description: 用少量硬规则提升 Agent 的稳定性。
+sidebar:
+  order: 2
+difficulty: intermediate
+source_repo: alchaincyf/harness-engineering-orange-book
+source_url: https://github.com/alchaincyf/harness-engineering-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/harness-engineering-orange-book" url="https://github.com/alchaincyf/harness-engineering-orange-book" updatedFrom="2026-05" />
+
+## 好规则的标准
+
+- 会改变 Agent 行为。
+- 能被执行或检查。
+- 不和其他规则冲突。
+- 不替代任务本身。
+
+## 操作步骤
+
+1. 先列出 Agent 最近三次失败。
+2. 每次失败只写一条补救规则。
+3. 删除“认真、谨慎、高质量”这类空泛词。
+4. 用真实任务验证规则是否有效。
+
+## 常见错误
+
+规则越多越好。实际上，规则越长，模型越容易忽略关键边界。
+
+## 实战案例
+
+“不要泄露密钥”应该写成“不要读取、打印或提交 `.env`、token、private key；需要密钥时要求用户通过环境变量提供”。

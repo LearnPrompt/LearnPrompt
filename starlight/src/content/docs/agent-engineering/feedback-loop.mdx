@@ -1,0 +1,36 @@
+---
+title: 反馈循环：让 Agent 从错误中改进
+description: 把失败输出转成下一轮更好的上下文。
+sidebar:
+  order: 4
+difficulty: intermediate
+source_repo: alchaincyf/harness-engineering-orange-book
+source_url: https://github.com/alchaincyf/harness-engineering-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/harness-engineering-orange-book" url="https://github.com/alchaincyf/harness-engineering-orange-book" updatedFrom="2026-05" />
+
+## 核心概念
+
+失败不是噪音。构建错误、测试失败、用户纠正和线上日志都是反馈，应进入下一轮计划。
+
+## 操作步骤
+
+1. 保留完整错误输出。
+2. 让 Agent 定位到文件、行号或配置。
+3. 修复后跑同一个命令确认。
+4. 如果是重复错误，把规则写进项目文档或 Skill。
+
+## 常见错误
+
+- 只粘贴最后一行错误。
+- 让 Agent 猜，而不是提供命令输出。
+- 修复后不跑同一条检查。
+
+## 实战案例
+
+Starlight 构建失败时，不要让 Agent “凭感觉改”。先看 `astro check` 的具体文件和字段，再收窄修复。

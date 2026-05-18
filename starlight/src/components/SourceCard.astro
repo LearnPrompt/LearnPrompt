@@ -1,0 +1,48 @@
+---
+interface Props {
+  repo: string;
+  url: string;
+  title?: string;
+  updatedFrom?: string;
+  license?: string;
+  note?: string;
+}
+
+const {
+  repo,
+  url,
+  title = "来源说明",
+  updatedFrom,
+  license,
+  note = "本文根据公开资料重新组织为 LearnPrompt 教程，不搬运原文或整章内容。",
+} = Astro.props;
+
+const displayNames: Record<string, string> = {
+  "alchaincyf/codex-orange-book": "Codex 实战资料",
+  "alchaincyf/claude-code-orange-book": "Claude Code 实战资料",
+  "alchaincyf/claude-code-source-analysis-orange-book": "Claude Code 架构分析资料",
+  "alchaincyf/hermes-agent-orange-book": "Hermes Agent 实战资料",
+  "alchaincyf/obsidian-ai-orange-book": "Obsidian AI 工作流资料",
+  "alchaincyf/agent-skills-orange-book": "Agent Skills 实战资料",
+  "alchaincyf/harness-engineering-orange-book": "Harness Engineering 方法资料",
+  "alchaincyf/openclaw-orange-book": "OpenClaw 架构资料",
+};
+
+const displayRepo = repo
+  .split(" / ")
+  .map((item) => displayNames[item] ?? item)
+  .join(" / ");
+---
+
+<aside class="lp-card" aria-label={title}>
+  <h3>{title}</h3>
+  <p>
+    <strong>{displayRepo}</strong>
+  </p>
+  <p class="lp-meta">{note}</p>
+  <p>
+    <a href={url} target="_blank" rel="noreferrer">查看来源</a>
+    {updatedFrom && <span class="lp-badge">资料时间：{updatedFrom}</span>}
+    {license && <span class="lp-badge">许可：{license}</span>}
+  </p>
+</aside>

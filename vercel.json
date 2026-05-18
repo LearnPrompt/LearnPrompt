@@ -1,5 +1,6 @@
 {
-    "rewrites": [
-    { "source": "/:path*", "destination": "/" }
-    ]
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "cd starlight && npm ci",
+  "buildCommand": "cd starlight && npm run build",
+  "outputDirectory": "starlight/dist"
 }

@@ -1,0 +1,28 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  href: string;
+  difficulty?: "beginner" | "intermediate" | "advanced";
+  topics?: string[] | string;
+}
+
+const { title, description, href, difficulty = "beginner", topics = [] } = Astro.props;
+const topicList = Array.isArray(topics) ? topics : topics.split(",").map((item) => item.trim());
+const difficultyLabel = {
+  beginner: "入门",
+  intermediate: "进阶",
+  advanced: "高级",
+}[difficulty];
+const base = import.meta.env.BASE_URL === "/" ? "" : import.meta.env.BASE_URL.replace(/\/$/, "");
+const cardHref = href.startsWith("/") ? `${base}${href}` : href;
+---
+
+<a class="lp-card" href={cardHref}>
+  <h3>{title}</h3>
+  <p>{description}</p>
+  <p>
+    <span class="lp-badge">{difficultyLabel}</span>
+    {topicList.filter(Boolean).map((topic) => <span class="lp-badge">{topic}</span>)}
+  </p>
+</a>

@@ -1,0 +1,41 @@
+---
+title: Skill 触发规则与目录结构
+description: 让 Skill 在正确场景被加载，而不是污染所有任务。
+sidebar:
+  order: 3
+difficulty: beginner
+source_repo: alchaincyf/agent-skills-orange-book
+source_url: https://github.com/alchaincyf/agent-skills-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/agent-skills-orange-book" url="https://github.com/alchaincyf/agent-skills-orange-book" updatedFrom="2026-05" note="仅参考主题结构，正文重新组织。" />
+
+## 触发规则
+
+触发规则要描述任务，而不是描述技术偏好。比如“当用户要求生成 ClawHub 榜单日报时使用”，比“需要抓数据时使用”更稳定。
+
+## 推荐目录
+
+```text
+my-skill/
+  SKILL.md
+  scripts/
+  templates/
+  examples/
+  README.md
+```
+
+## 操作步骤
+
+1. `SKILL.md` 只放核心流程。
+2. 长脚本放进 `scripts/`。
+3. 可复制文案放进 `templates/`。
+4. 用 `examples/` 保存最小输入输出样例。
+
+## 常见错误
+
+触发范围太宽。一个“写作 Skill”会干扰太多任务，一个“公众号长文改稿 Skill”更好用。

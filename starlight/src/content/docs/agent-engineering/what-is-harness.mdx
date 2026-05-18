@@ -1,0 +1,34 @@
+---
+title: 什么是 Harness
+description: 理解模型之外的工程系统。
+sidebar:
+  order: 1
+difficulty: intermediate
+source_repo: alchaincyf/harness-engineering-orange-book
+source_url: https://github.com/alchaincyf/harness-engineering-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/harness-engineering-orange-book" url="https://github.com/alchaincyf/harness-engineering-orange-book" updatedFrom="2026-05" />
+
+## 核心概念
+
+Harness 是把模型能力接进真实任务的工程系统。它包含指令、工具、权限、记忆、评估、反馈和部署边界。
+
+## 为什么重要
+
+同一个模型在不同 Harness 下表现差异巨大。好 Harness 会减少歧义、暴露失败、保留证据，让 Agent 能持续改进。
+
+## 组成
+
+- 指令层：告诉 Agent 如何工作。
+- 工具层：让 Agent 能访问环境。
+- 约束层：控制风险。
+- 反馈层：把失败转成下一轮改进。
+
+## 实战案例
+
+一个只会调用模型的“聊天框”不是完整 Harness。一个能读仓库、跑测试、生成 diff、提交 PR、记录失败的系统，才接近工程化 Harness。

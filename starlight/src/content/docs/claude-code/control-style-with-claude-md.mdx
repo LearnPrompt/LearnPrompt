@@ -1,0 +1,36 @@
+---
+title: 用 CLAUDE.md 管住代码风格和工程约束
+description: 把项目习惯写成 Agent 能长期遵守的规则。
+sidebar:
+  order: 3
+difficulty: intermediate
+source_repo: alchaincyf/claude-code-orange-book
+source_url: https://github.com/alchaincyf/claude-code-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/claude-code-orange-book" url="https://github.com/alchaincyf/claude-code-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+
+## 核心概念
+
+`CLAUDE.md` 最有价值的不是记录“喜欢什么”，而是减少重复沟通。它应该帮助 Agent 在同一个项目里稳定做出一致选择。
+
+## 规则写法
+
+- 具体：写“用 `rg` 搜索”，不要写“高效搜索”。
+- 可验证：写“改 UI 后跑构建”，不要写“保证质量”。
+- 有边界：写“不要修改部署配置”，不要写“谨慎操作”。
+
+## 操作步骤
+
+1. 从最近三次协作失败里提取规则。
+2. 每条规则只解决一个问题。
+3. 把一次性任务放在 issue，不放进长期规则。
+4. 每月删掉已经不再需要的规则。
+
+## 常见错误
+
+把 `CLAUDE.md` 当项目百科。百科会膨胀，规则应该保持短、硬、可执行。

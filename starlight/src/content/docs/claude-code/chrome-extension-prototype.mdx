@@ -1,0 +1,33 @@
+---
+title: 用 Claude Code 做 Chrome 扩展原型
+description: 用最小目录和验收路径生成浏览器扩展 MVP。
+sidebar:
+  order: 7
+difficulty: intermediate
+source_repo: alchaincyf/claude-code-orange-book
+source_url: https://github.com/alchaincyf/claude-code-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+
+<SourceCard repo="alchaincyf/claude-code-orange-book" url="https://github.com/alchaincyf/claude-code-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+
+## 操作步骤
+
+1. 先定义扩展只做一个动作，例如读取当前页面标题并保存。
+2. 让 Claude Code 生成 `manifest.json`、popup 和 background 的最小结构。
+3. 本地加载 unpacked extension。
+4. 在真实网页上验证按钮、权限和错误状态。
+5. 再补设置页、存储和外部 API。
+
+## 常见错误
+
+- 一开始就接入复杂账户系统。
+- 权限写得过大，审核和安全风险上升。
+- 没有真实浏览器验收，只看代码。
+
+## 实战案例
+
+网页信息源收集器可以先做成扩展：用户点击按钮，把当前 URL、标题、选中摘要保存到本地 JSON，再由 Agent 生成日报。
