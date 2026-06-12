@@ -58,6 +58,14 @@ Humanize PPT读取了50多期TED演讲，先处理主线，听众获得感和讲
 [![humanize-ppt](https://img.shields.io/github/stars/LearnPrompt/humanize-ppt?style=flat&label=humanize-ppt)](https://github.com/LearnPrompt/humanize-ppt)
 [![Demo](https://img.shields.io/badge/demo-online-brightgreen)](https://learnprompt.github.io/humanize-ppt/)
 
+**Irasutoya 配图 · 给文章配一张会吐槽的图**
+
+文章里最值钱的那个判断，配一张说明书式的图就死了。
+
+这个skill把中文文章里的关键判断、流程和隐喻，变成白底、圆润、有梗图感的Irasutoya反应人物解释图：角色DNA定稿，三套主角按情绪选角，跨图不走形。交付的是配图方案和生图提示词，素材按いらすとや官方条款使用。
+
+[![irasutoya](https://img.shields.io/github/stars/LearnPrompt/carl-irasutoya-illustrations?style=flat&label=Irasutoya%20%E9%85%8D%E5%9B%BE)](https://github.com/LearnPrompt/carl-irasutoya-illustrations)
+
 **班门家族 · 一组以中国工匠命名的skills**
 
 我把反复被验证过的方法论,做成了一组以人物命名的skills。一个名字,一门手艺:
