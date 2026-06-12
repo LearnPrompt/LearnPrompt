@@ -58,6 +58,14 @@ Humanize PPT studied more than 50 TED talks and handles the narrative arc, audie
 [![humanize-ppt](https://img.shields.io/github/stars/LearnPrompt/humanize-ppt?style=flat&label=humanize-ppt)](https://github.com/LearnPrompt/humanize-ppt)
 [![Demo](https://img.shields.io/badge/demo-online-brightgreen)](https://learnprompt.github.io/humanize-ppt/)
 
+**Irasutoya Illustrations · Give your article a picture that talks back**
+
+The most valuable judgment in an article dies next to a manual-style diagram.
+
+This skill turns the key judgments, flows, and metaphors of a Chinese article into white-background, soft-rounded Irasutoya reaction-character explainers: character DNA locked, three lead characters cast by emotion, consistent across images. It delivers shot lists and image-generation prompts; assets follow the official Irasutoya terms.
+
+[![irasutoya](https://img.shields.io/github/stars/LearnPrompt/carl-irasutoya-illustrations?style=flat&label=Irasutoya)](https://github.com/LearnPrompt/carl-irasutoya-illustrations)
+
 **The Workshop Family · skills named after Chinese craftsmen**
 
 I package methodologies that survived real use into a family of person-named skills. One name, one craft:
