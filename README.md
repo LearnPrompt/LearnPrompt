@@ -58,6 +58,23 @@ Humanize PPT读取了50多期TED演讲，先处理主线，听众获得感和讲
 [![humanize-ppt](https://img.shields.io/github/stars/LearnPrompt/humanize-ppt?style=flat&label=humanize-ppt)](https://github.com/LearnPrompt/humanize-ppt)
 [![Demo](https://img.shields.io/badge/demo-online-brightgreen)](https://learnprompt.github.io/humanize-ppt/)
 
+**班门家族 · 一组以中国工匠命名的skills**
+
+我把反复被验证过的方法论,做成了一组以人物命名的skills。一个名字,一门手艺:
+
+- **鲁班**,把"能用的skill"打磨成能被装、能传播、能验证的公共资产;
+- **庖丁**,零API拆解任何博主的爆款打法,蒸馏成可安装的内容教练;
+- **蔡伦**,把对话里聊出来的结论,3秒造成一页能传阅的纸;
+- **阿福**,站在Obsidian收件箱门口的管家,Inbox到日历一条线。
+
+名字背故事,定位背痛苦。装一个,就知道这一家子的脾气。重度Agent用户还有**CC Harness六件套**:记忆、压缩、验证、调度,一行命令全装上。
+
+[![luban](https://img.shields.io/github/stars/LearnPrompt/luban-skill?style=flat&label=鲁班%20luban)](https://github.com/LearnPrompt/luban-skill)
+[![paoding](https://img.shields.io/github/stars/LearnPrompt/paoding-skill?style=flat&label=庖丁%20paoding)](https://github.com/LearnPrompt/paoding-skill)
+[![cailun](https://img.shields.io/github/stars/LearnPrompt/cailun-skill?style=flat&label=蔡伦%20cailun)](https://github.com/LearnPrompt/cailun-skill)
+[![afu](https://img.shields.io/github/stars/LearnPrompt/afu-llm-todo?style=flat&label=阿福%20afu)](https://github.com/LearnPrompt/afu-llm-todo)
+[![cc-harness](https://img.shields.io/github/stars/LearnPrompt/cc-harness-skills?style=flat&label=CC%20Harness)](https://github.com/LearnPrompt/cc-harness-skills)
+
 **Carl Skills · 把真实AI工作流做成可复用的skills**
 
 我每天都会试很多AI工具，但一条视频，一篇文章，一次聊天记录，很快就会被新的信息盖过去。

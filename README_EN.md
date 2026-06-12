@@ -58,6 +58,23 @@ Humanize PPT studied more than 50 TED talks and handles the narrative arc, audie
 [![humanize-ppt](https://img.shields.io/github/stars/LearnPrompt/humanize-ppt?style=flat&label=humanize-ppt)](https://github.com/LearnPrompt/humanize-ppt)
 [![Demo](https://img.shields.io/badge/demo-online-brightgreen)](https://learnprompt.github.io/humanize-ppt/)
 
+**The Workshop Family · skills named after Chinese craftsmen**
+
+I package methodologies that survived real use into a family of person-named skills. One name, one craft:
+
+- **Luban** polishes a "working skill" into a public asset people can install, verify, and share;
+- **Paoding** dissects any blogger's viral playbook with zero API — and distills it into an installable content coach;
+- **Cailun** turns the conclusions of a chat into a single shareable page in three seconds;
+- **Afu** is the butler at your Obsidian inbox: Inbox to Wiki to Todo to Calendar.
+
+The name carries the story; the positioning carries the pain. For heavy agent users there is also the **CC Harness six-pack**: memory, compression, verification, orchestration — one command installs them all.
+
+[![luban](https://img.shields.io/github/stars/LearnPrompt/luban-skill?style=flat&label=Luban)](https://github.com/LearnPrompt/luban-skill)
+[![paoding](https://img.shields.io/github/stars/LearnPrompt/paoding-skill?style=flat&label=Paoding)](https://github.com/LearnPrompt/paoding-skill)
+[![cailun](https://img.shields.io/github/stars/LearnPrompt/cailun-skill?style=flat&label=Cailun)](https://github.com/LearnPrompt/cailun-skill)
+[![afu](https://img.shields.io/github/stars/LearnPrompt/afu-llm-todo?style=flat&label=Afu)](https://github.com/LearnPrompt/afu-llm-todo)
+[![cc-harness](https://img.shields.io/github/stars/LearnPrompt/cc-harness-skills?style=flat&label=CC%20Harness)](https://github.com/LearnPrompt/cc-harness-skills)
+
 **Carl Skills · Turning real AI workflows into reusable skills**
 
 I test a lot of AI tools every day. But a video, an article, or a chat transcript gets buried quickly by the next wave of information.
