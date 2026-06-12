@@ -40,15 +40,6 @@ AI News Radar里的伯乐Skill，用GitHub Actions、网页和自动化摘要，
 [![ai-news-radar](https://img.shields.io/github/stars/LearnPrompt/ai-news-radar?style=flat&label=AI%20News%20Radar)](https://github.com/LearnPrompt/ai-news-radar)
 [![Radar](https://img.shields.io/badge/radar-online-brightgreen)](https://learnprompt.github.io/ai-news-radar/)
 
-**Skillrush Town · 淘金小镇**
-
-淘金小镇从ClawHub Top100开始，记录每天哪些AI skill在上升。然后就是覆盖到更多的排行榜，像Claude Code的更新日志，或者像AA Index这种模型排行榜，观测它们的更新，让模型以最少的环境依赖稳定地运行多次数据分析。
-
-**这个项目保留下来的，是一套公开信息源监控方法：固定抓取口径、每天留快照、做历史对比、生成报告，再把结果贴到一个GitHub Pages页上。**
-
-[![skillrush-town](https://img.shields.io/github/stars/LearnPrompt/skillrush-town?style=flat&label=Skillrush%20Town)](https://github.com/LearnPrompt/skillrush-town)
-[![Town](https://img.shields.io/badge/town-online-brightgreen)](https://learnprompt.github.io/skillrush-town/)
-
 **Humanize PPT · 先让PPT像是人在讲，再用工具生成**
 
 很多AI做PPT的问题，出在第一页之前。材料刚丢进去，就被压成一堆无聊的提纲，这样用的HTML PPT Skill再好也没用。
@@ -57,6 +48,15 @@ Humanize PPT读取了50多期TED演讲，先处理主线，听众获得感和讲
 
 [![humanize-ppt](https://img.shields.io/github/stars/LearnPrompt/humanize-ppt?style=flat&label=humanize-ppt)](https://github.com/LearnPrompt/humanize-ppt)
 [![Demo](https://img.shields.io/badge/demo-online-brightgreen)](https://learnprompt.github.io/humanize-ppt/)
+
+**Skillrush Town · 淘金小镇**
+
+淘金小镇从ClawHub Top100开始，记录每天哪些AI skill在上升。然后就是覆盖到更多的排行榜，像Claude Code的更新日志，或者像AA Index这种模型排行榜，观测它们的更新，让模型以最少的环境依赖稳定地运行多次数据分析。
+
+**这个项目保留下来的，是一套公开信息源监控方法：固定抓取口径、每天留快照、做历史对比、生成报告，再把结果贴到一个GitHub Pages页上。**
+
+[![skillrush-town](https://img.shields.io/github/stars/LearnPrompt/skillrush-town?style=flat&label=Skillrush%20Town)](https://github.com/LearnPrompt/skillrush-town)
+[![Town](https://img.shields.io/badge/town-online-brightgreen)](https://learnprompt.github.io/skillrush-town/)
 
 **Irasutoya 配图 · 给文章配一张会吐槽的图**
 

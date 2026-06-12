@@ -40,15 +40,6 @@ It serves a plain need:
 [![ai-news-radar](https://img.shields.io/github/stars/LearnPrompt/ai-news-radar?style=flat&label=AI%20News%20Radar)](https://github.com/LearnPrompt/ai-news-radar)
 [![Radar](https://img.shields.io/badge/radar-online-brightgreen)](https://learnprompt.github.io/ai-news-radar/)
 
-**Skillrush Town · A small town for tracking rising skills**
-
-Skillrush Town started with the ClawHub Top 100. It records which AI skills are rising every day, then expands the same method to more leaderboards and update feeds, such as Claude Code changelogs and model rankings like AA Index.
-
-The point is not the leaderboard itself. What remains is a public-source monitoring workflow: fixed collection rules, daily snapshots, historical comparison, generated reports, and a GitHub Pages site where the results can be shared.
-
-[![skillrush-town](https://img.shields.io/github/stars/LearnPrompt/skillrush-town?style=flat&label=Skillrush%20Town)](https://github.com/LearnPrompt/skillrush-town)
-[![Town](https://img.shields.io/badge/town-online-brightgreen)](https://learnprompt.github.io/skillrush-town/)
-
 **Humanize PPT · Make the deck feel like a human is speaking before generating slides**
 
 Many AI-generated decks go wrong before the first slide is even made. Raw material is dropped in and immediately flattened into a boring outline. At that point, even the best HTML PPT skill can only do so much.
@@ -57,6 +48,15 @@ Humanize PPT studied more than 50 TED talks and handles the narrative arc, audie
 
 [![humanize-ppt](https://img.shields.io/github/stars/LearnPrompt/humanize-ppt?style=flat&label=humanize-ppt)](https://github.com/LearnPrompt/humanize-ppt)
 [![Demo](https://img.shields.io/badge/demo-online-brightgreen)](https://learnprompt.github.io/humanize-ppt/)
+
+**Skillrush Town · A small town for tracking rising skills**
+
+Skillrush Town started with the ClawHub Top 100. It records which AI skills are rising every day, then expands the same method to more leaderboards and update feeds, such as Claude Code changelogs and model rankings like AA Index.
+
+The point is not the leaderboard itself. What remains is a public-source monitoring workflow: fixed collection rules, daily snapshots, historical comparison, generated reports, and a GitHub Pages site where the results can be shared.
+
+[![skillrush-town](https://img.shields.io/github/stars/LearnPrompt/skillrush-town?style=flat&label=Skillrush%20Town)](https://github.com/LearnPrompt/skillrush-town)
+[![Town](https://img.shields.io/badge/town-online-brightgreen)](https://learnprompt.github.io/skillrush-town/)
 
 **Irasutoya Illustrations · Give your article a picture that talks back**
 
