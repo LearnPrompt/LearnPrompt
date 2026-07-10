@@ -69,11 +69,25 @@ def http_get(url, token):
 
 
 def fetch_stars(repo, token):
-    """Return sorted list of starred_at datetimes for a repo."""
+    """Return sorted list of starred_at datetimes for a repo.
+
+    Falls back to unauthenticated requests on 403: the Actions-provided
+    GITHUB_TOKEN is scoped to the current repository only, but all target
+    repos are public.
+    """
     dates = []
-    for page in range(1, MAX_PAGES + 1):
+    page = 1
+    while page <= MAX_PAGES:
         url = f"{API}/repos/{repo}/stargazers?per_page={PER_PAGE}&page={page}"
-        batch = http_get(url, token)
+        try:
+            batch = http_get(url, token)
+        except urllib.error.HTTPError as e:
+            if e.code == 403 and token:
+                print(f"warning: 403 with token for {repo}, retrying "
+                      f"unauthenticated", file=sys.stderr)
+                token = None
+                continue
+            raise
         if not isinstance(batch, list) or not batch:
             break
         for item in batch:
@@ -83,6 +97,7 @@ def fetch_stars(repo, token):
                              .replace(tzinfo=timezone.utc))
         if len(batch) < PER_PAGE:
             break
+        page += 1
     dates.sort()
     return dates
 
