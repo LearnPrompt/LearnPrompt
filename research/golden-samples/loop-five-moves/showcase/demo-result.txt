@@ -9,4 +9,4 @@ Exit code: 0
 3 VERIFY pass
 4 PERSIST uppercase-title:passed
 5 SCHEDULE idle
-Artifacts: /var/folders/04/f2k8hnws19n1tltqkywytglw0000gn/T/learnprompt-loop-jJwmeG
+Artifacts: $TMPDIR/learnprompt-loop-<redacted>

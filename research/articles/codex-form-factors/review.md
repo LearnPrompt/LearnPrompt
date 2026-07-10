@@ -5,6 +5,8 @@
 - Reviewer：OpenAI Codex `gpt-5.4`，与 Claude writer 不同模型和全新会话。
 - 模式：`read-only` sandbox、`approval=never`、ephemeral、忽略用户配置；只读正文、研究包、Showcase、量表和 article contract。
 - Writer 未参与打分，reviewer 未编辑文件。
+- 评审证据：原始评审输出在仓库外捕获；本文件是会话结束后的脱敏定稿，不是评审中的实时日志。
+- 隔离声明：reviewer 使用独立只读会话，writer 未参与打分或修改评审结果。
 
 ## 初审
 
@@ -58,5 +60,5 @@
 - Follow-up 2：第三个全新 Codex `gpt-5.4` 只读会话，blocker 0 / major 0 / minor 0，93/100，**PASS**。
 - Follow-up 2 六维评分：事实与证据 24/25、解释深度 18/20、Showcase 18/20、教学设计 14/15、时效性 10/10、编辑质量 9/10。
 - 放行条件：blocker=0、major=0、minor=0、总分至少 85，validator 与完整 Starlight build 均通过。
-- 未关闭问题：0
+- 未关闭问题：blocker 0 / major 0 / minor 0。
 - 最终状态：PASS。允许正文写入 `showcase_status: verified` 与 `quality_score: 93`；仍需控制面完成最终 validator、完整构建和 diff 检查。

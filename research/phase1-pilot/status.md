@@ -64,6 +64,20 @@ Phase 1 gate：**未通过**。三种母稿必须全部通过后才能进入 Pha
 - Lane commit：`cdd3641 docs(codex): goldenize codex-form-factors (93)`
 - 主分支 cherry-pick：`afbb39f docs(codex): goldenize codex-form-factors (93)`
 
+## Pilot 控制面加固
+
+`codex-form-factors` 暴露了两个生产风险：原始 reviewer 日志曾写入被审 worktree，形成自引用读取；脱敏前的日志还包含运行标识和本机路径。文章层已修复，生产 skill 同步加固，避免后续批量复制这个问题。
+
+- Skill workflow：原始命令和 review 输出必须先写到仓库外，进程结束后冻结并脱敏；不能以退出码代替最终评审报告。
+- Research contract：账号、认证头、凭据、session/thread/turn/item/request ID、用户目录与临时工作树路径均为 release blocker。
+- Validator：递归扫描 research pack 中所有文本特征文件，包括无扩展名文件；verified review 必须声明只读隔离和仓库外捕获，并包含六维评分、`blocker 0 / major 0 / minor 0`、与 frontmatter 一致的最终 PASS 分数。
+- 回归测试：1 个正例、11 个隐私负例、7 个 review 格式负例全部 PASS。
+- 正向回归：3 篇 Phase 0 黄金样稿与 `codex-form-factors` 全部重新通过 validator；旧 Loop Showcase 中一条真实 macOS 临时目录已脱敏为 `$TMPDIR/...<redacted>`。
+- Skill 结构校验：PASS。
+- 完整构建：49 页 PASS。
+- 重新打包：`.claude/packages/learnprompt-single-mdx.skill`，SHA-256 `da64b1467dc263b9ed9fc8ce86e07713563e8bcdbd13cee08bc1796b882c0438`。
+- 独立控制面评审：初审 FAIL（1 blocker / 2 major / 0 minor）；第二轮 FAIL（0 / 2 / 1）；第三轮仍为 FAIL（0 / 2 / 1），证明宽松隔离声明和 PASS 块后的 `当前状态：FAIL` 仍可绕过；第四轮独立只读复审 PASS（0 blocker / 0 major / 0 minor），上述 finding 全部关闭。
+
 ## 边界
 
 - 不把 CLI 启动、401、503 或进程存活记作文章写作进度。

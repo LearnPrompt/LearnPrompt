@@ -55,6 +55,10 @@ Demonstrate the article's central decision with a real task, not a generic repos
 
 Save the exact input, environment, commands or code, actual output, failures, and reproduction limits. If comparing tools, hold the task and acceptance criteria constant, use isolated workspaces, compare workflows rather than model intelligence, and disclose configuration differences prominently.
 
+Capture raw command output outside the repository first, using a temporary directory such as `$TMPDIR`. Inspect it, then commit only the smallest sanitized excerpt needed to prove the result. Remove local absolute paths, account identifiers, credentials, and session, thread, turn, item, or request identifiers.
+
+Never stream a reviewer or agent's output into an untracked file inside the same worktree it is reviewing. Commands such as `codex review --uncommitted` may discover and reread their own growing log, producing a self-referential scan. Write the raw log outside the worktree, freeze it after the process exits, and only then create a sanitized Showcase artifact.
+
 If a real run cannot be completed, set `showcase_status: partial`. Never invent a successful result.
 
 ### 5. Write the MDX
@@ -70,6 +74,8 @@ Set `showcase_status: partial` while writing. Do not set `quality_score` until i
 Run the showcase checks and `cd starlight && npm run build`. Save the actual results.
 
 Use a separate read-only model session or human reviewer. Record initial findings, fix every blocker, major, and minor finding, and run a follow-up review. If independent review is unavailable, leave the article partial and report the blocker.
+
+Do not infer review success from process exit code alone. Require a final report that matches the requested scope and finding format, and archive only its sanitized evidence. In `review.md`, record reviewer identity, read-only isolation, an explicit statement that the reviewer used a separate session and the writer did not score or alter the verdict, zero blocker/major/minor counts, all six rubric scores, a PASS line whose score matches frontmatter, and an attestation that raw review output was captured outside the worktree. `最终状态：PASS` must be the only final-status line and the last non-empty line.
 
 After review passes with at least 85/100, no unresolved finding, and no release-gate failure:
 
