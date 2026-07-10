@@ -3,7 +3,7 @@ name: Starlight Pages Preview
 on:
   push:
     branches:
-      - codex/starlight-wiki-migration
+      - main
     paths:
       - "starlight/**"
       - ".github/workflows/starlight-pages.yml"

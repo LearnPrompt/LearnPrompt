@@ -22,7 +22,7 @@ export default defineConfig({
       customCss: ["./src/styles/custom.css"],
       editLink: {
         baseUrl:
-          "https://github.com/LearnPrompt/LearnPrompt/edit/codex/starlight-wiki-migration/starlight/",
+          "https://github.com/LearnPrompt/LearnPrompt/edit/main/starlight/",
       },
       social: [
         {

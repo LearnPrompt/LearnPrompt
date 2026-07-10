@@ -7,7 +7,7 @@ on:
       - ".github/workflows/starlight-build.yml"
   push:
     branches:
-      - codex/starlight-wiki-migration
+      - main
     paths:
       - "starlight/**"
       - ".github/workflows/starlight-build.yml"
