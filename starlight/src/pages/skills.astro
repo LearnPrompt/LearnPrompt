@@ -1,0 +1,743 @@
+---
+const base = import.meta.env.BASE_URL === "/" ? "" : import.meta.env.BASE_URL.replace(/\/$/, "");
+const withBase = (href: string) => (href.startsWith("/") ? `${base}${href}` : href);
+
+type Project = {
+  name: string;
+  repo: string;
+  tagline: string;
+  installCmd?: string;
+  articleUrl?: string;
+  fallbackStars: number;
+};
+
+const activeProjects: Project[] = [
+  {
+    name: "ai-news-radar",
+    repo: "LearnPrompt/ai-news-radar",
+    tagline: "24 小时 AI 新闻雷达，GitHub Actions 自动更新，少刷一点，把注意力留给真正的变化。",
+    installCmd: "npx skills add LearnPrompt/ai-news-radar -g",
+    articleUrl: "https://mp.weixin.qq.com/s/iW5FVqbHtYi31mJ22Q_cog",
+    fallbackStars: 1546,
+  },
+  {
+    name: "luban-skill",
+    repo: "LearnPrompt/luban-skill",
+    tagline: "Agent Skill 打磨车间：验料、访行、过尺、慢刨、回炉，把能用的 skill 磨成能传播的公共资产。",
+    installCmd: "npx skills add LearnPrompt/luban-skill -g",
+    articleUrl: "https://mp.weixin.qq.com/s/WX_MNcSmSHUkjkPxzmc9Tg",
+    fallbackStars: 813,
+  },
+  {
+    name: "humanize-ppt",
+    repo: "LearnPrompt/humanize-ppt",
+    tagline: "为演讲而生的 PPT 系统：先把资料编成一条讲述主线，再生成页面，最后自己跑一遍演讲体检。",
+    installCmd: "npx skills add LearnPrompt/humanize-ppt -g",
+    articleUrl: "https://mp.weixin.qq.com/s/rGoYnUcBRkfRKQPbIaawyg",
+    fallbackStars: 741,
+  },
+];
+
+const stableProjects: Project[] = [
+  {
+    name: "cc-harness-skills",
+    repo: "LearnPrompt/cc-harness-skills",
+    tagline: "从 coding agent 工程实践提炼的六件套：记忆、压缩、验证、路由、调度。",
+    installCmd: "npx skills add LearnPrompt/cc-harness-skills -g",
+    fallbackStars: 222,
+  },
+  {
+    name: "partner-skill",
+    repo: "LearnPrompt/partner-skill",
+    tagline: "Claude Code 管规划与审查，Codex 管实现与收尾，一张 Session Receipt 记账。",
+    installCmd: "npx skills add LearnPrompt/partner-skill -g",
+    fallbackStars: 14,
+  },
+  {
+    name: "bugu",
+    repo: "LearnPrompt/bugu",
+    tagline: "macOS 菜单栏声音信标：agent 开始、完成、要授权、被中断，各叫一声。",
+    articleUrl: "https://mp.weixin.qq.com/s/hzZ87HG_qiZRYUs8ZIzm1Q",
+    fallbackStars: 21,
+  },
+  {
+    name: "paoding-skill",
+    repo: "LearnPrompt/paoding-skill",
+    tagline: "零 API 拆解任何博主的爆款打法，蒸馏成可安装的内容教练。",
+    installCmd: "npx skills add LearnPrompt/paoding-skill -g",
+    fallbackStars: 16,
+  },
+  {
+    name: "x-article-publisher-skill",
+    repo: "LearnPrompt/x-article-publisher-skill",
+    tagline: "飞书文档或本地 Markdown 一键变成 X Article 草稿，媒体自动落回原位。",
+    installCmd:
+      "npx skills add LearnPrompt/x-article-publisher-skill --skill x-article-publisher --global --copy --yes --full-depth",
+    fallbackStars: 8,
+  },
+  {
+    name: "carl-weread",
+    repo: "LearnPrompt/carl-weread",
+    tagline: "微信读书行动型阅读教练：按你当前卡住的问题，推荐今天读哪一小节。",
+    installCmd:
+      "hermes skills install https://raw.githubusercontent.com/LearnPrompt/carl-weread/main/SKILL.md",
+    fallbackStars: 22,
+  },
+  {
+    name: "skillrush-town",
+    repo: "LearnPrompt/skillrush-town",
+    tagline: "淘金小镇：每天盯 ClawHub Top100，看哪些 Skill 正在冒头。",
+    installCmd: "npx skills add LearnPrompt/skillrush-town -g",
+    fallbackStars: 104,
+  },
+  {
+    name: "LLMs-cookbook",
+    repo: "LearnPrompt/LLMs-cookbook",
+    tagline: "早期 LLM 实战示例与指南合集，记录这一切开始的地方。",
+    fallbackStars: 263,
+  },
+  {
+    name: "loop-engineering",
+    repo: "LearnPrompt/loop-engineering",
+    tagline: "愚公：别再一轮轮手动催 Agent，把山交给一个会自己挖的循环。",
+    installCmd: "npx skills add LearnPrompt/loop-engineering",
+    fallbackStars: 3,
+  },
+  {
+    name: "cailun-skill",
+    repo: "LearnPrompt/cailun-skill",
+    tagline: "蔡伦：对话里聊出来的好东西别埋在聊天记录里，造一页纸传出去。",
+    installCmd: "npx skills add LearnPrompt/cailun-skill -g",
+    fallbackStars: 3,
+  },
+  {
+    name: "afu-llm-todo",
+    repo: "LearnPrompt/afu-llm-todo",
+    tagline: "阿福：LLM 行动卡片规划台，合并同题、日历同步、今天该做什么一目了然。",
+    installCmd: "npx skills add LearnPrompt/afu-llm-todo",
+    fallbackStars: 4,
+  },
+  {
+    name: "carl-skills",
+    repo: "LearnPrompt/carl-skills",
+    tagline: "面向创作者的真实 AI 工作流合集，同门 skill 的总索引。",
+    fallbackStars: 17,
+  },
+  {
+    name: "carl-irasutoya-illustrations",
+    repo: "LearnPrompt/carl-irasutoya-illustrations",
+    tagline: "Irasutoya 风格正文配图库，写文章时插图即取即用。",
+    fallbackStars: 1,
+  },
+];
+
+const archivedProjects: Project[] = [];
+
+async function fetchStars(project: Project): Promise<number> {
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 5000);
+    const headers: Record<string, string> = {
+      Accept: "application/vnd.github+json",
+    };
+    if (import.meta.env.GITHUB_TOKEN) {
+      headers.Authorization = `Bearer ${import.meta.env.GITHUB_TOKEN}`;
+    }
+    const res = await fetch(`https://api.github.com/repos/${project.repo}`, {
+      headers,
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    if (!res.ok) return project.fallbackStars;
+    const data = await res.json();
+    if (typeof data.stargazers_count !== "number") return project.fallbackStars;
+    return data.stargazers_count;
+  } catch {
+    return project.fallbackStars;
+  }
+}
+
+const withStars = async (projects: Project[]) =>
+  Promise.all(projects.map(async (p) => ({ ...p, stars: await fetchStars(p) })));
+
+const active = await withStars(activeProjects);
+const stable = await withStars(stableProjects);
+const archived = await withStars(archivedProjects);
+
+const formatStars = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n));
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Skill 工坊 · Skill Workshop | LearnPrompt</title>
+    <meta name="description" content="LearnPrompt 的 Skill 工坊：用 AI Agent 造自己的工具，每个项目都开源、可安装、有故事。" />
+  </head>
+  <body>
+    <main class="lp-site">
+      <nav class="lp-nav" aria-label="主导航">
+        <a class="lp-brand" href={withBase("/")} aria-label="LearnPrompt 首页">
+          <span>LearnPrompt</span>
+          <small>Skill Workshop</small>
+        </a>
+        <div class="lp-nav-links">
+          <a href={withBase("/")}>首页</a>
+          <a href="#active">迭代中</a>
+          <a href="#stable">稳定</a>
+          <a href="#follow">公众号</a>
+        </div>
+      </nav>
+
+      <section class="lp-hero" aria-labelledby="hero-title">
+        <p class="lp-kicker">WORKSHOP · 2026</p>
+        <h1 id="hero-title"><span>Skill 工坊</span><span>Skill Workshop</span></h1>
+        <p class="lp-hero-lede">用 AI Agent 造自己的工具——每个项目都开源、可安装、有故事。</p>
+      </section>
+
+      <section id="active" class="lp-section">
+        <div class="lp-section-head">
+          <p>Active · 正在打磨</p>
+          <h2>迭代中 · Active</h2>
+        </div>
+        <div class="lp-card-grid lp-card-grid-active">
+          {active.map((project) => (
+            <article class="lp-project-card">
+              <header class="lp-project-head">
+                <h3>{project.name}</h3>
+                <span class="lp-star">★ {formatStars(project.stars)}</span>
+              </header>
+              <p class="lp-project-tagline">{project.tagline}</p>
+              <div class="lp-project-actions">
+                <a class="lp-button lp-button-small" href={`https://github.com/${project.repo}`} target="_blank" rel="noreferrer">GitHub ↗</a>
+                {project.articleUrl && (
+                  <a class="lp-button lp-button-small" href={project.articleUrl} target="_blank" rel="noreferrer">发布文 ↗</a>
+                )}
+              </div>
+              {project.installCmd && (
+                <div class="lp-install">
+                  <code>{project.installCmd}</code>
+                  <button type="button" class="lp-copy" data-copy={project.installCmd}>复制</button>
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="stable" class="lp-section">
+        <div class="lp-section-head">
+          <p>Stable · 装上就能用</p>
+          <h2>稳定可用 · Stable</h2>
+        </div>
+        <div class="lp-card-grid lp-card-grid-stable">
+          {stable.map((project) => (
+            <article class="lp-project-card lp-project-card-compact">
+              <header class="lp-project-head">
+                <h3>{project.name}</h3>
+                <span class="lp-star">★ {formatStars(project.stars)}</span>
+              </header>
+              <p class="lp-project-tagline">{project.tagline}</p>
+              <div class="lp-project-actions">
+                <a class="lp-button lp-button-small" href={`https://github.com/${project.repo}`} target="_blank" rel="noreferrer">GitHub ↗</a>
+                {project.articleUrl && (
+                  <a class="lp-button lp-button-small" href={project.articleUrl} target="_blank" rel="noreferrer">发布文 ↗</a>
+                )}
+              </div>
+              {project.installCmd && (
+                <div class="lp-install">
+                  <code>{project.installCmd}</code>
+                  <button type="button" class="lp-copy" data-copy={project.installCmd}>复制</button>
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {archived.length > 0 && (
+        <section id="archived" class="lp-section">
+          <div class="lp-section-head">
+            <p>Archived · 归档</p>
+            <h2>已归档 · Archived</h2>
+          </div>
+          <div class="lp-card-grid lp-card-grid-stable">
+            {archived.map((project) => (
+              <article class="lp-project-card lp-project-card-compact">
+                <header class="lp-project-head">
+                  <h3>{project.name}</h3>
+                  <span class="lp-star">★ {formatStars(project.stars)}</span>
+                </header>
+                <p class="lp-project-tagline">{project.tagline}</p>
+                <div class="lp-project-actions">
+                  <a class="lp-button lp-button-small" href={`https://github.com/${project.repo}`} target="_blank" rel="noreferrer">GitHub ↗</a>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section id="follow" class="lp-section lp-follow">
+        <div>
+          <p class="lp-kicker">Follow · 公众号</p>
+          <h2>新 Skill 发布，第一时间在这里。</h2>
+          <p>新 Skill 发布，第一时间在公众号「卡尔的AI沃茨」。扫码加我微信，备注 skill。</p>
+        </div>
+        <div class="lp-follow-panel">
+          <img src={withBase("/images/wechat-qrcode.jpg")} alt="扫二维码添加卡尔为微信好友" width="200" height="255" loading="lazy" />
+          <span>微信 · aiwarts101</span>
+        </div>
+      </section>
+
+      <footer class="lp-footer">
+        <span>© 2026 LearnPrompt</span>
+        <a href="https://github.com/LearnPrompt/LearnPrompt" target="_blank" rel="noreferrer">GitHub</a>
+      </footer>
+    </main>
+
+    <script>
+      document.addEventListener("click", (event) => {
+        const target = event.target as HTMLElement | null;
+        const button = target?.closest?.(".lp-copy") as HTMLButtonElement | null;
+        if (!button) return;
+        const text = button.dataset.copy;
+        if (!text || !navigator.clipboard?.writeText) return;
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            const original = button.textContent;
+            button.textContent = "已复制";
+            setTimeout(() => {
+              button.textContent = original;
+            }, 1500);
+          })
+          .catch(() => {});
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  :global(*) {
+    box-sizing: border-box;
+  }
+
+  :global(html) {
+    scroll-behavior: smooth;
+    background: #0a070d;
+  }
+
+  :global(body) {
+    margin: 0;
+    min-width: 320px;
+    background:
+      radial-gradient(circle at 76% 10%, rgba(196, 171, 130, 0.15), transparent 30rem),
+      radial-gradient(circle at 12% 36%, rgba(112, 88, 165, 0.18), transparent 26rem),
+      #0a070d;
+    color: #f5efe5;
+    font-family: "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  }
+
+  :global(a) {
+    color: inherit;
+  }
+
+  .lp-site {
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 4rem 4rem;
+  }
+
+  .lp-site::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.14;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+    mix-blend-mode: screen;
+  }
+
+  .lp-site > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .lp-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    width: min(1080px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 1.15rem 0;
+  }
+
+  .lp-brand {
+    display: grid;
+    gap: 0.12rem;
+    text-decoration: none;
+  }
+
+  .lp-brand span {
+    font-size: 0.98rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+
+  .lp-brand small,
+  .lp-kicker,
+  .lp-section-head p,
+  .lp-star,
+  .lp-footer {
+    color: rgba(245, 239, 229, 0.54);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  .lp-nav-links {
+    display: flex;
+    gap: 0.35rem;
+    padding: 0.32rem;
+    border: 1px solid rgba(245, 239, 229, 0.11);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.035);
+    backdrop-filter: blur(18px);
+  }
+
+  .lp-nav-links a {
+    padding: 0.52rem 0.82rem;
+    border-radius: 999px;
+    color: rgba(245, 239, 229, 0.72);
+    font-size: 0.86rem;
+    text-decoration: none;
+  }
+
+  .lp-nav-links a:hover {
+    color: #fffaf0;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .lp-hero {
+    width: min(1080px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: clamp(3rem, 7vw, 6.5rem) 0 clamp(2.5rem, 5vw, 4.5rem);
+  }
+
+  .lp-kicker {
+    margin: 0 0 1.4rem;
+  }
+
+  .lp-hero h1 {
+    margin: 0;
+    color: #fff8ec;
+    font-family: "Avenir Next Condensed", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    font-size: clamp(3rem, 6.4vw, 6.4rem);
+    font-weight: 820;
+    letter-spacing: -0.075em;
+    line-height: 0.98;
+  }
+
+  .lp-hero h1 span {
+    display: block;
+    white-space: nowrap;
+  }
+
+  .lp-hero-lede {
+    max-width: 38rem;
+    margin: 1.4rem 0 0;
+    color: rgba(245, 239, 229, 0.78);
+    font-size: clamp(1.05rem, 1.7vw, 1.38rem);
+    line-height: 1.85;
+  }
+
+  .lp-section,
+  .lp-footer {
+    width: min(1180px, calc(100% - 2rem));
+    margin-inline: auto;
+  }
+
+  .lp-section {
+    padding: clamp(4rem, 7vw, 7rem) 0;
+    border-top: 1px solid rgba(245, 239, 229, 0.11);
+  }
+
+  .lp-section-head {
+    display: grid;
+    grid-template-columns: minmax(12rem, 0.36fr) minmax(0, 1fr);
+    gap: 2rem;
+    align-items: end;
+    margin-bottom: 2rem;
+  }
+
+  .lp-section-head h2,
+  .lp-follow h2 {
+    margin: 0;
+    color: #fff8ec;
+    font-size: clamp(2.3rem, 4.6vw, 5.2rem);
+    letter-spacing: -0.065em;
+    line-height: 0.98;
+  }
+
+  .lp-card-grid {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .lp-card-grid-active {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .lp-card-grid-stable {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .lp-project-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    min-width: 0;
+    min-height: 16rem;
+    border: 1px solid rgba(245, 239, 229, 0.13);
+    border-radius: 1.1rem;
+    padding: 1.2rem;
+    background:
+      radial-gradient(circle at 18% 0%, rgba(228, 196, 139, 0.13), transparent 16rem),
+      rgba(255, 255, 255, 0.035);
+    transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+  }
+
+  .lp-project-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(228, 196, 139, 0.35);
+    background: rgba(255, 255, 255, 0.055);
+  }
+
+  .lp-project-card-compact {
+    min-height: 13rem;
+    padding: 1.05rem;
+  }
+
+  .lp-project-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.8rem;
+  }
+
+  .lp-project-head h3 {
+    margin: 0;
+    color: #fff8ec;
+    font-size: 1.32rem;
+    letter-spacing: -0.03em;
+    overflow-wrap: anywhere;
+  }
+
+  .lp-project-card-compact .lp-project-head h3 {
+    font-size: 1.08rem;
+  }
+
+  .lp-star {
+    flex-shrink: 0;
+    color: rgba(228, 196, 139, 0.82);
+    letter-spacing: 0.06em;
+  }
+
+  .lp-project-tagline {
+    flex: 1;
+    margin: 0;
+    color: rgba(245, 239, 229, 0.64);
+    font-size: 0.94rem;
+    line-height: 1.78;
+  }
+
+  .lp-project-card-compact .lp-project-tagline {
+    font-size: 0.86rem;
+  }
+
+  .lp-project-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .lp-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.9rem;
+    border: 1px solid rgba(245, 239, 229, 0.2);
+    border-radius: 999px;
+    padding: 0 1.18rem;
+    color: #f7efe4;
+    background: rgba(255, 255, 255, 0.045);
+    font-size: 0.92rem;
+    font-weight: 760;
+    text-decoration: none;
+    transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+  }
+
+  .lp-button:hover {
+    transform: translateY(-2px);
+    border-color: rgba(245, 239, 229, 0.42);
+    background: rgba(255, 255, 255, 0.085);
+  }
+
+  .lp-button-small {
+    min-height: 2.2rem;
+    padding: 0 0.85rem;
+    font-size: 0.8rem;
+  }
+
+  .lp-install {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid rgba(245, 239, 229, 0.13);
+    border-radius: 0.75rem;
+    padding: 0.55rem 0.7rem;
+    background: rgba(10, 7, 13, 0.58);
+  }
+
+  .lp-install code {
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    color: rgba(245, 239, 229, 0.78);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.74rem;
+    white-space: nowrap;
+    scrollbar-width: thin;
+  }
+
+  .lp-copy {
+    flex-shrink: 0;
+    border: 1px solid rgba(245, 239, 229, 0.2);
+    border-radius: 999px;
+    padding: 0.32rem 0.72rem;
+    color: rgba(245, 239, 229, 0.78);
+    background: rgba(255, 255, 255, 0.045);
+    font-family: inherit;
+    font-size: 0.74rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color 180ms ease, background 180ms ease, color 180ms ease;
+  }
+
+  .lp-copy:hover {
+    color: #fffaf0;
+    border-color: rgba(228, 196, 139, 0.45);
+    background: rgba(255, 255, 255, 0.085);
+  }
+
+  .lp-follow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, 0.5fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(245, 239, 229, 0.13);
+    border-radius: 1.6rem;
+    padding: clamp(1.5rem, 4vw, 3rem);
+    background:
+      radial-gradient(circle at 82% 20%, rgba(228, 196, 139, 0.14), transparent 24rem),
+      rgba(255, 255, 255, 0.035);
+  }
+
+  .lp-follow p {
+    margin: 0.9rem 0 0;
+    color: rgba(245, 239, 229, 0.64);
+    line-height: 1.78;
+  }
+
+  .lp-follow-panel {
+    display: grid;
+    gap: 0.7rem;
+    justify-self: end;
+    justify-items: center;
+    border: 1px solid rgba(245, 239, 229, 0.13);
+    border-radius: 1.2rem;
+    padding: 1.1rem;
+    background: rgba(10, 7, 13, 0.58);
+  }
+
+  .lp-follow-panel img {
+    display: block;
+    width: 200px;
+    height: auto;
+    border-radius: 0.75rem;
+  }
+
+  .lp-follow-panel span {
+    color: rgba(245, 239, 229, 0.62);
+    font-size: 0.88rem;
+  }
+
+  .lp-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 2rem 0 2.6rem;
+    border-top: 1px solid rgba(245, 239, 229, 0.11);
+  }
+
+  .lp-footer a {
+    text-decoration: none;
+  }
+
+  @media (max-width: 980px) {
+    .lp-nav {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .lp-nav-links {
+      max-width: 100%;
+      overflow-x: auto;
+    }
+
+    .lp-section-head,
+    .lp-follow {
+      grid-template-columns: 1fr;
+    }
+
+    .lp-card-grid-active {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .lp-card-grid-stable {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .lp-follow-panel {
+      justify-self: start;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .lp-nav-links a {
+      padding-inline: 0.72rem;
+      white-space: nowrap;
+    }
+
+    .lp-card-grid-active,
+    .lp-card-grid-stable {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lp-project-card,
+    .lp-project-card-compact {
+      min-height: 0;
+    }
+  }
+</style>

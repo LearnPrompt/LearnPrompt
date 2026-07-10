@@ -71,6 +71,7 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
           <a href={withBase("/start-here/")}>开始</a>
           <a href="#paths">路径</a>
           <a href="#guides">精选</a>
+          <a href={withBase("/skills/")}>工坊</a>
           <a href="#contact">联系</a>
         </div>
       </nav>
@@ -195,6 +196,10 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
         <div class="lp-contact-panel">
           <a href={`mailto:${contactEmail}?subject=${mailSubject}`}>{contactEmail}</a>
           <span>WeChat · {wechatId}</span>
+          <div class="lp-contact-wechat">
+            <span>公众号 · 卡尔的AI沃茨</span>
+            <img src={withBase("/images/wechat-qrcode.jpg")} alt="微信二维码" width="180" loading="lazy" />
+          </div>
           <a class="lp-button lp-button-primary" href={`mailto:${contactEmail}?subject=${mailSubject}`}>Send Email</a>
         </div>
       </section>
@@ -689,6 +694,21 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
 
   .lp-contact-panel span {
     color: rgba(245, 239, 229, 0.62);
+  }
+
+  .lp-contact-wechat {
+    display: grid;
+    gap: 0.6rem;
+    justify-items: start;
+    border-top: 1px solid rgba(245, 239, 229, 0.13);
+    padding-top: 0.95rem;
+  }
+
+  .lp-contact-wechat img {
+    display: block;
+    width: 180px;
+    height: auto;
+    border-radius: 0.75rem;
   }
 
   .lp-footer {
