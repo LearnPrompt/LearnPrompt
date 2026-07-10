@@ -6,11 +6,11 @@
 
 | 文章 | Lane | 状态 | Writer 工件 | 最终结果 |
 | --- | --- | --- | --- | --- |
-| `ai-coding/project-checklist.mdx` | A | resumed | 无 | 初次调用与两次自动重试均未生成工件；恢复 smoke 已通过，用户已重置为“新初次调用 + 最多两次重试”预算 |
-| `agent-skills/first-skill-md.mdx` | B | resumed | 无 | 初次调用与两次自动重试均未生成工件；恢复 smoke 已通过，用户已重置为“新初次调用 + 最多两次重试”预算 |
+| `ai-coding/project-checklist.mdx` | A | verified | 完整 | 94/100，独立复审 0 blocker / 0 major / 0 minor，validator 与 49 页构建通过 |
+| `agent-skills/first-skill-md.mdx` | B | verified | 完整 | 93/100，独立复审 0 blocker / 0 major / 0 minor，validator 与 49 页构建通过 |
 | `codex/codex-form-factors.mdx` | A | verified | 完整 | 93/100，独立复审 0 blocker / 0 major / 0 minor，validator 与 49 页构建通过 |
 
-Phase 1 gate：**未通过**。三种母稿必须全部通过后才能进入 Phase 2；当前不跳过两篇已恢复预算、尚未重新生成的文章。
+Phase 1 gate：**PASS**。三种差异母稿已全部 verified，允许进入 Phase 2 分波次生产。
 
 ## 前两篇失败链路
 
@@ -44,9 +44,9 @@ Phase 1 gate：**未通过**。三种母稿必须全部通过后才能进入 Pha
 
 ## 全站生产计数
 
-- `showcase_status: verified`：4 篇（3 篇 Phase 0 黄金样稿 + `codex-form-factors`）。
-- 仍含 `SourceCard` 的深度教程：37 篇。
-- Phase 1：1 verified / 2 resumed；Phase 2 尚未启动。
+- `showcase_status: verified`：6 篇（3 篇 Phase 0 黄金样稿 + 3 篇 Phase 1 母稿）。
+- 仍含 `SourceCard` 的深度教程：35 篇。
+- Phase 1：3 verified / 0 review / 0 partial / 0 blocked；Phase 2 可启动。
 
 ## `codex-form-factors` 生产记录
 
@@ -76,6 +76,37 @@ Phase 1 gate：**未通过**。三种母稿必须全部通过后才能进入 Pha
 - Lane commit：`cdd3641 docs(codex): goldenize codex-form-factors (93)`
 - 主分支 cherry-pick：`afbb39f docs(codex): goldenize codex-form-factors (93)`
 
+## 恢复预算两篇生产记录
+
+### Writer 与预算
+
+- 两篇在用户重置预算后分别按“新初次调用 + 最多两次重试”重新计数。
+- 新初次调用（attempt 1/3）在模型启动前被空 MCP 配置格式校验拒绝；两个 lane 均零改动。控制面仍按谨慎口径计入一次尝试。
+- 第一次重试（attempt 2/3）改用 `{"mcpServers":{}}`，两条 Claude Code writer 均成功执行一次 `/learnprompt-single-mdx`；没有使用 attempt 3/3。
+- 两个 writer 只修改各自 MDX、`research/articles/<slug>/` 与 `starlight/public/images/articles/<slug>/`，保持 `partial`，不自评、不写 `quality_score`。
+
+### `project-checklist`（94/100）
+
+- 从 41 行清单扩展为六格开工契约；Showcase 保存完整/不完整项目卡和无依赖 Node 校验器，控制面复跑得到预期退出码 0 / 1。
+- Harness 橙皮书因无标准开放许可只作为二手主题地图链接；教学 SVG 为 LearnPrompt 原创，CC BY-NC-SA 4.0。
+- 独立只读初审直接 PASS：0 blocker / 0 major / 0 minor，94/100。
+- Lane commit：`3badfc4 docs(ai-coding): goldenize project checklist (94)`；主分支 cherry-pick：`3390833`。
+
+### `first-skill-md`（93/100）
+
+- Showcase 保存合法与三个非法 `SKILL.md`、当前官方 `quick_validate.py` 输出和 `.skill` 打包结果；教学图解释三级渐进披露。
+- Agent Skills 橙皮书许可不明确，只保留主题地图链接，未复制图片或成段文字。
+- 独立初审 FAIL（2 blocker / 2 major / 1 minor，59/100）：发现官方脚本已加入 `compatibility`、旧 commit/日期不一致、XML 校验边界错误、“唯一触发器”表述过强。
+- 控制面以官方 `anthropics/skills` commit `9d2f1ae` 重跑并修正文、研究包、Showcase 冻结输出和 SVG。全新 follow-up 确认 finding 全部关闭；另一全新只读会话按六维量表终审 PASS（0 / 0 / 0，93/100）。
+- Lane commit：`748a2d8 docs(agent-skills): goldenize first skill guide (93)`；主分支 cherry-pick：`f7104c9`。
+
+### Phase 1 总门禁
+
+- 6 篇 verified 教程全部重新通过 validator。
+- Validator 回归：1 positive / 11 privacy negatives / 11 visual negatives / 7 review negatives，全部 PASS。
+- 两篇合并后主分支完整构建：49 页 PASS。
+- 主分支 `SourceCard` 剩余 35 篇，正好对应尚未黄金化的深度教程；Phase 2 不把这些草稿算完成。
+
 ## Pilot 控制面加固
 
 `codex-form-factors` 暴露了两个生产风险：原始 reviewer 日志曾写入被审 worktree，形成自引用读取；脱敏前的日志还包含运行标识和本机路径。文章层已修复，生产 skill 同步加固，避免后续批量复制这个问题。
@@ -101,7 +132,7 @@ Phase 1 gate：**未通过**。三种母稿必须全部通过后才能进入 Pha
 ## 边界
 
 - 不把 CLI 启动、401、503 或进程存活记作文章写作进度。
-- 不为两篇 blocked 任务自动发起第四次调用。
+- 重置预算的两篇只使用 attempt 1/3 与 attempt 2/3；没有擅自扩大到第四次或继续消耗 attempt 3/3。
 - 不用主控制器代写来伪装 `/learnprompt-single-mdx` 已成功执行。
 - 当前没有 push、部署或发布。
-- Phase 1 未通过前不启动 Phase 2 波次。
+- Phase 1 总门禁已通过；Phase 2 仍按每篇单独 Skill、最大并发 2、每两篇合并后全站构建的规则执行。
