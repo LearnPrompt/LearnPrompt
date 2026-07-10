@@ -29,6 +29,7 @@ export default defineConfig({
         },
       ],
       sidebar: [
+        { label: "Skill 工坊 · Workshop", link: "/workshop/" },
         { label: "开始", items: [{ autogenerate: { directory: "start-here" } }] },
         { label: "AI 编程", items: [{ autogenerate: { directory: "ai-coding" } }] },
         { label: "Claude Code", items: [{ autogenerate: { directory: "claude-code" } }] },
