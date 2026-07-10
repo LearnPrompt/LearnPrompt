@@ -6,8 +6,8 @@
 
 | 文章 | Lane | 状态 | Writer 工件 | 最终结果 |
 | --- | --- | --- | --- | --- |
-| `ai-coding/project-checklist.mdx` | A | blocked | 无 | Claude Code 在进入任务前连续遇到认证/网关错误，初次调用与两次自动重试均未生成工件 |
-| `agent-skills/first-skill-md.mdx` | B | blocked | 无 | Claude Code 在进入任务前连续遇到认证/网关错误，初次调用与两次自动重试均未生成工件 |
+| `ai-coding/project-checklist.mdx` | A | blocked | 无 | 初次调用与两次自动重试均未生成工件；恢复 smoke 已通过，等待明确重置文章重试预算 |
+| `agent-skills/first-skill-md.mdx` | B | blocked | 无 | 初次调用与两次自动重试均未生成工件；恢复 smoke 已通过，等待明确重置文章重试预算 |
 | `codex/codex-form-factors.mdx` | A | verified | 完整 | 93/100，独立复审 0 blocker / 0 major / 0 minor，validator 与 49 页构建通过 |
 
 Phase 1 gate：**未通过**。三种母稿必须全部通过后才能进入 Phase 2；当前不跳过两篇 blocked 文章。
@@ -35,6 +35,18 @@ Phase 1 gate：**未通过**。三种母稿必须全部通过后才能进入 Pha
 - 现场：两个 lane 仍为 clean，未生成目标 MDX diff 或研究工件。
 
 两篇均已耗尽“初次调用 + 两次自动重试”的预算，不自动发起第四次调用。
+
+### 恢复检查
+
+- 2026-07-11，在仓库外 `/private/tmp` 运行非文章最小调用：取消失效的 `CLAUDE_CODE_OAUTH_TOKEN`，不使用 `--setting-sources project`，Claude 成功返回 `GATEWAY_OK`，exit code 0。
+- 在 Lane A 运行相同的无工具、无写入 smoke：成功返回 `LANE_OK`，exit code 0；主分支和两个 lane 均保持 clean。
+- 这两次调用没有执行 `/learnprompt-single-mdx`，不算文章 writer 重试。外部认证/网关故障当前已恢复；两篇仍 blocked 的唯一原因是既定重试预算不能被控制器自行重置。
+
+## 全站生产计数
+
+- `showcase_status: verified`：4 篇（3 篇 Phase 0 黄金样稿 + `codex-form-factors`）。
+- 仍含 `SourceCard` 的深度教程：37 篇。
+- Phase 1：1 verified / 2 blocked；Phase 2 尚未启动。
 
 ## `codex-form-factors` 生产记录
 
