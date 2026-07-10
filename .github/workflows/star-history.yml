@@ -1,0 +1,36 @@
+name: Update Star History Chart
+
+on:
+  schedule:
+    - cron: "23 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-chart:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate star history SVG
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/star_history.py
+
+      - name: Commit and push if changed
+        run: |
+          if [ -n "$(git status --porcelain assets/star-history.svg)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add assets/star-history.svg
+            git commit -m "chore: update star history chart"
+            git push
+          else
+            echo "No changes to star history chart."
+          fi

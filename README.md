@@ -176,7 +176,7 @@ Carl Skills就是这个方向的新仓库。它会逐步收纳内容生产，资
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=LearnPrompt/LearnPrompt&type=Date)](https://star-history.com/#LearnPrompt/LearnPrompt&LearnPrompt/ai-news-radar&LearnPrompt/luban-skill&LearnPrompt/humanize-ppt&Date)
+[![Star History Chart](assets/star-history.svg)](https://star-history.com/#LearnPrompt/LearnPrompt&LearnPrompt/ai-news-radar&LearnPrompt/luban-skill&LearnPrompt/humanize-ppt&Date)
 
 ## Reference
 
