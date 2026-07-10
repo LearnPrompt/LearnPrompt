@@ -7,6 +7,9 @@ const isGitHubPages = process.env.DEPLOY_TARGET === "github-pages";
 export default defineConfig({
   site: isGitHubPages ? "https://learnprompt.github.io" : "https://www.learnprompt.pro",
   base: isGitHubPages ? "/LearnPrompt" : undefined,
+  redirects: {
+    "/workshop/": "/skills/",
+  },
   integrations: [
     starlight({
       title: "LearnPrompt",
@@ -29,7 +32,7 @@ export default defineConfig({
         },
       ],
       sidebar: [
-        { label: "Skill 工坊 · Workshop", link: "/workshop/" },
+        { label: "Skill 工坊 · Skills", link: "/skills/" },
         { label: "开始", items: [{ autogenerate: { directory: "start-here" } }] },
         { label: "AI 编程", items: [{ autogenerate: { directory: "ai-coding" } }] },
         { label: "Claude Code", items: [{ autogenerate: { directory: "claude-code" } }] },

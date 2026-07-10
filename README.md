@@ -12,7 +12,7 @@ AI对我来说，已经从聊天窗口变成了工作台：学新东西、写代
 
 我更关心普通人拿到这些工具以后，能不能真的多做成一些事。
 
-👉 项目全景：[learnprompt.pro/workshop](https://learnprompt.pro/workshop/)
+👉 项目全景：[learnprompt.pro/skills](https://learnprompt.pro/skills/)
 
 ---
 
@@ -42,6 +42,15 @@ AI News Radar里的伯乐Skill，用GitHub Actions、网页和自动化摘要，
 [![ai-news-radar](https://img.shields.io/github/stars/LearnPrompt/ai-news-radar?style=flat&label=AI%20News%20Radar)](https://github.com/LearnPrompt/ai-news-radar)
 [![Radar](https://img.shields.io/badge/radar-online-brightgreen)](https://learnprompt.github.io/ai-news-radar/)
 
+**鲁班 · 把能用的Skill打磨成公共资产**
+
+你写了一个skill，自己用着挺好，发出去却没人装。鲁班把它当作品收进工坊：验料、访行、过尺、慢刨、回炉，五个动作，每一刀都要过验证门，改完给你一份带证据的打磨报告。
+
+它的第一单活，是把ai-news-radar从v0.6打磨到v0.7.0，一个对话内4个PR全部合并。上线一个月拿到800+星。
+
+[![luban](https://img.shields.io/github/stars/LearnPrompt/luban-skill?style=flat&label=鲁班%20luban)](https://github.com/LearnPrompt/luban-skill)
+[![skills.sh](https://skills.sh/b/LearnPrompt/luban-skill)](https://skills.sh/LearnPrompt/luban-skill)
+
 **Humanize PPT · 先让PPT像是人在讲，再用工具生成**
 
 很多AI做PPT的问题，出在第一页之前。材料刚丢进去，就被压成一堆无聊的提纲，这样用的HTML PPT Skill再好也没用。
@@ -60,14 +69,6 @@ Humanize PPT读取了50多期TED演讲，先处理主线，听众获得感和讲
 [![skillrush-town](https://img.shields.io/github/stars/LearnPrompt/skillrush-town?style=flat&label=Skillrush%20Town)](https://github.com/LearnPrompt/skillrush-town)
 [![Town](https://img.shields.io/badge/town-online-brightgreen)](https://learnprompt.github.io/skillrush-town/)
 
-**Irasutoya 配图 · 给文章配一张会吐槽的图**
-
-文章里最值钱的那个判断，配一张说明书式的图就死了。
-
-这个skill把中文文章里的关键判断、流程和隐喻，变成白底、圆润、有梗图感的Irasutoya反应人物解释图：角色DNA定稿，三套主角按情绪选角，跨图不走形。交付的是配图方案和生图提示词，素材按いらすとや官方条款使用。
-
-[![irasutoya](https://img.shields.io/github/stars/LearnPrompt/carl-irasutoya-illustrations?style=flat&label=Irasutoya%20%E9%85%8D%E5%9B%BE)](https://github.com/LearnPrompt/carl-irasutoya-illustrations)
-
 **班门家族 · 一组以中国工匠命名的skills**
 
 我把反复被验证过的方法论,做成了一组以人物命名的skills。一个名字,一门手艺:
@@ -77,7 +78,8 @@ Humanize PPT读取了50多期TED演讲，先处理主线，听众获得感和讲
 - **蔡伦**,把对话里聊出来的结论,3秒造成一页能传阅的纸;
 - **阿福**,站在Obsidian收件箱门口的管家,Inbox到日历一条线;
 - **愚公**,别再一轮轮手动催Agent,把山交给一个会自己挖的循环;
-- **搭子**,Claude Code管规划审查,Codex管实现收尾,一张Session Receipt记账。
+- **搭子**,Claude Code管规划审查,Codex管实现收尾,一张Session Receipt记账;
+- **Irasutoya配图**,把文章里最值钱的判断,变成一张会吐槽的Irasutoya反应人物图。
 
 名字背故事,定位背痛苦。装一个,就知道这一家子的脾气。重度Agent用户还有**CC Harness六件套**:记忆、压缩、验证、调度,一行命令全装上。
 
@@ -87,6 +89,7 @@ Humanize PPT读取了50多期TED演讲，先处理主线，听众获得感和讲
 [![afu](https://img.shields.io/github/stars/LearnPrompt/afu-llm-todo?style=flat&label=阿福%20afu)](https://github.com/LearnPrompt/afu-llm-todo)
 [![yugong](https://img.shields.io/github/stars/LearnPrompt/loop-engineering?style=flat&label=愚公%20loop)](https://github.com/LearnPrompt/loop-engineering)
 [![partner](https://img.shields.io/github/stars/LearnPrompt/partner-skill?style=flat&label=搭子%20partner)](https://github.com/LearnPrompt/partner-skill)
+[![irasutoya](https://img.shields.io/github/stars/LearnPrompt/carl-irasutoya-illustrations?style=flat&label=Irasutoya%20%E9%85%8D%E5%9B%BE)](https://github.com/LearnPrompt/carl-irasutoya-illustrations)
 [![cc-harness](https://img.shields.io/github/stars/LearnPrompt/cc-harness-skills?style=flat&label=CC%20Harness)](https://github.com/LearnPrompt/cc-harness-skills)
 
 **工作台小件 · 顺手但离不开的三个小工具**

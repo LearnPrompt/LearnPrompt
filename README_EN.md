@@ -12,7 +12,7 @@ That is the reason I keep building LearnPrompt, AI Warts, and Carl Skills. I don
 
 What I care about is simpler: when ordinary people get access to these tools, can they actually get more meaningful work done?
 
-👉 Project matrix: [learnprompt.pro/workshop](https://learnprompt.pro/workshop/)
+👉 Project matrix: [learnprompt.pro/skills](https://learnprompt.pro/skills/)
 
 ---
 
@@ -42,6 +42,15 @@ It serves a plain need:
 [![ai-news-radar](https://img.shields.io/github/stars/LearnPrompt/ai-news-radar?style=flat&label=AI%20News%20Radar)](https://github.com/LearnPrompt/ai-news-radar)
 [![Radar](https://img.shields.io/badge/radar-online-brightgreen)](https://learnprompt.github.io/ai-news-radar/)
 
+**Luban · Polishing a working skill into a public asset**
+
+You wrote a skill that works fine for you, but nobody installs it. Luban treats it as a piece of craft: inspect the material, survey the trade, take measurements, plane slowly, refire — five moves, every cut gated by verification, ending with an evidence-backed polishing report.
+
+Its first job took ai-news-radar from v0.6 to v0.7.0, four PRs merged within a single conversation. It earned 800+ stars in its first month.
+
+[![luban](https://img.shields.io/github/stars/LearnPrompt/luban-skill?style=flat&label=Luban)](https://github.com/LearnPrompt/luban-skill)
+[![skills.sh](https://skills.sh/b/LearnPrompt/luban-skill)](https://skills.sh/LearnPrompt/luban-skill)
+
 **Humanize PPT · Make the deck feel like a human is speaking before generating slides**
 
 Many AI-generated decks go wrong before the first slide is even made. Raw material is dropped in and immediately flattened into a boring outline. At that point, even the best HTML PPT skill can only do so much.
@@ -60,14 +69,6 @@ The point is not the leaderboard itself. What remains is a public-source monitor
 [![skillrush-town](https://img.shields.io/github/stars/LearnPrompt/skillrush-town?style=flat&label=Skillrush%20Town)](https://github.com/LearnPrompt/skillrush-town)
 [![Town](https://img.shields.io/badge/town-online-brightgreen)](https://learnprompt.github.io/skillrush-town/)
 
-**Irasutoya Illustrations · Give your article a picture that talks back**
-
-The most valuable judgment in an article dies next to a manual-style diagram.
-
-This skill turns the key judgments, flows, and metaphors of a Chinese article into white-background, soft-rounded Irasutoya reaction-character explainers: character DNA locked, three lead characters cast by emotion, consistent across images. It delivers shot lists and image-generation prompts; assets follow the official Irasutoya terms.
-
-[![irasutoya](https://img.shields.io/github/stars/LearnPrompt/carl-irasutoya-illustrations?style=flat&label=Irasutoya)](https://github.com/LearnPrompt/carl-irasutoya-illustrations)
-
 **The Workshop Family · skills named after Chinese craftsmen**
 
 I package methodologies that survived real use into a family of person-named skills. One name, one craft:
@@ -77,7 +78,8 @@ I package methodologies that survived real use into a family of person-named ski
 - **Cailun** turns the conclusions of a chat into a single shareable page in three seconds;
 - **Afu** is the butler at your Obsidian inbox: Inbox to Wiki to Todo to Calendar;
 - **Yugong** stops you from nudging the agent round after round — hand the mountain to a loop that digs by itself;
-- **Partner** lets Claude Code plan and review while Codex implements and ships, with one Session Receipt keeping score.
+- **Partner** lets Claude Code plan and review while Codex implements and ships, with one Session Receipt keeping score;
+- **Irasutoya Illustrations** turns the most valuable judgment of an article into a reaction-character picture that talks back.
 
 The name carries the story; the positioning carries the pain. For heavy agent users there is also the **CC Harness six-pack**: memory, compression, verification, orchestration — one command installs them all.
 
@@ -87,6 +89,7 @@ The name carries the story; the positioning carries the pain. For heavy agent us
 [![afu](https://img.shields.io/github/stars/LearnPrompt/afu-llm-todo?style=flat&label=Afu)](https://github.com/LearnPrompt/afu-llm-todo)
 [![yugong](https://img.shields.io/github/stars/LearnPrompt/loop-engineering?style=flat&label=Yugong)](https://github.com/LearnPrompt/loop-engineering)
 [![partner](https://img.shields.io/github/stars/LearnPrompt/partner-skill?style=flat&label=Partner)](https://github.com/LearnPrompt/partner-skill)
+[![irasutoya](https://img.shields.io/github/stars/LearnPrompt/carl-irasutoya-illustrations?style=flat&label=Irasutoya)](https://github.com/LearnPrompt/carl-irasutoya-illustrations)
 [![cc-harness](https://img.shields.io/github/stars/LearnPrompt/cc-harness-skills?style=flat&label=CC%20Harness)](https://github.com/LearnPrompt/cc-harness-skills)
 
 **Workbench Sidekicks · three small tools I can't work without**
