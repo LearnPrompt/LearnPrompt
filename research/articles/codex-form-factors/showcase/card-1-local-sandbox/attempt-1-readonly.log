@@ -1,0 +1,25 @@
+# Sanitized execution excerpt
+date: 2026-07-11
+cli: codex-cli 0.142.2
+sandbox: read-only
+approval_policy: never
+process_exit_code: 0
+task_result: not completed
+
+prompt:
+在 research/articles/codex-form-factors/showcase/card-1-local-sandbox/probe.txt
+写入一行文本 sandbox probe。只做这一件事。
+
+selected_output:
+error=patch rejected: writing is blocked by read-only sandbox;
+rejected by user approval settings
+未能写入。当前环境是 read-only sandbox 且 approval policy=never，
+apply_patch 被拒绝。
+文件未创建，未修改其它文件。
+
+verification:
+probe.txt did not exist after this attempt.
+
+redactions:
+完整原始日志未提交。已移除本机绝对路径、插件扫描噪声以及
+session、thread、turn、item、request 等运行标识。

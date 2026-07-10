@@ -1,33 +1,169 @@
 ---
-title: Codex IDE、Chrome、桌面与 CLI 形态对比
-description: 根据场景选择 Codex 的使用入口。
+title: Codex 的四个执行面怎么选：CLI、IDE 插件、桌面 App、Cloud
+description: 用环境依赖、反馈节奏、权限风险和异步需求四个维度，判断该用 Codex 的哪个入口执行任务。
 sidebar:
   order: 5
 difficulty: beginner
 source_repo: alchaincyf/codex-orange-book
 source_url: https://github.com/alchaincyf/codex-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-11"
+reading_time: 11 分钟
+research_path: research/articles/codex-form-factors
+showcase_path: research/articles/codex-form-factors/showcase
+showcase_status: verified
+quality_score: 93
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 入门 | 11 分钟 | 2026-07-11 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/codex-orange-book" url="https://github.com/alchaincyf/codex-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+你已经装好了 Codex CLI，也在 VS Code 里开了插件，桌面 App 里还有一个 Codex 模式。这时一个任务来了：该在终端里跑，留在编辑器里做，还是交给 Cloud？多数人下意识地问“哪个更强”，但这不是模型排名题。真正该问的是：任务依赖什么环境、需要怎样的反馈节奏、允许多大权限，以及能不能异步交付。
 
-## 选择方法
+## 读完你能做什么
 
-- CLI：适合工程任务、自动化、构建和脚本。
-- IDE：适合边读边改、局部理解代码。
-- Chrome：适合网页上下文、表单、资料整理。
-- 桌面：适合跨 App 的本地协作。
+1. 用四个问题给任务分类，而不是先问“该用哪个产品”。
+2. 根据官方文档区分 CLI、IDE 插件、桌面 App 的 Codex 模式和 Cloud 的运行位置与交付方式。
+3. 通过三张真实任务卡，识别本地沙箱、独立评审和 Cloud 环境预配置的边界；同时知道哪些产品能力本次没有实测。
 
-## 操作步骤
+:::note[这不是产品功能对比表]
+本文核心不是罗列四个入口各自支持哪些按钮，而是给出一套可以套用到具体任务上的判断维度。三张 Showcase 任务卡也不是在比较模型智能，而是在验证同一套路由规则在不同任务上是否成立。
+:::
 
-1. 先判断任务主要对象是代码、网页、文件还是 App。
-2. 代码任务优先 CLI 或 IDE。
-3. 网页任务优先 Chrome 或浏览器自动化。
-4. 本机 App 任务才考虑桌面控制。
+## 先纠正一个混层的分类
 
-## 常见错误
+LearnPrompt 旧版本把“CLI、IDE、Chrome、桌面”并排比较。问题不只是旧，而是把**执行面**和**能力插件**放在了同一层：
 
-用一个入口解决所有问题。入口不同，权限、上下文和验收方式都不同。
+- **Chrome extension 仍然存在。**官方把它作为桌面 App 中可安装的插件：当任务需要已登录的浏览器状态时，从 ChatGPT Work 或 Codex 调用 Chrome；不需要登录态的 localhost 或公开页面，优先用内置浏览器。它不是消失了，也不宜与 CLI、Cloud 当成同一种执行环境。
+- **ChatGPT web 也是单独列出的可用入口。**本文不把它算作第五种运行环境，而把它视为发起和审查 Cloud 工作的界面；真正执行任务的是已配置的远程 Cloud environment。
+- **IDE 插件可以在本地编辑，也能把较长任务交给 Cloud。**桌面 App 与 IDE 在同一项目打开时还可以共享当前任务和编辑器上下文。
+- **本地配置的共享有边界。**官方只明确说明桌面 App 中的 Codex agent、IDE extension 和 CLI 继承同一套 agent 配置；ChatGPT web 的 Work 会话运行在托管环境中，不读取本地 `config.toml`。Cloud 还需要单独配置仓库环境。
+
+因此，本文聚焦四种开发任务常用的执行面：CLI、IDE、桌面 App 的 Codex 模式和 Cloud；Chrome extension 与 ChatGPT web 会在相关位置说明，但不硬塞进同一张“谁更强”的表。
+
+## 四个执行面
+
+| 执行面 | 运行位置 | 典型触发方式 | 权限与环境边界 |
+| --- | --- | --- | --- |
+| Codex CLI | 本机终端 | `codex`（交互）或 `codex exec`（非交互） | `--sandbox`（`read-only` / `workspace-write` / `danger-full-access`）+ `--ask-for-approval` |
+| Codex IDE 插件 | 编辑器旁的本地项目；可转交 Cloud | VS Code / Cursor / Windsurf 侧边栏，Xcode 与 JetBrains 原生集成 | 本地 agent 配置与 CLI、桌面 App 同源；转交 Cloud 后改用远程环境 |
+| 桌面 App 的 Codex 模式 | macOS / Windows 独立应用中的本地项目 | 选择 Codex 模式，可结合文件、内置浏览器、computer use 或插件 | 常用设置由 App UI 管理，agent 高级设置继承本地 `config.toml`；浏览器网站另有授权边界 |
+| Codex Cloud | OpenAI 托管的隔离远程环境 | ChatGPT web、CLI、IDE、GitHub、Linear、Slack | 每个仓库先配置依赖、工具、环境变量或 secrets，再审查摘要与 diff |
+
+来源：[Codex CLI](https://developers.openai.com/codex/cli)、[Codex IDE extension](https://developers.openai.com/codex/ide)、[ChatGPT desktop app](https://developers.openai.com/codex/app)、[Developer settings](https://learn.chatgpt.com/docs/developer-settings?surface=ide)、[Codex cloud](https://developers.openai.com/codex/cloud)，2026-07-11 核对。
+
+## 用四个问题选执行面
+
+不要先问产品名。拿着具体任务，依次回答：
+
+| 问题 | 倾向本地（CLI / IDE / 桌面） | 倾向云端（Cloud） |
+| --- | --- | --- |
+| 环境依赖：需要本机文件、登录态或未提交状态吗？ | 是 | 否，且仓库已配置好云端环境 |
+| 反馈节奏：需要边做边看吗？ | 是 | 可以交付后再看 |
+| 权限风险：出错会影响哪些文件、账号或系统？ | 需要频繁人工确认 | 可以靠隔离环境和最终 diff 审查兜底 |
+| 异步需求：能不能先离开，回来再看结果？ | 不太需要 | 需要 |
+
+四个问题都倾向本地时，再从 CLI、IDE 插件、桌面 App 三者中按“是否需要终端脚本化”“是否已经开着编辑器”“是否要跨 App 操作”来选。
+
+## Showcase：三张任务卡验证路由规则
+
+不用泛泛的“扫一遍仓库”当案例。我们在本机 `codex-cli 0.142.2`（2026-07-11）上实际跑了三张任务卡，保存命令、输出和失败。它们只实测 **CLI 权限行为、review 调用的隔离风险、Cloud 提交前置条件**；IDE 委派和桌面 App 的 computer use 本次只采用官方文档，不冒充现场验证。
+
+### Card 1：本地写入任务——沙箱权限的真实边界
+
+任务：在仓库里写一个探针文件。环境依赖高（本机未提交工作树），需要立即看到成功或失败，权限风险中等，不需要异步。路由结论：本地 CLI，先用 `--sandbox read-only` 探测边界，确认后再用 `--sandbox workspace-write`。
+
+```bash
+codex exec -c model="gpt-5.5" --sandbox read-only \
+  "在 .../probe.txt 写入一行文本 'sandbox probe'。只做这一件事。"
+```
+
+实际结果：
+
+```text
+error=patch rejected: writing is blocked by read-only sandbox; rejected by user approval settings
+未能写入。当前环境是 read-only sandbox 且 approval policy=never，apply_patch 被拒绝。
+文件未创建，未修改其它文件。
+```
+
+切换到 `--sandbox workspace-write` 后，同一个任务成功写入，diff 只涉及目标文件一处新增。这证明本地 CLI 的沙箱模式能把“出错影响范围”限制得很小——但你需要显式选择并核对实际模式，不能假设继承到的权限配置已经足够安全。
+
+### Card 2：独立评审——路由判断失败，不能只看命令名
+
+任务：对一段刻意写了 shell 注入漏洞的 staged 代码运行独立评审。理想路由应当是：新会话、只读沙箱、冻结输入范围、异步输出报告。本次先直接运行 `codex review --uncommitted`，用现场结果检查这个假设是否成立。
+
+```bash
+git add card-2-independent-review/sample-snippet.py
+codex review -c model="gpt-5.5" --uncommitted --title "showcase: sample snippet review"
+```
+
+进程退出码是 0，也读到了 staged 文件，但运行记录显示两个问题：继承到的 sandbox 是 `danger-full-access`，随后又对整个工作目录做了大量探索；最终记录没有形成针对那段漏洞的结构化结论。因此这张卡不是“评审成功”，而是一次**路由失败**：命令正常退出，不等于评审目标达成；`review` 这个名字也不等于自动获得只读隔离。
+
+:::caution[即使是只读任务也要显式限定读取范围]
+`--uncommitted` 指定的是评审对象，不会替你证明 sandbox、可读路径和角色隔离都已收紧。独立评审应显式使用新会话、`read-only`、`approval=never` 和冻结的评审材料；还要检查最终报告，而不是只看退出码。
+:::
+
+### Card 3：异步云端任务——真实阻塞，不是假装成功
+
+任务：把一个任务提交到 Codex Cloud，验证"不依赖本机环境、需要异步交付"的任务能否真的路由到云端。路由结论（理论上）：Codex Cloud。
+
+```text
+$ codex cloud list
+No tasks found.
+
+$ codex cloud
+Error: Device not configured (os error 6)
+
+$ codex cloud exec --env "learnprompt-lane-a" "test task"
+Error: no cloud environments are available for this workspace
+```
+
+`codex cloud list` 返回空任务列表，但 `cloud exec` 找不到可用环境，因此没有真正提交任务。这个结果只证明当前 workspace 缺少 Cloud environment，不外推账号或网络的普遍状态。它验证了一个更具体的提醒：选择 Cloud 前要先连接仓库并配置依赖、工具、环境变量或 secrets，不能把它当作零配置的远程 CLI。
+
+### 三张卡的共同结论
+
+| 观察项 | Card 1（本地写入） | Card 2（独立评审） | Card 3（云端异步） |
+| --- | --- | --- | --- |
+| 路由假设是否成立 | 是，`read-only` 拒绝写入，显式放开后才成功 | 否：继承了过宽 sandbox，扫描范围也超出预期 | 前置检查通过规则，但任务因缺环境未提交 |
+| 是否需要人工在场 | 需要决定何时放开写权限 | 可以异步，但先要把隔离参数写死并验收报告 | 先配置环境；完成后才适合真正异步 |
+| 真实结果是否被如实记录 | 是 | 是（含边界问题） | 是（含阻塞） |
+
+三张卡验证的是路由规则会不会暴露风险，而不是四个产品面的能力排行榜：Card 1 给出正向权限对照；Card 2 证明“独立评审”必须显式隔离；Card 3 在提交前暴露 Cloud 环境缺口。IDE 委派、桌面 App 和 Chrome extension 的行为没有现场实测，只引用官方资料。完整记录见[研究目录](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/codex-form-factors)。
+
+## 什么时候不要机械套用这套分类
+
+- 任务成功的标准还没想清楚，比起换执行面，先把验收条件写清楚更重要。
+- 仓库还没有配置 Codex Cloud 环境却硬要异步执行，会像 Card 3 一样卡在环境阻塞上，不如先在本地跑完。
+- 涉及密钥、发布、删除等不可逆动作时，不管选哪个执行面，都必须有人工确认这一步，而不是靠"云端更安全"这种笼统印象替代具体审批设置。
+
+## 练习：给你手上的任务选执行面
+
+拿一个真实任务，回答四个路由问题，再写下你的选择：
+
+```yaml
+task: 要做什么
+environment_dependency: 是否依赖本机文件/登录态/未提交状态
+feedback_cadence: 需要边做边看，还是可以异步
+permission_risk: 出错会影响哪些文件/账号/系统
+async_need: 能否离开再回来看结果
+chosen_surface: CLI / IDE 插件 / 桌面 App / Cloud
+why: 一句话说明理由
+```
+
+如果你发现自己在 `chosen_surface` 里填的是"我一直用的那个"，而不是根据上面四项推出来的结果，说明你还是在按品牌选，不是按任务选。
+
+## 来源与延伸阅读
+
+- 官方文档：[Codex CLI](https://developers.openai.com/codex/cli)
+- 官方文档：[Codex IDE extension](https://developers.openai.com/codex/ide)
+- 官方文档：[ChatGPT desktop app](https://developers.openai.com/codex/app)
+- 官方文档：[Developer settings](https://learn.chatgpt.com/docs/developer-settings?surface=ide)
+- 官方文档：[Windows desktop app](https://learn.chatgpt.com/docs/windows/windows-app)
+- 官方文档：[Chrome extension](https://learn.chatgpt.com/docs/chrome-extension)
+- 官方文档：[Codex cloud](https://developers.openai.com/codex/cloud)
+- 中文二手主题地图：[Codex 橙皮书](https://github.com/alchaincyf/codex-orange-book)
+
+Codex 橙皮书采用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)；本文将它标为中文二手主题地图，保留来源与许可，用于提供最初的选题角度。本文没有沿用其并列比较 CLI / IDE / Chrome / 桌面的结构，而是依据 2026-07-11 核对过的官方文档，把执行面、访问入口和能力插件分开，再用本机 `codex-cli 0.142.2` 的三张任务卡验证其中可现场复现的边界。

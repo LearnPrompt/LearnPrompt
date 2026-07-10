@@ -1,0 +1,11 @@
+$ codex cloud list
+No tasks found.
+
+$ codex cloud
+Error: Device not configured (os error 6)
+
+$ codex cloud exec --env "" "test"
+Error: environment id must not be empty
+
+$ codex cloud exec --env "learnprompt-lane-a" "test task"
+Error: no cloud environments are available for this workspace
