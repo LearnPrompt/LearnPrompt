@@ -12,6 +12,8 @@ AI对我来说，已经从聊天窗口变成了工作台：学新东西、写代
 
 我更关心普通人拿到这些工具以后，能不能真的多做成一些事。
 
+👉 项目全景：[learnprompt.pro/workshop](https://learnprompt.pro/workshop/)
+
 ---
 
 ## 我在做的事
