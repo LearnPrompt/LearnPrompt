@@ -1,0 +1,16 @@
+Date: 2026-07-10
+Node: v24.11.0
+Command: node --test research/golden-samples/loop-five-moves/showcase/test/loop-demo.test.mjs
+Exit code: 0
+
+1 DISCOVER uppercase-title
+2 HANDOFF uppercase-title
+3 VERIFY pass
+4 PERSIST uppercase-title:passed
+5 SCHEDULE idle
+1 DISCOVER idle
+5 SCHEDULE idle
+
+tests 1
+pass 1
+fail 0

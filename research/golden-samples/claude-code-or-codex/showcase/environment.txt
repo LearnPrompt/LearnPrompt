@@ -1,0 +1,11 @@
+Date: 2026-07-10
+Repository: LearnPrompt
+
+Command: git branch --show-current
+Output: main
+
+Command: git rev-parse --short HEAD
+Output: 038bcd5
+
+Command: git status --short
+Output: (empty; working tree clean before the showcase)

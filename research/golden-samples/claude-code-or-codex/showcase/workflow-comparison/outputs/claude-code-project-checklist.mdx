@@ -1,0 +1,119 @@
+---
+title: AI 编程项目的任务和验收清单
+description: 开始项目之前先写好的最小工程清单。
+sidebar:
+  order: 5
+difficulty: beginner
+source_repo: alchaincyf/harness-engineering-orange-book
+source_url: https://github.com/alchaincyf/harness-engineering-orange-book
+updated_from: 2026-05
+legacy_status: current
+---
+
+import SourceCard from "../../../components/SourceCard.astro";
+import { Aside } from "@astrojs/starlight/components";
+
+<SourceCard repo="alchaincyf/harness-engineering-orange-book" url="https://github.com/alchaincyf/harness-engineering-orange-book" updatedFrom="2026-05" />
+
+接手一个已经存在的仓库,让 AI Agent 帮你改代码,最容易踩的坑不是 Agent 不够聪明,而是**你没有把项目的边界写清楚**。Agent 会猜运行命令、猜哪些文件能改、猜密钥从哪来——猜错一次,就是一次返工。
+
+这篇教程把"最小清单"扩成一套可以直接照做的流程:五分钟填完一张表,生成一张项目卡,交给 Agent 之前先过一遍验收清单。
+
+## 五分钟开工表
+
+拿到一个新仓库,先别急着写 prompt。花五分钟按下表把答案填出来,填不出来的就去找,找不到就先问人。
+
+| 问题 | 去哪里找 | 留下什么 |
+| --- | --- | --- |
+| 仓库地址和当前分支是什么? | `git remote -v`、`git branch` | 分支名,以及这个分支是不是受保护分支 |
+| 怎么把项目跑起来? | `README.md`、`package.json` 的 `scripts` | 一条能复制粘贴的启动命令 |
+| 最快的检查命令是什么? | CI 配置文件(`.github/workflows/`)、`package.json` | 一条 lint/test/build 命令,越快越好 |
+| 主要目录和不能碰的目录分别是什么? | 项目结构、`.gitignore`、历史 PR | 一份"可以改"和"禁止改"的目录清单 |
+| 密钥怎么提供? | `.env.example`、部署文档、团队群里问 | 密钥的**获取方式**,不是密钥本身 |
+| 怎么算做完了? | 需求描述、Issue、验收人 | 一条用户能看懂的验收路径 |
+| 出问题怎么撤回? | `git log`、部署平台的回滚按钮 | 一句话的回滚步骤 |
+
+填完这张表,你已经拥有了交给 Agent 的最小上下文。
+
+## 可复制的 YAML 项目卡
+
+把上面的表整理成结构化的项目卡,存成 `project-card.yml`,放在仓库根目录或者贴进 Agent 的第一条消息里。
+
+```yaml
+repo: your-org/your-repo
+branch: main
+run: npm run dev
+check: npm run lint && npm run test
+dirs:
+  editable:
+    - src/
+    - starlight/src/content/
+  do_not_touch:
+    - docs/legacy/          # 旧文档只读盘点,不删不改
+    - .github/workflows/     # CI 配置需要人工审核
+secrets:
+  provide_via: .env.local(从团队密钥管理工具复制,不要硬编码)
+acceptance:
+  - 本地跑 npm run build 无报错
+  - 首页在浏览器里能正常打开
+rollback: git revert <commit>,或在部署平台点"回滚到上一版本"
+```
+
+这张卡的价值在于:Agent 读一遍就知道边界在哪,你自己也能在几秒内检查任务范围有没有跑偏。
+
+## Before / After:缺清单导致返工
+
+**Before(没写清单)**
+
+> "帮我把登录页面改成新设计。"
+
+Agent 直接改了 `src/pages/login.tsx`,顺手也"优化"了旁边的 `src/pages/register.tsx`,因为它觉得两者应该保持一致。结果 `register.tsx` 是产品经理明确要求"暂不改动"的页面,PR 被打回,你花了半小时解释哪些改动要撤销。
+
+**After(写了清单)**
+
+> 项目卡里写明:
+> `editable: src/pages/login.tsx`
+> `do_not_touch: src/pages/register.tsx`
+>
+> "根据项目卡,只修改 `login.tsx` 的登录页面设计,`register.tsx` 不要动。"
+
+Agent 只改了目标文件,PR 一次通过。**同一个需求,差别只是清单写没写。**
+
+<Aside type="caution">
+涉及密钥和发布的操作,清单里只写"怎么获取",绝不写密钥本身,也不要让 Agent 自己决定是否推送、部署或删除远程分支。`git push`、`npm publish`、删数据库表这类动作,即使 Agent 建议了,也要你自己确认之后再执行。
+</Aside>
+
+## 实战案例:LearnPrompt Starlight 迁移
+
+这次把 LearnPrompt 的 Wiki 从 Docusaurus 迁移到 Starlight,就是照着这套清单走的:
+
+1. **仓库地址和分支** — 迁移在独立分支上进行,新站代码全部放进 `starlight/` 目录,和旧站代码物理隔离。
+2. **运行方式** — 项目卡里写死 `cd starlight && npm run dev` 用于本地预览。
+3. **主要目录 / 不能碰的目录** — 旧 Docusaurus 目录标记为"只读盘点",第一阶段只做内容迁移,不删除、不改写旧文件,避免迁移过程中误伤仍在使用的旧站。
+4. **密钥** — 迁移过程不涉及新增密钥,沿用现有部署平台的环境变量,清单里注明"无需新增"。
+5. **验收路径** — 验收标准是"新旧两站都能各自构建成功,导航结构一一对应"。
+6. **回滚方式** — 因为改动全在 `starlight/` 目录和新分支上,回滚等价于不合并这个分支,旧站完全不受影响。
+
+正是因为"不能碰的目录"和"验收范围"在动手前就写清楚了,整个迁移过程里没有出现"改错文件"或"旧站被误删"的返工。
+
+想看这套流程更完整的最小工作法,可以参考 [最小可行的 Agent 编程工作法](./minimum-agentic-coding-workflow/)。
+
+<Aside type="note">
+新项目和"接手旧仓库"不完全一样:全新项目里"不能碰的目录"往往还不存在,你需要在设计阶段就先划出边界(比如"数据层由后端团队维护,前端 Agent 不碰 `api/` 目录"),而不是等仓库变大了再补清单。清单要在项目还小的时候写,补救成本最低。
+</Aside>
+
+## 练习
+
+1. 找一个你正在用但还没写过清单的仓库,照着"五分钟开工表"填一遍,能填出几项?哪几项找不到答案?
+2. 把填好的表整理成 `project-card.yml`,试着交给 Agent 做一个小改动,观察它有没有越界。
+3. 回忆一次你经历过的返工,对照"Before / After"案例,写出如果当时有清单,哪一句话能避免它。
+
+## 读后验收清单
+
+- [ ] 能说出仓库地址、当前分支、启动命令、检查命令。
+- [ ] 写出了"可以改"和"禁止改"的目录清单,而不是只有口头约定。
+- [ ] 密钥的获取方式写进了清单,密钥本身没有出现在任何文档或 prompt 里。
+- [ ] 涉及推送、发布、删除的动作,明确要人工确认,没有交给 Agent 自主决定。
+- [ ] 验收路径是一句话能讲清楚的用户可见结果,不是"代码看起来没问题"。
+- [ ] 回滚方式写清楚了,出问题能在一分钟内说出怎么撤回。
+- [ ] 本地跑通了 `cd starlight && npm run build`,构建无报错。

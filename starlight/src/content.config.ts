@@ -12,6 +12,13 @@ export const collections = {
         source_repo: z.string().optional(),
         source_url: z.url().optional(),
         updated_from: z.string().optional(),
+        author: z.string().optional(),
+        verified_at: z.string().optional(),
+        reading_time: z.string().optional(),
+        research_path: z.string().optional(),
+        showcase_path: z.string().optional(),
+        showcase_status: z.enum(["verified", "partial", "planned"]).optional(),
+        quality_score: z.number().int().min(0).max(100).optional(),
         legacy_status: z
           .enum(["current", "outdated", "archived"])
           .default("current"),

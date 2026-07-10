@@ -1,0 +1,7 @@
+{
+  "steps": ["inspect", "plan", "implement", "verify", "report"],
+  "worker": "implementation-agent",
+  "evaluator": "scripts/verify-harness.mjs",
+  "stop_when": "all_checks_pass",
+  "on_failure": "record evidence and return to plan"
+}

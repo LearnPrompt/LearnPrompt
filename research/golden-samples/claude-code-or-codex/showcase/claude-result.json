@@ -1,0 +1,25 @@
+{
+  "tool": "Claude Code",
+  "cli_version": "2.1.206",
+  "model_reported_by_cli": "claude-opus-4-8[1m]",
+  "duration_ms_reported_by_cli": 32966,
+  "turns_reported_by_cli": 6,
+  "project": "LearnPrompt 当前以 Astro Starlight 为主站，根目录保留旧 Docusaurus。",
+  "entrypoints": [
+    "starlight/astro.config.mjs",
+    "vercel.json",
+    "docusaurus.config.js"
+  ],
+  "first_check": "cd starlight && npm ci && npm run build",
+  "evidence": [
+    "README.md 描述当前 Starlight 与旧站结构",
+    "vercel.json 指向 starlight 构建",
+    "starlight/package.json 定义当前构建脚本",
+    "根 package.json 仍属于旧站"
+  ],
+  "uncertainty": [
+    "迁移是否已经完成",
+    "根目录旧脚本是否仍被 CI 使用",
+    "依赖更新是否会影响构建"
+  ]
+}

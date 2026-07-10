@@ -1,0 +1,21 @@
+Date: 2026-07-10
+
+Command: node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs --article starlight/src/content/docs/ai-coding/choose-claude-code-or-codex.mdx --research research/golden-samples/claude-code-or-codex
+Exit code: 0
+Result: PASS article; PASS research; showcase_status partial (intentional before follow-up review)
+
+Command: cd starlight && npm run build
+Exit code: 0
+Result: 49 pages built; Pagefind and sitemap generated; /ai-coding/choose-claude-code-or-codex/ generated
+
+Command: git diff --check
+Exit code: 0
+
+Final-state rerun after follow-up review:
+- showcase_status: verified
+- quality_score: 92
+- validator: first run exposed a false positive because historical text mentioned PENDING; validator rule narrowed to current/final status lines
+- Starlight build: PASS, 49 pages built
+- validator rerun: PASS article; PASS research; verified (92/100)
+- git diff --check: PASS
+- packaged skill validation: PASS

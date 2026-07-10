@@ -35,6 +35,7 @@ export default defineConfig({
         { label: "Codex", items: [{ autogenerate: { directory: "codex" } }] },
         { label: "Agent 工程", items: [{ autogenerate: { directory: "agent-engineering" } }] },
         { label: "Agent Skills", items: [{ autogenerate: { directory: "agent-skills" } }] },
+        { label: "Loop Engineering", items: [{ autogenerate: { directory: "loop-engineering" } }] },
         { label: "Obsidian AI", items: [{ autogenerate: { directory: "obsidian-ai" } }] },
         { label: "Hermes / OpenClaw", items: [{ autogenerate: { directory: "agent-frameworks" } }] },
       ],
