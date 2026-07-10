@@ -473,6 +473,7 @@ const formatStars = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : St
     display: flex;
     flex-direction: column;
     gap: 0.9rem;
+    min-width: 0;
     min-height: 16rem;
     border: 1px solid rgba(245, 239, 229, 0.13);
     border-radius: 1.1rem;
@@ -577,6 +578,7 @@ const formatStars = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : St
 
   .lp-install code {
     flex: 1;
+    min-width: 0;
     overflow-x: auto;
     color: rgba(245, 239, 229, 0.78);
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -697,7 +699,7 @@ const formatStars = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : St
 
     .lp-card-grid-active,
     .lp-card-grid-stable {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .lp-project-card,
