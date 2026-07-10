@@ -24,13 +24,17 @@ jobs:
         run: python3 scripts/star_history.py
 
       - name: Commit and push if changed
+        # main is a protected branch (PR-only + deployment check), so the
+        # chart lives on a dedicated `star-history` branch that the bot
+        # force-pushes. READMEs reference the raw URL of that branch.
         run: |
           if [ -n "$(git status --porcelain assets/star-history.svg)" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
+            git checkout -B star-history
             git add assets/star-history.svg
             git commit -m "chore: update star history chart"
-            git push
+            git push --force origin star-history
           else
             echo "No changes to star history chart."
           fi

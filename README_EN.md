@@ -174,7 +174,7 @@ That is why I’m reorganizing this repository now.
 
 ## Star History
 
-[![Star History Chart](assets/star-history.svg)](https://star-history.com/#LearnPrompt/LearnPrompt&LearnPrompt/ai-news-radar&LearnPrompt/luban-skill&LearnPrompt/humanize-ppt&Date)
+[![Star History Chart](https://raw.githubusercontent.com/LearnPrompt/LearnPrompt/star-history/assets/star-history.svg)](https://star-history.com/#LearnPrompt/LearnPrompt&LearnPrompt/ai-news-radar&LearnPrompt/luban-skill&LearnPrompt/humanize-ppt&Date)
 
 ## Reference
 
