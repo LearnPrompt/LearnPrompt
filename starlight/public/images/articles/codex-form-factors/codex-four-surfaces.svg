@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Codex 四个执行面的选择边界</title>
+  <desc id="desc">CLI、IDE、桌面 App 属于本地执行面，Cloud 属于远程隔离执行面；Chrome 插件和 ChatGPT Web 是能力或界面，不与执行面同层。</desc>
+  <rect width="1200" height="675" rx="28" fill="#f8fafc"/>
+  <text x="600" y="70" text-anchor="middle" font-family="system-ui, sans-serif" font-size="42" font-weight="700" fill="#0f172a">Codex 四个执行面：先看任务边界，不做能力排名</text>
+  <rect x="45" y="112" width="820" height="410" rx="28" fill="#fff7ed" stroke="#fb923c" stroke-width="3"/>
+  <text x="455" y="155" text-anchor="middle" font-family="system-ui, sans-serif" font-size="25" font-weight="700" fill="#9a3412">本地项目：依赖当前文件、登录态或即时反馈</text>
+  <g font-family="system-ui, sans-serif">
+    <g transform="translate(80 195)"><rect width="225" height="260" rx="24" fill="white" stroke="#f97316" stroke-width="3"/><text x="112" y="62" text-anchor="middle" font-size="31" font-weight="700" fill="#9a3412">CLI</text><text x="112" y="112" text-anchor="middle" font-size="19" fill="#475569">终端脚本化</text><text x="112" y="148" text-anchor="middle" font-size="17" fill="#64748b">命令 · 管道 · 沙箱</text><text x="112" y="210" text-anchor="middle" font-size="18" font-weight="700" fill="#0f172a">适合可复制步骤</text></g>
+    <g transform="translate(340 195)"><rect width="225" height="260" rx="24" fill="white" stroke="#f59e0b" stroke-width="3"/><text x="112" y="62" text-anchor="middle" font-size="31" font-weight="700" fill="#92400e">IDE</text><text x="112" y="112" text-anchor="middle" font-size="19" fill="#475569">编辑器内连续反馈</text><text x="112" y="148" text-anchor="middle" font-size="17" fill="#64748b">选区 · 文件 · diff</text><text x="112" y="210" text-anchor="middle" font-size="18" font-weight="700" fill="#0f172a">适合边看边改</text></g>
+    <g transform="translate(600 195)"><rect width="225" height="260" rx="24" fill="white" stroke="#eab308" stroke-width="3"/><text x="112" y="62" text-anchor="middle" font-size="31" font-weight="700" fill="#854d0e">桌面 App</text><text x="112" y="112" text-anchor="middle" font-size="19" fill="#475569">跨应用本地任务</text><text x="112" y="148" text-anchor="middle" font-size="17" fill="#64748b">文件 · 浏览器 · 插件</text><text x="112" y="210" text-anchor="middle" font-size="18" font-weight="700" fill="#0f172a">适合多工具协作</text></g>
+  </g>
+  <rect x="900" y="112" width="255" height="410" rx="28" fill="#eff6ff" stroke="#3b82f6" stroke-width="3"/>
+  <text x="1027" y="180" text-anchor="middle" font-family="system-ui, sans-serif" font-size="32" font-weight="700" fill="#1e40af">Cloud</text>
+  <text x="1027" y="236" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" fill="#475569">远程隔离环境</text>
+  <text x="1027" y="286" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" fill="#64748b">仓库预配置</text>
+  <text x="1027" y="324" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" fill="#64748b">异步交付</text>
+  <text x="1027" y="362" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" fill="#64748b">最终 diff 审查</text>
+  <text x="1027" y="440" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" font-weight="700" fill="#0f172a">适合边界冻结任务</text>
+  <rect x="140" y="560" width="920" height="72" rx="36" fill="#0f172a"/>
+  <text x="600" y="604" text-anchor="middle" font-family="system-ui, sans-serif" font-size="23" fill="white">Chrome 插件是浏览器能力，ChatGPT Web 是发起/审查界面；不要与执行面混为一层</text>
+</svg>

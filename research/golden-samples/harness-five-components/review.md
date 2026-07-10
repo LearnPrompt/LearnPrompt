@@ -38,4 +38,25 @@
 
 未关闭问题：blocker 0 / major 0 / minor 0。正文、台账、代码与原始结果路径一致；站点构建通过。
 
+## 视觉补充终审：PASS（92/100）
+
+新的 Codex `gpt-5.4` 独立只读会话核对正文、SVG、资产台账与本审稿记录；原始输出在仓库外捕获，writer 未参与打分或修改结论。图片把五组件模型压缩成可扫读的审计框架，与正文五问和 Showcase 的 `5/5 verified` 逻辑一致；alt、图注、SVG 文案和许可台账闭环。
+
+Visual assessment: PASS
+Asset: `/images/articles/what-is-harness/harness-five-components.svg`
+Teaching role: 解释规则、能力、约束、状态与编排怎样形成可验证执行闭环
+Decorative-only: no
+Rights: CC BY-NC-SA 4.0
+
+| 维度 | 视觉补充终审分数 |
+| --- | ---: |
+| 事实与证据 | 24/25 |
+| 解释深度 | 18/20 |
+| Showcase | 18/20 |
+| 教学设计 | 14/15 |
+| 时效性 | 9/10 |
+| 编辑质量 | 9/10 |
+
+未关闭问题：blocker 0 / major 0 / minor 0。
+
 最终状态：PASS

@@ -47,6 +47,9 @@ Loop 的关键不是“永远运行”，而是让系统在多次执行之间仍
 
 你还会运行一个完全不调用模型的最小 Loop。它故意使用确定性 mock worker，让我们先验证循环结构本身，再讨论接入 Claude Code、Codex 或其他 Agent。
 
+![Loop Engineering 五动作让一次执行的证据进入下一次发现](/images/articles/five-moves/loop-five-moves.svg)
+*图注：发现、交接、验证、持久化与调度构成跨执行闭环；其中验证结果必须先被持久化，下一轮发现才不会从零开始。*
+
 :::note[Loop Engineering 仍是新兴术语]
 本文的五动作框架来自 Addy Osmani 的 Loop Engineering 论述、长任务 Harness 研究和橙皮书主题地图的综合。它是一套实用的教学模型，不是正式行业标准。
 :::

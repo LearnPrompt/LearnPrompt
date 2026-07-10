@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Claude Code 与 Codex 的工作流路由</title>
+  <desc id="desc">需求仍需澄清时选择现场探索，任务卡已冻结时选择隔离委派，两条路线最终进入相同验收门。</desc>
+  <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#64748b"/></marker></defs>
+  <rect width="1200" height="675" rx="28" fill="#f8fafc"/>
+  <text x="600" y="72" text-anchor="middle" font-family="system-ui, sans-serif" font-size="42" font-weight="700" fill="#0f172a">先判断工作方式，再选择工具</text>
+  <rect x="370" y="112" width="460" height="90" rx="22" fill="#0f172a"/>
+  <text x="600" y="150" text-anchor="middle" font-family="system-ui, sans-serif" font-size="23" fill="#cbd5e1">任务入口</text>
+  <text x="600" y="182" text-anchor="middle" font-family="system-ui, sans-serif" font-size="27" font-weight="700" fill="white">需求成熟度 · 环境依赖 · 风险 · 验收</text>
+  <path d="M510 202 L330 270" stroke="#64748b" stroke-width="4" fill="none" marker-end="url(#arrow)"/>
+  <path d="M690 202 L870 270" stroke="#64748b" stroke-width="4" fill="none" marker-end="url(#arrow)"/>
+  <g font-family="system-ui, sans-serif">
+    <rect x="90" y="275" width="470" height="220" rx="26" fill="#fff7ed" stroke="#f97316" stroke-width="4"/>
+    <text x="325" y="330" text-anchor="middle" font-size="29" font-weight="700" fill="#9a3412">仍在探索：人需要留在现场</text>
+    <text x="130" y="378" font-size="21" fill="#475569">① 只读发现与提出问题</text>
+    <text x="130" y="418" font-size="21" fill="#475569">② 编辑者回答并缩小范围</text>
+    <text x="130" y="458" font-size="21" fill="#475569">③ 适合 Claude Code 式连续会话</text>
+    <rect x="640" y="275" width="470" height="220" rx="26" fill="#eff6ff" stroke="#3b82f6" stroke-width="4"/>
+    <text x="875" y="330" text-anchor="middle" font-size="29" font-weight="700" fill="#1e40af">任务已冻结：可以离开现场</text>
+    <text x="680" y="378" font-size="21" fill="#475569">① 明确输入、禁止范围和验收</text>
+    <text x="680" y="418" font-size="21" fill="#475569">② 在隔离环境中一次委派</text>
+    <text x="680" y="458" font-size="21" fill="#475569">③ 适合 Codex 式后台任务</text>
+  </g>
+  <path d="M325 495 L475 555" stroke="#64748b" stroke-width="4" fill="none" marker-end="url(#arrow)"/>
+  <path d="M875 495 L725 555" stroke="#64748b" stroke-width="4" fill="none" marker-end="url(#arrow)"/>
+  <rect x="350" y="550" width="500" height="80" rx="40" fill="#dcfce7" stroke="#22c55e" stroke-width="3"/>
+  <text x="600" y="600" text-anchor="middle" font-family="system-ui, sans-serif" font-size="27" font-weight="700" fill="#166534">共同出口：独立 review + validator + build</text>
+</svg>

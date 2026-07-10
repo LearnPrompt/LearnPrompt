@@ -50,4 +50,25 @@
 
 未关闭问题：blocker 0 / major 0 / minor 0。
 
+## V2 视觉补充终审：PASS（92/100）
+
+新的 Codex `gpt-5.4` 独立只读会话核对正文、SVG、资产台账与本审稿记录；原始输出在仓库外捕获，writer 未参与打分或修改结论。图片把“先判断工作方式，再选择工具”转成可扫读的路由图，并准确保留探索、冻结任务与共同验收出口的边界；未引入额外产品事实或 MDX 风险。
+
+Visual assessment: PASS
+Asset: `/images/articles/choose-claude-code-or-codex/workflow-routing.svg`
+Teaching role: 解释任务成熟度、环境依赖与反馈节奏如何路由到探索或完整委派
+Decorative-only: no
+Rights: CC BY-NC-SA 4.0
+
+| 维度 | 视觉补充终审分数 |
+| --- | ---: |
+| 事实与证据 | 22/25 |
+| 解释深度 | 18/20 |
+| Showcase | 18/20 |
+| 教学设计 | 14/15 |
+| 时效性 | 10/10 |
+| 编辑质量 | 10/10 |
+
+未关闭问题：blocker 0 / major 0 / minor 0。
+
 最终状态：PASS

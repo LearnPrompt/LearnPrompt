@@ -61,4 +61,25 @@
 - Follow-up 2 六维评分：事实与证据 24/25、解释深度 18/20、Showcase 18/20、教学设计 14/15、时效性 10/10、编辑质量 9/10。
 - 放行条件：blocker=0、major=0、minor=0、总分至少 85，validator 与完整 Starlight build 均通过。
 - 未关闭问题：blocker 0 / major 0 / minor 0。
+## 视觉补充终审：PASS（93/100）
+
+新的 Codex `gpt-5.4` 独立只读会话核对正文、SVG、资产台账与本审稿记录；原始输出在仓库外捕获，writer 未参与打分或修改结论。图片准确区分本地三种执行面与 Cloud，并把 Chrome 插件、ChatGPT Web 留在不同层；alt、图注、SVG 文案和许可台账均可审计，未引入额外产品主张或 MDX 风险。
+
+Visual assessment: PASS
+Asset: `/images/articles/codex-form-factors/codex-four-surfaces.svg`
+Teaching role: 解释环境依赖、反馈节奏、权限边界与异步交付怎样选择四种 Codex 执行面
+Decorative-only: no
+Rights: CC BY-NC-SA 4.0
+
+| 维度 | 视觉补充终审分数 |
+| --- | ---: |
+| 事实与证据 | 24/25 |
+| 解释深度 | 18/20 |
+| Showcase | 18/20 |
+| 教学设计 | 14/15 |
+| 时效性 | 10/10 |
+| 编辑质量 | 9/10 |
+
+未关闭问题：blocker 0 / major 0 / minor 0。
+
 - 最终状态：PASS。允许正文写入 `showcase_status: verified` 与 `quality_score: 93`；仍需控制面完成最终 validator、完整构建和 diff 检查。

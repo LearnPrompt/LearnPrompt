@@ -35,6 +35,9 @@ legacy_status: current
 2. Claude Code 现场探索与 Codex 完整委派的真实改稿记录。
 3. 四种常见任务模式，以及双工具协作的安全分界。
 
+![根据任务成熟度、环境依赖和反馈节奏在 Claude Code 与 Codex 工作流之间路由](/images/articles/choose-claude-code-or-codex/workflow-routing.svg)
+*图注：工具选择从任务状态开始：方向仍模糊时保留人在回路中探索；目标、边界和验收已经冻结后，再进入可异步委派与独立验收的路径。*
+
 :::note[这不是模型跑分]
 本次实验固定了基线提交、目标文件和最终验收，却故意没有固定输入成熟度：Claude 先收到模糊方向，Codex 后收到冻结任务卡。模型、提示词、权限和 Harness 也不同。它能说明两种工作流怎样展开，不能证明某个模型普遍更快或更聪明。
 :::

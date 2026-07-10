@@ -164,6 +164,152 @@ function validateReviewReport(review, score) {
   }
 }
 
+const INSPECTABLE_LICENSE_PATTERN =
+  /(?:CC0(?: 1\.0)?|CC BY(?:-NC-SA|-NC|-SA|-ND)? 4\.0|MIT(?: License)?|Apache(?: License)? 2\.0|BSD(?:-[23]-Clause)?|MPL-2\.0|LGPL(?:-[0-9.]+)?|GPL(?:-[0-9.]+)?|public domain)/i;
+const EXPLICIT_PERMISSION_PATTERN =
+  /(?:explicit permission|明确授权)\s*[:：]\s*(?:https:\/\/\S+|[A-Za-z0-9._/-]+\.(?:md|pdf|txt)|[^|\n]{8,})/i;
+
+function hasInspectableRights(text) {
+  return (
+    INSPECTABLE_LICENSE_PATTERN.test(text) ||
+    EXPLICIT_PERMISSION_PATTERN.test(text)
+  );
+}
+
+function validateVisualAssets({ body, articleFile, root, researchDir, verified }) {
+  const articleSlug = path.basename(articleFile, path.extname(articleFile));
+  const assetLedgerFile = path.join(researchDir, "asset-ledger.md");
+  if (!existsSync(assetLedgerFile)) {
+    fail("research pack is missing asset-ledger.md");
+    return;
+  }
+
+  const assetLedger = readFileSync(assetLedgerFile, "utf8");
+  const requiredLedgerColumns = [
+    "Public path",
+    "Teaching purpose",
+    "Original source",
+    "Creator",
+    "License",
+    "Modifications",
+    "Verified at",
+  ];
+  for (const column of requiredLedgerColumns) {
+    if (!assetLedger.includes(column)) fail(`asset ledger is missing ${column} column`);
+  }
+
+  const allMarkdownImages = [
+    ...body.matchAll(/!\[([^\]\n]*)\]\(([^)\s]+)\)/g),
+  ];
+  if (allMarkdownImages.length === 0) {
+    fail("article must contain at least one teaching image");
+    return;
+  }
+
+  let finalVisualReview = "";
+  if (verified) {
+    const reviewFile = path.join(researchDir, "review.md");
+    const review = existsSync(reviewFile) ? readFileSync(reviewFile, "utf8") : "";
+    const visualVerdicts = [
+      ...review.matchAll(/^##[^\n]*(?:视觉|Visual)[^\n]*PASS[^\n]*$/gim),
+    ];
+    const latestVisualVerdict = visualVerdicts.at(-1);
+    if (!latestVisualVerdict) {
+      fail("verified article review is missing a final visual PASS section");
+    } else {
+      finalVisualReview = review.slice(latestVisualVerdict.index);
+    }
+  }
+
+  for (const image of allMarkdownImages) {
+    const alt = image[1].trim();
+    const source = image[2];
+    if (alt.length < 6 || /^(?:图片|截图|图|image|screenshot|diagram)$/i.test(alt)) {
+      fail(`teaching image has a generic or too-short alt: ${source}`);
+    }
+
+    const expectedPrefix = `/images/articles/${articleSlug}/`;
+    if (!source.startsWith(expectedPrefix)) {
+      fail(`teaching image must use the article-local public path: ${source}`);
+      continue;
+    }
+    if (!/\.(?:avif|gif|jpe?g|png|svg|webp)$/i.test(source)) {
+      fail(`teaching image has an unsupported extension: ${source}`);
+    }
+
+    const publicRoot = path.resolve(root, "starlight/public");
+    const imageFile = path.resolve(publicRoot, source.slice(1));
+    const imageRelativeToPublic = path.relative(publicRoot, imageFile);
+    if (
+      imageRelativeToPublic === ".." ||
+      imageRelativeToPublic.startsWith(`..${path.sep}`) ||
+      path.isAbsolute(imageRelativeToPublic)
+    ) {
+      fail(`teaching image escapes starlight/public: ${source}`);
+    } else if (!existsSync(imageFile)) {
+      fail(`teaching image file does not exist: ${source}`);
+    }
+
+    const followingText = body.slice((image.index ?? 0) + image[0].length);
+    if (!/^[ \t]*\n[ \t]*\*图注：[^*\n]{8,}\*[ \t]*(?:\n|$)/.test(followingText)) {
+      fail(`teaching image is missing an immediate 图注 line: ${source}`);
+    }
+
+    const ledgerRow = assetLedger
+      .split("\n")
+      .find((line) => line.includes(source));
+    if (!ledgerRow) {
+      fail(`asset ledger is missing teaching image: ${source}`);
+    } else {
+      const ledgerCells = ledgerRow
+        .split("|")
+        .slice(1, -1)
+        .map((cell) => cell.trim());
+      if (ledgerCells.length < requiredLedgerColumns.length) {
+        fail(`asset ledger image row is malformed: ${source}`);
+        continue;
+      }
+      const teachingPurpose = ledgerCells[1] ?? "";
+      const teachingVerb =
+        /(?:解释|说明|展示|比较|演示|标注|拆解|定位|追踪|呈现|visualiz|explain|show|compare|demonstrat|map|trace)/i;
+      const decorativePurpose =
+        /(?:装饰|封面|横幅|吉祥物|\blogo\b|\bbanner\b|\bcover\b|\bmascot\b)/i;
+      if (
+        teachingPurpose.length < 12 ||
+        !teachingVerb.test(teachingPurpose) ||
+        decorativePurpose.test(teachingPurpose)
+      ) {
+        fail(`asset ledger teaching purpose is decorative or too vague: ${source}`);
+      }
+      const licenseCell = ledgerCells[4] ?? "";
+      if (!hasInspectableRights(licenseCell)) {
+        fail(`asset ledger image row has no inspectable license: ${source}`);
+      }
+    }
+
+    if (verified && finalVisualReview) {
+      const assessmentBlocks = finalVisualReview.split(
+        /(?=^Visual assessment\s*[:：])/gim,
+      );
+      const assessment = assessmentBlocks.find((block) => block.includes(source));
+      if (!assessment) {
+        fail(`final visual assessment is missing teaching image: ${source}`);
+      } else {
+        if (!/^Visual assessment\s*[:：]\s*PASS\s*$/im.test(assessment)) {
+          fail(`teaching image has no final visual PASS attestation: ${source}`);
+        }
+        if (!/^Decorative-only\s*[:：]\s*no\s*$/im.test(assessment)) {
+          fail(`teaching image has no independent non-decorative attestation: ${source}`);
+        }
+        const rights = assessment.match(/^Rights\s*[:：]\s*(.+?)\s*$/im)?.[1] ?? "";
+        if (!hasInspectableRights(rights)) {
+          fail(`teaching image review has no inspectable rights attestation: ${source}`);
+        }
+      }
+    }
+  }
+}
+
 const args = parseArgs(process.argv.slice(2));
 if (!args.article || !args.research) {
   throw new Error("Both --article and --research are required");
@@ -253,12 +399,20 @@ const researchFiles = [
   "horizontal-research.md",
   "vertical-research.md",
   "evidence-ledger.md",
+  "asset-ledger.md",
   "review.md",
 ];
 for (const name of researchFiles) {
   if (!existsSync(path.join(researchDir, name))) fail(`research pack is missing ${name}`);
 }
 scanResearchPrivacy(researchDir);
+validateVisualAssets({
+  body,
+  articleFile,
+  root,
+  researchDir,
+  verified: data.showcase_status === "verified",
+});
 
 const showcaseDir = path.resolve(root, data.showcase_path ?? "missing-showcase");
 const showcaseRelativeToResearch = path.relative(researchDir, showcaseDir);

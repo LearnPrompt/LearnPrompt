@@ -41,6 +41,21 @@ Adapt headings to the subject, but include every function:
 9. An exercise with observable completion criteria.
 10. A final bottom source section with primary sources, clearly labeled secondary topic maps, and applicable attribution or license notes.
 
+## Visual contract
+
+- Include at least one image that teaches a mechanism, decision, sequence, comparison, or verified result. Decorative covers, logos, and banners do not count.
+- Store public assets under `starlight/public/images/articles/<article-slug>/` and reference them as `/images/articles/<article-slug>/<filename>`.
+- Use Markdown image syntax with a specific alt, followed immediately by an italic caption line beginning with `图注：`.
+- Record every image in `asset-ledger.md`; disclose creator, original source, exact license, modifications, and verification date.
+- Prefer original diagrams and redacted Showcase evidence. Use Orange Book assets only when they materially teach the article and the repository's license covers the intended use.
+- Do not use an old product screenshot as proof of current behavior. Verify changing UI and product claims with current official material or a live run.
+- The final independent review must name each image path and include the machine-readable lines `Visual assessment: PASS`, `Decorative-only: no`, and `Rights: <exact license or permission reference>`. These lines attest semantic teaching value; the validator cannot infer that from a filename alone.
+
+```markdown
+![五个组件共同约束一次 Agent 执行](/images/articles/what-is-harness/harness-five-components.svg)
+*图注：五个组件分别回答规则、能力、边界、状态与验收问题；缺一项都可能让执行失去证据。*
+```
+
 ## Source policy
 
 - Never import or render `SourceCard` in a public tutorial.

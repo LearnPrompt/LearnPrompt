@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Harness 五组件审计模型</title>
+  <desc id="desc">指令、能力、约束、状态和编排共同把模型输出变成可执行、可审计、可停止的任务。</desc>
+  <rect width="1200" height="675" rx="28" fill="#fff7ed"/>
+  <text x="600" y="82" text-anchor="middle" font-family="system-ui, sans-serif" font-size="42" font-weight="700" fill="#0f172a">Harness 不是一段提示词，而是五层执行系统</text>
+  <text x="600" y="122" text-anchor="middle" font-family="system-ui, sans-serif" font-size="22" fill="#475569">每一层都回答一个可检查的问题</text>
+  <g font-family="system-ui, sans-serif">
+    <g transform="translate(45 190)">
+      <rect width="206" height="250" rx="22" fill="#ffedd5" stroke="#f97316" stroke-width="3"/>
+      <circle cx="103" cy="58" r="30" fill="#f97316"/><text x="103" y="68" text-anchor="middle" font-size="30" font-weight="700" fill="white">1</text>
+      <text x="103" y="125" text-anchor="middle" font-size="30" font-weight="700" fill="#9a3412">指令</text>
+      <text x="103" y="168" text-anchor="middle" font-size="19" fill="#475569">应该怎样工作？</text>
+      <text x="103" y="205" text-anchor="middle" font-size="16" fill="#64748b">入口、范围、规则</text>
+    </g>
+    <g transform="translate(271 190)">
+      <rect width="206" height="250" rx="22" fill="#fef3c7" stroke="#f59e0b" stroke-width="3"/>
+      <circle cx="103" cy="58" r="30" fill="#f59e0b"/><text x="103" y="68" text-anchor="middle" font-size="30" font-weight="700" fill="white">2</text>
+      <text x="103" y="125" text-anchor="middle" font-size="30" font-weight="700" fill="#92400e">能力</text>
+      <text x="103" y="168" text-anchor="middle" font-size="19" fill="#475569">实际上能做什么？</text>
+      <text x="103" y="205" text-anchor="middle" font-size="16" fill="#64748b">工具、命令、接口</text>
+    </g>
+    <g transform="translate(497 190)">
+      <rect width="206" height="250" rx="22" fill="#fee2e2" stroke="#ef4444" stroke-width="3"/>
+      <circle cx="103" cy="58" r="30" fill="#ef4444"/><text x="103" y="68" text-anchor="middle" font-size="30" font-weight="700" fill="white">3</text>
+      <text x="103" y="125" text-anchor="middle" font-size="30" font-weight="700" fill="#991b1b">约束</text>
+      <text x="103" y="168" text-anchor="middle" font-size="19" fill="#475569">哪些边界不能跨？</text>
+      <text x="103" y="205" text-anchor="middle" font-size="16" fill="#64748b">沙箱、审批、拒绝</text>
+    </g>
+    <g transform="translate(723 190)">
+      <rect width="206" height="250" rx="22" fill="#dcfce7" stroke="#22c55e" stroke-width="3"/>
+      <circle cx="103" cy="58" r="30" fill="#22c55e"/><text x="103" y="68" text-anchor="middle" font-size="30" font-weight="700" fill="white">4</text>
+      <text x="103" y="125" text-anchor="middle" font-size="30" font-weight="700" fill="#166534">状态</text>
+      <text x="103" y="168" text-anchor="middle" font-size="19" fill="#475569">下一轮要记住什么？</text>
+      <text x="103" y="205" text-anchor="middle" font-size="16" fill="#64748b">证据、水位线、结果</text>
+    </g>
+    <g transform="translate(949 190)">
+      <rect width="206" height="250" rx="22" fill="#dbeafe" stroke="#3b82f6" stroke-width="3"/>
+      <circle cx="103" cy="58" r="30" fill="#3b82f6"/><text x="103" y="68" text-anchor="middle" font-size="30" font-weight="700" fill="white">5</text>
+      <text x="103" y="125" text-anchor="middle" font-size="30" font-weight="700" fill="#1e40af">编排</text>
+      <text x="103" y="168" text-anchor="middle" font-size="19" fill="#475569">谁推进、验收、停止？</text>
+      <text x="103" y="205" text-anchor="middle" font-size="16" fill="#64748b">角色、顺序、退出条件</text>
+    </g>
+  </g>
+  <rect x="190" y="500" width="820" height="105" rx="52" fill="#0f172a"/>
+  <text x="600" y="545" text-anchor="middle" font-family="system-ui, sans-serif" font-size="22" fill="#fdba74">共同交付</text>
+  <text x="600" y="580" text-anchor="middle" font-family="system-ui, sans-serif" font-size="30" font-weight="700" fill="white">可执行 · 可验证 · 可审计 · 可停止</text>
+</svg>

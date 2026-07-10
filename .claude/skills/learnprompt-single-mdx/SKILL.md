@@ -15,7 +15,8 @@ Before editing, read:
 2. `research/golden-samples/quality-rubric.md`
 3. [references/article-contract.md](references/article-contract.md)
 4. [references/research-and-review.md](references/research-and-review.md)
-5. The closest existing golden sample and the target section's adjacent tutorials
+5. [references/visual-assets.md](references/visual-assets.md)
+6. The closest existing golden sample and the target section's adjacent tutorials
 
 Use an Orange Book as a topic map when relevant. Verify current product behavior with primary sources and live tools.
 
@@ -43,6 +44,7 @@ brief.md
 horizontal-research.md
 vertical-research.md
 evidence-ledger.md
+asset-ledger.md
 showcase/
 review.md
 ```
@@ -64,6 +66,8 @@ If a real run cannot be completed, set `showcase_status: partial`. Never invent 
 ### 5. Write the MDX
 
 Follow [references/article-contract.md](references/article-contract.md). Start from a real problem, explain the mechanism and trade-offs, show the evidence, state when not to use the method, and end with an exercise and sources.
+
+Include at least one local teaching image that explains a mechanism, decision, sequence, comparison, or verified result. Follow [references/visual-assets.md](references/visual-assets.md): use a descriptive alt, an immediate `图注：` line, a matching `asset-ledger.md` row, and source/license disclosure. A cover, logo, or decorative banner does not satisfy this requirement.
 
 Never import or render `SourceCard` in a public tutorial. When rewriting a legacy page, remove the import and component only after its bottom source section accurately lists the material actually used and the applicable attribution or license.
 

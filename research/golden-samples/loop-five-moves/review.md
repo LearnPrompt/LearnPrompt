@@ -36,6 +36,27 @@
 | 时效性 | 9/10 |
 | 编辑质量 | 9/10 |
 
-未关闭问题：blocker 0 / major 0 / minor 0。Demo/test 结果分离、临时目录前提和术语解释均已闭环；可写环境中的重跑与站点构建通过。
+未关闭问题：blocker 0 / major 0 / minor 0。Demo/test 结果已分别归档在 `showcase/demo-result.txt` 与 `showcase/result.txt`；临时目录前提和术语解释均已闭环。站点构建属于控制面发布门禁，不由本段只读审稿结论代替。
+
+## 视觉补充 Follow-up：PASS（89/100）
+
+首次视觉审稿发现资产来源过于笼统、旧构建表述不可追溯、SVG 描述未写清“验证后先持久化”，因此判为 FAIL。修订后，新的 Codex `gpt-5.4` 独立只读会话仅复核这三项；原始输出在仓库外捕获，writer 未参与打分或修改结论。精确正文节名与证据台账已写入资产来源，旧构建断言已删除，SVG `desc` 与紧邻图注一致。
+
+Visual assessment: PASS
+Asset: `/images/articles/five-moves/loop-five-moves.svg`
+Teaching role: 解释五动作如何持久化验证证据并让下一轮继续发现
+Decorative-only: no
+Rights: CC BY-NC-SA 4.0
+
+| 维度 | 视觉补充终审分数 |
+| --- | ---: |
+| 事实与证据 | 22/25 |
+| 解释深度 | 18/20 |
+| Showcase | 17/20 |
+| 教学设计 | 14/15 |
+| 时效性 | 9/10 |
+| 编辑质量 | 9/10 |
+
+未关闭问题：blocker 0 / major 0 / minor 0。
 
 最终状态：PASS
