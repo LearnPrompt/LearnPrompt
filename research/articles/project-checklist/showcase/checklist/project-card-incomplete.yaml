@@ -1,0 +1,14 @@
+# 机器可校验的开工清单（不完整版，用于演示闸门如何拦截）
+# 故意缺少 rollback，且 boundaries 只写了 allow 没写 forbid，
+# acceptance 写成“手动看一下”而不是可执行命令。
+
+repo_and_branch: LearnPrompt 文档站，内容改稿分支
+
+run_and_check: 站点在 starlight/ 目录
+
+boundaries:
+  allow: [目标 MDX, research/ 研究包]
+
+secrets: 构建不需要密钥
+
+acceptance: 手动打开页面看一下有没有问题
