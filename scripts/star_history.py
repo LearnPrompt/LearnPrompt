@@ -56,6 +56,13 @@ def http_get(url, token):
                 return json.loads(resp.read().decode("utf-8"))
         except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError) as e:
             last_err = e
+            if isinstance(e, urllib.error.HTTPError):
+                try:
+                    body = e.read().decode("utf-8", "replace")[:300]
+                except Exception:
+                    body = "<unreadable>"
+                print(f"debug: HTTP {e.code} attempt {attempt} for {url}: {body}",
+                      file=sys.stderr)
             if isinstance(e, urllib.error.HTTPError) and e.code in (403, 429):
                 # rate limited: brief backoff
                 time.sleep(5 * attempt)
