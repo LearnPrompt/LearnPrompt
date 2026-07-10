@@ -1,156 +1,232 @@
 ---
-title: 第一个 SKILL.md 怎么写
-description: 写出一个能被 Agent 稳定触发和执行的 Skill。
+title: 第一个 SKILL.md 怎么写：让 Agent 稳定触发、执行和验收
+description: 用官方字段约束和三级渐进披露写出第一个能被 Agent 触发的 SKILL.md，并亲手校验、打包一个最小 Skill。
 sidebar:
   order: 2
 difficulty: beginner
 source_repo: alchaincyf/agent-skills-orange-book
 source_url: https://github.com/alchaincyf/agent-skills-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-11"
+reading_time: 12 分钟
+research_path: research/articles/first-skill-md
+showcase_path: research/articles/first-skill-md/showcase/minimal-skill
+showcase_status: verified
+quality_score: 93
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 入门 | 12 分钟 | 2026-07-11 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/agent-skills-orange-book" url="https://github.com/alchaincyf/agent-skills-orange-book" updatedFrom="2026-05" note="仅参考主题结构，正文重新组织。" />
+你把一段常用提示词整理成了 `SKILL.md`，内容写得很用心，可 Agent 就是当没看见，
+仍然用普通提示词硬做；或者相反，它在几乎每个任务里都被拉起来，连不相关的对话也来插一脚。
+第一次写 Skill，卡住的往往不是文笔，而是三件工程问题：触发器没写对、字段踩了红线、内容没有按加载层次分层。
 
-## 最小结构
+> Skill 的价值不是把提示词写长，而是把一个稳定流程变成 Agent 能识别、能调用、能验收的能力。
 
-```md
-# Skill Name
+## 读完你能做什么
 
-## When to use
-说明触发场景。
+1. 判断一个流程到底该不该做成 Skill。
+2. 说清 Skill 的三级渐进披露：哪一层在什么时候加载、各占多少上下文、由什么触发。
+3. 写出一个能通过官方校验的最小 `SKILL.md`，并打包成 `.skill`。
+4. 记住 `name` 与 `description` 的官方硬边界，第一次就不踩红线。
+5. 看出哪些问题“再补一段提示词”永远补不上。
 
-## Inputs
-列出用户需要提供什么。
+## 先想清楚：这个流程该不该做成 Skill
 
-## Workflow
-按顺序列步骤。
+不要把所有提示词都做成 Skill。满足下面几条里的多数时，才值得写：
 
-## Verification
-列出如何判断完成。
-
-## Safety
-列出不能做什么。
-```
-
-Skill 的价值不是“把提示词写长”，而是把一个稳定流程变成 Agent 能识别、能调用、能验收的能力。
-
-## 什么时候应该写 Skill
-
-不要把所有提示词都做成 Skill。满足下面任一条件时，才值得写：
-
-- 这个流程你已经重复做过三次。
+- 这个流程你已经重复做过三次以上。
 - 每次输入不同，但步骤大致相同。
 - 需要读取固定格式的文件、目录或网页。
 - 有明确的完成标准。
 - 其他人也可能复用这套流程。
 
-如果只是一次性聊天，普通提示词就够了。
+反过来，一次性的临时任务、需求还在探索、没有稳定步骤且高度依赖人工判断的活，
+用普通提示词更划算，做成 Skill 只会多一份维护负担。
 
-## 一个好 Skill 的四个问题
+## 机制：Skill 分三层加载，触发先看元数据
 
-写之前先回答：
+要理解触发为什么会失灵，得先知道 Skill 的内容不是一次性全塞进上下文，而是分三层按需加载。
 
-1. 什么时候应该触发？
-2. 用户必须提供什么输入？
-3. Agent 应该按什么顺序做？
-4. 怎么判断结果合格？
+![Skill 三级渐进披露示意：元数据层始终加载并负责触发，正文层触发后加载，资源与脚本层按需加载](/images/articles/first-skill-md/progressive-disclosure.svg)
+*图注：name 与 description 会始终进入系统提示；官方以请求是否匹配 description 作为读取正文的条件，脚本执行时则只有输出进入上下文。*
 
-这四个问题回答不清，Skill 就会变成“看起来很强，但执行时很飘”的说明书。
+按官方文档，这三层分别是：
 
-## 操作步骤
+| 层级 | 内容 | 何时加载 | 上下文成本 |
+| --- | --- | --- | --- |
+| Level 1 元数据 | `name` + `description` | 启动时始终加载 | 约 100 tokens / 个 |
+| Level 2 正文 | `SKILL.md` 的工作流与步骤 | 被触发后加载 | 低于 5k tokens |
+| Level 3 资源 | `scripts/`、`references/`、模板 | 按需，脚本经 bash 执行 | 近似无限，代码不进上下文 |
 
-1. 先写触发场景，避免 Skill 被误用。
-2. 再写输入和输出。
-3. 把工作流拆成 5-9 步。
-4. 最后写验收和安全边界。
+关键推论：Agent 在决定“要不要用这个 Skill”时，先看到的是 Level 1 的 `name` 与 `description`，因为正文那一刻还没加载。官方进一步把请求是否匹配 Skill 的 `description` 作为读取正文的条件。因此，`description` 是主要匹配依据，必须写清楚“做什么 + 什么时候用”；正文写得再好，也不能补救模糊的发现元数据。
 
-## 可复制模板
+:::note[这是触发失灵的根因]
+`description` 太宽，比如“需要处理文本时使用”，命中面就过大，到处乱触发；
+只写“做什么”不写“何时用”，又会该触发时不触发。官方给的 `pdf-processing` 示例把能力
+（提取文本表格、填表单、合并文档）和触发场景（处理 PDF 文件或用户提到 PDF 时）都写进了 `description`，正是这个道理。
+:::
+
+## 触发器有硬边界，不是自由文本
+
+`name` 和 `description` 是触发器，但它们不是随便写。按官方 Agent Skills 文档，字段有明确约束：
+
+- `name`：最多 64 字符；只能是小写字母、数字和连字符；不能含 XML 标签；不能包含保留词 `anthropic` 或 `claude`。
+- `description`：非空；最多 1024 字符；不能含 XML 标签。
+
+这些不是风格建议，而是打包前会被机器挡下的规则。本文的 Showcase 会用官方校验脚本亲手撞一遍这几堵墙。
+
+## 最小结构
+
+一个能被稳定触发和执行的 `SKILL.md`，至少要回答四个问题。把它们落成小节：
 
 ```md
 ---
-name: example-skill
-description: 当用户需要把一组资料整理成可发布教程时使用。
+name: link-to-obsidian
+description: 一句话说明做什么 + 什么时候用（这是主要匹配依据）
 ---
 
-# Example Skill
+# Skill Name
 
 ## When to use
-
-Use this skill when the user provides source notes, links, or drafts and asks to turn them into a structured tutorial.
+说明触发场景，用任务描述，不要写技术偏好。
 
 ## Inputs
-
-- Source material: notes, links, transcript, or draft.
-- Target audience.
-- Output format.
+列出用户必须提供什么；缺输入时应先问，而不是硬做。
 
 ## Workflow
-
-1. Identify the user's goal and audience.
-2. Extract the key claims and examples from the source material.
-3. Build an outline with sections and learning outcomes.
-4. Rewrite into a tutorial with concrete steps.
-5. Add a checklist or template the reader can reuse.
-6. Flag missing source material or uncertain claims.
+按顺序列 5-9 步。
 
 ## Verification
-
-- The tutorial has a clear audience.
-- Each section teaches one action.
-- Claims are grounded in the provided material.
-- The final output includes a reusable checklist or template.
+列出如何判断完成，要可检查。
 
 ## Safety
-
-- Do not invent source claims.
-- Do not include secrets or private information.
-- Ask before publishing or committing changes.
+列出不能做什么，尤其涉及账号、密钥、发布、删除时。
 ```
 
-## 结构解释
+`name` 与 `description` 组成发现元数据，其中 `description` 承担主要匹配作用；`Inputs` 是前置条件，`Workflow` 是执行路径，
+`Verification` 是验收标准，`Safety` 是边界。这五件事各归其位，Skill 才不会变成一段很长却很飘的提示词。
 
-`description` 是触发器。它要具体到 Agent 能判断“什么时候该用”。
-`Inputs` 是前置条件。缺输入时，Agent 应该先问，而不是硬做。
-`Workflow` 是执行路径。步骤太少会飘，步骤太多会难维护。
-`Verification` 是验收标准。没有验收，Skill 就只是一段长提示词。
-`Safety` 是边界。尤其是涉及账号、密钥、本地文件、发布操作时必须写。
+## 按三级加载分层目录
+
+既然正文建议控制在数百行内、脚本和资源按需加载且代码不进上下文，就不该把长脚本塞进 `SKILL.md` 正文。
+在 Claude Code 里，Skill 放在 `~/.claude/skills/`（个人）或 `.claude/skills/`（项目），推荐这样分层：
+
+```text
+my-skill/
+  SKILL.md        # 只放核心工作流与判断
+  scripts/        # 需要确定性的操作，经 bash 执行、只吃输出
+  references/     # 大段参考资料，用到才读
+  assets/         # 模板、示例等产出用文件
+```
+
+这是对官方“渐进披露”原则的操作化做法：把稳定、确定性的部分下沉到脚本，正文只留判断。
+
+## Showcase：亲手创建、校验并打包一个最小 Skill
+
+下面这个 Showcase 不是展示抽象模板，而是让你走完“写 → 校验 → 打包”的闭环。
+完整可复现记录见 [`research/articles/first-skill-md/showcase/minimal-skill`](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/first-skill-md/showcase/minimal-skill)。
+
+### 输入与环境
+
+- 一个合法的最小 Skill 目录 `link-to-obsidian/`，正文 34 行。
+- 三个反例目录，各触发一种被拒的写法。
+- 校验与打包脚本来自官方 `anthropics/skills` 仓库的 `skill-creator`（其目录内 `LICENSE.txt` 为 Apache License 2.0，commit `9d2f1ae`，2026-07-11 核验）。用 `SC_ROOT` 指向 `skills/skill-creator` 目录。
+
+### 执行
+
+```bash
+# 1. 校验合法 Skill
+python3 "$SC_ROOT/scripts/quick_validate.py" link-to-obsidian
+# 2. 逐个校验反例
+python3 "$SC_ROOT/scripts/quick_validate.py" invalid-cases/bad-name
+python3 "$SC_ROOT/scripts/quick_validate.py" invalid-cases/extra-key
+python3 "$SC_ROOT/scripts/quick_validate.py" invalid-cases/no-desc
+# 3. 打包（先自动校验，再产出 .skill）
+(cd "$SC_ROOT" && python3 -m scripts.package_skill "$SHOWCASE/link-to-obsidian" "$DIST")
+# 4. 查看 .skill 内容
+unzip -l "$DIST/link-to-obsidian.skill"
+```
+
+### 2026-07-11 的实际输出
+
+```text
+# 合法 Skill
+Skill is valid!                       (exit=0)
+
+# name 含空格与大写
+Name 'Link To Obsidian' should be kebab-case (lowercase letters, digits, and hyphens only)   (exit=1)
+
+# 混入不允许的 version 字段
+Unexpected key(s) in SKILL.md frontmatter: version. Allowed properties are: allowed-tools, compatibility, description, license, metadata, name   (exit=1)
+
+# 缺少必填 description
+Missing 'description' in frontmatter   (exit=1)
+
+# 打包
+🔍 Validating skill...
+✅ Skill is valid!
+  Added: link-to-obsidian/SKILL.md
+✅ Successfully packaged skill to: $DIST/link-to-obsidian.skill   (exit=0)
+```
+
+`.skill` 就是一个带扩展名的 zip，`unzip -l` 看到里面只有 `link-to-obsidian/SKILL.md`。
+
+### 这个示例证明了什么
+
+- `name` 必须是 kebab-case，大写和空格会被直接拒。
+- 当前脚本接受受限字段集合（allowed-tools、compatibility、description、license、metadata、name），随手加 `version` 等字段会被拒；`compatibility` 可选且最长 500 字符。
+- `description` 必填。
+- 打包前会强制校验，不过就不产出 `.skill`。
+
+### 它没有证明什么
+
+- 校验通过只保证字段格式合规，不代表 `description` 真能在正确场景触发，也不代表工作流写得好。
+- 当前 `quick_validate.py` 会检查 `description` 的尖括号、长度和可选 `compatibility` 的类型/长度，也会用 kebab-case 正则排除 `name` 中的尖括号；但它没有单独拒绝 `name` 中的保留词 `anthropic` / `claude`。因此，本地通过仍不等于覆盖了官方文档的全部语义约束。
+- 触发准确率和长期可维护性，要靠真实使用和迭代来验证。
 
 ## 从提示词迁移到 Skill
 
-如果你已经有一段常用提示词，可以按这个方式拆：
+如果你已经有一段常用提示词，可以按字段拆过去：
 
-| 原提示词内容 | Skill 里放哪里 |
+| 原提示词里的话 | 放进 Skill 的哪里 |
 | --- | --- |
-| “当我给你一篇文章时” | When to use |
+| “当我给你一篇文章时” | When to use（写成任务，不写技术偏好） |
 | “你需要知道目标读者” | Inputs |
 | “先总结，再改写，再给标题” | Workflow |
-| “输出必须包含小红书标题和正文” | Verification |
+| “输出必须包含标题和正文” | Verification |
 | “不要编造链接” | Safety |
 
-## 验收清单
+## 常见反模式与边界
 
-写完以后，检查这五项：
+- 只写理念，不写输入输出：Agent 读完仍不知何时触发、怎么执行。
+- 触发场景描述技术偏好而非任务（“需要抓数据时使用”）：命中面过宽，污染无关对话。
+- 验收只写“高质量”：没有可检查条目，等于没验收。
+- 安全边界缺失：涉及账号、密钥、发布、删除时容易出事；官方也强调要审计 Skill 的安全性。
+- 把长脚本塞进正文：浪费上下文又难维护，应下沉到 `scripts/`。
 
-- 触发场景是否足够具体？
-- 输入缺失时是否知道该问什么？
-- 工作流是否能按顺序执行？
-- 输出是否有明确格式？
-- 是否写了不能做的事？
+什么时候**不该**做成 Skill：一次性任务、需求仍在探索、没有稳定步骤——这些用普通提示词就够。
 
-## 常见错误
+## 练习：写你的第一个 Skill 并验证
 
-只写理念，不写输入输出。Agent 读完仍不知道何时触发、怎么执行。
+1. 选一个你每天都做、步骤稳定的流程，比如“把链接保存成 Obsidian 笔记”。
+2. 写一个 `SKILL.md`，`description` 必须同时说清“做什么 + 什么时候用”。
+3. 用官方 `quick_validate.py` 校验，直到输出 `Skill is valid!`、退出码为 0。
+4. 故意制造一个反例（大写的 `name`，或多加一个字段），确认它被拒且原因清晰。
+5. 用 `package_skill.py` 打包，`unzip -l` 确认 `.skill` 里包含你的 `SKILL.md`。
 
-另外几个常见问题：
+可观察的完成标准：合法 Skill 校验通过、至少一个反例被拒、`.skill` 成功产出且内容正确。
 
-- 把 Skill 写成一篇文章，没有步骤。
-- 触发场景过宽，导致任何任务都想调用它。
-- 验收标准只写“高质量”，没有可检查条目。
-- 安全边界缺失，发布、删除、改配置时容易出事。
+## 来源与延伸阅读
 
-## 下一步
+- [Anthropic 官方：Agent Skills 概览](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)（一手文档，字段约束与三级加载的权威来源）
+- [Anthropic 官方 skills 仓库（含 skill-creator）](https://github.com/anthropics/skills/tree/9d2f1ae187231d8199c64b5b762e1bdf2244733d/skills/skill-creator)（一手；该目录 `LICENSE.txt` 为 Apache License 2.0；本文 Showcase 使用此提交的校验与打包脚本）
+- [Agent Skills 橙皮书](https://github.com/alchaincyf/agent-skills-orange-book)（中文主题地图 / 二手来源）
 
-先用一个你自己每天都在做的流程练手。比如“把链接保存成 Obsidian 笔记”“把选题资料整理成教程卡”“抓取榜单并生成日报”。这些流程稳定、输入明确、容易验收，最适合做第一个 Skill。
+官方文档与官方 skill-creator 支撑本文的当前产品行为与字段约束，均在 2026-07-11 重新核验。
+Agent Skills 橙皮书仅作为中文主题地图：其 README 声明仅供个人与教育用途、未采用标准开源许可，
+本文只保留链接与署名，未复制或改编其任何图片与成段文字；正文结构、论证与 Showcase 均由 LearnPrompt 重新组织并复核。
