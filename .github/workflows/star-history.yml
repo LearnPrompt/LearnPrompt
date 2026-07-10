@@ -20,8 +20,23 @@ jobs:
 
       - name: Generate star history SVG
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # The built-in GITHUB_TOKEN cannot read other repos' stargazers
+          # ("Resource not accessible by integration"). Set a classic PAT
+          # with public_repo read as STAR_HISTORY_TOKEN to enable weekly
+          # auto-refresh across all four repos.
+          GITHUB_TOKEN: ${{ secrets.STAR_HISTORY_TOKEN || secrets.GITHUB_TOKEN }}
         run: python3 scripts/star_history.py
+
+      - name: Guard against partial chart
+        # If any repo fetch failed the SVG has fewer than 4 lines — keep
+        # the previous good chart instead of clobbering it.
+        run: |
+          LINES=$(python3 -c "import re;print(len(re.findall('<polyline', open('assets/star-history.svg').read())))")
+          echo "polylines: $LINES"
+          if [ "$LINES" -lt 4 ]; then
+            echo "Partial chart ($LINES/4 lines) — reverting, keeping previous SVG."
+            git checkout -- assets/star-history.svg
+          fi
 
       - name: Commit and push if changed
         # main is a protected branch (PR-only + deployment check), so the
