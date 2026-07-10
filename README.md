@@ -75,7 +75,9 @@ Humanize PPT读取了50多期TED演讲，先处理主线，听众获得感和讲
 - **鲁班**,把"能用的skill"打磨成能被装、能传播、能验证的公共资产;
 - **庖丁**,零API拆解任何博主的爆款打法,蒸馏成可安装的内容教练;
 - **蔡伦**,把对话里聊出来的结论,3秒造成一页能传阅的纸;
-- **阿福**,站在Obsidian收件箱门口的管家,Inbox到日历一条线。
+- **阿福**,站在Obsidian收件箱门口的管家,Inbox到日历一条线;
+- **愚公**,别再一轮轮手动催Agent,把山交给一个会自己挖的循环;
+- **搭子**,Claude Code管规划审查,Codex管实现收尾,一张Session Receipt记账。
 
 名字背故事,定位背痛苦。装一个,就知道这一家子的脾气。重度Agent用户还有**CC Harness六件套**:记忆、压缩、验证、调度,一行命令全装上。
 
@@ -83,7 +85,17 @@ Humanize PPT读取了50多期TED演讲，先处理主线，听众获得感和讲
 [![paoding](https://img.shields.io/github/stars/LearnPrompt/paoding-skill?style=flat&label=庖丁%20paoding)](https://github.com/LearnPrompt/paoding-skill)
 [![cailun](https://img.shields.io/github/stars/LearnPrompt/cailun-skill?style=flat&label=蔡伦%20cailun)](https://github.com/LearnPrompt/cailun-skill)
 [![afu](https://img.shields.io/github/stars/LearnPrompt/afu-llm-todo?style=flat&label=阿福%20afu)](https://github.com/LearnPrompt/afu-llm-todo)
+[![yugong](https://img.shields.io/github/stars/LearnPrompt/loop-engineering?style=flat&label=愚公%20loop)](https://github.com/LearnPrompt/loop-engineering)
+[![partner](https://img.shields.io/github/stars/LearnPrompt/partner-skill?style=flat&label=搭子%20partner)](https://github.com/LearnPrompt/partner-skill)
 [![cc-harness](https://img.shields.io/github/stars/LearnPrompt/cc-harness-skills?style=flat&label=CC%20Harness)](https://github.com/LearnPrompt/cc-harness-skills)
+
+**工作台小件 · 顺手但离不开的三个小工具**
+
+bugu在agent干长活时用叫声报状态,carl-weread按你卡住的问题推荐今天读哪节,x-article-publisher把飞书文档一键变成X Article。
+
+[![bugu](https://img.shields.io/github/stars/LearnPrompt/bugu?style=flat&label=布谷%20bugu)](https://github.com/LearnPrompt/bugu)
+[![weread](https://img.shields.io/github/stars/LearnPrompt/carl-weread?style=flat&label=carl-weread)](https://github.com/LearnPrompt/carl-weread)
+[![x-article](https://img.shields.io/github/stars/LearnPrompt/x-article-publisher-skill?style=flat&label=x-article-publisher)](https://github.com/LearnPrompt/x-article-publisher-skill)
 
 **Carl Skills · 把真实AI工作流做成可复用的skills**
 
@@ -151,6 +163,8 @@ Carl Skills就是这个方向的新仓库。它会逐步收纳内容生产，资
 
 **公众号/视频号**：「卡尔的AI沃茨」
 
+<img src="starlight/public/images/wechat-qrcode.jpg" width="160" alt="公众号二维码">
+
 **社交平台**：[B站](https://space.bilibili.com/1820008345) · [小红书](https://xhslink.com/m/AUj3yYs85qi) · [X](https://x.com/aiwarts) · [即刻](https://okjk.co/mO7Cg4) · [YouTube](https://www.youtube.com/@aiwarts101) · [Instagram](https://www.instagram.com/carllee2077)
 
 **交流与反馈**：你可以添加微信`aiwarts101`，或在GitHub提交[issue](https://github.com/LearnPrompt/LearnPrompt/issues)。
@@ -159,7 +173,7 @@ Carl Skills就是这个方向的新仓库。它会逐步收纳内容生产，资
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=LearnPrompt/LearnPrompt&type=Date)](https://star-history.com/#LearnPrompt/LearnPrompt&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=LearnPrompt/LearnPrompt,LearnPrompt/ai-news-radar,LearnPrompt/luban-skill,LearnPrompt/humanize-ppt&type=Date)](https://star-history.com/#LearnPrompt/LearnPrompt&LearnPrompt/ai-news-radar&LearnPrompt/luban-skill&LearnPrompt/humanize-ppt&Date)
 
 ## Reference
 

@@ -12,6 +12,8 @@ That is the reason I keep building LearnPrompt, AI Warts, and Carl Skills. I don
 
 What I care about is simpler: when ordinary people get access to these tools, can they actually get more meaningful work done?
 
+👉 Project matrix: [learnprompt.pro/workshop](https://learnprompt.pro/workshop/)
+
 ---
 
 ## What I’m building
@@ -73,7 +75,9 @@ I package methodologies that survived real use into a family of person-named ski
 - **Luban** polishes a "working skill" into a public asset people can install, verify, and share;
 - **Paoding** dissects any blogger's viral playbook with zero API — and distills it into an installable content coach;
 - **Cailun** turns the conclusions of a chat into a single shareable page in three seconds;
-- **Afu** is the butler at your Obsidian inbox: Inbox to Wiki to Todo to Calendar.
+- **Afu** is the butler at your Obsidian inbox: Inbox to Wiki to Todo to Calendar;
+- **Yugong** stops you from nudging the agent round after round — hand the mountain to a loop that digs by itself;
+- **Partner** lets Claude Code plan and review while Codex implements and ships, with one Session Receipt keeping score.
 
 The name carries the story; the positioning carries the pain. For heavy agent users there is also the **CC Harness six-pack**: memory, compression, verification, orchestration — one command installs them all.
 
@@ -81,7 +85,17 @@ The name carries the story; the positioning carries the pain. For heavy agent us
 [![paoding](https://img.shields.io/github/stars/LearnPrompt/paoding-skill?style=flat&label=Paoding)](https://github.com/LearnPrompt/paoding-skill)
 [![cailun](https://img.shields.io/github/stars/LearnPrompt/cailun-skill?style=flat&label=Cailun)](https://github.com/LearnPrompt/cailun-skill)
 [![afu](https://img.shields.io/github/stars/LearnPrompt/afu-llm-todo?style=flat&label=Afu)](https://github.com/LearnPrompt/afu-llm-todo)
+[![yugong](https://img.shields.io/github/stars/LearnPrompt/loop-engineering?style=flat&label=Yugong)](https://github.com/LearnPrompt/loop-engineering)
+[![partner](https://img.shields.io/github/stars/LearnPrompt/partner-skill?style=flat&label=Partner)](https://github.com/LearnPrompt/partner-skill)
 [![cc-harness](https://img.shields.io/github/stars/LearnPrompt/cc-harness-skills?style=flat&label=CC%20Harness)](https://github.com/LearnPrompt/cc-harness-skills)
+
+**Workbench Sidekicks · three small tools I can't work without**
+
+bugu chirps to report status while an agent grinds through long tasks, carl-weread recommends what to read today based on where you're stuck, and x-article-publisher turns a Feishu doc into an X Article in one step.
+
+[![bugu](https://img.shields.io/github/stars/LearnPrompt/bugu?style=flat&label=bugu)](https://github.com/LearnPrompt/bugu)
+[![weread](https://img.shields.io/github/stars/LearnPrompt/carl-weread?style=flat&label=carl-weread)](https://github.com/LearnPrompt/carl-weread)
+[![x-article](https://img.shields.io/github/stars/LearnPrompt/x-article-publisher-skill?style=flat&label=x-article-publisher)](https://github.com/LearnPrompt/x-article-publisher-skill)
 
 **Carl Skills · Turning real AI workflows into reusable skills**
 
@@ -147,6 +161,8 @@ That is why I’m reorganizing this repository now.
 
 **WeChat Official Account / Channels:** 卡尔的AI沃茨
 
+<img src="starlight/public/images/wechat-qrcode.jpg" width="160" alt="WeChat QR code">
+
 **Social:** [Bilibili](https://space.bilibili.com/1820008345) · [Xiaohongshu](https://xhslink.com/m/AUj3yYs85qi) · [X](https://x.com/aiwarts) · [Jike](https://okjk.co/mO7Cg4) · [YouTube](https://www.youtube.com/@aiwarts101) · [Instagram](https://www.instagram.com/carllee2077)
 
 **Feedback and discussion:** add me on WeChat at `aiwarts101`, or open an [issue](https://github.com/LearnPrompt/LearnPrompt/issues) on GitHub.
@@ -155,7 +171,7 @@ That is why I’m reorganizing this repository now.
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=LearnPrompt/LearnPrompt&type=Date)](https://star-history.com/#LearnPrompt/LearnPrompt&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=LearnPrompt/LearnPrompt,LearnPrompt/ai-news-radar,LearnPrompt/luban-skill,LearnPrompt/humanize-ppt&type=Date)](https://star-history.com/#LearnPrompt/LearnPrompt&LearnPrompt/ai-news-radar&LearnPrompt/luban-skill&LearnPrompt/humanize-ppt&Date)
 
 ## Reference
 
