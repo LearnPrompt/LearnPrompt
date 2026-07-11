@@ -1,0 +1,15 @@
+diff --git a/src/archiveIncident.js b/src/archiveIncident.js
+index f12da15..555dd32 100644
+--- a/src/archiveIncident.js
++++ b/src/archiveIncident.js
+@@ -2 +2,9 @@ function dayKeyForReporter(incident) {
+-  return new Date(incident.reportedAt).toISOString().slice(0, 10);
++  const parts = new Intl.DateTimeFormat("en-US", {
++    timeZone: incident.reporterTimeZone,
++    year: "numeric",
++    month: "2-digit",
++    day: "2-digit"
++  }).formatToParts(new Date(incident.reportedAt));
++
++  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
++  return `${values.year}-${values.month}-${values.day}`;

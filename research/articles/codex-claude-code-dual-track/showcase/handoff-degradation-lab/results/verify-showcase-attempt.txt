@@ -1,0 +1,2 @@
+FAIL degraded gate exit mismatch: expected 0, received 21
+verify_showcase_exit=1

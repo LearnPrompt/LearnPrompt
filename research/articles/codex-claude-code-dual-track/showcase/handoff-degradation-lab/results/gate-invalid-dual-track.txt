@@ -1,0 +1,1 @@
+FAIL claimed dual_track_complete without claude diagnosis receipt

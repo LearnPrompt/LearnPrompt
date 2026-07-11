@@ -1,0 +1,13 @@
+> incident-archive-lab@0.0.1 test
+> node --test
+
+✔ uses reporter local day instead of UTC day for Los Angeles (<duration-ms>)
+✔ keeps same day when reporter local day already matches UTC day (<duration-ms>)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms <duration-ms>

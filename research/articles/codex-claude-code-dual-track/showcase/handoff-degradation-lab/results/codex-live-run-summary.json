@@ -1,0 +1,18 @@
+{
+  "tool": "codex exec",
+  "version": "codex-cli 0.142.2",
+  "captured_at": "2026-07-12",
+  "mode": "live outer-harness run in an isolated temporary Git worktree",
+  "model": "gpt-5.5",
+  "sandbox": "workspace-write",
+  "approval_policy": "never",
+  "output_schema": true,
+  "exit_code": 0,
+  "result": "success",
+  "changed_files": [
+    "src/archiveIncident.js"
+  ],
+  "test": "npm test; tests=2 pass=2 fail=0",
+  "preflight_note": "Two earlier requests stopped before model execution while the response schema was tightened for the current CLI. No fixture files changed in those preflights.",
+  "redaction_note": "Absolute paths, runtime identifiers, raw stdout and raw stderr were not committed."
+}

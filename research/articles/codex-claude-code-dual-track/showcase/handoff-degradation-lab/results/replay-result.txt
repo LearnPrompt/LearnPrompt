@@ -1,0 +1,37 @@
+handoff-degradation-lab offline replay
+command: node research/articles/codex-claude-code-dual-track/showcase/handoff-degradation-lab/scripts/verify-showcase.mjs
+mode: offline deterministic replay only; no model call
+
+degraded_command: node research/articles/codex-claude-code-dual-track/showcase/handoff-degradation-lab/scripts/integrator-gate.mjs degraded_single_lane
+degraded_exit_code: 0
+degraded_output: PASS degraded_single_lane
+claimed_state: degraded_single_lane
+baseline_sha: d3f5e409b65fca9e4d7ceaebe9e340756b5065f1
+contract_sha: 382c1b029a028a9fc5a685ed43e5b35c23b9ab43f9594d54115e50cc2c2770fa
+changed_files: src/archiveIncident.js
+tests: npm test exit=0
+Preparing worktree (new branch 'codex-lane')
+degraded_fresh_worktree_tests: tests=2 pass=2 fail=0
+
+invalid_dual_track_command: node research/articles/codex-claude-code-dual-track/showcase/handoff-degradation-lab/scripts/integrator-gate.mjs invalid_dual_track
+invalid_dual_track_exit_code: 30
+invalid_dual_track_output: FAIL claimed dual_track_complete without claude diagnosis receipt
+
+bad_write_set_command: node research/articles/codex-claude-code-dual-track/showcase/handoff-degradation-lab/scripts/integrator-gate.mjs bad_write_set
+bad_write_set_exit_code: 31
+bad_write_set_output: Preparing worktree (new branch 'codex-lane')
+FAIL out-of-scope changed file: README.md
+
+contract_drift_command: node research/articles/codex-claude-code-dual-track/showcase/handoff-degradation-lab/scripts/integrator-gate.mjs contract_drift
+contract_drift_exit_code: 32
+contract_drift_output: Preparing worktree (new branch 'codex-lane')
+FAIL codex receipt contract_sha does not match frozen contract
+
+privacy_command: node research/articles/codex-claude-code-dual-track/showcase/handoff-degradation-lab/scripts/privacy-scan.mjs
+privacy_exit_code: 0
+privacy_output: PASS privacy scan
+root: research/articles/codex-claude-code-dual-track
+files_scanned: 43
+checks: identifier-like values, uuid, absolute temp or home paths, absolute shell paths
+
+tracked_results_unchanged_vs_previous_run: yes

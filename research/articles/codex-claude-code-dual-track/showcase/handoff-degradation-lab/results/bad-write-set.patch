@@ -1,0 +1,6 @@
+diff --git a/README.md b/README.md
+index bb94b9e..cc94b9e 100644
+--- a/README.md
++++ b/README.md
+@@ -1,0 +2 @@
++out-of-scope edit used only by the negative gate

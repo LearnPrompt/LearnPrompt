@@ -1,0 +1,6 @@
+command: npm test
+exit_code: 0
+tests: 2
+pass: 2
+fail: 0
+summary: the Los Angeles incident now archives under the reporter local day, and the same-day case still passes

@@ -1,0 +1,19 @@
+{
+  "tool": "codex exec",
+  "version": "codex-cli 0.142.2",
+  "captured_at": "2026-07-12",
+  "mode": "nested live run from inside the writer sandbox",
+  "model": "gpt-5.5",
+  "sandbox": "workspace-write",
+  "approval_policy": "never",
+  "json_output": true,
+  "exit_code": 1,
+  "result": "blocked_before_model_completion",
+  "reason_summary": [
+    "state runtime tried to open ~/.codex/state_5.sqlite in write mode and hit a readonly database error",
+    "the CLI then failed to initialize the in-process app-server client with operation not permitted",
+    "no final report JSON was produced",
+    "the worktree stayed clean, so there is no real Codex completion receipt or patch to archive"
+  ],
+  "redaction_note": "Absolute HOME and temp paths were removed. Raw stdout/stderr stayed outside the repository."
+}

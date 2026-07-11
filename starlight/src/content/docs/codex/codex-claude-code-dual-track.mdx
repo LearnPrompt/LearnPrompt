@@ -1,35 +1,320 @@
 ---
-title: Codex 与 Claude Code 双线开发心智模型
-description: 让两个 AI 编程工具分工，而不是互相覆盖。
+title: Claude Code 与 Codex 双线开发：用 Git 工件交接，而不是靠记忆接力
+description: 用一套与品牌无关的 handoff contract、receipt、worktree 和 gate，在 Claude Code 与 Codex 之间切 lane、降级和独立验收。
 sidebar:
   order: 6
 difficulty: intermediate
-source_repo: alchaincyf/codex-orange-book
-source_url: https://github.com/alchaincyf/codex-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-12"
+reading_time: 16 分钟
+research_path: research/articles/codex-claude-code-dual-track
+showcase_path: research/articles/codex-claude-code-dual-track/showcase
+showcase_status: verified
+quality_score: 94
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 16 分钟 | 2026-07-12 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/codex-orange-book / claude-code-orange-book" url="https://github.com/alchaincyf/codex-orange-book" updatedFrom="2026-05" />
+你已经决定两个工具都留着。Claude Code 可能在终端、IDE 或独立 session 里陪你做 discovery，Codex 可能在本地 CLI、detached review 或 worktree 里接实现与验收。真正难的不是“谁更强”，而是**你怎么在两条通道之间切换，却不丢上下文、边界和失败状态**。
 
-## 推荐分工
+很多团队一到这里就退化成两种低级做法：
 
-- Claude Code：长上下文探索、产品草图、知识库协作。
-- Codex：仓库级改动、分支、构建、验证和提交。
+1. 把上一段对话摘要贴给下一个工具，希望它“接着来”。
+2. 让两个工具都拿着高权限在同一个 checkout 里试，最后用肉眼看谁写得更像对的。
 
-## 操作步骤
+这两种做法最缺的都不是模型能力，而是工程接口。没有 baseline commit、没有 allowed paths、没有失败 receipt、没有机械 gate，你根本说不清楚交接发生了什么，更别提一条 lane 故障后如何降级。
 
-1. 让一个工具负责主线执行。
-2. 另一个工具只做独立审查或资料盘点。
-3. 不让两个工具同时改同一文件。
-4. 结果必须回到 git diff 和验收命令。
+> 本文把 `handoff contract`、`dual_track_complete`、`degraded_single_lane` 明确标成 LearnPrompt 编辑部操作模型。它借用了官方 worktree、review、sessions、`AGENTS.md`、prompt boundary 这些原语，但**不是**某个产品专有 UI 名词的官方定义。
 
-## 常见错误
+## 读完你能做什么
 
-把两个工具都开成高权限执行者。这样容易重复改动、互相覆盖，也会让问题定位变难。
+读完后，你应该能独立做五件事：
 
-## 实战案例
+1. 区分三篇容易混掉的主题：`choose-claude-code-or-codex` 讲“怎么选”，本篇讲“两个都留时怎么交接”，`multi-agent-collaboration` 讲“怎么并行拆多个 worker”。
+2. 用四类 Git 附近工件组织双线：`contract`、`receipt`、`patch`、`gate`。
+3. 在 Claude lane 先做健康检查，明确什么时候能产出 diagnosis receipt，什么时候只能写 degraded summary。
+4. 让 Codex lane 只在隔离 Git worktree 里改允许文件、跑测试、交付结构化 receipt。
+5. 用 deterministic gate 区分三种状态：`dual_track_complete`、`degraded_single_lane`、`partial`。
 
-可以让 Claude Code 检查 README 是否像真人写的，让 Codex 实际改文件、跑构建、提交分支。
+![一张图解释 healthy dual-track 与 degraded_single_lane 两条分支，以及缺 receipt、写集越界、contract drift 时的 gate 退出码](/images/articles/codex-claude-code-dual-track/handoff-degradation-lab.svg)
+*图注：同一份 frozen contract 可以支撑 healthy dual-track 和 degraded_single_lane 两条路径；差别不在“谁来做实现”，而在 Claude diagnosis receipt 是否真实存在，以及 integrator gate 是否接受你当前的状态声明。*
+
+## 先把三篇教程分清，不然你会在错误的问题上争论
+
+这篇不是上一篇 [Claude Code 与 Codex 怎么选：别比较模型，先判断工作方式](/ai-coding/choose-claude-code-or-codex/)。上一篇的核心问题是：需求还模糊，还是已经冻结？你应该留在本地交互探索，还是适合完整委派？
+
+这篇也不是 [多 Agent 协作适合解决什么问题](/claude-code/multi-agent-collaboration/)。那篇的核心问题是：任务能不能拆成多个并行 worker，怎样冻结接口、分配不重叠文件所有权、避免覆盖。
+
+本篇的问题更窄，但也更日常：
+
+- 你已经决定 **两个入口都保留**；
+- 这轮任务不一定需要并行 worker；
+- 你只想知道 **怎么在两个工具之间切 lane**，同时保住 Git 基线、写集、测试和故障状态。
+
+如果你把这三个问题混成一个，就会开始问一些看似高级、实际上无效的问题，例如“到底 Claude 更适合思考还是 Codex 更适合改代码”。这类问题忽略了一个更硬的现实：**当前官方资料里，两边都支持 worktree 和隔离 review / session，所以角色不能写成品牌天性，角色是流程分工。**
+
+Claude 官方文档已经把 worktree、独立 session、subagent 权限分离写得很清楚；Codex 官方文档也把 worktree、detached review task、`AGENTS.md` 指令链和 prompt boundary 讲明白了。换句话说：
+
+- 你可以让 Claude 做只读诊断，Codex 做实现。
+- 你也可以让 Codex 做只读 review，Claude 在 worktree 里实现。
+
+稳定性的来源不是品牌分工，而是你是否把交接单位冻结成可验证工件。
+
+## 双线真正交接的不是聊天记录，而是四类工件
+
+一条稳定的双线流程，至少要把交接收敛成四个实体：
+
+| 工件 | 它回答什么 | 如果缺失会怎样 |
+| --- | --- | --- |
+| `contract` | 目标是什么、能改什么、不能改什么、怎样验收 | 后手会边做边猜，越改越宽 |
+| `receipt` | 某条 lane 真实做了什么、没做成什么、基于哪份 SHA | 你无法判断前手到底完成到哪一步 |
+| `patch` | 代码层面的最小改动是什么，能否离线重放 | 最终只能相信一段自然语言总结 |
+| `gate` | 不调用模型时，怎样验证状态声明、写集和测试 | 任何人都可以口头宣布“已经完成” |
+
+这四个工件里，最容易被低估的是 `receipt`。很多人以为 receipt 就是“最终总结”。不是。它至少还要回答：
+
+1. 这条 lane 有没有拿到模型结果。
+2. 它看的 baseline SHA 是什么。
+3. 它接的 contract SHA 是什么。
+4. 它声称改了哪些文件、跑了什么测试。
+5. 如果失败，失败停在了 health、diagnosis、implementation 还是 gate。
+
+一旦你把 receipt 写清楚，`dual_track_complete` 和 `degraded_single_lane` 的区别就会非常清楚：
+
+| 状态 | 必需 receipt | 可否宣称双线完成 |
+| --- | --- | --- |
+| `dual_track_complete` | Claude health、Claude diagnosis、Codex completion、integrator gate PASS | 可以 |
+| `degraded_single_lane` | Claude health 显示无 model result、Codex completion、integrator gate PASS | 不可以，只能声明降级完成 |
+| `partial` | 任何关键 receipt 缺失，或 gate / build / review 未完成 | 不可以 |
+
+这也是为什么本篇把 `health receipt` 和 `diagnosis receipt` 分开。前者只证明“这条 lane 活着吗”，后者才证明“这条 lane 读过 fixture，并把结论交出来了”。
+
+## 把 handoff contract 写死，工具才能互换
+
+先看本文 Showcase 真正冻结的 contract。它不是一句“修一下时区 bug”，而是一个能被 gate 机械核对的边界：
+
+```json
+{
+  "showcase_name": "handoff-degradation-lab",
+  "issue_id": "incident-reporter-local-day",
+  "goal": "Archive incidents under the reporter's local calendar day, not the UTC day.",
+  "baseline_sha": "d3f5e409b65fca9e4d7ceaebe9e340756b5065f1",
+  "allowed_paths": ["src/archiveIncident.js"],
+  "forbidden_paths": ["README.md", "AGENTS.md", "package.json", "test/archiveIncident.test.js"],
+  "verify_command": "npm test",
+  "expected_changed_files": ["src/archiveIncident.js"]
+}
+```
+
+这里最重要的不是 `goal`，而是后面几项：
+
+- `baseline_sha` 把两条 lane 拉到同一个基线。
+- `allowed_paths` / `forbidden_paths` 让写集可以被拒绝，而不是只能被提醒。
+- `verify_command` 把“看起来修好了”变成可执行检查。
+- `expected_changed_files` 让 patch scope 和 receipt scope 都能比对。
+
+如果把这四项拿掉，只剩一句“请最小修改”，那就还不是 handoff contract，只是礼貌请求。
+
+这也是 prompt 官方文档反复提醒的边界问题：更大的任务不只需要 goal，还需要 context、output 和 boundaries。写给 agent 的 boundaries 如果不落到具体文件、具体命令、具体停机条件，最后就无法进 gate。
+
+:::note[为什么这里还放了局部 `AGENTS.md`]
+Codex 官方文档说明它会按全局与项目链条读取 `AGENTS.md`。所以本文在 fixture 里放了一个极小的局部 `AGENTS.md`，只重复三件事：只改 `src/archiveIncident.js`、跑 `npm test`、回报 changed files。它不是 contract 的替代品，而是把同一条边界同时暴露给模型与 gate。
+:::
+
+## Showcase：一个最小 Node bug，怎样在双线里流动
+
+本文的 fixture 不是“扫一遍陌生仓库”，而是一个很具体的 Node.js 问题：incident 应按记者本地日期归档，但当前实现偷懒用了 UTC 日期。
+
+bug 文件只有一个：
+
+```js
+function dayKeyForReporter(incident) {
+  return new Date(incident.reportedAt).toISOString().slice(0, 10);
+}
+```
+
+这样写会把 `2026-01-15T01:30:00Z` 统一切成 `2026-01-15`。对东京记者没问题，但对洛杉矶记者就错了，因为当地还是 `2026-01-14`。
+
+基线测试也故意做得很小，只用两条 case：
+
+1. Los Angeles：应该暴露 bug。
+2. Tokyo：应该保持同一天。
+
+writer 阶段冻结的 preflight 结果是：
+
+- `npm test` 退出码 `1`
+- 两条测试里 `pass 1 / fail 1`
+- 失败的是 Los Angeles case
+
+这类最小 fixture 很重要，因为它把双线流程的注意力收回到真正要验证的东西：
+
+- Claude lane 能不能只读产出 diagnosis receipt；
+- Codex lane 能不能只改一个文件；
+- gate 能不能认得“这次声明的是 healthy 还是 degraded”。
+
+### 理想的 healthy dual-track 长什么样
+
+健康时，这个 lab 的顺序应该是：
+
+1. Claude lane 先做 health check。
+2. Claude lane 只读 fixture，产出 diagnosis receipt，指出 bug 来源是 `toISOString().slice(0, 10)` 把 UTC 当成 reporter local day。
+3. 外层 harness 冻结同一份 contract，连同 baseline SHA、contract SHA 一起交给 Codex lane。
+4. Codex lane 进入隔离 Git worktree，只改 `src/archiveIncident.js`，跑 `npm test`，交出 completion receipt。
+5. integrator gate 机械核对两条 lane 的 receipt、patch、SHA、changed files 和 tests。
+
+注意这里没有任何一步要求“Claude 天生只会诊断”或“Codex 天生只会实现”。如果你愿意，角色完全可以反过来。关键只是：**本轮谁拥有读写权，谁只拥有只读诊断权。**
+
+### 本 worktree 的真实 Claude 证据：只有 health summary，没有 diagnosis receipt
+
+2026-07-12 这台机器上的 Claude 事实不是“它诊断得很好”，而是更朴素也更关键的失败状态。主会话已经在工作树外抓到两次脱敏探针 summary：
+
+1. 移除 `CLAUDE_CODE_OAUTH_TOKEN` 后，约 90 秒没有 streamed model output，随后中止。
+2. 固定 `sonnet` 与 `stream-json` 后，连续返回 `503 server_error`，观察到 attempts `1-6`，input/output tokens 都是 `0`，随后中止。
+
+研究包里只提交了最小 `claude-health-summary.json`，并明确标注它是 **outer harness summary**，不是完整 raw transcript。这么做有两个原因：
+
+- 一次探针没有拿到 model result，只能证明“这条 lane 此刻不可用”，不能伪造 diagnosis receipt。
+- 原始 transcript 里常常混着会话标识、临时路径或其他敏感运行细节，不该直接进入公开 research pack。
+
+所以，光凭这份 summary，你最多只能得到：
+
+- `Claude lane unhealthy`
+- `diagnosis receipt missing`
+- `如果继续走 implementation lane，只能进入 degraded path`
+
+你**不能**得到：`dual_track_complete`。
+
+:::caution[不要把一次 503 写成产品稳定性结论]
+本文只写 2026-07-12 这台机器、这两次探针、这组参数下没有拿到 model result。它不等于对 Claude Code 整体稳定性的排名，也不能反过来证明 Codex 必然更稳。
+:::
+
+## 真实降级：Claude lane 失败后，Codex lane 怎样接管
+
+Claude lane 没有 diagnosis receipt，不代表整个任务必须停下；它改变的是**你最终能声明的状态**。writer 的嵌套沙箱先做了一次 Codex preflight，但在宿主 runtime 初始化阶段被只读状态库拦下，没有模型输出，也没有 fixture 改动。主控随后把同一份 contract 交给外层、可写的隔离 worktree，运行了真正的 implementation lane：
+
+```bash
+codex -C <worktree> \
+  -m gpt-5.5 \
+  -s workspace-write \
+  -a never \
+  exec --ephemeral --ignore-rules \
+  --output-schema <schema-file> \
+  -o <completion-receipt.json> -
+```
+
+第一次发出真实请求前，当前 CLI 还暴露了两处 response schema 兼容要求：object 必须显式写 `additionalProperties: false`，`const` 字段也要带 `type`。两次请求都在 schema preflight 阶段返回 400，模型没有执行，worktree 保持干净。收紧 schema 后，第三次才真正进入模型执行。
+
+这次成功 run 的冻结结果是：
+
+- `codex-cli 0.142.2`，模型固定 `gpt-5.5`；
+- sandbox 为 `workspace-write`，approval policy 为 `never`；
+- 只修改 `src/archiveIncident.js`；
+- patch 把 `reportedAt` 按 `reporterTimeZone` 格式化为本地年月日；
+- `npm test` 退出码 `0`，`tests=2 / pass=2 / fail=0`；
+- completion receipt 中的 baseline SHA、contract SHA、changed files 与冻结 contract 完全一致。
+
+因此本次真正的执行状态是 `degraded_single_lane`：Claude lane 只有失败的 health summary，Codex lane 有真实 completion receipt，deterministic gate 通过。它不是 healthy dual-track，也不能把缺失的 Claude diagnosis 补写出来。
+
+这正好说明为什么要把失败层级拆开：
+
+- Claude 的失败停在 health / model result；
+- writer 内嵌 Codex 的失败停在 host runtime initialization；
+- 两次外层 schema 失败停在 request validation；
+- 最终外层 Codex run 才真正到达 implementation / test / receipt。
+
+公开 research pack 只保留脱敏 summary、结构化 receipt、零上下文 patch、测试摘要和 replay；绝对路径、runtime id 与 raw stdout/stderr 都留在工作树外。文章此时仍保持 `showcase_status: partial`，原因只剩独立终审和最终发布门禁尚未完成，不再是 Showcase 缺证据。
+
+## Gate 怎么判断 healthy、degraded 和胡乱宣称完成
+
+本文的 integrator gate 不调用模型，只做四类检查：
+
+1. baseline SHA 是否等于冻结值。
+2. contract SHA 是否等于冻结 contract。
+3. patch 与 receipt 的 changed files 是否只落在 `allowed_paths`。
+4. 当前状态声明是否和 receipt 完整性一致。
+
+因此三条负例都能稳定落到不同的退出码：
+
+| 场景 | 为什么失败 | 退出码 |
+| --- | --- | ---: |
+| 缺 Claude diagnosis receipt 却声称 `dual_track_complete` | 状态声明与 receipt 完整性矛盾 | 30 |
+| patch 改到 `README.md` 或其他越界文件 | 写集超出 contract | 31 |
+| receipt 里的 `contract_sha` 漂移 | 你交付的不是同一份 contract | 32 |
+
+这三个退出码不是行业标准，也不是某个产品内置功能。它们只是本文 lab 的教学约定。重要的不是号码本身，而是你有没有把“失败属于哪一层”清楚分开。
+
+这也是 worktree 真正有价值的地方。无论 Claude 还是 Codex，官方 worktree 文档说的都是同一个底层事实：把代码修改隔离在独立 checkout 里，才能让 patch、diff、receipt 和 gate 都有共同的物理边界。
+
+## 什么时候不要保留双线
+
+双线流程不是免费的。它会增加：
+
+- 一份 contract
+- 至少两份 receipt
+- 一条 deterministic gate
+- 可能还要加一条独立 reviewer
+
+下面这些情况，通常不值得上双线：
+
+- 你改的是一个 5 分钟内就能人工完成的单文件小任务。
+- 你没有测试或构建命令，只能靠“看起来像对了”。
+- 你还说不清 allowed paths / forbidden actions。
+- 两个工具最后还是要写同一文件，但你没有合并 gate。
+- 其中一条 lane 的故障不会改变任何执行策略，只会多生成一份无用日志。
+
+还有一种常见误区：把 Codex desktop 的 Handoff UI 直接当成本篇 contract 的同义词。它们当然都建立在 Git worktree 上，但问题空间不同：
+
+- 产品 Handoff UI 负责“在 Local 和 Worktree 之间安全移动任务与代码”。
+- 本篇 contract 负责“跨工具时，怎样冻结边界、区分 receipt 和定义 gate”。
+
+两者相关，但不能直接画等号。
+
+## 练习：为你的下一次双线交接写一张卡
+
+拿一个你最近真的会交给 agent 的 bug，先别急着跑工具，先写这张卡：
+
+```yaml
+goal: 要修什么行为
+baseline_sha: 接手时的 commit
+allowed_paths:
+forbidden_paths:
+verify_command:
+healthy_requires:
+degraded_requires:
+claim_blockers:
+```
+
+然后只问自己三件事：
+
+1. 如果第一条 lane 根本没拿到 model result，我是否有单独的 health summary，而不是伪造 diagnosis receipt？
+2. 如果第二条 lane 改到了 README，我能不能机械拒绝，而不是事后争论“这算不算顺手改一下”？
+3. 如果有人声称 `dual_track_complete`，gate 能不能直接证明 receipt 不齐？
+
+你能把这三题答稳，双线流程才算成型。
+
+完成标准也最好写成 checklist，而不是口头感觉：
+
+- baseline SHA 已冻结
+- allowed paths / forbidden paths 已冻结
+- 至少一条最快验收命令可运行
+- health receipt 与 completion receipt 被区分
+- gate 能在缺 receipt 时稳定非零退出
+
+## 来源与延伸阅读
+
+- 官方文档：[Run parallel sessions with worktrees](https://code.claude.com/docs/en/worktrees)
+- 官方文档：[Configure permissions](https://code.claude.com/docs/en/permissions)
+- 官方文档：[Create custom subagents](https://code.claude.com/docs/en/sub-agents)
+- 官方文档：[Manage sessions](https://code.claude.com/docs/en/sessions)
+- 官方文档：[Codex Worktrees](https://learn.chatgpt.com/docs/environments/git-worktrees)
+- 官方文档：[Codex code review](https://learn.chatgpt.com/docs/code-review)
+- 官方文档：[Custom instructions with AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md)
+- 官方文档：[Prompting](https://learn.chatgpt.com/docs/prompting)
+- 二手中文主题地图：[Claude Code 橙皮书](https://github.com/alchaincyf/claude-code-orange-book)
+- 二手中文主题地图：[Codex 橙皮书](https://github.com/alchaincyf/codex-orange-book)
+
+官方资料支撑本文关于 worktree、permissions、session、review、`AGENTS.md` 与 prompt boundary 的当前行为；相关页面均在 2026-07-12 复核。两本橙皮书只作为中文主题地图保留署名与链接，不作为现行产品事实权威；其仓库 README 当前都声明采用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)。本文的 `handoff contract`、`dual_track_complete`、`degraded_single_lane` 和相应 gate 退出码是 LearnPrompt 编辑部操作模型，不是某个产品原生 UI 的官方术语。
