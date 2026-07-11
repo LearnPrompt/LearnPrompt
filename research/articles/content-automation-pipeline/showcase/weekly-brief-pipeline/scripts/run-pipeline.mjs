@@ -172,7 +172,7 @@ function renderDraft(selectedItems) {
   lines.push("- publish-candidate 仍只是本地发布候选，不代表已发往外部平台。");
   lines.push("");
 
-  return `${lines.join("\n")}\n`;
+  return lines.join("\n");
 }
 
 function tamperDraftIfNeeded(draftText, selectedItems, scenario) {

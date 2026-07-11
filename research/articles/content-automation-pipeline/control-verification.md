@@ -2,6 +2,8 @@
 
 本文件记录 writer 阶段真实执行的机械验证，以及独立只读 follow-up 关闭全部 finding 后的最终 verified 门禁；机械结果本身不替代 reviewer verdict。
 
+主分支最终重放还验证了生成器的 EOF 稳定性：草稿以恰好一个换行结尾，重复执行一键 Showcase 后冻结结果无 diff；独立只读窄审 PASS（0/0/0）。
+
 ## 1. 一键 Showcase 四场景
 
 命令：
