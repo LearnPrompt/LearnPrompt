@@ -1,0 +1,39 @@
+diff --git a/README.md b/README.md
+index 0076f88..e92e0e2 100644
+--- a/README.md
++++ b/README.md
+@@ -5,3 +5,34 @@ A tiny command-line tool that counts the words in a string.
+ ## 功能
+
+ 传入一段文本，返回其中的单词数量。空字符串返回 0。
++
++## 本地运行
++
++### 安装
++
++无外部依赖，克隆仓库后直接安装：
++
++```bash
++npm install
++```
++
++### 运行 CLI
++
++```bash
++node wordcount.js "hello world"
++```
++
++输出：`2`
++
++或全局安装后直接使用：
++
++```bash
++npm link
++wordcount "hello world"
++```
++
++### 跑测试
++
++```bash
++npm test
++```

@@ -1,0 +1,8 @@
+{
+  "name": "wordcount-demo",
+  "version": "1.0.0",
+  "description": "Tiny word-count CLI used as a disposable Claude Code practice repo.",
+  "main": "wordcount.js",
+  "bin": { "wordcount": "wordcount.js" },
+  "scripts": { "test": "node test.js" }
+}
