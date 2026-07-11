@@ -109,6 +109,13 @@
 - 当前 14 篇 verified 教程全部重新通过新门禁。
 - Skill 已重新打包为 `.claude/packages/learnprompt-single-mdx.skill`，SHA-256 `b54196deb98a2d449170a3f43571df7b842b50c33023dd6fbde50764d01d4bc4`，压缩包完整性检查通过。
 
+## Wave A 跨文章审计
+
+- 9 篇 Wave A 教程标题无重复，本地图片与站内 Markdown 链接无失效目标。
+- `ai-coding` 栏目按选型 → 最小工作流 → 需求切片 → 放权边界 → 项目清单排列为 sidebar 1–5；`agent-engineering` 按总览 → 指令 → 约束 → 反馈 → 记忆 → 编排排列为 sidebar 1–6。
+- 9 篇均以学习目标开场、以“来源与延伸阅读”收尾；H2 数量为 7–13，未发现短占位稿。
+- 五篇分层教程统一把自建分类写成 LearnPrompt 操作化归纳或综合，不冒充产品官方术语；Claude Code 与 Codex 的指令、权限、记忆原语保持分列。
+
 ## 本地提交
 
 - `9fc4a01 docs(ai-coding): goldenize minimum agentic workflow (94)`
