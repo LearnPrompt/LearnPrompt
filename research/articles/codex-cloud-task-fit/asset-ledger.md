@@ -1,0 +1,3 @@
+| Public path | Teaching purpose | Original source | Creator | License | Modifications | Verified at |
+| --- | --- | --- | --- | --- | --- | --- |
+| `/images/articles/codex-cloud-task-fit/cloud-task-fit-decision-chain.svg` | 解释一次 Cloud handoff 预演为何要先过 repo-contained、deterministic、clean-checkout、acceptance-command 四道门，再进入 clean-room replay；同时展示正向通过与四类稳定拒绝的关系 | `research/articles/codex-cloud-task-fit/vertical-research.md` 第 2-10 节；`research/articles/codex-cloud-task-fit/showcase/cloud-handoff-lab/results/run-result.txt` | LearnPrompt 编辑部 | CC BY-NC-SA 4.0 (repository root `LICENSE`) | none | 2026-07-11 |

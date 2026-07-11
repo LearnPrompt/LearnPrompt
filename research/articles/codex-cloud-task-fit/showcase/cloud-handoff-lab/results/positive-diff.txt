@@ -1,0 +1,38 @@
+diff --git a/src/rollupByReporterDay.js b/src/rollupByReporterDay.js
+--- a/src/rollupByReporterDay.js
++++ b/src/rollupByReporterDay.js
+@@
+-function utcDayKey(instant) {
+-  return instant.toISOString().slice(0, 10);
++function reporterDayKey(instant, timeZone) {
++  const formatter = new Intl.DateTimeFormat("en-CA", {
++    timeZone,
++    year: "numeric",
++    month: "2-digit",
++    day: "2-digit",
++  });
++  const parts = formatter.formatToParts(instant);
++  const year = parts.find(({ type }) => type === "year")?.value;
++  const month = parts.find(({ type }) => type === "month")?.value;
++  const day = parts.find(({ type }) => type === "day")?.value;
++
++  if (!year || !month || !day) {
++    throw new Error("Unable to derive reporter day from timestamp");
++  }
++
++  return `${year}-${month}-${day}`;
+ }
+@@LEARNPROMPT_BLANK_CONTEXT@@
+export function rollupByReporterDay(entries, timeZone) {
+@@
+  for (const entry of entries) {
+    const instant = new Date(entry.timestamp);
+    if (Number.isNaN(instant.getTime())) {
+     throw new Error(`Invalid timestamp: ${entry.timestamp}`);
+    }
+@@LEARNPROMPT_BLANK_CONTEXT@@
+-    const day = utcDayKey(instant);
++    const day = reporterDayKey(instant, timeZone);
+     totals.set(day, (totals.get(day) ?? 0) + entry.minutes);
+   }
+@@LEARNPROMPT_BLANK_CONTEXT@@

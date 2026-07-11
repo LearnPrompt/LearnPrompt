@@ -1,0 +1,23 @@
+{
+  "scenario_id": "positive-clean-room",
+  "goal": "Fix the timezone rollup bug so usage is grouped by the reporter local day instead of the UTC day.",
+  "direction_status": "frozen",
+  "expected_fix": "Replace UTC date bucketing with a reporter-time-zone day key in src/rollupByReporterDay.js.",
+  "allowed_paths": [
+    "src/rollupByReporterDay.js"
+  ],
+  "acceptance_command": "npm test -- --test-reporter tap",
+  "requires_clean_checkout": true,
+  "requires_agent_internet": false,
+  "requires_secret_names": [],
+  "host_dependencies": {
+    "local_files": [],
+    "browser_login": false,
+    "local_apps": []
+  },
+  "deliverables": [
+    "single-file diff",
+    "test output",
+    "follow-up note if a future cloud run needs a PR or additional reviewer"
+  ]
+}
