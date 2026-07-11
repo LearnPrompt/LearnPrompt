@@ -1,0 +1,22 @@
+{
+  "status": "completed",
+  "codex_cli_version": "codex-cli 0.142.2",
+  "model": "gpt-5.5",
+  "prompt_file": "contracts/prompt.md",
+  "schema_file": "contracts/final-report.schema.json",
+  "exec_exit_code": 0,
+  "changed_files": [
+    "?? migration-candidate/",
+    "?? receipts/",
+    "?? reports/",
+    "?? work/"
+  ],
+  "source_unchanged": true,
+  "reports_written": {
+    "run_summary": true,
+    "verify_summary": true,
+    "manifest": true
+  },
+  "redaction_note": "Absolute temp paths, runtime identifiers, and raw shell traces were redacted before commit.",
+  "candidate_hash": "cdc8bf70d44838e2239ff00052b092cb0ce7d198b77ec5b581e17f799e8dc892"
+}

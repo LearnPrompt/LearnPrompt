@@ -1,0 +1,7 @@
+scenario: rerun-stability
+command_a: node .agents/skills/docs-migration-pipeline/scripts/run-pipeline.mjs
+command_b: node .agents/skills/docs-migration-pipeline/scripts/run-pipeline.mjs
+exit_code: 0
+candidate_sha_a: cdc8bf70d44838e2239ff00052b092cb0ce7d198b77ec5b581e17f799e8dc892
+candidate_sha_b: cdc8bf70d44838e2239ff00052b092cb0ce7d198b77ec5b581e17f799e8dc892
+stable: true

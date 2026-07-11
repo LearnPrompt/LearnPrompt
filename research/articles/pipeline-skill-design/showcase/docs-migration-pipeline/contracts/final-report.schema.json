@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "skill_invocation",
+    "crash_exit_code",
+    "resume_exit_code",
+    "verify_exit_code",
+    "candidate_hash",
+    "source_unchanged",
+    "changed_files",
+    "notes"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["completed", "blocked", "failed"]
+    },
+    "skill_invocation": {
+      "type": "string"
+    },
+    "crash_exit_code": {
+      "type": "integer"
+    },
+    "resume_exit_code": {
+      "type": "integer"
+    },
+    "verify_exit_code": {
+      "type": "integer"
+    },
+    "candidate_hash": {
+      "type": "string"
+    },
+    "source_unchanged": {
+      "type": "boolean"
+    },
+    "changed_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

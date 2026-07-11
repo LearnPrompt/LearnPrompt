@@ -1,0 +1,5 @@
+scenario: receipt-issue
+setup_command: node .agents/skills/docs-migration-pipeline/scripts/run-pipeline.mjs --scenario crash-after-transform
+tamper: deleted receipts/transform.json while transform outputs remained
+command: node .agents/skills/docs-migration-pipeline/scripts/run-pipeline.mjs --resume
+exit_code: 33

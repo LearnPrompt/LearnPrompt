@@ -1,0 +1,13 @@
+{
+  "checkpoint_stage": "transform",
+  "completed_stages": [
+    "inventory",
+    "normalize",
+    "transform"
+  ],
+  "crash_exit_code": 30,
+  "resume": false,
+  "reused_stages": [],
+  "scenario": "crash-after-transform",
+  "status": "simulated_crash"
+}

@@ -1,0 +1,3 @@
+| Public path | Teaching purpose | Original source | Creator | License | Modifications | Verified at |
+| --- | --- | --- | --- | --- | --- | --- |
+| `/images/articles/pipeline-skill-design/docs-migration-pipeline.svg` | 解释五阶段 stage contract、receipt、crash checkpoint、resume 跳过、input tamper invalidation 与最终 candidate 的关系，让读者一眼看懂“恢复的是已验证阶段，而不是重新猜流程进度” | `research/articles/pipeline-skill-design/vertical-research.md` 中“stage contract 的六个部件”与 `showcase/docs-migration-pipeline/results/` 的真实冻结场景 | LearnPrompt 编辑部 | CC BY-NC-SA 4.0 | 原创 SVG；实际渲染后重排 invalidation 文本与 resume 说明，消除溢出；未复制橙皮书视觉素材 | 2026-07-12 |

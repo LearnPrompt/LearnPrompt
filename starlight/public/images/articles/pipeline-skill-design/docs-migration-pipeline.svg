@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">docs-migration-pipeline 的五阶段恢复骨架</title>
+  <desc id="desc">图中展示 inventory、normalize、transform、validate、package-candidate 五阶段，每阶段各有 receipt。transform 后发生 crash，resume 复用前三阶段 receipt；输入被篡改时触发 invalidation；最终只生成 migration candidate。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f7f2e8"/>
+      <stop offset="100%" stop-color="#fffdfa"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#38414a"/>
+    </marker>
+    <marker id="greenArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2f7d32"/>
+    </marker>
+    <marker id="redArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b4473f"/>
+    </marker>
+    <style>
+      .title { font-family: serif; font-size: 32px; font-weight: 700; fill: #27231f; }
+      .subtitle { font-family: serif; font-size: 17px; font-weight: 400; fill: #5a524b; }
+      .stage-title { font-family: serif; font-size: 22px; font-weight: 700; fill: #1f1f1f; }
+      .stage-text { font-family: serif; font-size: 16px; font-weight: 400; fill: #3d3d3d; }
+      .small { font-family: serif; font-size: 14px; font-weight: 400; fill: #4b4b4b; }
+      .label { font-family: serif; font-size: 16px; font-weight: 700; fill: #ffffff; }
+      .warn { font-family: serif; font-size: 16px; font-weight: 700; fill: #7e241e; }
+      .ok { font-family: serif; font-size: 16px; font-weight: 700; fill: #215f24; }
+    </style>
+  </defs>
+
+  <rect width="1400" height="900" fill="url(#bg)" />
+  <rect x="34" y="34" width="1332" height="832" rx="28" fill="#fffaf2" stroke="#d7c8ae" stroke-width="2" />
+
+  <text x="76" y="92" class="title">docs-migration-pipeline：失败恢复靠 receipt，不靠模型回忆</text>
+  <text x="76" y="126" class="subtitle">隔离 temp repo 中只生成 migration candidate。每阶段先写 receipt；resume 先验证 input/output hash，再决定跳过还是失效。</text>
+
+  <rect x="76" y="168" width="210" height="78" rx="18" fill="#efe3c8" stroke="#b89b67" stroke-width="2"/>
+  <text x="98" y="200" class="stage-title">Legacy Source</text>
+  <text x="98" y="225" class="stage-text">3 fake Markdown docs</text>
+
+  <line x1="286" y1="207" x2="330" y2="207" stroke="#38414a" stroke-width="3" marker-end="url(#arrow)" />
+
+  <g transform="translate(330 150)">
+    <rect width="185" height="110" rx="20" fill="#d8e8f2" stroke="#6e98ae" stroke-width="2"/>
+    <text x="20" y="34" class="stage-title">1. inventory</text>
+    <text x="20" y="62" class="stage-text">hash source docs</text>
+    <text x="20" y="84" class="stage-text">write inventory.json</text>
+    <rect x="18" y="126" width="150" height="74" rx="14" fill="#ffffff" stroke="#6e98ae" stroke-width="1.5"/>
+    <text x="34" y="152" class="small">receipt</text>
+    <text x="34" y="174" class="small">input_sha</text>
+    <text x="34" y="193" class="small">output_sha / exit 0</text>
+  </g>
+
+  <line x1="515" y1="207" x2="555" y2="207" stroke="#38414a" stroke-width="3" marker-end="url(#arrow)" />
+
+  <g transform="translate(555 150)">
+    <rect width="185" height="110" rx="20" fill="#dcefd8" stroke="#7ba06f" stroke-width="2"/>
+    <text x="20" y="34" class="stage-title">2. normalize</text>
+    <text x="20" y="62" class="stage-text">canonical records</text>
+    <text x="20" y="84" class="stage-text">stable field order</text>
+    <rect x="18" y="126" width="150" height="74" rx="14" fill="#ffffff" stroke="#7ba06f" stroke-width="1.5"/>
+    <text x="34" y="152" class="small">receipt</text>
+    <text x="34" y="174" class="small">input_sha</text>
+    <text x="34" y="193" class="small">output_sha / exit 0</text>
+  </g>
+
+  <line x1="740" y1="207" x2="780" y2="207" stroke="#38414a" stroke-width="3" marker-end="url(#arrow)" />
+
+  <g transform="translate(780 150)">
+    <rect width="185" height="110" rx="20" fill="#f2ddd5" stroke="#b7836f" stroke-width="2"/>
+    <text x="20" y="34" class="stage-title">3. transform</text>
+    <text x="20" y="62" class="stage-text">legacy -&gt; .mdx</text>
+    <text x="20" y="84" class="stage-text">candidate only</text>
+    <rect x="18" y="126" width="150" height="74" rx="14" fill="#ffffff" stroke="#b7836f" stroke-width="1.5"/>
+    <text x="34" y="152" class="small">receipt</text>
+    <text x="34" y="174" class="small">checkpoint kept</text>
+    <text x="34" y="193" class="small">output_sha / exit 0</text>
+  </g>
+
+  <polygon points="972,165 1002,205 982,205 1008,245 968,198 988,198" fill="#b4473f"/>
+  <text x="1008" y="196" class="warn">simulated crash</text>
+  <text x="1008" y="219" class="warn">exit 30 after transform</text>
+
+  <rect x="1048" y="150" width="250" height="112" rx="20" fill="#fff1ed" stroke="#b4473f" stroke-width="2"/>
+  <text x="1070" y="184" class="stage-title">Checkpoint Survives</text>
+  <text x="1070" y="214" class="stage-text">inventory + normalize + transform</text>
+  <text x="1070" y="238" class="stage-text">receipts stay reusable</text>
+
+  <path d="M1110 292 C1035 360, 965 380, 905 382" fill="none" stroke="#2f7d32" stroke-width="4" marker-end="url(#greenArrow)"/>
+  <text x="985" y="336" class="ok">resume validates old receipts</text>
+
+  <g transform="translate(780 382)">
+    <rect width="185" height="110" rx="20" fill="#e8e3f2" stroke="#8172a4" stroke-width="2"/>
+    <text x="20" y="34" class="stage-title">4. validate</text>
+    <text x="20" y="62" class="stage-text">frontmatter + headings</text>
+    <text x="20" y="84" class="stage-text">source still untouched</text>
+    <rect x="18" y="126" width="150" height="74" rx="14" fill="#ffffff" stroke="#8172a4" stroke-width="1.5"/>
+    <text x="34" y="152" class="small">receipt</text>
+    <text x="34" y="174" class="small">validation.json</text>
+    <text x="34" y="193" class="small">exit 0</text>
+  </g>
+
+  <line x1="965" y1="439" x2="1004" y2="439" stroke="#38414a" stroke-width="3" marker-end="url(#arrow)" />
+
+  <g transform="translate(1004 382)">
+    <rect width="225" height="110" rx="20" fill="#ead7b9" stroke="#a48143" stroke-width="2"/>
+    <text x="20" y="34" class="stage-title">5. package-candidate</text>
+    <text x="20" y="62" class="stage-text">migration-candidate/docs/*.mdx</text>
+    <text x="20" y="84" class="stage-text">manifest.json + stable hash</text>
+    <rect x="18" y="126" width="176" height="74" rx="14" fill="#ffffff" stroke="#a48143" stroke-width="1.5"/>
+    <text x="34" y="152" class="small">receipt</text>
+    <text x="34" y="174" class="small">candidate_sha</text>
+    <text x="34" y="193" class="small">rerun hash must match</text>
+  </g>
+
+  <rect x="1088" y="606" width="210" height="96" rx="20" fill="#f7f2d8" stroke="#a48d3f" stroke-width="2"/>
+  <text x="1110" y="641" class="stage-title">Final Candidate</text>
+  <text x="1110" y="669" class="stage-text">source unchanged</text>
+  <text x="1110" y="691" class="stage-text">publish not allowed here</text>
+
+  <line x1="1116" y1="582" x2="1165" y2="606" stroke="#38414a" stroke-width="3" marker-end="url(#arrow)" />
+
+  <rect x="84" y="610" width="554" height="156" rx="24" fill="#fff2ee" stroke="#c48a77" stroke-width="2"/>
+  <text x="110" y="648" class="stage-title">Invalidation Rule</text>
+  <text x="110" y="680" class="stage-text">If source changes after crash, the old inventory receipt</text>
+  <text x="110" y="704" class="stage-text">no longer matches current input_sha.</text>
+  <text x="110" y="728" class="stage-text">Resume stops with exit 32 instead of reusing stale checkpoints.</text>
+  <text x="110" y="752" class="warn">input tamper -&gt; stale resume -&gt; invalidate old receipts</text>
+
+  <path d="M286 207 C220 340, 196 470, 270 602" fill="none" stroke="#b4473f" stroke-width="4" marker-end="url(#redArrow)"/>
+  <path d="M320 610 C430 532, 612 516, 780 536" fill="none" stroke="#b4473f" stroke-width="3" stroke-dasharray="10 8" marker-end="url(#redArrow)"/>
+
+  <rect x="694" y="620" width="336" height="148" rx="24" fill="#eef7ef" stroke="#6eaa72" stroke-width="2"/>
+  <text x="720" y="656" class="stage-title">What Resume Actually Reuses</text>
+  <text x="720" y="684" class="stage-text">- only stages whose receipts still match</text>
+  <text x="738" y="706" class="stage-text">current input/output hash</text>
+  <text x="720" y="732" class="stage-text">- not folders that happen to exist</text>
+  <text x="720" y="756" class="stage-text">- not model memory</text>
+</svg>

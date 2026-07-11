@@ -1,34 +1,314 @@
 ---
-title: 流水线型 Skill 设计
-description: 把重复工作拆成可重跑、可检查的阶段。
+title: 流水线型 Skill 设计：用 stage contract 和 receipt 让失败可恢复，而不是把步骤塞进巨大 prompt
+description: 用一个 3 文档迁移 Showcase 学会 stage contract、receipt、checkpoint、resume、invalidation 和 idempotency 的最小骨架。
 sidebar:
   order: 5
 difficulty: intermediate
 source_repo: alchaincyf/agent-skills-orange-book
 source_url: https://github.com/alchaincyf/agent-skills-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-12"
+reading_time: 15 分钟
+research_path: research/articles/pipeline-skill-design
+showcase_path: research/articles/pipeline-skill-design/showcase/docs-migration-pipeline
+showcase_status: verified
+quality_score: 98
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后核对 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 15 分钟 | 2026-07-12 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/agent-skills-orange-book" url="https://github.com/alchaincyf/agent-skills-orange-book" updatedFrom="2026-05" note="仅参考主题结构，正文重新组织。" />
+你已经知道该把重复工作拆成多个步骤了。问题是，任务一旦做到一半崩掉，下一轮凭什么知道哪些步骤真的完成了，哪些步骤必须重跑？
 
-## 适用场景
+很多所谓“流水线型 Skill”其实只做了一件事：把 5 个动作写成一个更长的 prompt。它当然比一句“帮我迁移文档”更清楚，但它仍然回答不了最关键的工程问题：
 
-日报、榜单、资料整理、批量迁移、课程生成，都可以做成流水线型 Skill。
+- transform 跑完后 crash，下一轮该从哪儿接？
+- 为什么可以跳过 inventory 和 normalize，而不是重新猜？
+- 输入被篡改以后，旧 checkpoint 为什么必须失效？
+- 两次完整重跑如果结果 hash 不同，到底是哪一层混进了非确定性？
 
-## 设计方法
+这篇文章只回答一个中心问题：**流水线型 Skill 如何用 stage contract、receipt、checkpoint、resume、invalidation 和 idempotency 管理失败，而不是把步骤写成巨大 prompt。**
 
-1. 每一步都落盘。
-2. 每一步都有输入和输出。
-3. 失败时能从中间继续。
-4. 最终报告要写清限制。
+我不会重复 [`《第一个 SKILL.md 怎么写》`](./first-skill-md) 里已经讲过的字段教程，也不重复 [`content-automation-pipeline`](/claude-code/content-automation-pipeline/) 那篇关于周报生产和人工发布边界的内容。本文聚焦的是**可恢复的 Skill 编排骨架**。
 
-## 常见错误
+## 读完你能做什么
 
-把整条流水线写成一个巨大 prompt。这样失败后无法定位，也无法单独重跑。
+1. 说清为什么“多阶段任务”需要 stage contract，而不是只靠长 prompt。
+2. 看懂一条最小恢复骨架里，receipt、checkpoint、resume、invalidation、idempotency 分别落在哪个 artifact。
+3. 用一个 3 文档迁移 Showcase 判断：哪些阶段可复用，哪些阶段必须作废。
+4. 识别三类常见误判：把 checkpoint 当目录名、把 resume 当性能优化、把“看起来差不多”误当成 idempotent。
 
-## 实战案例
+![五阶段 docs-migration-pipeline：每个阶段各写一张 receipt；transform 后可保留 checkpoint；resume 只跳过已验证阶段；输入被篡改会触发 invalidation 并拒绝旧 receipt](/images/articles/pipeline-skill-design/docs-migration-pipeline.svg)
+*图注：真正可恢复的不是“流程图”，而是每个阶段都留下 receipt，并且 resume 先核对 input/output hash；transform 后 crash 可以继续，但输入被篡改后旧 checkpoint 必须整体失效。*
 
-ClawHub 日报流水线：抓 Top100 快照、保存 JSON、读取前一日、计算增量、生成 Markdown、写入收件箱。
+:::note[术语边界]
+`stage contract`、`receipt`、`checkpoint`、`resume`、`invalidation`、`idempotency` 是 LearnPrompt 在本文采用的操作模型，不是官方 Agent Skill 规范。官方资料能证明 Skill 的目录、加载和脚本边界；恢复协议需要你自己设计并机械验证。
+:::
+
+## 为什么“把步骤写进 prompt”仍然不够
+
+先看一个很常见的版本：
+
+```text
+请把旧 Markdown 文档迁移成新 docs：
+1. 先盘点文件
+2. 再标准化
+3. 再转换
+4. 再校验
+5. 最后打包
+如果中途失败，请从上次继续
+```
+
+这段话已经比“帮我迁移一下”具体很多，但它仍然缺 4 个关键事实：
+
+1. 上次的“继续”是由什么证据支持的？
+2. 哪个阶段的输出是 checkpoint，哪些只是临时文件？
+3. 输入变了以后，旧结果怎样自动失效？
+4. 重新跑一遍为什么应该得到同样的 candidate hash？
+
+这就是 stage contract 的起点。**流水线型 Skill 不只是把顺序写出来，而是把“何时算完成、何时能复用、何时必须作废”写成可检查契约。**
+
+OpenAI 当前的 Skill 文档把 Skill 定位成可复用 workflow，并明确建议：默认优先 instructions，需要确定性行为时再下沉脚本。开放的 Agent Skills 规范则把 `scripts/`、`references/`、`assets/` 设计成按需加载资源。这两点放到一起，得到的工程结论很直接：
+
+- Skill 正文负责协调：什么时候用、先读什么、失败码怎么解释；
+- 脚本负责机械性：hash、文件枚举、candidate 生成、receipt 校验；
+- 两者组合，才可能支持 resume，而不是让模型回忆“我上次做到 transform 了”。
+
+## 一条最小恢复骨架：stage contract 到底包含什么
+
+本文的 Showcase 冻结了一个隔离 temp repo：把 3 个 legacy Markdown 文档迁移成 Starlight-compatible candidate。Skill 目录位于：
+
+```text
+.agents/skills/docs-migration-pipeline/
+├── SKILL.md
+├── references/stage-contract.md
+├── scripts/run-pipeline.mjs
+├── scripts/verify-receipts.mjs
+└── assets/receipt-template.md
+```
+
+阶段固定为：
+
+| 阶段 | 读什么 | 写什么 | 失败后能否复用 |
+| --- | --- | --- | --- |
+| `inventory` | `legacy/*.md` | `work/inventory.json` | 可以，但要重新核对输入哈希 |
+| `normalize` | `work/inventory.json` | `work/normalized/*.json` | 可以，前提同上 |
+| `transform` | normalized records | `work/transformed/*.mdx` | 可以；本文专门在这里模拟 crash |
+| `validate` | transformed candidates | `reports/validation.json` | 只有完整 receipt 才算 checkpoint |
+| `package-candidate` | validated candidates | `migration-candidate/docs/*.mdx` + `manifest.json` | 最终产物，必须可重放 |
+
+这 5 步不是按名字排列就完事了。每个阶段都会写一张 receipt，至少包含：
+
+- `input_sha`
+- `output_sha`
+- `command`
+- `exit_code`
+- `status`
+- `started_seq`
+- `finished_seq`
+
+这里有个容易被忽略的细节：本文故意不用墙钟时间参与可重放 hash。你当然可以在日志里记录时间，但**不要让 wall clock 决定 checkpoint 是否可复用**。否则同样输入、同样输出，只因为运行时间不同，第二次就会被误判成不同结果。
+
+## receipt 和 checkpoint：保存的是“已证明完成的阶段”
+
+很多人把 checkpoint 理解成“目录里有中间文件”。这还差一层。
+
+真正可复用的 checkpoint 至少同时满足两件事：
+
+1. 这个阶段的 output 已经与 receipt 绑定；
+2. 下一轮还能重新验证 `receipt.input_sha == current_input_sha`，且 `receipt.output_sha == current_output_sha`。
+
+这就是为什么本文把 checkpoint 定义得比“文件还在”更严格。文件在，不代表证据还成立。
+
+用文档迁移这个案例更容易看懂：
+
+- `transform` 阶段写出了 3 个 candidate `.mdx`；
+- 同时写出 `receipts/transform.json`；
+- 下一轮 resume 时，系统先重新计算 normalized 输入的哈希；
+- 只有哈希仍一致，并且 3 个 transformed 文件的输出哈希也与 receipt 一致，才允许跳过 transform。
+
+这时复用的不是“目录名叫 transformed”，而是“transform 这步已经被 receipt 证明过，而且证据现在还有效”。
+
+## Resume 不是省时间功能，而是失效规则先行的恢复协议
+
+本文 Showcase 冻结了 4 个关键场景：
+
+| 场景 | 预期 exit code | 证明什么 |
+| --- | ---: | --- |
+| fresh success | `0` | 整条流水线能从头成功生成 candidate |
+| crash after transform | `30` | crash 后能保留前三阶段 checkpoint |
+| resume after crash | `0` | resume 真复用了前三张 receipt，而不是重跑 |
+| stale resume after input tamper | `32` | 输入变了以后，旧 receipt 必须整体失效 |
+| receipt missing or corrupt | `33` | 证据不完整时不能假装能恢复 |
+
+这里最重要的不是数字本身，而是**失效原因被分开编码**：
+
+- `32` 代表输入已经变了，旧 checkpoint 过期；
+- `33` 代表 receipt 缺失、损坏或与实际输出对不上，系统无法证明你能安全跳过。
+
+这种区分会直接影响调用方的策略：
+
+- 收到 `32`，你应该重建前序阶段，不该继续复用；
+- 收到 `33`，你该先修复证据链，不能把“看起来文件还在”当成成功。
+
+如果你把两类错误都混成“resume failed”，调用方就只能重新猜处理方式，等于又退回巨大 prompt 的世界。
+
+## Showcase：docs-migration-pipeline 如何冻结 crash、resume 和 invalidation
+
+本篇 Showcase 只做一件小事：把 3 个 legacy Markdown 文档迁移成 candidate，不覆盖 source，也不发布。这样才能把焦点放在恢复骨架，而不是放到真实内容风险上。
+
+离线 replay 的入口是：
+
+```bash
+node research/articles/pipeline-skill-design/showcase/docs-migration-pipeline/scripts/verify-showcase.mjs
+```
+
+2026-07-12 writer 阶段冻结的离线结果：
+
+```text
+fresh success: 0
+crash after transform: 30
+resume after crash: 0
+stale resume after input tamper: 32
+receipt issue: 33
+rerun stability: 0
+privacy scan: 0
+```
+
+其中最关键的不是一条“PASS”，而是三条具体证明：
+
+### 1. resume 真复用了 checkpoint
+
+`resume-summary.json` 里冻结的 `reused_stages` 为：
+
+```json
+["inventory", "normalize", "transform"]
+```
+
+这说明恢复不是“从 crash 的地方大概接上”，而是明确跳过了已验证的前三阶段，只继续 `validate -> package-candidate`。
+
+### 2. tamper 真会触发 invalidation
+
+Showcase 在 crash 之后故意向 `legacy/02-api-auth.md` 追加一行，再执行 `--resume`。因为 `inventory` 阶段的 `input_sha` 与旧 receipt 不再一致，系统稳定返回 `32`。这一步证明：**resume 服从输入契约，而不是服从“我想快一点”的愿望。**
+
+### 3. 完整重跑 hash 稳定
+
+`rerun-stability.txt` 里，两次 fresh success 的 `candidate_sha` 相同。这证明最终 candidate 没把 wall clock、绝对临时路径或随机顺序混进输出。
+
+## 一次真实 Codex 恢复演练：先保留 blocked，再由外层补跑成功
+
+用户要求在隔离 temp repo 中做一次真实 Codex 显式 `$docs-migration-pipeline` 调用，完成“模拟 crash -> resume -> verify receipts”。命令入口是：
+
+```bash
+CODEX_NESTED_MODEL=gpt-5.5 \
+node research/articles/pipeline-skill-design/showcase/docs-migration-pipeline/scripts/run-codex-live.mjs
+```
+
+writer 隔离层的首次尝试没有伪造成成功。它被两条宿主约束拦住：
+
+- state DB 落在只读位置，无法写 `~/.codex/state_5.sqlite`
+- in-process app-server 初始化被 `Operation not permitted` 拦截
+
+因此我们保留了失败证据。随后，外层主控修正 output schema：把已有的 `notes` 属性加入 `required`，再用同一冻结 fixture、prompt、schema 与 gpt-5.5 补跑。真实结果为：
+
+```text
+skill_invocation: $docs-migration-pipeline
+exec_exit_code: 0
+crash_exit_code: 30
+resume_exit_code: 0
+verify_exit_code: 0
+source_unchanged: true
+candidate_hash: cdc8bf70d44838e2239ff00052b092cb0ce7d198b77ec5b581e17f799e8dc892
+changed_files: migration-candidate/, receipts/, reports/, work/
+```
+
+这里故意保留了一个不那么“漂亮”的结果：模型报告里明确承认“只改 candidate / receipt / report”是 false，因为 `work/` 还包含 checkpoint 和中间文件。这比把中间状态藏起来更有教学价值，也符合流水线恢复机制的真实边界。
+
+research pack 同时保留了：
+
+- `contracts/prompt.md`
+- `contracts/final-report.schema.json`
+- `scripts/run-codex-live.mjs`
+- `results/live-run-summary.json`
+- `results/codex-stderr-summary.txt`
+- `results/codex-last-message.json`
+
+独立只读 reviewer 随后逐项核对正文、冻结工件和实际渲染图，给出 PASS 98/100，blocker / major / minor 均为 0，因此本文已提升为 `showcase_status: verified`。
+
+## 什么时候不要用这种流水线骨架
+
+不是每个多步骤任务都值得引入 receipt 和 resume。
+
+### 情况一：流程还在探索
+
+如果你每做一次都在改阶段边界，先不要急着加 checkpoint。过早定义 receipt，只会把模糊流程固化成更难维护的协议。
+
+### 情况二：输入经常整体变动
+
+如果 source 每次都大幅变化，resume 的收益可能很小，invalidations 却会很频繁。此时整条重跑比“勉强恢复”更安全。
+
+### 情况三：只有一个确定性脚本
+
+如果任务本质上就是“读一个输入，写一个输出”，既不需要多阶段证据，也不需要中间 checkpoint，那普通脚本就够了，不必为了形式感强行 Skill 化。
+
+### 情况四：真正缺的是外部系统接入
+
+如果问题的关键是“要访问飞书、GitHub、数据库或存储系统”，先想清楚 MCP 或 connector 边界。流水线 Skill 解决的是编排与恢复，不替代外部连接层。
+
+## 练习：给你自己的流水线写一条失效规则
+
+找一个你最近重复做过的多阶段任务，不管它是文档迁移、数据整理，还是 release checklist，都先不要写代码，先把下面 5 行补全：
+
+```yaml
+阶段名:
+这一阶段的输入:
+这一阶段的输出:
+什么条件下允许 resume:
+什么条件下必须 invalidation:
+```
+
+可观察的完成标准不是“你觉得写出来了”，而是你能再补两条：
+
+1. 这一阶段的 `input_sha` 应该基于哪些文件或字段计算。
+2. 如果 receipt 丢失、损坏或与当前输出不一致，调用方应该收到哪个明确退出码。
+
+如果这两条还答不出来，先别急着做恢复。说明你的流程还没长成可验证 contract。
+
+## 一个可直接复用的检查表
+
+在把多阶段任务做成流水线型 Skill 之前，先过一遍这 6 个问题：
+
+```yaml
+阶段是否有明确输入和输出: 是 / 否
+每个阶段是否能写稳定 receipt: 是 / 否
+checkpoint 是否能重新验证 input/output hash: 是 / 否
+输入变化时是否有明确 invalidation 规则: 是 / 否
+完整重跑后最终 hash 是否应稳定: 是 / 否
+如果 nested run 被宿主拦截，是否能保留 blocked evidence: 是 / 否
+```
+
+只有前 5 条里大多数都能回答“是”，resume 才值得做。否则你只是把复杂性从 prompt 挪到了目录结构里。
+
+可观察的完成标准也应该是机械的，而不是“我觉得这次应该没问题”：
+
+1. crash 后 resume 真复用了哪些 stages；
+2. tamper 后旧 receipt 是否稳定失效；
+3. 缺 receipt 时系统是否拒绝继续；
+4. 两次完整重跑的 candidate hash 是否相同。
+
+## 来源与延伸阅读
+
+- [Agent Skills specification](https://agentskills.io/specification)（一手规范，支撑 Skill 目录、`SKILL.md`、`scripts/` / `references/` / `assets/` 与渐进加载）
+- [OpenAI Learn: Build skills](https://learn.chatgpt.com/docs/build-skills)（一手文档，支撑 `.agents/skills`、可复用 workflow、以及“需要确定性行为时再下沉脚本”的边界）
+- [OpenAI Learn: Customization overview](https://learn.chatgpt.com/docs/customization/overview)（一手文档，支撑 `AGENTS.md`、Skills 与 MCP 的分层）
+- [Claude Code Docs: Skills](https://code.claude.com/docs/en/skills)（一手文档，支撑“当 instructions / checklist / multi-step procedure 被反复粘贴时，应抽成 Skill”）
+- [Node.js Crypto API](https://nodejs.org/api/crypto.html)（一手运行时文档，支撑 `createHash()` 作为输入/输出哈希实现）
+- [Node.js File system API](https://nodejs.org/api/fs.html)（一手运行时文档，支撑确定性文件读写与枚举）
+- [Agent Skills 橙皮书仓库](https://github.com/alchaincyf/agent-skills-orange-book)（中文主题地图 / 二手资料）
+
+官方资料支撑本文关于 Skill 容器、路径分层、脚本边界和运行时 API 的当前事实，均在 2026-07-12 复核。本文中的 `stage contract`、`receipt`、`checkpoint`、`resume`、`invalidation` 和 `idempotency` 字段设计属于 LearnPrompt 的操作化实现，不冒充官方规范。
+
+橙皮书只作为“流水线型 Skill 是一种设计模式”的主题地图使用。本文阅读了本地镜像 `$TMPDIR/agent-skills-orange-book/README_zh.md` 以确认作者、用途和许可边界；其 README 当前仅声明“免费提供，仅限个人学习使用”，未提供标准开源许可。本文未复制其 PDF 原文、截图或图片，只保留链接、作者署名、用途与限制说明。
