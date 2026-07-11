@@ -56,8 +56,8 @@ row CHANGELOG-21 uses not_applicable without inspected evidence
 > clip-clean@1.4.0 test
 > node --test test/*.test.mjs
 
-✔ clip-clean collapses repeated blank lines from stdin (20.175833ms)
-✔ clip-clean prints help text (19.39675ms)
+✔ clip-clean collapses repeated blank lines from stdin (<duration>ms)
+✔ clip-clean prints help text (<duration>ms)
 ℹ tests 2
 ℹ suites 0
 ℹ pass 2
@@ -65,7 +65,7 @@ row CHANGELOG-21 uses not_applicable without inspected evidence
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 68.01275
+ℹ duration_ms <duration>
 
 [report excerpt]
 {

@@ -25,7 +25,9 @@ function sanitize(text) {
   return text
     .replaceAll(process.env.HOME || "", "$HOME")
     .replace(/\/private\/tmp\/[^\s"'<>]+/g, "$TMPDIR/release-readiness-<redacted>")
-    .replace(/\/var\/folders\/[^\s"'<>]+/g, "$TMPDIR/release-readiness-<redacted>");
+    .replace(/\/var\/folders\/[^\s"'<>]+/g, "$TMPDIR/release-readiness-<redacted>")
+    .replace(/\(\d+(?:\.\d+)?ms\)/g, "(<duration>ms)")
+    .replace(/duration_ms \d+(?:\.\d+)?/g, "duration_ms <duration>");
 }
 
 const scenario = process.argv[2];

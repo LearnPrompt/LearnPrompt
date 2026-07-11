@@ -56,8 +56,8 @@ PASS report contract
 > clip-clean@1.4.0 test
 > node --test test/*.test.mjs
 
-✔ clip-clean collapses repeated blank lines from stdin (19.851375ms)
-✔ clip-clean prints help text (18.916459ms)
+✔ clip-clean collapses repeated blank lines from stdin (<duration>ms)
+✔ clip-clean prints help text (<duration>ms)
 ℹ tests 2
 ℹ suites 0
 ℹ pass 2
@@ -65,7 +65,7 @@ PASS report contract
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 67.022958
+ℹ duration_ms <duration>
 
 [report excerpt]
 {

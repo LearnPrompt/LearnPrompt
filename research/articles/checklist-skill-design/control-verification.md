@@ -19,6 +19,7 @@
 - verified validator：PASS。
 - `npm --prefix starlight run build`：PASS，Pagefind 报告 49 个 HTML 文件，包含 `/agent-skills/checklist-skill-design/index.html`。
 - `git diff --check`：PASS。
+- 中文真实主仓库路径下连续两次完整 replay：results 目录哈希一致；Node test wall-clock duration 已归一化，不再制造 tracked diff。
 - 本轮交付 research pack、fixture、SVG、MDX、真实 live 结果和机械门禁结果。
 - frontmatter：`showcase_status: verified`，`quality_score: 97`。
 - `review.md` 最终状态：PASS。
