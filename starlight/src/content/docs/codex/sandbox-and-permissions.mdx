@@ -1,36 +1,436 @@
 ---
-title: Codex 沙箱与权限模式怎么理解
-description: 用风险分级理解本地 Agent 的读写边界。
+title: Codex 沙箱与审批怎么分层：最小权限实战教程
+description: 用一个 docs-link-fix 实验室，拆开“沙箱能做什么”和“何时停下来问”，学会按任务风险选择最小权限。
 sidebar:
   order: 2
 difficulty: beginner
 source_repo: alchaincyf/codex-orange-book
 source_url: https://github.com/alchaincyf/codex-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-11"
+reading_time: "18 分钟"
+research_path: research/articles/sandbox-and-permissions
+showcase_path: research/articles/sandbox-and-permissions/showcase
+showcase_status: verified
+quality_score: 98
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 入门 | 18 分钟 | 2026-07-11 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/codex-orange-book" url="https://github.com/alchaincyf/codex-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+你让 Codex 修一个文档链接，仓库里同时有 `docs/link.md` 和敏感 `.env`。这时最常见的错误不是命令写错，而是**一上来就把“别总停下来问我”和“给更大本地权限”混成同一件事**。
 
-## 核心概念
+于是很多人会做出两个危险动作之一：
 
-沙箱不是为了限制效率，而是为了让高权限任务有清楚边界。权限越高，越要依赖 git、计划、验收和日志。
+- 因为嫌审批打断节奏，直接切到 `danger-full-access`。
+- 因为担心出事，又把所有任务都放在过于保守的只读模式里，结果正常编辑也推进不动。
 
-## 风险分级
+这两种反应都跳过了真正应该先回答的问题：**你的本地命令到底需要物理上碰到哪些路径和网络？哪些动作只是应该再问一次，而不是必须扩大 OS 边界？**
 
-- 低风险：只读、测试、构建、格式化。
-- 中风险：局部新增或修改文件。
-- 高风险：删除、迁移、部署、修改密钥或账单。
+这篇教程用 2026-07-11 的官方 OpenAI 文档、本机 `codex-cli 0.142.2` 帮助，以及一个无模型、确定性的 `docs-link-fix` 权限实验室，把这两个控制层拆开。
 
-## 操作步骤
+## 读完你能做什么
 
-1. 根据任务风险选择权限。
-2. 高权限前先创建分支。
-3. 让 Codex 明确哪些命令会写文件。
-4. 每轮结束检查 `git status`。
+你会得到四个可以直接拿去用的东西：
 
-## 常见错误
+1. 一套稳定的判断顺序：先看任务风险，再选 sandbox/profile，再配 approval，而不是先选 full access。
+2. 一组可复现 probe：` :read-only `、` :workspace `、自定义 `docs-edit` 各自会拦什么、放什么。
+3. 一份最小 TOML 模板：继承 `:workspace`，只开放 docs 编辑，同时显式拒绝读取 `**/*.env`。
+4. 一个硬结论：`approval_policy = "never"` 只会让 agent 少停下来问，不会把被 deny 的文件突然变成可读可写。
 
-把高权限当成默认模式。高权限适合明确任务，不适合模糊探索。
+![把任务风险、permission profile、approval 时机和最终结果串在一起的 Codex 决策链](/images/articles/sandbox-and-permissions/decision-chain.svg)
+*图注：最小权限的正确顺序是“任务风险 -> profile -> approval -> outcome”。profile 决定本地命令碰得到什么，approval 决定 agent 会不会先停下来问；两者不能互相冒充。*
+
+:::note[本文的事实层和实验层是分开的]
+审批策略这一层，本文只依据 2026-07-11 官方文档、本机 `codex --help` 和配置验证来解释；Showcase 本身只跑 `codex sandbox --permissions-profile ...`。也就是说，**沙箱实验的结果不能拿来冒充 approval 行为**，反过来，prompt/rules 的审批提示也不能冒充 OS 沙箱。
+:::
+
+## 先把两个问题拆开：沙箱回答“能碰什么”，审批回答“何时停下来问”
+
+先记住一句话：
+
+> 本地命令的可达边界是一个问题，agent 的交互时机是另一个问题。
+
+如果不拆开，你会不断把“少打断我”和“给我更大权限”绑在一起。可是在 Codex 里，这两件事原本就由不同控制面负责：
+
+| 你真正想问的问题 | 对应控制层 | 它控制什么 | 它控制不了什么 |
+| --- | --- | --- | --- |
+| 这个命令能不能写 `docs/link.md`？能不能读 `.env`？能不能写工作区外路径？ | sandbox / permission profile | 文件系统边界、网络边界、本地命令物理可达范围 | 不决定 agent 要不要先向你确认 |
+| agent 运行到这里，要不要停下来问我？ | approval policy | 何时升级给人、何时自动继续、何时直接失败返回 | 不会自动扩大文件和网络权限 |
+| 某个命令前缀应该强制提示还是直接禁止？ | rules / prefix rules | 会话治理、命令前缀级的附加限制 | 不是 OS 沙箱，不能把 deny 变 allow |
+
+这三层可以同时存在，但顺序不能反。最底下的是本地沙箱或 profile，因为那是机械边界；上面才是 approval 与规则，因为它们只是在这个边界内决定“怎么对待这次尝试”。
+
+### 为什么这件事在实战里特别容易混
+
+因为你在界面里看到的往往都是“权限”“批准”“自动执行”“full access”这些词。它们都长得像风险开关，但其实分属不同层。
+
+一个最典型的误解是：
+
+- 误解：既然我把 `approval_policy` 改成 `never`，那 agent 就更“放得开”了。
+- 真相：`never` 只是表示**别弹人工确认**。如果 profile 明确 deny 了 `.env`，命令仍然会直接得到 `Operation not permitted`。
+
+本文后面的三个 probe 会把这件事用真实退出码跑出来。
+
+## 2026-07-11 的事实层：旧 sandbox settings 和 Beta permission profiles 不是一套东西
+
+这一页的旧短稿最容易误导人的地方，就是把“沙箱”和“权限模式”写成了一个笼统概念。但截至 2026-07-11，Codex 的官方材料和本机 0.142.2 CLI 实际上同时暴露了两套配置表面：
+
+| 表面 | 你在哪会看到 | 代表什么 | 这篇教程怎么用 |
+| --- | --- | --- | --- |
+| 旧 sandbox settings | `codex --help` 里的 `--sandbox read-only|workspace-write|danger-full-access` | 交互 CLI 常见的本地沙箱模式 | 只拿它解释审批文档里的组合示例，不拿它和 permission profiles 混写 |
+| approval policy | `codex --help` 里的 `--ask-for-approval untrusted|on-request|never` | agent 何时停下来问 | 用来讲交互行为，不拿来解释 `codex sandbox` 实测 |
+| Beta permission profiles | 官方 [Permissions](https://learn.chatgpt.com/docs/permissions) 与 `codex sandbox --help` 的 `--permissions-profile` | 更细粒度的本地文件/网络策略 | 本文 Showcase 全部基于这一层执行 |
+
+官方 `Permissions` 页面已经把红线写得很清楚：**对普通本地、非 managed 的配置堆栈，permission profiles 不与旧 sandbox settings 组合**。你要么配置 `default_permissions` 和 `[permissions.<name>]`，要么用 `sandbox_mode` / `sandbox_workspace_write` 这套旧设置；只要任一已加载 config、选中的 config profile 或 CLI `--sandbox` 仍设置旧模式，Codex 就会继续走旧设置。
+
+但这里有一个官方例外：managed `allowed_permission_profiles` 会把 Codex 切到 permission profiles 体系，用于企业要求的受管 rollout。本文只讨论普通本地实验室，不展开 managed 要求层的部署细节。
+
+这不是术语洁癖，而是为了避免两类错误：
+
+1. 你以为自己在测试自定义 profile，其实某个旧 `sandbox_mode` 还在生效。
+2. 你以为 `--ask-for-approval never` 会连带放宽 profile，实际上它只是不再弹确认。
+
+### 本机 0.142.2 帮助面告诉了我们什么
+
+本机 `codex --help` 明确列出：
+
+- `--sandbox read-only|workspace-write|danger-full-access`
+- `--ask-for-approval untrusted|on-request|never`
+
+本机 `codex sandbox --help` 则明确列出：
+
+- `--permissions-profile <NAME>`
+- `--log-denials`
+
+这说明两件事：
+
+1. 交互 CLI 的默认用户表面里，旧 sandbox/approval 组合仍然是主要入口。
+2. 如果你要做**无模型、确定性**的本地权限实验，最直接的工具不是开一个 agent 会话，而是单独调用 `codex sandbox` 并显式选 profile。
+
+## 用风险链路选最小权限，而不是把高权限当默认
+
+真正稳定的顺序不是“我今天想不想让 agent 多做一点”，而是下面这四步：
+
+1. 任务风险：这次动作会碰到普通文档、敏感配置，还是不可逆外部系统？
+2. 本地边界：命令物理上需要读哪些路径、写哪些路径、访问哪些网络？
+3. 审批策略：这些动作里，哪些要自动跑，哪些必须在关键时刻停下来问？
+4. 可观察结果：失败时我期待看到什么证据，才能知道是被问住，还是被 OS 拦下？
+
+可以先把常见任务粗分成这样：
+
+| 任务 | 推荐最小 profile | 推荐 approval 思路 | 为什么不是更高权限 |
+| --- | --- | --- | --- |
+| 只读理解仓库、找入口、回答问题 | `:read-only` | `on-request` 或 `untrusted` | 没有写需求，就不该先给写权限 |
+| 改文档、改局部代码，但仓库里有 `.env` | 自定义 profile 继承 `:workspace`，对 `**/*.env` deny | `on-request` | 正常文件可写，敏感读取仍被硬拦 |
+| 只在当前工作区做普通编辑和构建 | `:workspace` | `on-request` | 工作区内已经够用，不需要去掉本地边界 |
+| 确实要运行需要更大本地权限的动作 | `:danger-full-access`，但仅在外层环境可丢弃且有人为 gate 时使用 | 仍然要单独设计审批与回滚 | full access 只移除本地沙箱，不会替你解决业务风险 |
+
+这里最重要的一句是：**full access 不是“更顺手的 workspace”，而是“去掉这一层本地 OS 保护”。**
+
+## Showcase 设置：为什么 `docs-link-fix` 实验室要这样摆
+
+这次 Showcase 只围绕一个小问题展开：如果我要修 `docs/link.md`，而同一个工作区里还有需要被 deny-read 的 `.env` 路径，怎样证明“可写 docs”和“拒读敏感路径”可以被拆成两个独立控制层？为了让 `.env` checksum 和冻结输出在连续运行里保持稳定，实验室会由固定非敏感种子在运行时确定性生成测试标记，不放任何真实 credential 形状，也不把标记的 key/value 冻结进研究包。
+
+实验室布局如下：
+
+```text
+<lab-root>/
+  workspace/
+    docs/link.md
+    .env
+  sentinel.txt
+  home/.codex/config.toml
+```
+
+三个设计点值得特别解释。
+
+### 1. 为什么 `sentinel.txt` 要和工作区同级
+
+因为我们要验证的不是“能不能写另一个文件”，而是“profile 是否允许写**工作区外**路径”。把 `sentinel.txt` 放成 `workspace` 的兄弟节点，可以让 probe 2 用最小命令证明：
+
+- `docs/link.md` 在工作区内，可写。
+- `../sentinel.txt` 已经越界，应被拒绝。
+
+### 2. 为什么实验室本身不能放在 `os.tmpdir()`
+
+这是本次写作里最有价值的一个失败模式。官方 `Permissions` 页面写得很明确：内置 `:workspace` 允许写 active workspace roots 和 system temp directories。也就是说，如果你把“工作区外 sentinel”也放在 `/tmp` 或 macOS 的 `TMPDIR`，你以为自己在测越界写，实际上还在允许区里。
+
+所以正式实验室放在家目录下，原始日志才放在 `os.tmpdir()`。这样既满足“原始输出先写工作树外”，又不会把越界写实验做坏。
+
+### 3. 为什么配置里固定 `approval_policy = "never"`
+
+不是为了“放开权限”，而是为了把实验变成非交互、可重复的确定性 probe。这样三次运行都会直接给出退出码和 denial，不会因为中途弹审批而把结果混成另一层逻辑。
+
+本次自定义 profile 配置如下：
+
+```toml
+approval_policy = "never"
+default_permissions = "docs-edit"
+
+[permissions.docs-edit]
+extends = ":workspace"
+
+[permissions.docs-edit.filesystem]
+glob_scan_max_depth = 4
+
+[permissions.docs-edit.filesystem.":workspace_roots"]
+"**/*.env" = "deny"
+```
+
+这里有两个关键点：
+
+- `extends = ":workspace"`：保留工作区内正常编辑能力。
+- `"**/*.env" = "deny"`：在同一套 profile 里，把敏感文件读取单独拦下来。
+
+`glob_scan_max_depth = 4` 是为了显式满足 config reference 对 deny-read glob 的展开要求，避免平台差异让实验解释变得含糊。
+
+研究包里的 `showcase/run-probes.sh` 已经把这套流程收成一条命令：它会在用户家目录连续创建两轮一次性 lab，在 `os.tmpdir()` 下写 raw capture，依次跑完三个 probe，先生成 `checksum-manifest.md` / `probe-results.md`，再用 `CHECKSUM_MANIFEST_EXPECTED` 做一次 expected compare，只有 `verifier-output.txt` 出现 `checksum_manifest_matches_expected=yes` 且 `replay-stability.txt` 记录四个 frozen outputs 全部 `stable=yes` 时才会冻结结果。
+
+## Probe 1：`:read-only` 写 `docs/link.md` 失败，退出码 1
+
+第一个 probe 只问一个最小问题：在 `:read-only` 下，能不能直接追加写工作区内文件？
+
+命令是：
+
+```bash
+HOME=<lab-root>/home \
+codex sandbox --log-denials \
+  --permissions-profile :read-only \
+  --cd <lab-root>/workspace \
+  /bin/sh -lc 'printf "probe-1\n" >> docs/link.md'
+```
+
+最小脱敏输出是：
+
+```text
+/bin/sh: docs/link.md: Operation not permitted
+(bash) file-write-data <LAB_ROOT>/workspace/docs/link.md
+```
+
+实际结果：
+
+- 退出码：`1`
+- `docs/link.md` 没有变化
+- `sentinel.txt` 没有参与本次 probe
+- 三个逻辑文件在 `initial` / `probe1` 的 SHA-256 见 committed `research/articles/sandbox-and-permissions/showcase/checksum-manifest.md`
+
+这个 probe 的价值不在于“只读不能写”这句常识本身，而在于它给后面两件事立了基线：
+
+1. 相同实验室里，profile 真的是在机械阻止写操作。
+2. 失败的信号是明确的退出码和 denial，而不是某个模型“决定先别改”。
+
+换句话说，这里根本不需要猜 agent 的主观意图。底层已经把边界写死了。
+
+## Probe 2：`:workspace` 能写 docs，但越界写 `sentinel.txt` 失败
+
+第二个 probe 专门验证“工作区内允许、工作区外拒绝”这条边界是不是清晰。
+
+命令是：
+
+```bash
+HOME=<lab-root>/home \
+codex sandbox --log-denials \
+  --permissions-profile :workspace \
+  --cd <lab-root>/workspace \
+  /bin/sh -lc 'printf "probe-2\n" >> docs/link.md && printf "probe-2\n" >> ../sentinel.txt'
+```
+
+注意，这里故意把两个动作放在同一个 shell 里：先写 `docs/link.md`，再写同级 `sentinel.txt`。如果 profile 边界真的正确，我们应该看到“前者成功、后者失败”在同一次 probe 里同时出现。
+
+最小脱敏输出是：
+
+```text
+/bin/sh: ../sentinel.txt: Operation not permitted
+(bash) file-write-data <LAB_ROOT>/sentinel.txt
+```
+
+实际结果：
+
+- 退出码：`1`
+- `docs/link.md` 成功追加 `probe-2`
+- `sentinel.txt` checksum 与初始值一致，没有被改写
+- `docs/link.md`、`sentinel.txt`、`.env` 的 `initial` / `probe1` / `probe2` SHA-256 见 committed `checksum-manifest.md`
+
+这就是“最小权限不是最小能力”的一个好例子。` :workspace ` 并没有让任务停在只读状态，它仍然允许你完成当前工作区内的编辑；但一旦尝试碰工作区外的同级文件，就被 OS 边界拦下。
+
+这一步也解释了为什么不能直接跳到 `danger-full-access`。你真正的目标只是改 docs 时，` :workspace ` 已经足够；把本地边界一起拿掉，只是在扩大事故半径，而不是在增加必要能力。
+
+:::caution[别把工作区外测试放进 temp]
+如果你的 `sentinel.txt` 也在 `os.tmpdir()` 或 `/tmp` 下，` :workspace ` 可能会让这次写入成功，因为官方 built-in 规则本来就把 system temp directories 算进允许区。那不是 profile“失效”，而是实验设计错误。
+:::
+
+## Probe 3：自定义 `docs-edit` 继承 `:workspace`，但拒读 `.env`
+
+第三个 probe 才是这篇教程真正的中心：我们不只是想证明“有边界”，还想证明你可以把边界切得比“只读 / 工作区全可写 / 完全放开”更细。
+
+命令是：
+
+```bash
+HOME=<lab-root>/home \
+codex sandbox --log-denials \
+  --permissions-profile docs-edit \
+  --cd <lab-root>/workspace \
+  /bin/sh -lc 'printf "probe-3\n" >> docs/link.md && cat .env > /dev/null'
+```
+
+这里同样故意把两个动作放进一次 probe：
+
+1. 先写普通文档 `docs/link.md`。
+2. 再读取敏感 `.env`。
+
+如果 `docs-edit` profile 真的只收紧 `.env` 路径，而不影响普通 docs 编辑，我们应该看到：
+
+- 写 docs 成功。
+- 读 `.env` 失败。
+- 退出码为非 0。
+- `.env` 里的运行时测试标记不会出现在日志里。
+
+最小脱敏输出是：
+
+```text
+cat: .env: Operation not permitted
+(cat) file-read-data <LAB_ROOT>/workspace/.env
+```
+
+实际结果：
+
+- 退出码：`1`
+- `docs/link.md` 成功追加 `probe-3`
+- `.env` checksum 与初始值一致
+- `sentinel.txt` 也保持不变
+
+而一键 verifier 的摘要是：
+
+```text
+config_rc=0
+probe1_rc=1
+probe2_rc=1
+probe3_rc=1
+link_probe1_matches_initial=yes
+link_probe2_differs_from_probe1=yes
+link_probe3_differs_from_probe2=yes
+sentinel_unchanged=yes
+env_unchanged=yes
+fixture_marker_in_logs=no
+checksum_manifest_matches_expected=yes
+```
+
+同一次 runner 调用还会写出 `replay-stability.txt`，把 `environment.txt`、`checksum-manifest.md`、`probe-results.md`、`verifier-output.txt` 两轮连续生成的 SHA-256 并排列出，并要求最终 `stable=yes`。
+
+而 committed `checksum-manifest.md` 会把 `initial` / `probe1` / `probe2` / `probe3` 的 `docs/link.md`、`sentinel.txt`、`.env` SHA-256 全部列出来。reviewer 不用接触原始临时目录，也能独立证明三件事：
+
+- `:read-only` 没改 `docs/link.md`
+- `:workspace` 与 `docs-edit` 都只让 `docs/link.md` 按预期递进
+- `sentinel.txt` 与 `.env` 在三次失败路径里都没有被改写
+
+这一步的意义，比“`.env` 被拒绝了”更大。它告诉你：**最小权限不是靠流程提醒实现的，而是可以靠 profile 直接把敏感面切掉，同时保留当前任务真正需要的写能力。**
+
+对于 docs、重构、局部代码修复这类常见任务，这通常比“要么全只读、要么全工作区可写、要么 full access”更符合真实风险结构。
+
+## 为什么本文不实跑 `:danger-full-access`
+
+很多教程一讲到全权限，就想用“真的写一次工作区外文件”来证明它有多强。本文故意不这么做，因为那已经不是边界演示，而是真实放权。
+
+官方文档对 `danger-full-access` 的定义已经足够明确：
+
+- 它移除本地 sandbox restrictions。
+- 也就是本地文件系统和网络边界不再由这一层保护。
+
+在这种前提下，再做一次“越界写 sentinel 成功”的实验，并不会带来更多教学信息，反而只是在真实执行一个原本应当被阻止的动作。
+
+更有价值的做法是把适用限制说清楚：
+
+1. 环境必须可丢弃，或者已经有外层容器/VM 隔离。
+2. 任务目标、允许路径和回滚方式要先冻结。
+3. 不可逆动作另设人工 gate，不能只靠提示词里的“请谨慎”。
+4. 必须保留 diff、日志、构建或 reviewer 证据，让结果可追责。
+
+如果这四条里有任意一条你还答不上来，问题通常不在“CLI 能不能给更高权限”，而在“这件事是否已经具备安全委派条件”。
+
+## 审批策略怎么配，才不会把“从不提问”误解成“权限更大”
+
+到这里可以回到第二条控制层了。根据本机 `codex --help` 和官方 config reference，常见 approval policy 至少包括：
+
+| 策略 | 作用 | 适合什么 | 绝对不要误解成什么 |
+| --- | --- | --- | --- |
+| `untrusted` | 已知安全读操作自动跑，其他高风险或不受信动作要问 | 交互式探索、想保留人工门 | “它会自动扩大 profile” |
+| `on-request` | 由 agent 判断何时需要升级 | 你愿意让 agent 自行判断节奏 | “它能替你定义 OS 边界” |
+| `never` | 不弹人工确认，失败直接返回 | 非交互 probe、CI、确定性脚本 | “它等于 full access” |
+
+你可以把它理解成“何时停下来问”的交通灯，而不是“把路障移开”的推土机。
+
+这也是为什么本文的三个 probe 虽然固定了 `approval_policy = "never"`，却仍然全部拿到了 `exit code = 1` 的拒绝结果。审批没出场，边界照样存在；因为边界来自 profile，而不是来自确认弹窗。
+
+### prompt 规则也不能冒充 OS 沙箱
+
+如果你在 `config.toml` 或 requirements 里加了 `rules.prefix_rules[].decision = "prompt"`，你增加的是一层流程门槛：某些命令前缀要不要再问一次，或者直接禁止。
+
+这当然有价值，但它解决的是另一类问题：
+
+- 解决“这条命令应不应该被尝试”。
+- 不是解决“就算尝试了，底层能不能碰到 `.env` 或工作区外路径”。
+
+真正稳妥的顺序仍然是：
+
+1. 先让 profile 缩到最小。
+2. 再让 approval 决定何时升级。
+3. 最后才用 rules 做额外的组织级治理。
+
+把这三层混成一层时，团队最容易发生的事故就是：明明只是不想频繁点“批准”，最后却顺手把本地边界也拿掉了。
+
+## 一张最小权限决策表：下次别从 full access 开始
+
+如果你下次再遇到“这次到底开什么权限”这种问题，不要先看模式名，先回答下面四个问题：
+
+1. 这次命令必须写哪里？有没有敏感文件需要明确 deny？
+2. 有没有任何工作区外、网络或不可逆动作是真正必需的？
+3. 我是希望 agent 自动继续，还是希望它在关键点停下来问？
+4. 如果失败，我希望看到的是哪种证据：审批请求、退出码、diff、日志，还是构建结果？
+
+能回答清楚这四个问题时，权限选择通常就会自然收敛：
+
+- 只读探索：` :read-only `
+- 工作区内普通编辑：` :workspace `
+- 需要在普通编辑里避开 secrets：自定义 profile 继承 `:workspace` 再做 deny
+- 真正需要更大边界：最后才讨论 `:danger-full-access`
+
+这也是本文最想替换掉的旧习惯：**不要把高权限当默认，然后再靠“我会小心”补救。应该把最小权限当默认，只有在任务证明自己需要更大边界时才上调。**
+
+## 练习：把你手头的任务写成“两层控制卡”
+
+选一个真实任务，把它压成下面这张卡：
+
+```yaml
+risk:
+  files:
+  network:
+  irreversible_actions:
+profile:
+  base:
+  extra_allow:
+  explicit_deny:
+approval:
+  policy:
+  human_gate:
+evidence:
+  first_check:
+  final_check:
+```
+
+如果你写不出 `explicit_deny`，问问自己是不是把敏感面想得过粗；如果你写不出 `human_gate`，问问自己是不是把 approval 和 profile 又混回去了。
+
+## 来源与延伸阅读
+
+- 官方文档：[Sandbox](https://learn.chatgpt.com/docs/sandboxing)
+- 官方文档：[Agent approvals & security](https://learn.chatgpt.com/docs/agent-approvals-security)
+- 官方文档：[Permissions](https://learn.chatgpt.com/docs/permissions)
+- 官方文档：[Managed configuration](https://learn.chatgpt.com/docs/enterprise/managed-configuration)（只用于说明 `allowed_permission_profiles` 这个 managed 例外）
+- 官方文档：[Configuration Reference](https://learn.chatgpt.com/docs/config-file/config-reference)
+- 本机一手帮助：`codex --help`、`codex sandbox --help`（`codex-cli 0.142.2`，摘录见 `research/articles/sandbox-and-permissions/showcase/environment.txt`）
+- 二手主题地图：[alchaincyf/codex-orange-book](https://github.com/alchaincyf/codex-orange-book)
+
+官方资料和本机帮助支撑本文的当前事实层。Orange Book 只作为旧稿线索和中文主题地图使用，不作为 2026-07 行为权威。按 `alchaincyf/codex-orange-book` 与本仓库 `LICENSE` 保留 CC BY-NC-SA 4.0 署名与许可说明；本文结构、论证、实验与图示已重新组织并重新核验。

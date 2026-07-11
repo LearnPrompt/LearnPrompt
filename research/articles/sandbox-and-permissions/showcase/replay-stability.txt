@@ -1,0 +1,12 @@
+# Replay stability
+
+本文件由 `run-probes.sh` 在同一次调用里连续生成两轮 frozen outputs 后写出。它只列出文件名和 SHA-256，不含任何绝对路径。
+
+| File | Pass 1 SHA-256 | Pass 2 SHA-256 | Stable |
+| --- | --- | --- | --- |
+| `environment.txt` | `3c11c5f29a8e8347da3e34ed14825bb809ea84e9801cdf5c6a86f8a1b745b21c` | `3c11c5f29a8e8347da3e34ed14825bb809ea84e9801cdf5c6a86f8a1b745b21c` | `yes` |
+| `checksum-manifest.md` | `a7164c9c69242f32e7849daab8f4dbcd71f48b11734a0793817fd8632c5ed7e1` | `a7164c9c69242f32e7849daab8f4dbcd71f48b11734a0793817fd8632c5ed7e1` | `yes` |
+| `probe-results.md` | `04ee01c3d22dba0921b1c1a1f0b22c515e963cf4eb9abdb4304ed3f0e4cacea5` | `04ee01c3d22dba0921b1c1a1f0b22c515e963cf4eb9abdb4304ed3f0e4cacea5` | `yes` |
+| `verifier-output.txt` | `0da739bd20d56a2f363fc9c29077bf9e3625ee5c47c7bd2c3c3b8d3b9f0123ad` | `0da739bd20d56a2f363fc9c29077bf9e3625ee5c47c7bd2c3c3b8d3b9f0123ad` | `yes` |
+
+stable=yes

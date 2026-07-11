@@ -1,0 +1,22 @@
+Verification date: 2026-07-11
+Platform: macOS 26.5.1
+Kernel: Darwin 25.5.0 arm64
+Node: v24.11.0
+Codex CLI: codex-cli 0.142.2
+
+Local help surface:
+- `codex --help` exposes `--sandbox <SANDBOX_MODE>` with `read-only`, `workspace-write`, `danger-full-access`
+- `codex --help` exposes `--ask-for-approval <APPROVAL_POLICY>` including `untrusted`, `on-request`, `never`
+- `codex sandbox --help` exposes `--permissions-profile <NAME>`
+- `codex sandbox --help` exposes `--log-denials`
+
+Config verification:
+- `HOME=<LAB_ROOT>/home codex --strict-config help` exit code: 0
+- Purpose: prove the custom TOML profile is accepted by this client
+
+Important methodological note:
+- The three probes use permission profiles only (`--permissions-profile ...`).
+- Approval behavior is explained from official docs and local help, not inferred from `codex sandbox`.
+- `approval_policy = "never"` is fixed only to remove interactive branching from the local probe lab.
+- The `.env` payload is a deterministic non-credential fixture generated at runtime; its key and value are never frozen into committed outputs.
+- Managed `allowed_permission_profiles` is the official exception that can force permission profiles in managed requirements; this local lab does not exercise managed config.
