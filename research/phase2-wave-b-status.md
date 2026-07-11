@@ -44,6 +44,12 @@
 | `codex/codex-cloud-task-fit.mdx` | 主会话只读预审发现 1 major：把保守的离线优先交接门禁误写成普遍 Cloud 前提 → 收窄适用范围并补齐可配置联网边界 → 独立终审 PASS 100/100（0/0/0） | verified |
 | `codex/auto-review-boundaries.mdx` | 主会话只读预审发现教学 SVG 文字越界 → 重排并重新渲染检查 → 独立终审 PASS 100/100（0/0/0） | verified |
 
+## 最后一篇结果
+
+| 文章 | 审稿链路 | 最终状态 |
+| --- | --- | --- |
+| `codex/codex-claude-code-dual-track.mdx` | Claude 两次 health probe 无 model result → writer 内嵌 Codex runtime preflight 失败 → 主控外层真实 Codex 实现成功 → SVG 越框重排 → 独立只读终审 PASS 94/100（0/0/0） | verified |
+
 ## 关闭的问题
 
 `install-and-first-project`：
@@ -126,6 +132,13 @@
 - good finding 通过 schema、changed-line、severity、复现与行为证据门禁；伪造的 out-of-diff finding 被 changed-line gate 以退出码 3 拒绝，离线 replay 可重复。
 - 重排 1400×900 教学 SVG 的第四步文字并重新渲染，独立终审核对右边缘溢出为 0。
 
+`codex-claude-code-dual-track`：
+
+- 不再用“Claude 探索、Codex 执行”的品牌口号，而是用 `contract / receipt / patch / gate` 组织可互换角色；明确与选型教程和多 Agent 并行教程分工。
+- Claude Code 2.1.206 两次探针都没有 model result，真实保留为 health summary；外层 `codex exec` 固定 gpt-5.5，在隔离 worktree 只改 `src/archiveIncident.js`，`npm test` 为 2/2。
+- deterministic gate 放行 `degraded_single_lane`（0），拒绝缺 diagnosis 却宣称双线完成（30）、写集越界（31）和 contract SHA 漂移（32）；privacy scan 为 0。
+- 1400×900 教学图初次实际渲染发现多处越框，重排为两条五步 lane 与三张负例卡后终审 PASS。
+
 ## Writer 与重试记录
 
 - 两路 Claude writer 均完成一手研究、真实 Showcase 和部分工件后遇到同一外部配额错误；保留已完成工件，没有伪造或重跑结果。
@@ -136,17 +149,19 @@
 - 第四对两路 Claude Opus 在执行前遇到外部 503/403，token 为 0、工作树无改动，也未实际调用 Skill。Chrome 使用第 1 次 Codex GPT-5.4 恢复；内容流水线的第 1 次 Claude 恢复仍失败，随后使用第 2 次 Codex GPT-5.4 恢复。两位 Codex writer 各完整读取并使用一次本地 Skill，没有重复调用。
 - 第五对两路 Codex GPT-5.4 writer 各完整读取并使用一次本地 Skill；后续 finding 回修会话均未重复读取 Skill。沙箱教程最后一次回修会话因外层 sandbox 禁止嵌套 Seatbelt 而中止、未写文件，主会话只做 marker hygiene 定向修正，随后由新的独立只读 reviewer 终审。
 - 第六对两路 Codex GPT-5.4 writer 各完整读取并使用一次本地 Skill；后续 finding 回修没有重复读取 Skill。Claude Opus/Sonnet 恢复尝试因认证或 403 失败且未写文件；主会话按已冻结 finding 做定向修正，最终由使用独立配额的 Codex Spark 只读会话完成两篇终审。
+- 最后一篇 Codex GPT-5.4 writer 完整读取并使用一次本地 Skill。Claude 的两次恢复探针分别无输出和连续 503，均为 0 tokens、无文件改动；主控没有伪造 diagnosis，而是按降级 contract 完成外层 Codex lane。独立 reviewer 使用 Codex Spark read-only 会话。
 - reviewer 与 writer 始终为独立会话；reviewer 使用 read-only sandbox，原始报告只写工作树外。
 
 ## 门禁结果
 
-- 本 Wave 十二篇均为 `showcase_status: verified`，质量分 96、93、92、98、94、93、96、100、98、98、100、100。
-- 十二张原创教学 SVG 均通过语义教学价值和 CC BY-NC-SA 4.0 许可审查。
-- 第六对两篇单独 verified validator：PASS；合并后两套 Showcase 重放：PASS。
-- 合并后 26 篇 verified 全量 validator：PASS。
+- 本 Wave 十三篇均为 `showcase_status: verified`，质量分 96、93、92、98、94、93、96、100、98、98、100、100、94；加上 Phase 1 已完成的 `codex-form-factors`，Wave B 范围为 14/14 verified。
+- 十三张本 Wave 原创教学 SVG 均通过语义教学价值和 CC BY-NC-SA 4.0 许可审查；Wave B 范围共 14 张教学图。
+- 最后一篇 Showcase 为 0/30/31/32，真实 Codex patch 只改一个文件、tests 2/2；verified validator：PASS。
+- 合并后 27 篇 verified 全量 validator：PASS。
 - Validator 回归：1 positive / 3 depth negatives / 11 privacy negatives / 11 visual negatives / 7 review negatives，全部 PASS。
 - 主分支完整构建：49 页 PASS。
-- 当前全站计数：26 verified / 15 个仍含 SourceCard 的待处理深度教程。
+- Wave B 收官审计：14 verified / 0 SourceCard / 0 partial / 14 teaching images；60 个去重外链中 54 个当前可达，6 个预发布 research 路径均在本地存在。
+- 当前全站计数：27 verified / 14 个仍含 SourceCard 的待处理深度教程。
 
 ## 本地提交
 
@@ -164,5 +179,6 @@
 - `53039b4 docs(codex): goldenize sandbox and permissions (98)`
 - `a5e57f2 docs(codex): goldenize cloud task fit (100)`
 - `f06de92 docs(codex): goldenize auto-review boundaries (100)`
+- `b1ac171 docs(codex): goldenize dual-track workflow (94)`
 
 没有 push、部署或发布。

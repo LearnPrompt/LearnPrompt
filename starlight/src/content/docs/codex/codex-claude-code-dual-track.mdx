@@ -226,7 +226,7 @@ codex -C <worktree> \
 - 两次外层 schema 失败停在 request validation；
 - 最终外层 Codex run 才真正到达 implementation / test / receipt。
 
-公开 research pack 只保留脱敏 summary、结构化 receipt、零上下文 patch、测试摘要和 replay；绝对路径、runtime id 与 raw stdout/stderr 都留在工作树外。文章此时仍保持 `showcase_status: partial`，原因只剩独立终审和最终发布门禁尚未完成，不再是 Showcase 缺证据。
+公开 research pack 只保留脱敏 summary、结构化 receipt、零上下文 patch、测试摘要和 replay；绝对路径、runtime id 与 raw stdout/stderr 都留在工作树外。writer 阶段此时仍保持 `showcase_status: partial`；只有独立终审与最终发布门禁通过后，才机械升为 `verified`。这一步现在已经完成，不能把“有真实 Showcase”和“已获独立终审”混成同一件事。
 
 ## Gate 怎么判断 healthy、degraded 和胡乱宣称完成
 
