@@ -1,0 +1,7 @@
+[
+  { "label": "写发布说明 docs/notes.md", "type": "write", "path": "docs/notes.md" },
+  { "label": "读追踪文件 tracked.txt", "type": "read", "path": "tracked.txt" },
+  { "label": "改配置密钥 config/app.env", "type": "write", "path": "config/app.env" },
+  { "label": "推送到远端 git push origin main", "type": "run", "command": "git push origin main" },
+  { "label": "删除目录 rm -rf build", "type": "run", "command": "rm -rf build" }
+]
