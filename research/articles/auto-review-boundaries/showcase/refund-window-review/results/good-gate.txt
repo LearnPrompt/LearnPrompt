@@ -1,0 +1,5 @@
+PASS anchored finding: src/refundPolicy.js:15
+PASS severity: P1
+PASS future timestamp scenario named
+PASS negative elapsed behavior named
+PASS reproduction present

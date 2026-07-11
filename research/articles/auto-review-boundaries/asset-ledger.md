@@ -1,0 +1,3 @@
+| Public path | Teaching purpose | Original source | Creator | License | Modifications | Verified at |
+| --- | --- | --- | --- | --- | --- | --- |
+| `/images/articles/auto-review-boundaries/review-boundary-flow.svg` | 解释一次本地 structured review 如何从 staged diff 进入 candidate finding，再经过 mechanical verification 与 human/CI decision；帮助读者看清“托管 GitHub review surface”和“本地 gate surface”之间的交界 | `research/articles/auto-review-boundaries/vertical-research.md` 第 1-6 节与 `research/articles/auto-review-boundaries/showcase/refund-window-review/results/` 里的实际 review/gate 结果 | LearnPrompt 编辑部 | CC BY-NC-SA 4.0 (repository root `LICENSE`) | 终审前回修：提高正文图字号、缩短长标签，并将 out-of-diff 负例拆成两行，消除 Step 4 右侧越框 | 2026-07-11 |

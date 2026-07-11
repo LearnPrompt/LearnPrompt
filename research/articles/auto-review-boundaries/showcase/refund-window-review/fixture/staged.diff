@@ -1,0 +1,6 @@
+diff --git a/src/refundPolicy.js b/src/refundPolicy.js
+--- a/src/refundPolicy.js
++++ b/src/refundPolicy.js
+@@ -15 +15 @@ export function isRefundEligible({ deliveredAt, now = new Date() }) {
+-  return elapsedMs >= 0 && elapsedMs <= REFUND_WINDOW_MS;
++  return elapsedMs <= REFUND_WINDOW_MS;
