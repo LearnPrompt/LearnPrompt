@@ -1,0 +1,66 @@
+# 冻结的真实运行输出（2026-07-11，已脱敏）
+# 环境：macOS，Node v24.11.0。所有命令均在 showcase/instruction-map 目录内以相对路径运行。
+# 脱敏：TAP 诊断里的绝对文件路径已改写为仓库内相对路径，未改动任何数值或判定。
+
+=== A. 确定性指令地图检查 ===
+$ node scripts/verify-instruction-map.mjs before/AGENTS.md
+FAIL 目标 goal — 缺少可判断的目标小节
+FAIL 范围 scope — 范围没有指向具体文件路径
+FAIL 顺序 sequence — 缺少可执行的步骤序列
+FAIL 验收 acceptance — 验收没有可运行命令
+FAIL 冲突优先级 priority — 没有声明冲突时谁说了算
+summary: 0/5 dimensions executable
+exit=1
+
+$ node scripts/verify-instruction-map.mjs after/AGENTS.md
+PASS 目标 goal
+PASS 范围 scope
+PASS 顺序 sequence
+PASS 验收 acceptance
+PASS 冲突优先级 priority
+summary: 5/5 dimensions executable
+exit=0
+
+=== B. 模糊指令导向的候选实现跑验收 ===
+# 把 before/candidate-format-date.mjs 拷入 repo/src/format-date.mjs 后运行
+$ (cd repo && node --test)
+✖ returns ISO calendar date YYYY-MM-DD (1.243958ms)
+✖ pads single-digit month and day (0.080333ms)
+✔ does not mutate the input date (0.064791ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 1
+ℹ fail 2
+ℹ duration_ms 39.386291
+
+✖ failing tests:
+
+test at test/format-date.test.mjs:6:1
+✖ returns ISO calendar date YYYY-MM-DD
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  + 'Sat, 11 Jul 2026'
+  - '2026-07-11'
+      at TestContext.<anonymous> (test/format-date.test.mjs:7:10)
+
+test at test/format-date.test.mjs:10:1
+✖ pads single-digit month and day
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  + 'Thu, 05 Mar 2026'
+  - '2026-03-05'
+      at TestContext.<anonymous> (test/format-date.test.mjs:11:10)
+exit=1
+
+=== C. 可执行指令导向的候选实现跑验收 ===
+# 把 after/candidate-format-date.mjs 拷入 repo/src/format-date.mjs 后运行
+$ (cd repo && node --test)
+✔ returns ISO calendar date YYYY-MM-DD (0.345292ms)
+✔ pads single-digit month and day (0.123791ms)
+✔ does not mutate the input date (0.048208ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ duration_ms 35.678042
+exit=0

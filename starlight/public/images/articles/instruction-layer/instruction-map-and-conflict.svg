@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">指令层：把五个维度变成可执行地图，并按优先级解冲突</title>
+  <desc id="desc">左侧把目标、范围、顺序、验收、冲突优先级各自落到一个真实资源；右侧是冲突解析的优先级阶梯，安全与范围约束高于显式任务指令，显式任务指令高于通用风格偏好。</desc>
+  <rect width="1200" height="720" fill="#fff7ed"/>
+  <text x="600" y="58" text-anchor="middle" font-family="system-ui, sans-serif" font-size="36" font-weight="700" fill="#0f172a">指令层：把意图翻译成 Agent 能执行的项目地图</text>
+  <text x="600" y="96" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" fill="#475569">每个维度都要落到一个可定位的真实资源；维度打架时按固定优先级解</text>
+
+  <!-- Panel A: five dimensions map to real resources -->
+  <g font-family="system-ui, sans-serif">
+    <rect x="40" y="130" width="620" height="540" rx="18" fill="#ffedd5" stroke="#f97316" stroke-width="2"/>
+    <text x="66" y="172" font-size="24" font-weight="700" fill="#9a3412">五个维度 → 可执行资源</text>
+
+    <!-- rows -->
+    <g>
+      <rect x="66" y="196" width="180" height="72" rx="10" fill="#ffffff" stroke="#f97316" stroke-width="2"/>
+      <text x="156" y="230" text-anchor="middle" font-size="22" font-weight="700" fill="#9a3412">目标</text>
+      <text x="156" y="256" text-anchor="middle" font-size="15" fill="#64748b">应做成什么样</text>
+      <text x="270" y="238" font-size="26" fill="#f97316">→</text>
+      <rect x="308" y="196" width="326" height="72" rx="10" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+      <text x="328" y="232" font-size="17" fill="#0f172a">formatDate 返回 YYYY-MM-DD</text>
+      <text x="328" y="255" font-size="14" fill="#64748b">可判断的完成态，不是“更好”</text>
+    </g>
+
+    <g>
+      <rect x="66" y="284" width="180" height="72" rx="10" fill="#ffffff" stroke="#f97316" stroke-width="2"/>
+      <text x="156" y="318" text-anchor="middle" font-size="22" font-weight="700" fill="#9a3412">范围</text>
+      <text x="156" y="344" text-anchor="middle" font-size="15" fill="#64748b">可动哪些文件</text>
+      <text x="270" y="326" font-size="26" fill="#f97316">→</text>
+      <rect x="308" y="284" width="326" height="72" rx="10" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+      <text x="328" y="320" font-size="17" fill="#0f172a">只改 src/format-date.mjs</text>
+      <text x="328" y="343" font-size="14" fill="#64748b">越界即失败半径扩大</text>
+    </g>
+
+    <g>
+      <rect x="66" y="372" width="180" height="72" rx="10" fill="#ffffff" stroke="#f97316" stroke-width="2"/>
+      <text x="156" y="406" text-anchor="middle" font-size="22" font-weight="700" fill="#9a3412">顺序</text>
+      <text x="156" y="432" text-anchor="middle" font-size="15" fill="#64748b">先后怎么走</text>
+      <text x="270" y="414" font-size="26" fill="#f97316">→</text>
+      <rect x="308" y="372" width="326" height="72" rx="10" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+      <text x="328" y="408" font-size="17" fill="#0f172a">读测试 → 实现 → 跑验收</text>
+      <text x="328" y="431" font-size="14" fill="#64748b">先看验收标准再动手</text>
+    </g>
+
+    <g>
+      <rect x="66" y="460" width="180" height="72" rx="10" fill="#ffffff" stroke="#f97316" stroke-width="2"/>
+      <text x="156" y="494" text-anchor="middle" font-size="22" font-weight="700" fill="#9a3412">验收</text>
+      <text x="156" y="520" text-anchor="middle" font-size="15" fill="#64748b">谁说了算</text>
+      <text x="270" y="502" font-size="26" fill="#f97316">→</text>
+      <rect x="308" y="460" width="326" height="72" rx="10" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+      <text x="328" y="496" font-size="17" fill="#0f172a">node --test 三条全过</text>
+      <text x="328" y="519" font-size="14" fill="#64748b">命令而非“我觉得做完了”</text>
+    </g>
+
+    <g>
+      <rect x="66" y="548" width="180" height="72" rx="10" fill="#ffffff" stroke="#f97316" stroke-width="2"/>
+      <text x="156" y="582" text-anchor="middle" font-size="22" font-weight="700" fill="#9a3412">冲突优先级</text>
+      <text x="156" y="608" text-anchor="middle" font-size="15" fill="#64748b">打架时听谁</text>
+      <text x="270" y="590" font-size="26" fill="#f97316">→</text>
+      <rect x="308" y="548" width="326" height="72" rx="10" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+      <text x="328" y="584" font-size="17" fill="#0f172a">冲突时以测试规定为准</text>
+      <text x="328" y="607" font-size="14" fill="#64748b">见右侧优先级阶梯</text>
+    </g>
+    <text x="66" y="652" font-size="14" fill="#9a3412">检查器结果：模糊指令 0/5，可执行指令 5/5</text>
+  </g>
+
+  <!-- Panel B: conflict resolution priority ladder -->
+  <g font-family="system-ui, sans-serif">
+    <rect x="690" y="130" width="470" height="540" rx="18" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <text x="716" y="172" font-size="24" font-weight="700" fill="#92400e">冲突解析：优先级阶梯</text>
+    <text x="716" y="198" font-size="15" fill="#64748b">上层压过下层；同层冲突才交给人</text>
+
+    <rect x="716" y="216" width="418" height="86" rx="10" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+    <text x="732" y="248" font-size="20" font-weight="700" fill="#991b1b">1　安全与范围约束（最高）</text>
+    <text x="732" y="276" font-size="15" fill="#475569">不越界、不碰密钥、不发布——由系统强制</text>
+    <text x="732" y="296" font-size="13" fill="#64748b">指令解释意图，PreToolUse 钩子/沙箱才是硬闸</text>
+
+    <text x="925" y="322" text-anchor="middle" font-size="22" fill="#d97706">▲ 压过</text>
+
+    <rect x="716" y="332" width="418" height="86" rx="10" fill="#ffedd5" stroke="#f97316" stroke-width="2"/>
+    <text x="732" y="364" font-size="20" font-weight="700" fill="#9a3412">2　显式任务指令</text>
+    <text x="732" y="392" font-size="15" fill="#475569">测试规定的机器格式 2026-07-11 ✓</text>
+    <text x="732" y="412" font-size="13" fill="#64748b">本轮任务的目标与验收，压过通用偏好</text>
+
+    <text x="925" y="438" text-anchor="middle" font-size="22" fill="#d97706">▲ 压过</text>
+
+    <rect x="716" y="448" width="418" height="86" rx="10" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+    <text x="732" y="480" font-size="20" font-weight="700" fill="#334155">3　通用风格偏好（最低）</text>
+    <text x="732" y="508" font-size="15" fill="#475569">“让日期更好读” Sat, 11 Jul 2026 ✗</text>
+    <text x="732" y="528" font-size="13" fill="#64748b">好听但会被上层的验收否决</text>
+
+    <rect x="716" y="558" width="418" height="92" rx="10" fill="#ffffff" stroke="#d97706" stroke-width="1.5"/>
+    <text x="732" y="588" font-size="16" font-weight="700" fill="#92400e">同一次执行的判定</text>
+    <text x="732" y="614" font-size="15" fill="#475569">模糊指令让 2、3 打架且无人裁决 → 跑偏、验收挂</text>
+    <text x="732" y="638" font-size="15" fill="#475569">写清优先级后 → 验收唯一、结果确定</text>
+  </g>
+</svg>
