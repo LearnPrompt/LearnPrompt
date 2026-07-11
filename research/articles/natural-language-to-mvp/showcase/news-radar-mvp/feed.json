@@ -1,0 +1,10 @@
+[
+  { "title": "Anthropic 发布 Claude 新模型", "source": "官方博客", "url": "https://example.com/a", "published": "2026-07-10", "tags": ["anthropic", "model-release"] },
+  { "title": "OpenAI 更新 Codex CLI", "source": "官方博客", "url": "https://example.com/b", "published": "2026-07-09", "tags": ["openai", "coding-agent"] },
+  { "title": "一篇关于提示词的随笔", "source": "个人博客", "url": "https://example.com/c", "published": "2026-07-08", "tags": ["opinion"] },
+  { "title": "Anthropic 发布 Claude 新模型", "source": "转载站", "url": "https://example.com/d", "published": "2026-07-10", "tags": ["anthropic"] },
+  { "title": "开源 Agent 框架月度进展", "source": "GitHub Trending", "url": "https://example.com/e", "published": "2026-07-07", "tags": ["open-source", "coding-agent"] },
+  { "title": "某公司融资新闻", "source": "科技媒体", "url": "https://example.com/f", "published": "2026-07-06", "tags": ["funding"] },
+  { "title": "Codex 与 Claude Code 对比实测", "source": "社区", "url": "https://example.com/g", "published": "2026-07-05", "tags": ["coding-agent", "review"] },
+  { "title": "周末闲聊：AI 与咖啡", "source": "个人博客", "url": "https://example.com/h", "published": "2026-07-04", "tags": ["offtopic"] }
+]
