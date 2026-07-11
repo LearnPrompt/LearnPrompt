@@ -1,0 +1,57 @@
+# 冻结的真实运行输出（已脱敏）
+# 环境：macOS，Node v24.11.0，无网络依赖。
+# 所有命令在 showcase/feedback-signal/ 目录内以相对路径运行。
+# 说明：node --test 的失败栈里包含运行机器的临时绝对路径，已整段删除，
+#       只保留可复现的定位行、断言的 expected/actual 与统计，不影响结论。
+
+$ node -v
+v24.11.0
+
+===== A. 模糊反馈通道：只回一个布尔式结论 =====
+$ node checkers/vague-check.mjs
+FAIL: 构建未通过（无更多信息）
+# exit 1
+# 读者从这条信号里拿不到任何可定位的东西：不知道哪个文件、哪一行、期望什么、实际什么。
+
+===== B. 可操作反馈通道：node --test（同一次失败，颗粒度完全不同）=====
+$ node --test repo/test/slugify.test.mjs
+✖ lowercases and hyphenates words (0.75ms)
+✔ collapses repeated whitespace (0.07ms)
+✔ drops punctuation (0.04ms)
+ℹ tests 3
+ℹ pass 2
+ℹ fail 1
+ℹ duration_ms 39.34
+
+✖ failing tests:
+test at repo/test/slugify.test.mjs:5:1
+✖ lowercases and hyphenates words
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+
+  + 'Hello-World'
+  - 'hello-world'
+# exit 1
+# 同一次失败，这条信号同时给了：文件 repo/test/slugify.test.mjs、行号 5、
+#   期望 'hello-world'、实际 'Hello-World'。三条用例只挂一条，把搜索范围收窄到大小写行为。
+
+===== C. 从证据定位最小改动，应用后重跑同一命令 =====
+$ cp patch/slugify.mjs repo/src/slugify.mjs
+$ node --test repo/test/slugify.test.mjs
+✔ lowercases and hyphenates words (0.37ms)
+✔ collapses repeated whitespace (0.06ms)
+✔ drops punctuation (0.04ms)
+ℹ tests 3
+ℹ pass 3
+ℹ fail 0
+ℹ duration_ms 38.74
+# exit 0
+
+===== D. 最小改动本身（diff）=====
+$ diff before after
+5a6
+>     .toLowerCase()      # 本文选择的候选修复：在 trim 之后补一步小写化
+# 改动面：src/slugify.mjs 一处、一行。证据把范围收窄到小写化问题；
+#   该候选补丁通过当前三条验收，但不构成唯一实现证明。
+
+# 复现结束后，repo/src/slugify.mjs 已还原为失败状态，方便读者从 fail 起步重跑。
