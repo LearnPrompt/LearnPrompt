@@ -1,0 +1,38 @@
+# 冻结的真实运行输出（已脱敏）
+# 环境：macOS，Node v24.11.0，无网络依赖、无第三方依赖。
+# 复现：在 showcase/state-machine/ 目录内运行 `node run.mjs`。
+# 说明：orchestrator 的日志本身不含任何本地绝对路径或运行标识，原样保留即可复现。
+#       worker 是确定性桩，不是在线大模型，两个场景不构成任何模型排名。
+
+$ node -v
+v24.11.0
+
+$ node run.mjs
+===== 场景 A：预算内收敛（fail → retry → pass → stop） =====
+[state] INSPECT     task=slugify  acceptance=3 cases  retry_budget=2
+[state] IMPLEMENT   attempt=1/3  worker applied candidate #1
+[state] VERIFY      attempt=1       FAIL  case="lowercases and hyphenates"  expected=hello-world  actual=Hello-World
+[route] RETRY       budget used 1/2, 1 left -> IMPLEMENT
+[state] IMPLEMENT   attempt=2/3  worker applied candidate #2
+[state] VERIFY      attempt=2       PASS  3/3 cases
+[stop]  STOP_DONE   reason=all-acceptance-passed  exit=0
+[result] outcome=done  attempts=2  exit=0
+
+===== 场景 B：撞预算升级（fail → retry → fail → escalate） =====
+[state] INSPECT     task=slugify  acceptance=3 cases  retry_budget=1
+[state] IMPLEMENT   attempt=1/2  worker applied candidate #1
+[state] VERIFY      attempt=1       FAIL  case="lowercases and hyphenates"  expected=hello-world  actual=Hello-World
+[route] RETRY       budget used 1/1, 0 left -> IMPLEMENT
+[state] IMPLEMENT   attempt=2/2  worker applied candidate #2
+[state] VERIFY      attempt=2       FAIL  case="lowercases and hyphenates"  expected=hello-world  actual=Hello-World
+[route] BUDGET      exhausted after 2 attempts -> ESCALATE
+[stop]  ESCALATE    reason=retry-budget-exhausted  handoff=human  exit=1
+[result] outcome=escalated  attempts=2  exit=1
+
+# 整体进程退出码（run.mjs）：EXIT=2
+# 含义：只要有任一场景以升级收尾，整体判为“需要人接手”，用退出码把这个事实暴露给上游脚本。
+
+# 读法：
+# - 场景 A 证明状态机能在预算内收敛：一次失败被路由回 IMPLEMENT，修正后 VERIFY 通过即 STOP。
+# - 场景 B 证明升级出口是真实控制流，不是装饰：预算用尽后不再重试，改为 handoff=human。
+# - 两个场景跑的是同一台 orchestrator、同一份 acceptance，只换 worker 候选与 retry_budget。
