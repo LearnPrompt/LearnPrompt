@@ -1,0 +1,32 @@
+{
+  "suite": "skill-router-lab",
+  "status": "blocked",
+  "captured_at": "2026-07-12",
+  "attempts": [
+    {
+      "name": "preflight-1-invalid-approval-flag",
+      "exit_code": 2,
+      "command_shape": "codex exec --ephemeral --skip-git-repo-check -a never -s read-only -C <temp> \"Reply with exactly OK.\"",
+      "blocked_reason": "codex exec does not accept -a/--ask-for-approval",
+      "stderr_excerpt": "error: unexpected argument '-a' found"
+    },
+    {
+      "name": "preflight-2-readonly-state-db",
+      "exit_code": 1,
+      "command_shape": "codex exec --ephemeral --skip-git-repo-check -s read-only -C <temp> \"Reply with exactly OK.\"",
+      "blocked_reason": "default CODEX_HOME cannot open the state database for writing and fails to initialize the in-process app-server client",
+      "stderr_excerpt": "attempt to write a readonly database; failed to initialize in-process app-server client: Operation not permitted"
+    },
+    {
+      "name": "preflight-3-writable-codex-home-network-blocked",
+      "exit_code": 1,
+      "command_shape": "CODEX_HOME=<temp>/codex-home codex exec --ignore-user-config --ephemeral --skip-git-repo-check -s read-only -C <temp> \"Reply with exactly OK.\"",
+      "blocked_reason": "moving CODEX_HOME to a writable temp directory bypasses the readonly state-db issue, but the writer sandbox still cannot resolve or reach api.openai.com",
+      "stderr_excerpt": "failed to lookup address information ... api.openai.com/v1/responses"
+    }
+  ],
+  "observations": [
+    "A real Codex warning reported that the skills listing exceeded the 2 percent budget, all descriptions were removed, and additional skills were omitted from the model-visible list.",
+    "The raw command logs were captured outside the worktree and reduced to these redacted excerpts before committing."
+  ]
+}

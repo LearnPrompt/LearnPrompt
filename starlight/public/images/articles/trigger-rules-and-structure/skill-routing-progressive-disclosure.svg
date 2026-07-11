@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">Skill 路由与渐进披露示意图</title>
+  <desc id="desc">上半部分展示请求先经过 metadata routing，再决定是否加载 SKILL.md 正文与 references、scripts、assets；下半部分展示 broad 与 bounded 两种 description 在同一组四请求实跑中的混淆矩阵。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f5efe3"/>
+      <stop offset="100%" stop-color="#f0d7bf"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fffdf8"/>
+      <stop offset="100%" stop-color="#fff5ea"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+      <path d="M1 1l10 5-10 5z" fill="#1f3c45"/>
+    </marker>
+    <style>
+      .panel { fill: url(#panel); stroke: #d9b48a; stroke-width: 2; }
+      .box { fill: #fffaf2; stroke: #1f3c45; stroke-width: 2; rx: 18; ry: 18; }
+      .meta { fill: #e2f0e7; }
+      .body { fill: #f7ead1; }
+      .resource { fill: #e9edf7; }
+      .warn { fill: #f8d9d0; }
+      .accent { fill: #e8894a; }
+      .title { font: 700 36px 'Helvetica Neue', Arial, sans-serif; fill: #1f2b2d; }
+      .h2 { font: 700 24px 'Helvetica Neue', Arial, sans-serif; fill: #1f2b2d; }
+      .bodytext { font: 18px 'Helvetica Neue', Arial, sans-serif; fill: #304547; }
+      .small { font: 16px 'Helvetica Neue', Arial, sans-serif; fill: #304547; }
+      .mono { font: 15px 'SFMono-Regular', Consolas, monospace; fill: #23323a; }
+      .matrixhead { font: 700 20px 'Helvetica Neue', Arial, sans-serif; fill: #1f2b2d; }
+      .matrixcell { font: 700 18px 'Helvetica Neue', Arial, sans-serif; fill: #1f2b2d; }
+      .grid { stroke: #c8b59a; stroke-width: 1.5; }
+      .flow { stroke: #1f3c45; stroke-width: 4; fill: none; marker-end: url(#arrow); }
+      .thinflow { stroke: #355e68; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1400" height="900" fill="url(#bg)"/>
+  <rect x="40" y="40" width="1320" height="820" class="panel" rx="28" ry="28"/>
+
+  <text x="90" y="105" class="title">触发边界要先过 metadata，目录分层才会真的帮上忙</text>
+
+  <g transform="translate(80,150)">
+    <text x="0" y="0" class="h2">A. Request -&gt; metadata routing -&gt; body -&gt; resources</text>
+
+    <rect x="0" y="40" width="220" height="96" class="box accent"/>
+    <text x="20" y="78" class="h2">Request</text>
+    <text x="20" y="108" class="bodytext">“整理三个版本更新，</text>
+    <text x="20" y="132" class="bodytext">输出本周中文 digest”</text>
+
+    <rect x="300" y="20" width="250" height="136" class="box meta"/>
+    <text x="320" y="58" class="h2">Metadata listing</text>
+    <text x="320" y="88" class="mono">name + description</text>
+    <text x="320" y="114" class="small">这里只看得到前置关键词、</text>
+    <text x="320" y="138" class="small">边界和排除条件</text>
+
+    <rect x="640" y="20" width="260" height="136" class="box body"/>
+    <text x="660" y="58" class="h2">SKILL.md body</text>
+    <text x="660" y="88" class="small">核心流程、拒绝条件、</text>
+    <text x="660" y="112" class="small">资源索引、canary</text>
+    <text x="660" y="138" class="mono">SKILL_USED: release-weekly</text>
+
+    <rect x="980" y="0" width="250" height="72" class="box resource"/>
+    <text x="1000" y="44" class="h2">references/</text>
+    <text x="1000" y="64" class="small">完整输入合同与近邻边界</text>
+
+    <rect x="980" y="94" width="250" height="72" class="box resource"/>
+    <text x="1000" y="138" class="h2">scripts/</text>
+    <text x="1000" y="158" class="small">确定性格式化 / evaluator</text>
+
+    <rect x="980" y="188" width="250" height="72" class="box resource"/>
+    <text x="1000" y="232" class="h2">assets/</text>
+    <text x="1000" y="252" class="small">模板与静态资源</text>
+
+    <path d="M220 88h70" class="flow"/>
+    <path d="M550 88h80" class="flow"/>
+    <path d="M900 88h65" class="thinflow"/>
+    <path d="M900 88c50 0 50 42 65 42" class="thinflow"/>
+    <path d="M900 88c50 0 50 136 65 136" class="thinflow"/>
+
+    <rect x="300" y="198" width="600" height="104" class="box warn"/>
+    <text x="320" y="230" class="h2">排错顺序</text>
+    <text x="320" y="260" class="bodytext">1. 显式调用先看 canary；2. 隐式失败再查 description</text>
+    <text x="320" y="287" class="bodytext">3. 只有显式也失败，才去改正文和资源链</text>
+  </g>
+
+  <g transform="translate(80,490)">
+    <text x="0" y="0" class="h2">B. broad vs bounded：同一组 ground truth，同一套混淆矩阵</text>
+
+    <rect x="0" y="40" width="560" height="250" class="box"/>
+    <text x="24" y="78" class="matrixhead">broad description</text>
+    <text x="24" y="108" class="small">gpt-5.5 · 4 个 fresh implicit runs · 2026-07-12</text>
+
+    <line x1="170" y1="120" x2="170" y2="270" class="grid"/>
+    <line x1="340" y1="120" x2="340" y2="270" class="grid"/>
+    <line x1="0" y1="120" x2="560" y2="120" class="grid"/>
+    <line x1="0" y1="195" x2="560" y2="195" class="grid"/>
+    <line x1="0" y1="270" x2="560" y2="270" class="grid"/>
+
+    <text x="200" y="150" class="matrixhead">should load</text>
+    <text x="390" y="150" class="matrixhead">should not</text>
+    <text x="24" y="168" class="matrixhead">loaded</text>
+    <text x="24" y="243" class="matrixhead">not loaded</text>
+    <text x="230" y="243" class="matrixcell">FN 0</text>
+    <text x="390" y="243" class="matrixcell">TN 2</text>
+    <text x="220" y="168" class="matrixcell">TP 2</text>
+    <text x="386" y="168" class="matrixcell">FP 0</text>
+
+    <rect x="640" y="40" width="560" height="250" class="box"/>
+    <text x="664" y="78" class="matrixhead">bounded description</text>
+    <text x="664" y="108" class="small">gpt-5.5 · 4 个 fresh implicit runs · 2026-07-12</text>
+
+    <line x1="810" y1="120" x2="810" y2="270" class="grid"/>
+    <line x1="980" y1="120" x2="980" y2="270" class="grid"/>
+    <line x1="640" y1="120" x2="1200" y2="120" class="grid"/>
+    <line x1="640" y1="195" x2="1200" y2="195" class="grid"/>
+    <line x1="640" y1="270" x2="1200" y2="270" class="grid"/>
+
+    <text x="840" y="150" class="matrixhead">should load</text>
+    <text x="1030" y="150" class="matrixhead">should not</text>
+    <text x="664" y="168" class="matrixhead">loaded</text>
+    <text x="664" y="243" class="matrixhead">not loaded</text>
+    <text x="862" y="168" class="matrixcell">TP 2</text>
+    <text x="1034" y="168" class="matrixcell">FP 0</text>
+    <text x="844" y="243" class="matrixcell">FN 0</text>
+    <text x="1048" y="243" class="matrixcell">TN 2</text>
+
+    <rect x="0" y="300" width="1200" height="60" class="box warn"/>
+    <text x="24" y="325" class="bodytext">单次实跑中 broad 与 bounded 都得到 TP 2 / FP 0 / FN 0 / TN 2；显式 bounded 控制组为 loaded=true。</text>
+    <text x="24" y="349" class="bodytext">本轮没有复现 broad 误触发；不要把“宽描述更危险”的合理假设伪装成这次实验事实。</text>
+  </g>
+</svg>

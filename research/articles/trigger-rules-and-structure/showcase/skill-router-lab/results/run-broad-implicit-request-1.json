@@ -1,0 +1,13 @@
+{
+  "suite": "skill-router-lab",
+  "variant": "broad",
+  "mode": "implicit",
+  "case_id": "request-1",
+  "loaded": true,
+  "contains_canary": true,
+  "exit_code": 0,
+  "privacy_ok": true,
+  "model": "gpt-5.5",
+  "final_output_excerpt": "SKILL_USED: release-weekly\n\n缺少输入：当前工作区没有 release notes 文件，你也还没粘贴具体内容。\n\n请提供至少 2 条 GitHub release notes，支持链接、Markdown、JSON，或直接粘贴版本标题/日期/要点。我收到后会按中文发布周报格式汇总。",
+  "notes": "completed"
+}

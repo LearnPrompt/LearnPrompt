@@ -1,0 +1,13 @@
+{
+  "suite": "skill-router-lab",
+  "variant": "broad",
+  "mode": "implicit",
+  "case_id": "request-4",
+  "loaded": false,
+  "contains_canary": false,
+  "exit_code": 0,
+  "privacy_ok": true,
+  "model": "gpt-5.5",
+  "final_output_excerpt": "当前目录没有会议纪要文件，只有 `.agents/skills/release-weekly`；且该 skill 明确不适用于“会议纪要转团队周报”。\n\n请把会议纪要正文贴过来，或给我文件路径。我会按团队周报整理成：\n\n```markdown\n# 团队周报\n\n## 本周重点\n## 进展与产出\n## 问题与风险\n## 下周计划\n## 待跟进事项\n```\n\n已检查：`pwd`、`rg --files`、`find . -maxdepth 5`、`release-weekly` skill 边界、mem0 相关偏好。",
+  "notes": "completed"
+}

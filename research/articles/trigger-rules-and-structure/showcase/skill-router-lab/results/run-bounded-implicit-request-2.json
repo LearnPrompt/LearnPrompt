@@ -1,0 +1,13 @@
+{
+  "suite": "skill-router-lab",
+  "variant": "bounded",
+  "mode": "implicit",
+  "case_id": "request-2",
+  "loaded": true,
+  "contains_canary": true,
+  "exit_code": 0,
+  "privacy_ok": true,
+  "model": "gpt-5.5",
+  "final_output_excerpt": "SKILL_USED: release-weekly\n\n无法生成 digest：当前工作区和对话里没有三个版本的 release notes / changelog 输入。按该 skill 的 input contract，缺少版本更新材料时必须阻塞，不能猜测补写。\n\n已检查：工作区只包含 `.agents/skills/release-weekly/...`，没有版本更新文件。  \n请提供三个版本的原始更新内容或文件路径。格式可用：\n\n```json\n{\"entries\":[{\"version\":\"v1\",\"summary\":\"...\"},{\"version\":\"v2\",\"summary\":\"...\"},{\"version\":\"v3\",\"summary\":\"...\"}]}\n```\n\nLessons learned:\nrelease-weekly 缺少 release-note 输入时必须阻塞，不能补编。",
+  "notes": "completed"
+}

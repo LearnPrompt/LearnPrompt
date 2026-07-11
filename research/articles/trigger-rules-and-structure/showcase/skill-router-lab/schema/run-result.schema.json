@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "skill-router-lab run result",
+  "type": "object",
+  "required": [
+    "suite",
+    "variant",
+    "mode",
+    "case_id",
+    "loaded",
+    "contains_canary",
+    "exit_code",
+    "privacy_ok"
+  ],
+  "properties": {
+    "suite": {
+      "const": "skill-router-lab"
+    },
+    "variant": {
+      "enum": ["broad", "bounded"]
+    },
+    "mode": {
+      "enum": ["implicit", "explicit"]
+    },
+    "case_id": {
+      "type": "string",
+      "pattern": "^request-[1-5]$"
+    },
+    "loaded": {
+      "type": "boolean"
+    },
+    "contains_canary": {
+      "type": "boolean"
+    },
+    "exit_code": {
+      "type": "integer"
+    },
+    "privacy_ok": {
+      "type": "boolean"
+    },
+    "final_output_excerpt": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

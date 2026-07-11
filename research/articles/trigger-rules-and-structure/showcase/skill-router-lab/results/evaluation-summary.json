@@ -1,0 +1,24 @@
+{
+  "status": "complete",
+  "broad": {
+    "tp": 2,
+    "fp": 0,
+    "fn": 0,
+    "tn": 2,
+    "precision": 1,
+    "recall": 1
+  },
+  "bounded": {
+    "tp": 2,
+    "fp": 0,
+    "fn": 0,
+    "tn": 2,
+    "precision": 1,
+    "recall": 1
+  },
+  "explicit": {
+    "case_id": "request-5",
+    "loaded": true,
+    "exit_code": 0
+  }
+}

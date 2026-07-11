@@ -1,0 +1,32 @@
+[
+  {
+    "id": "request-1",
+    "kind": "implicit-fixed",
+    "text": "把一组 GitHub release notes 汇总成中文发布周报。",
+    "intent": "positive"
+  },
+  {
+    "id": "request-2",
+    "kind": "implicit-fixed",
+    "text": "整理三个版本更新，输出本周中文 changelog digest。",
+    "intent": "positive-rewrite"
+  },
+  {
+    "id": "request-3",
+    "kind": "implicit-fixed",
+    "text": "审校一条 release note 的措辞，不生成周报。",
+    "intent": "near-negative"
+  },
+  {
+    "id": "request-4",
+    "kind": "implicit-fixed",
+    "text": "把会议纪要整理成团队周报。",
+    "intent": "irrelevant-negative"
+  },
+  {
+    "id": "request-5",
+    "kind": "explicit-control",
+    "text": "把一组 GitHub release notes 汇总成中文发布周报。",
+    "intent": "explicit-positive"
+  }
+]

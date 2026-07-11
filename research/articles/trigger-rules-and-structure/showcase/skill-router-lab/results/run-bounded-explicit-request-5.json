@@ -1,0 +1,13 @@
+{
+  "suite": "skill-router-lab",
+  "variant": "bounded",
+  "mode": "explicit",
+  "case_id": "request-5",
+  "loaded": true,
+  "contains_canary": true,
+  "exit_code": 0,
+  "privacy_ok": true,
+  "model": "gpt-5.5",
+  "final_output_excerpt": "SKILL_USED: release-weekly\n\n缺少输入，暂时不能汇总。请提供至少 2 条 GitHub release notes，格式可以是：\n\n```md\n- repo:\n  version:\n  date:\n  url:\n  notes:\n```\n\n也可以直接贴 release note 原文或 GitHub release 链接。",
+  "notes": "completed"
+}
