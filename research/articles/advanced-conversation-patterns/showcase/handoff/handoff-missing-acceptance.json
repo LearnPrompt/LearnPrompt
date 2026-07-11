@@ -1,0 +1,14 @@
+{
+  "task": "Fix the slugify bug with the smallest possible change.",
+  "symptom": "The fixture currently returns rock--roll for Rock & Roll.",
+  "evidence": [
+    "Baseline command: node tests/run-tests.mjs",
+    "FAIL collapses punctuation gaps into one hyphen expected=rock-roll actual=rock--roll"
+  ],
+  "allowed_files": [
+    "src/slugify.js"
+  ],
+  "risks": [
+    "Do not broaden the change into locale-aware transliteration."
+  ]
+}

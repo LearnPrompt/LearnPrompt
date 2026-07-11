@@ -1,0 +1,8 @@
+{
+  "name": "advanced-conversation-patterns-fixture",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests/run-tests.mjs"
+  }
+}

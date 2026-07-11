@@ -1,0 +1,1 @@
+REJECT missing acceptance.commands[0]

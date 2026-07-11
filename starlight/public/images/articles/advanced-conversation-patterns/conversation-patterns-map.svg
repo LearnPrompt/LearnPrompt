@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="780" viewBox="0 0 1200 780" fill="none">
+  <style>
+    text { font-family: Georgia, "Noto Serif SC", serif; fill: #1f2937; }
+    .title { font-size: 34px; font-weight: 700; }
+    .section { font-size: 24px; font-weight: 700; }
+    .label { font-size: 18px; font-weight: 700; }
+    .body { font-size: 16px; }
+    .small { font-size: 14px; }
+    .muted { fill: #475569; }
+  </style>
+  <rect width="1200" height="780" fill="#f5efe3"/>
+  <rect x="32" y="32" width="1136" height="716" rx="28" fill="#fffaf0" stroke="#d4c3a1" stroke-width="2"/>
+  <text x="70" y="88" class="title">Advanced Conversation Patterns</text>
+  <text x="70" y="120" class="body muted">先判断你要保留哪一类状态，再选 continue / compact / clear / resume / fork。</text>
+
+  <rect x="64" y="150" width="490" height="548" rx="24" fill="#fff" stroke="#c8b38a" stroke-width="2"/>
+  <text x="92" y="195" class="section">一、操作选择：保留什么状态？</text>
+
+  <rect x="92" y="224" width="430" height="84" rx="18" fill="#eef6ea" stroke="#8bb174" stroke-width="2"/>
+  <text x="114" y="254" class="label">continue / resume</text>
+  <text x="114" y="279" class="small">任务关系没变，只是被打断；</text>
+  <text x="114" y="299" class="small">保留完整历史和同一 workstream。</text>
+
+  <rect x="92" y="326" width="430" height="84" rx="18" fill="#eef2ff" stroke="#7c8fd8" stroke-width="2"/>
+  <text x="114" y="356" class="label">compact</text>
+  <text x="114" y="381" class="small">任务没变，但上下文太长；</text>
+  <text x="114" y="401" class="small">保留同一 session，只压缩噪声，不重开分支。</text>
+
+  <rect x="92" y="428" width="430" height="84" rx="18" fill="#fff3df" stroke="#d39a4c" stroke-width="2"/>
+  <text x="114" y="458" class="label">clear + 新 prompt</text>
+  <text x="114" y="483" class="small">当前会话已经脏了；只带走冻结结论，</text>
+  <text x="114" y="503" class="small">不继续拖着旧噪声。</text>
+
+  <rect x="92" y="530" width="430" height="84" rx="18" fill="#f9ebef" stroke="#c56d86" stroke-width="2"/>
+  <text x="114" y="560" class="label">fork</text>
+  <text x="114" y="585" class="small">保留原调查历史，同时试另一条实现路线；</text>
+  <text x="114" y="605" class="small">新 session ID，原会话不变。</text>
+
+  <text x="92" y="654" class="small muted">checkpoint / rewind 属于“回退工具”：恢复代码、会话或两者；</text>
+  <text x="92" y="676" class="small muted">适合撤销刚才的风险编辑，但不替代 git，也不追踪 bash 改动。</text>
+
+  <rect x="586" y="150" width="548" height="548" rx="24" fill="#fff" stroke="#c8b38a" stroke-width="2"/>
+  <text x="614" y="190" class="section">二、两阶段隔离</text>
+  <text x="614" y="218" class="body muted">Explore → Handoff → Fresh Implement</text>
+
+  <rect x="618" y="242" width="196" height="100" rx="20" fill="#e4f0ff" stroke="#5b8ed6" stroke-width="2"/>
+  <text x="642" y="270" class="label">Stage A</text>
+  <text x="642" y="294" class="body">Explore / Plan</text>
+  <text x="642" y="318" class="small">只读盘点、跑基线、找症状</text>
+
+  <rect x="846" y="242" width="256" height="100" rx="20" fill="#f5f0ff" stroke="#8e73c5" stroke-width="2"/>
+  <text x="870" y="270" class="label">冻结 handoff</text>
+  <text x="870" y="294" class="small">symptom / evidence</text>
+  <text x="870" y="316" class="small">allowed files / acceptance / risks</text>
+
+  <line x1="814" y1="292" x2="846" y2="292" stroke="#7a6b4e" stroke-width="3"/>
+  <polygon points="846,292 834,284 834,300" fill="#7a6b4e"/>
+
+  <rect x="618" y="390" width="220" height="108" rx="20" fill="#fff4dc" stroke="#d39a4c" stroke-width="2"/>
+  <text x="642" y="424" class="label">Stage B: Fresh process</text>
+  <text x="642" y="451" class="body">新 terminal / 新上下文</text>
+  <text x="642" y="476" class="body">输入只有 repo + handoff</text>
+
+  <rect x="880" y="390" width="222" height="108" rx="20" fill="#ecf7ef" stroke="#6faa75" stroke-width="2"/>
+  <text x="904" y="424" class="label">最小实现 + 验证</text>
+  <text x="904" y="451" class="body">只改允许文件</text>
+  <text x="904" y="476" class="body">跑 acceptance command</text>
+
+  <line x1="838" y1="444" x2="880" y2="444" stroke="#7a6b4e" stroke-width="3"/>
+  <polygon points="880,444 868,436 868,452" fill="#7a6b4e"/>
+
+  <line x1="974" y1="342" x2="974" y2="390" stroke="#7a6b4e" stroke-width="3" stroke-dasharray="10 8"/>
+  <polygon points="974,390 966,378 982,378" fill="#7a6b4e"/>
+
+  <rect x="618" y="548" width="484" height="106" rx="20" fill="#fff" stroke="#d6d3d1" stroke-width="2"/>
+  <text x="642" y="582" class="label">拒绝条件</text>
+  <text x="642" y="609" class="body">如果 handoff 没有 acceptance command，Stage B 必须拒绝继续；</text>
+  <text x="642" y="634" class="body">否则“干净上下文”只会退化成新的主观猜测。</text>
+</svg>

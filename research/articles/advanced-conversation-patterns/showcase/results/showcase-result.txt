@@ -1,0 +1,7 @@
+Showcase run summary
+
+- Stage A: PASS read-only exploration archived in `stage-a-summary.txt`
+- Stage B positive: PASS archived in `positive-run.txt`
+- Stage B negative: PASS rejection archived in `negative-run.txt`
+
+This summary file exists so the deterministic validator can detect an archived result artifact.

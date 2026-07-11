@@ -1,0 +1,10 @@
+STAGE A read-only exploration
+mode=inspect-and-freeze
+command=node tests/run-tests.mjs
+exit=1
+PASS keeps simple words
+FAIL collapses punctuation gaps into one hyphen expected=rock-roll actual=rock--roll
+PASS trims surrounding whitespace
+SUMMARY failed=1 passed=2
+
+frozen fields=symptom,evidence,allowed_files,acceptance,risks
