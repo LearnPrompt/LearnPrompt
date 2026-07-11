@@ -1,0 +1,29 @@
+receipt-renamer-skill offline replay
+normal_command: node research/articles/what-are-agent-skills/showcase/receipt-renamer-skill/scripts/release-gate.mjs normal
+normal_exit_code: 0
+scenario: normal
+command: node .agents/skills/receipt-renamer/scripts/plan-renames.mjs --batch incoming/normal-batch/receipts.json --policy .agents/skills/receipt-renamer/references/naming-policy.md --report reports/normal-batch-plan.md --json reports/normal-batch-plan.json
+exit_code: 0
+PASS dry run plan created for normal-batch
+plan_json: reports/normal-batch-plan.json
+plan_report: reports/normal-batch-plan.md
+receipts: 3
+tests: npm test exit 0
+
+missing_currency_command: node research/articles/what-are-agent-skills/showcase/receipt-renamer-skill/scripts/release-gate.mjs missing-currency
+missing_currency_exit_code: 21
+scenario: missing-currency
+command: node .agents/skills/receipt-renamer/scripts/plan-renames.mjs --batch incoming/missing-currency-batch/receipts.json --policy .agents/skills/receipt-renamer/references/naming-policy.md --report reports/missing-currency-plan.md --json reports/missing-currency-plan.json
+exit_code: 21
+ERROR missing currency for vendor-lunch.pdf
+
+conflict_command: node research/articles/what-are-agent-skills/showcase/receipt-renamer-skill/scripts/release-gate.mjs conflict
+conflict_exit_code: 23
+scenario: conflict
+command: node .agents/skills/receipt-renamer/scripts/plan-renames.mjs --batch incoming/conflict-batch/receipts.json --policy .agents/skills/receipt-renamer/references/naming-policy.md --report reports/conflict-plan.md --json reports/conflict-plan.json
+exit_code: 23
+ERROR target filename conflict for 2026-05-18_desk-foundry_USD124.40.pdf: existing file in batch directory
+
+privacy_command: node research/articles/what-are-agent-skills/showcase/receipt-renamer-skill/scripts/privacy-scan.mjs
+privacy_exit_code: 0
+privacy_output: PASS privacy scan: no runtime IDs, absolute temp paths, user home paths, or shell paths were committed.

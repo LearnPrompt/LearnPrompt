@@ -1,0 +1,97 @@
+what-are-agent-skills writer release gate (frozen sanitized excerpt)
+================================================================
+运行日期：2026-07-12
+运行环境：Codex workspace-write sandbox；codex-cli 0.142.2；Node v24.11.0。
+说明：以下冻结 writer 阶段和主控补跑的真实命令、关键输出和退出码；
+      随后的独立只读终审以 0/0/0、96/100 通过。
+
+----------------------------------------------------------------
+1. Showcase offline replay
+命令：
+  node research/articles/what-are-agent-skills/showcase/receipt-renamer-skill/scripts/verify-showcase.mjs
+关键输出：
+  normal_exit_code: 0
+  missing_currency_exit_code: 21
+  conflict_exit_code: 23
+  privacy_exit_code: 0
+退出码：0
+
+2. Fixture tests
+命令：
+  npm test
+工作目录：
+  research/articles/what-are-agent-skills/showcase/receipt-renamer-skill/fixture
+关键输出：
+  pass 4
+  fail 0
+退出码：0
+
+3. 真实 Codex 显式调用（主控外层补跑）
+命令：
+  CODEX_NESTED_MODEL=gpt-5.5 node research/articles/what-are-agent-skills/showcase/receipt-renamer-skill/scripts/run-codex-live.mjs
+关键输出：
+  status: completed
+  model: gpt-5.5
+  exec_exit_code: 0
+  skill_invocation: $receipt-renamer
+  changed_files: ["?? reports/"]
+  reports_written: json=true, markdown=true
+  tests_exit_code: 0
+  dry_run_confirmed: true
+  tests_status: passed (4/4)
+退出码：0
+
+4. 单篇 partial validator
+命令：
+  node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs \
+    --article starlight/src/content/docs/agent-skills/what-are-agent-skills.mdx \
+    --research research/articles/what-are-agent-skills
+关键输出：
+  PASS article: starlight/src/content/docs/agent-skills/what-are-agent-skills.mdx
+  PASS research: research/articles/what-are-agent-skills
+  PASS status: partial
+退出码：0
+
+5. 深度指标
+命令：
+  node -e '统计 body_chars / h2_count / cn_explanatory_chars'
+关键输出：
+  body_chars=9833 h2_count=9 cn_explanatory_chars=3662
+退出码：0
+
+6. SVG render check
+命令：
+  node -e 'import sharp from "sharp"; await sharp("public/images/articles/what-are-agent-skills/skill-load-chain.svg").png().toFile("$TMPDIR/skill-load-chain-render.png")'
+  sips -g pixelWidth -g pixelHeight $TMPDIR/skill-load-chain-render.png
+  visual inspection on rendered PNG
+关键输出：
+  pixelWidth: 1400
+  pixelHeight: 900
+结果：
+  PASS rendered successfully; no overflow or cropped text observed
+
+7. Starlight build
+命令：
+  npm --prefix starlight run build
+关键输出：
+  Found 49 HTML files.
+  49 page(s) built in 3.72s
+  Complete!
+退出码：0
+
+8. Privacy scan
+命令：
+  node research/articles/what-are-agent-skills/showcase/receipt-renamer-skill/scripts/privacy-scan.mjs
+关键输出：
+  PASS privacy scan: no runtime IDs, absolute temp paths, user home paths, or shell paths were committed.
+退出码：0
+
+9. git diff --check
+命令：
+  git diff --check
+关键输出：
+  (no output)
+退出码：0
+
+================================================================
+当前状态：verified。离线 replay、真实 Codex 显式调用、validator、render、build、privacy scan、diff-check 与独立只读终审均通过。

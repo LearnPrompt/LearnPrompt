@@ -1,36 +1,285 @@
 ---
-title: Agent Skills 是什么
-description: 把稳定工作流包装成 AI Agent 可复用能力。
+title: Agent Skill 到底是什么：什么时候该把重复 prompt 升级成按需加载的工作包
+description: 用当前官方文档和一个真实收据重命名案例，判断 Skill 的边界，以及什么时候值得从普通 prompt 升级。
 sidebar:
   order: 1
 difficulty: beginner
-source_repo: alchaincyf/agent-skills-orange-book
-source_url: https://github.com/alchaincyf/agent-skills-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-12"
+reading_time: 14 分钟
+research_path: research/articles/what-are-agent-skills
+showcase_path: research/articles/what-are-agent-skills/showcase/receipt-renamer-skill
+showcase_status: verified
+quality_score: 96
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后核对 | 作者 |
+| --- | --- | --- | --- |
+| 入门 | 14 分钟 | 2026-07-12 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/agent-skills-orange-book" url="https://github.com/alchaincyf/agent-skills-orange-book" updatedFrom="2026-05" note="仅参考主题结构，正文重新组织。" />
+你已经有一段常用 prompt。每次遇到同类任务，你都把那段话贴进去，再补几句“这次处理这个目录”“别真的改文件”“最后给我一个计划”。头两次还行，到了第五次，你开始怀疑：这是不是已经不只是 prompt 了？我是不是该把它做成 Skill？
 
-## 核心概念
+很多人就卡在这里。不是不会写 `SKILL.md`，而是不知道**什么时候一个重复任务已经值得升级成按需加载的工作包**。再往下走，又会撞上第二个坑：Skill、`AGENTS.md` / `CLAUDE.md`、普通脚本、MCP、plugin 这几个词经常一起出现，但它们根本不是一层东西。把边界混掉，最后不是把所有规则塞进全局指令，就是把一个本地小流程包装成又重又贵的 plugin，或者干脆只留下一段脚本，让下一个人读代码猜用法。
 
-Skill 是一套可复用的工作说明、脚本、模板和验收标准。它让 Agent 在遇到特定任务时，不必每次从零理解。
+这篇文章只回答一个中心问题：**Agent Skill 到底是什么，什么时候该从普通 prompt 升级过去。** 我不会重复 [`《第一个 SKILL.md 怎么写》`](./first-skill-md) 里已经展开的字段红线、最小模板和打包步骤；那篇负责“怎么写”，本文负责“为什么做、什么时候做、边界在哪、什么时候别做”。
 
-## 适合做成 Skill 的任务
+## 读完你能做什么
 
-- 高频重复。
-- 有明确输入输出。
-- 有固定检查清单。
-- 可以通过脚本或模板提升稳定性。
+1. 用当前官方资料说清什么是 Skill，以及它为什么不是“更长的 prompt”。
+2. 区分 prompt、Skill、`AGENTS.md` / `CLAUDE.md`、普通脚本、MCP、plugin 各自负责哪一层。
+3. 看懂一个真实的收据重命名案例，判断它为什么已经值得做成 Skill。
+4. 用一张简单的判定表决定：一个重复任务该继续保留为 prompt、抽成 Skill，还是直接写脚本 / 接 MCP。
 
-## 不适合做成 Skill
+## 先别急着写：Skill 解决的不是“prompt 不够长”，而是“工作包还没成型”
 
-- 只发生一次的临时任务。
-- 需求仍在探索期。
-- 依赖大量人工判断且没有稳定步骤。
+先把最容易混的一件事说清：prompt 解决的是**这次想做什么**，Skill 解决的是**以后遇到类似任务，什么时候该把哪套工作流按需拉起来**。
 
-## 实战案例
+开放的 Agent Skills 规范把 Skill 定义成一个目录，最少包含 `SKILL.md`，旁边可以有 `scripts/`、`references/`、`assets/`，并按 metadata、正文、资源三层渐进加载。OpenAI 当前的 Codex 文档也把 Skill 直接写成“reusable workflows”的作者格式，并明确建议：默认优先 instructions，只有在需要确定性行为或外部工具时再引入脚本。Claude Code 这边的文档则换了一个更容易理解的判断法：当你一直在聊天里重复贴同一套 instructions、checklist 或 multi-step procedure，或者 `CLAUDE.md` 里某一段已经长成了 procedure 而不是事实，就该抽成 Skill。
 
-“淘金”适合做成 Skill：用户提供榜单或信息源，Skill 抓取、快照、对比、生成日报，并保留限制说明。
+这三份一手材料其实在讲同一件事：**Skill 的价值在于把一段“会再次发生的工作方式”从一次性 prompt，整理成一个可发现、可复用、按需加载、带边界的工作包。**
+
+如果只是单次意图，prompt 就够了。比如：
+
+```text
+请把今天这 3 张收据整理成一个 dry-run 重命名计划。
+```
+
+这句话能完成任务，但它没有解决三个长期问题：
+
+- 下次遇到同类任务，Agent 怎么知道该复用哪套流程？
+- 这套流程里哪些是稳定规则，哪些是这次的临时上下文？
+- 确定性的命名规则和失败码，应该写在 prompt 里反复解释，还是下沉到脚本与政策文件？
+
+一旦这些问题出现，说明你面对的已经不是“再补一句提示词”就能解决的情况了。
+
+## 真正的边界：prompt、Skill、`AGENTS.md` / `CLAUDE.md`、script、MCP、plugin 各管哪一段
+
+这六个东西最常见的误用，不是“完全不会用”，而是**拿错层做错事**。先看一张分工表：
+
+| 机制 | 它负责回答什么 | 典型载体 | 不该冒充什么 |
+| --- | --- | --- | --- |
+| prompt | 这次具体要做什么 | 聊天里的单次任务描述 | 不该承担长期 discoverability |
+| Skill | 遇到这类任务时，该用哪套工作流、参考和边界 | `SKILL.md` + `references/` + `scripts/` + `assets/` | 不该假装自己是纯脚本 |
+| `AGENTS.md` / `CLAUDE.md` | 这个 repo / 项目里始终适用的规则 | 持久项目指导文件 | 不该塞满按需流程 |
+| 普通脚本 | 确定性转换与机械检查 | `scripts/*.mjs` / `*.py` / `*.sh` | 不该承担“何时使用”解释 |
+| MCP | 连接本地工作区之外的系统、数据和工具 | MCP server / connector | 不该承担本地流程说明 |
+| plugin | 分发和安装层 | 可安装包 | 不该代替 Skill 内部工作流 |
+
+先看 `AGENTS.md` / `CLAUDE.md`。OpenAI 的 customization 文档把 `AGENTS.md` 定义成 repo 级 durable guidance：在 agent 开始工作前就生效，适合 build/test 命令、review 期望、目录级规则。Claude Code 的 features overview 也把 `CLAUDE.md` 放在 persistent context 那一列，强调它是每次会话都能看到的持续上下文。
+
+这类文件最适合放“始终为真”的东西，例如：
+
+- 用哪条构建命令。
+- 允许改哪些目录。
+- 提交前必须跑哪些检查。
+- 评审输出格式是什么。
+
+它们**不适合**放一整套只有在“处理收据重命名”时才需要看的具体流程。因为那样会让每次会话都背着一份并不总是有用的长说明。
+
+再看普通脚本。脚本能做确定性转换，但它天然回答不了：
+
+- 什么时候该运行这段脚本？
+- 先读哪份政策文件？
+- exit `21` 和 `23` 对人类来说分别是什么意思？
+- 这次是不是只允许 dry run？
+
+脚本只会做，不会解释“为什么现在该做、失败该怎么收场”。这正是 Skill 的补位点。
+
+MCP 又是另一层。OpenAI customization 文档把它定义成 access to external tools and shared systems；Claude Code features overview 则把它放在“connects Claude to external services and tools”。换句话说，MCP 的问题是“**能连到什么**”，不是“**该怎么做**”。如果数据就在本地 repo 里、流程本身也不需要外部系统，硬上 MCP 只会增加边界和维护成本。
+
+plugin 更不能和 Skill 混写。OpenAI 的 build-skills 文档把 plugin 说成给 workspace 里其他人安装的分发层；Claude 的 features overview 也直接写成 packaging layer，能把 skills、hooks、subagents、MCP servers 打到一起。它负责的是“怎么发出去、怎么装进来”，不是“某个任务内部到底怎么执行”。
+
+一句话收束：**prompt 是这次意图，Skill 是按需复用的工作流，`AGENTS.md` / `CLAUDE.md` 是始终适用的规则，script 是确定性转换，MCP 是外部连接，plugin 是分发层。**
+
+## 什么时候一个重复任务真的值得升成 Skill
+
+不是所有常用 prompt 都值得做成 Skill。一个实用的判断法，是看它是否同时满足下面四条。这里是 LearnPrompt 编辑部的操作模型，不是官方术语，但和一手文档并不冲突。
+
+### 1. 它会重复发生
+
+只做一次的任务，用 prompt 就行。Skill 带来的是目录、维护、说明、测试和触发元数据，只有当同类任务会再次出现时才值得付这个成本。
+
+### 2. 它的输入、输出和停止条件已经比较稳定
+
+你至少知道：
+
+- 输入一般长什么样；
+- 输出一般长什么样；
+- 哪些错误该直接停；
+- 什么叫完成。
+
+如果这些还在变，先继续用 prompt 探索更合适。过早 Skill 化，通常只是把模糊流程固化起来。
+
+### 3. 它需要的不只是“这次上下文”，还需要长期 discoverability
+
+如果你每次都得重新描述“当用户提到收据批量命名时，用某个政策、走某个流程”，说明这已经是一个可以被发现的能力，而不只是一次性任务说明。
+
+### 4. 其中有一段天然值得确定性下沉
+
+这条尤其关键。OpenAI 当前文档明确建议：默认优先 instructions，只有在需要 deterministic behavior 或 external tooling 时再用 scripts。也就是说，**脚本不是 Skill 的替代品，而是 Skill 里最应该被下沉的那一块机械核心。**
+
+像文件命名这种任务，日期、金额、slug、冲突检测都应稳定重放。这就是一个强信号：继续只靠 prompt 已经不够，工作包里应该既有自然语言协调层，也有确定性执行层。
+
+## Showcase：为什么“费用收据批量重命名计划”已经值得做成 Skill
+
+为了让“什么时候值得升级”这件事不落成抽象道理，本文冻结了一个真实可重放的案例：[`receipt-renamer-skill`](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/what-are-agent-skills/showcase/receipt-renamer-skill)。
+
+它的目标不是直接重命名收据，而是更保守也更工程化的一步：**先生成 dry-run rename plan，再由人决定是否真的改名。**
+
+Showcase 的 repo Skill 放在临时 fixture 的 `.agents/skills/receipt-renamer/`，包含：
+
+```text
+.agents/skills/receipt-renamer/
+├── SKILL.md
+├── scripts/plan-renames.mjs
+├── references/naming-policy.md
+└── assets/report-template.md
+```
+
+这里的职责切得非常刻意：
+
+- `SKILL.md` 负责协调：什么时候用、先读什么、该跑哪条命令、exit code 怎么解释、什么时候再跑测试。
+- `references/naming-policy.md` 负责定义文件名政策：`YYYY-MM-DD_merchant-slug_CURRENCYamount.pdf`。
+- `scripts/plan-renames.mjs` 负责确定性转换：读 manifest、算目标文件名、检查缺 `currency`、检查冲突、输出 JSON 和 Markdown dry-run 报告。
+- `assets/report-template.md` 负责产出模板。
+
+这正好体现 Skill 和脚本的边界。**Skill 不能冒充脚本。** 如果把精确命名逻辑全留在自然语言正文里，等于每次都让模型重新猜一遍日期、金额和文件名细节；如果只留脚本，则又没有“何时使用、为何停下、向人如何汇报”的协调层。
+
+### 三类 fixture
+
+这个 showcase 至少准备了三种批次：
+
+- `normal-batch`：正常输入，应该 exit `0`。
+- `missing-currency-batch`：有 receipt 缺 `currency`，应该 exit `21`。
+- `conflict-batch`：目标文件名与已有文件冲突，应该 exit `23`。
+
+从仓库根执行：
+
+```bash
+node research/articles/what-are-agent-skills/showcase/receipt-renamer-skill/scripts/verify-showcase.mjs
+```
+
+2026-07-12 的真实冻结结果是：
+
+```text
+normal_exit_code: 0
+missing_currency_exit_code: 21
+conflict_exit_code: 23
+privacy_exit_code: 0
+```
+
+对应的确定性含义也很清楚：
+
+- 正常批次能稳定生成 `reports/normal-batch-plan.json` 和 `reports/normal-batch-plan.md`；
+- 缺 `currency` 时不继续猜，而是明确失败；
+- 目标名冲突时不强行覆盖，而是明确失败；
+- 公开 research pack 通过 privacy scan，没有冻结 runtime id、绝对本机路径或 shell 绝对路径。
+
+### 真实 Codex 显式调用：从宿主阻塞到外层补跑成功
+
+用户要求这篇文章在隔离临时 Git repo 中做一次真实 Codex 显式调用，用 `$receipt-renamer` 处理正常批次。writer sandbox 内的第一次尝试被只读 state DB 与 app-server 初始化权限拦截；这证明的是宿主边界，不是 Skill 失败。随后主控在外层用同一份 fixture、prompt 和 schema 补跑，没有改任务契约。
+
+最终冻结的真实运行结果是：
+
+- `status: completed`
+- `model: gpt-5.5`
+- `exec_exit_code: 0`
+- 返回值明确记录 `skill_invocation: "$receipt-renamer"`
+- `changed_files: ["?? reports/"]`
+- `reports_written: json=true, markdown=true`
+- `npm test`: `4/4` 通过
+- 三个源 PDF 保持原名，整个过程只是 dry run
+
+这次外层补跑把“按名字显式加载 Skill、读取 policy、调用确定性脚本、产出两种报告、再跑测试”串成了完整证据链。生产流程先保持 `partial`，随后由独立只读 reviewer 核对正文、研究包、实渲染图片和冻结结果；0/0/0 findings、96/100 后才升级为 `verified`。
+
+![从一次性 prompt 到 Skill metadata、Skill body、references/scripts，再到可验收输出的加载链](/images/articles/what-are-agent-skills/skill-load-chain.svg)
+*图注：一次性 prompt 先表达“这次要做什么”；只有当任务命中 Skill metadata 时，正文才被加载，再按需读取参考资料和确定性脚本，最后才产出可验收结果。*
+
+## 这张图背后的判断：为什么 Skill 不是“脚本 + 说明文档”的别名
+
+上图想教清一件常被低估的事：Skill 的关键不只是目录结构，而是**加载顺序带来的职责切分**。
+
+第一层是 prompt。它负责告诉 Agent：这次是 normal batch，还是 conflict batch；要不要顺手跑测试；这次只是 dry run 还是别的任务。没有这层，Agent 不知道“现在要做哪件事”。
+
+第二层是 metadata。开放规范和当前客户端文档都把 `name` / `description` 放在最前面。它们是可发现性的基础，决定这套工作包是不是该在这类任务里出现。没有 metadata，你只有一坨说明文档，却没有“何时该拉起它”的入口。
+
+第三层是 Skill body。它回答“进入后怎么协调”：先确认 dry run、再读政策、再跑脚本、再解释失败码。它不是脚本的中文注释，而是工作流本身。
+
+第四层是 resources。`references/` 放长说明，`scripts/` 放确定性逻辑，`assets/` 放模板。它们按需加载，既减少上下文浪费，也把最容易变成机械规则的部分下沉出去。
+
+最后才是 output。对这篇文章来说，合格输出不是“模型说自己懂了”，而是：
+
+- dry-run JSON 计划；
+- Markdown 验收摘要；
+- 或明确的 exit `21` / `23`；
+- 再加一条稳定的 privacy scan 结果。
+
+这就是为什么一个 Skill 不能简化成“一个脚本加一份 README”。README 通常是给人读的，脚本通常只会做确定性转换；Skill 则是把“什么时候用、怎么协调、去哪里读细节、如何解释失败、何时算完成”一起装成一个按需调用的工作包。
+
+## 什么时候不要做 Skill
+
+如果本文只讲“什么时候该做”，很容易把读者推向另一个极端：看见重复任务就想 Skill 化。实际上，很多任务不值得。
+
+### 情况一：只发生一次
+
+只做一次的任务，没有必要为它维护 metadata、目录结构和触发说明。prompt 就是最便宜的形式。
+
+### 情况二：规则还在探索
+
+如果每次做完你都在改流程，先继续用 prompt 或简单笔记探索。Skill 的前提是稳定，不是愿望。
+
+### 情况三：一个脚本就已经足够
+
+比如你明确知道永远只需要手工跑一条校验命令，也不需要 discoverability、不需要参考资料、不需要自然语言解释边界，那直接脚本更干净。
+
+### 情况四：真正缺的是外部连接，而不是流程包装
+
+如果问题的本质是“我需要让 Agent 读飞书、GitHub、数据库”，优先考虑 MCP。Skill 可以在流程里调用这些能力，但它本身不是外部系统连接器。
+
+### 情况五：你要解决的是团队分发，而不是流程本体
+
+如果工作流本身已经成熟，你下一步想的是“怎么让别的同事也能安装”，那关注点应该从 Skill 设计切到 plugin / 分发层，而不是继续往 `SKILL.md` 里堆东西。
+
+## 一个简单练习：拿你最近常贴的 prompt 过一遍升级门槛
+
+找一段你最近重复贴了三次以上的 prompt，用下面这张表过一遍：
+
+```yaml
+重复发生: 是 / 否
+输入输出稳定: 是 / 否
+需要长期 discoverability: 是 / 否
+有一段值得下沉为确定性脚本: 是 / 否
+如果四项里有三项以上为是:
+  优先考虑 Skill
+如果主要缺的是 repo 级长期规则:
+  优先补 AGENTS.md 或 CLAUDE.md
+如果主要缺的是外部系统接入:
+  优先看 MCP
+如果只是一条固定机械命令:
+  直接脚本
+```
+
+可观察的完成标准不是“你觉得像”，而是你能明确说出：
+
+1. 这次意图仍由 prompt 决定什么。
+2. 哪些规则属于始终适用，不该塞进 Skill。
+3. 哪些部分应下沉成脚本，而不是让模型重复猜。
+4. 这个能力未来是只给自己复用，还是还需要 plugin 分发。
+
+如果这四点说不清，先别做 Skill。说明它还没长成一个真正的工作包。
+
+## 来源与延伸阅读
+
+- [Agent Skills 规范：Specification](https://agentskills.io/specification)（一手规范，支撑目录结构、frontmatter、`scripts/` / `references/` / `assets/` 和渐进加载）
+- [OpenAI Learn：Build skills](https://learn.chatgpt.com/docs/build-skills)（一手文档，支撑 Codex 的 `.agents/skills`、`$skill`、脚本与确定性行为的边界）
+- [OpenAI Learn：Customization overview](https://learn.chatgpt.com/docs/customization/overview)（一手文档，支撑 `AGENTS.md`、Skills、MCP 的分层）
+- [Claude Code Docs：Extend Claude with skills](https://code.claude.com/docs/en/slash-commands)（一手文档，支撑 `/skill-name`、`.claude/skills`、`CLAUDE.md` 与 procedure 的边界）
+- [Claude Code Docs：Features overview](https://code.claude.com/docs/en/features-overview)（一手文档，支撑 `CLAUDE.md`、Skills、MCP、plugins 的扩展层分工）
+- [Claude Platform Docs：Agent Skills overview](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)（一手文档，支撑不同 Claude surface 的共享与路径边界）
+- [Agent Skills 橙皮书仓库](https://github.com/alchaincyf/agent-skills-orange-book)（中文主题地图 / 二手资料）
+
+官方资料支撑本文关于 Skill 结构、路径、加载、分层和 surface 边界的当前行为，均在 2026-07-12 复核。`receipt-renamer-skill` 的离线 replay、privacy scan 与外层真实 Codex 显式调用也是同日真实重跑。
+
+橙皮书部分只作为概念篇主题地图使用。本文阅读了本地临时镜像 `agent-skills-orange-book-zh.txt` 与 `agent-skills-orange-book/README_zh.md` 的概念相关段落，用于组织中文心智模型；作者署名为花叔。该仓库 README 当前说明仅供个人学习参考，未提供标准开源许可，也不授权未许可的商业传播。本文未复制其 PDF 正文、截图或图片，只保留链接、作者署名、用途与限制说明。

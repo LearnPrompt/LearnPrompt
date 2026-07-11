@@ -1,0 +1,4 @@
+scenario: missing-currency
+command: node .agents/skills/receipt-renamer/scripts/plan-renames.mjs --batch incoming/missing-currency-batch/receipts.json --policy .agents/skills/receipt-renamer/references/naming-policy.md --report reports/missing-currency-plan.md --json reports/missing-currency-plan.json
+exit_code: 21
+ERROR missing currency for vendor-lunch.pdf

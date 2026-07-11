@@ -1,0 +1,36 @@
+{
+  "batch_id": "normal-batch",
+  "dry_run": true,
+  "policy_reference": ".agents/skills/receipt-renamer/references/naming-policy.md",
+  "policy_digest": "YYYY-MM-DD_merchant-slug_CURRENCYamount.pdf",
+  "total_receipts": 3,
+  "items": [
+    {
+      "source_file": "metro-card.pdf",
+      "target_file": "2026-05-14_metro-card_USD7.25.pdf",
+      "receipt_date": "2026-05-14",
+      "merchant": "Metro Card",
+      "currency": "USD",
+      "total_amount": "7.25",
+      "reason": "Matches YYYY-MM-DD_merchant-slug_CURRENCYamount.pdf"
+    },
+    {
+      "source_file": "airport-taxi.pdf",
+      "target_file": "2026-05-15_airport-taxi_USD48.00.pdf",
+      "receipt_date": "2026-05-15",
+      "merchant": "Airport Taxi",
+      "currency": "USD",
+      "total_amount": "48.00",
+      "reason": "Matches YYYY-MM-DD_merchant-slug_CURRENCYamount.pdf"
+    },
+    {
+      "source_file": "monitor-stand.pdf",
+      "target_file": "2026-05-18_desk-foundry_USD124.40.pdf",
+      "receipt_date": "2026-05-18",
+      "merchant": "Desk Foundry",
+      "currency": "USD",
+      "total_amount": "124.40",
+      "reason": "Matches YYYY-MM-DD_merchant-slug_CURRENCYamount.pdf"
+    }
+  ]
+}

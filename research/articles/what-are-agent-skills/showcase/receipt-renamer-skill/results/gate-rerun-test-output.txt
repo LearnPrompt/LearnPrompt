@@ -1,0 +1,15 @@
+> test
+> node --test test/plan-renames.test.mjs
+
+✔ normal batch exits 0, writes both artifacts, and keeps source files unchanged (25.36575ms)
+✔ missing currency batch exits 21 (22.61175ms)
+✔ existing target conflict exits 23 (22.798666ms)
+✔ markdown report keeps dry-run acceptance lines (23.966ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 128.687542

@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "skill_invocation",
+    "batch",
+    "dry_run_confirmed",
+    "plan_json",
+    "plan_report",
+    "tests_command",
+    "tests_status",
+    "notes"
+  ],
+  "properties": {
+    "skill_invocation": {
+      "type": "string",
+      "const": "$receipt-renamer"
+    },
+    "batch": {
+      "type": "string",
+      "const": "normal-batch"
+    },
+    "dry_run_confirmed": {
+      "type": "boolean"
+    },
+    "plan_json": {
+      "type": "string",
+      "const": "reports/normal-batch-plan.json"
+    },
+    "plan_report": {
+      "type": "string",
+      "const": "reports/normal-batch-plan.md"
+    },
+    "tests_command": {
+      "type": "string",
+      "const": "npm test"
+    },
+    "tests_status": {
+      "type": "string",
+      "enum": ["passed", "failed", "not-run"]
+    },
+    "notes": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

@@ -1,0 +1,8 @@
+scenario: normal
+command: node .agents/skills/receipt-renamer/scripts/plan-renames.mjs --batch incoming/normal-batch/receipts.json --policy .agents/skills/receipt-renamer/references/naming-policy.md --report reports/normal-batch-plan.md --json reports/normal-batch-plan.json
+exit_code: 0
+PASS dry run plan created for normal-batch
+plan_json: reports/normal-batch-plan.json
+plan_report: reports/normal-batch-plan.md
+receipts: 3
+tests: npm test exit 0

@@ -1,0 +1,26 @@
+{
+  "batch_id": "normal-batch",
+  "receipts": [
+    {
+      "source_file": "metro-card.pdf",
+      "receipt_date": "2026-05-14",
+      "merchant": "Metro Card",
+      "total_amount": 7.25,
+      "currency": "usd"
+    },
+    {
+      "source_file": "airport-taxi.pdf",
+      "receipt_date": "2026-05-15",
+      "merchant": "Airport Taxi",
+      "total_amount": 48,
+      "currency": "usd"
+    },
+    {
+      "source_file": "monitor-stand.pdf",
+      "receipt_date": "2026-05-18",
+      "merchant": "Desk Foundry",
+      "total_amount": 124.4,
+      "currency": "usd"
+    }
+  ]
+}
