@@ -1,37 +1,207 @@
 ---
-title: Skills、Hooks、MCP 的分工
-description: 理解 Claude Code 扩展能力的三种边界。
+title: "Skill、Hook、MCP 怎么选：用三个问题分诊，而不是混成一锅"
+description: 根据重复工作流、事件时点保证、外部系统与数据三个问题选对扩展机制，知道何时组合、何时不该上 MCP。
 sidebar:
   order: 5
 difficulty: intermediate
 source_repo: alchaincyf/claude-code-orange-book
 source_url: https://github.com/alchaincyf/claude-code-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-11"
+reading_time: 14 分钟
+research_path: research/articles/skills-hooks-mcp-roles
+showcase_path: research/articles/skills-hooks-mcp-roles/showcase
+showcase_status: verified
+quality_score: 94
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 14 分钟 | 2026-07-11 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/claude-code-orange-book" url="https://github.com/alchaincyf/claude-code-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+你已经会写 CLAUDE.md，也在 `.claude/rules` 里放过几条项目规则。直到有一天需求变了：你想让 Claude 每次都按同一套步骤生成发布摘要，想在它 `git push` 之前拦一道，还想让它直接读 issue 跟踪系统里的 `LP-42`，而不是你手动把内容贴进聊天框。
 
-## 核心概念
+于是你打开文档，看到 Skill、Hook、MCP 三个词，然后开始纠结：这三样到底有什么区别？是不是随便挑一个都能凑合？很多人这时候会做出最贵的选择——把什么都包装成 MCP，或者用 Hook 去写一大段业务逻辑。结果流程能跑，但每加一个功能都要多维护一个进程、多调一次试。
 
-- Skill：把一套稳定工作流写成说明和脚本。
-- Hook：在特定时机自动触发检查或动作。
-- MCP：让 Agent 调用外部系统或本地服务。
+问题不在于你不会用某一个机制，而在于没有一把尺子判断需求属于哪一类。这篇文章给你三个判定问题，让你在动手之前就知道该建 Skill、配 Hook 还是接 MCP。
 
-## 怎么选
+## 读完你能做什么
 
-1. 只是教 Agent 怎么做：用 Skill。
-2. 每次保存、提交、运行前都要触发：用 Hook。
-3. 需要访问外部数据或工具：用 MCP。
+你会学会用三个问题给任何扩展需求做分诊：
 
-## 常见错误
+1. 这件事需要访问外部系统或数据吗？需要就走 MCP。
+2. 这件事需要在某个事件时点上做保证吗？需要就走 Hook。
+3. 这件事是同一套步骤反复执行吗？是就走 Skill。
 
-- 把所有能力都写成 MCP，增加维护成本。
-- 用 Hook 做复杂业务逻辑，导致难调试。
-- Skill 只有概念，没有可执行步骤和验收。
+你还会知道三种机制如何合法组合，以及在什么情况下不该上 MCP。最后，你会看到一个叫 `release-workbench` 的 Showcase：同一个真实任务（从 issue 加 diff 生成发布摘要）分别用三种机制演示，并有一个被设计闸门拒绝的误用反例，每一条结论都有退出码作证。
 
-## 实战案例
+![需求分类决策树：先问外部数据再问事件时点再问重复工作流，底部拆解合法组合与误用红线](/images/articles/skills-hooks-mcp-roles/mechanism-decision-tree.svg)
+*图注：读图顺序是从上到下先做减法——先排除最重的 MCP，再排除次重的 Hook，剩下的重复流程才落到最轻的 Skill；下半部左边是三种机制的合法组合，右边是每条误用红线，对应 Showcase 里的机械反例。*
 
-“淘金小镇 Skill”适合写成 Skill：用户提供信息源，Agent 抓取榜单、生成快照、产出日报。只有当它需要稳定访问外部 API 时，才考虑 MCP。
+:::note[三问顺序是教学综合，不是官方标准]
+官方文档分别讲解 Skill、Hook、MCP，并没有给出一张统一的决策树。本文把它们整理成一个先做减法的三问模型：从边界最重的选项开始排除，好处是你不会一上来就把简单需求塞进最贵的机制。
+:::
+
+## 三个判定问题：先排除最重的选项
+
+为什么要按 MCP、Hook、Skill 这个顺序问，而不是反过来？因为这三种机制的边界成本差得很远。
+
+Skill 最轻，一个 Markdown 文件就能工作，它只管流程。Hook 中等，它能在事件时点上拦截，但脚本看不到会话上下文。MCP 最重，它在 Claude Code 和外部系统之间架起一条跨进程通道，同时带来进程边界、信任边界和凭据边界三样负担。
+
+如果你从最轻的问起（先问是不是重复流程），几乎所有需求都会答是——因为大部分工作确实有固定步骤。于是你会习惯性地把连数据库、拦 push 这些需求也塞进 Skill，最后发现 Skill 根本管不了时点保证，也连不上外部系统。
+
+反过来先做减法就干净多了：先问要不要外部数据，把真正需要 MCP 的挑出来；再问要不要时点保证，把需要 Hook 的挑出来；剩下的纯本地重复流程，才交给 Skill。三个问题的答案可以同时为是，这时候就是组合，但每个是都对应一个明确的机制职责，不会含糊。
+
+## Skill：把重复流程从"始终加载"变成"按需调用"
+
+你可能会问：我已经能在 CLAUDE.md 里写步骤了，为什么还要 Skill？
+
+关键区别在加载时机。CLAUDE.md 在每次会话开始时全量进入上下文，内容越长，持续占用的上下文窗口越大。Skill 不一样，它的正文只在被用到时才加载。官方文档说得很直接：a skill's body loads only when it's used, so long reference material costs almost nothing until you need it。换句话说，一段几百行的操作手册，写进 CLAUDE.md 是每轮都背着走，写成 Skill 则是平时挂零成本，用到才付费。
+
+官方给的判断信号也很好记：当 CLAUDE.md 里某一段已经从一条事实长成了一套流程（a procedure rather than a fact），就该把它抽成 Skill。事实留在 CLAUDE.md，流程搬进 Skill。
+
+一个 Skill 就是一个目录加一个入口文件。最小结构是这样：
+
+```text
+.claude/skills/release-brief/
+└── SKILL.md
+```
+
+`SKILL.md` 由两部分组成：`---` 之间的 YAML frontmatter，以及调用后进入上下文的 Markdown 正文。frontmatter 字段本身都是可选的；其中 `description` 是官方建议填写的匹配信号，`when_to_use` 可以补充触发场景。`name` 通常只是展示名，项目 Skill 真正输入的命令名来自目录名，不能把它写成触发条件。本文 Showcase 里那个固化“从 issue 加 diff 生成发布摘要”的 Skill，正文就是五个固定步骤加一份输出契约：
+
+```markdown
+---
+name: release-brief
+description: 从一个 issue 和一段 diff 生成结构化发布摘要。
+---
+
+## 固定步骤
+1. 读 issue：提取标题、问题描述与验收标准。
+2. 读 diff：列出被改动的文件与关键函数。
+3. 归类改动：区分缺陷修复、功能新增还是纯重构。
+4. 评估风险：指出回归面与需要人工确认的点。
+5. 写验证步骤：给出可复制的复现或回归命令。
+```
+
+Skill 能不能真正复用，取决于它有没有一份可机械检查的契约。光写步骤不够，你还要能验证产出是否合格。Showcase 里的 `check-skill-contract.mjs` 就是干这个的：它读 `SKILL.md`，确认五步流程都在，再拿一份生成的发布摘要 JSON，检查 `issue`、`summary`、`change_type`、`risk`、`verification` 五个字段一个不少。缺字段就非零退出。这样"重复流程"才真的落成了可复用、可验收的资产，而不是一段好看的说明。
+
+## Hook：在事件时点上多一层机械保证
+
+CLAUDE.md 里写"请不要随便 push"是一条软提醒。模型大概率会听，但没有任何机械保证——它只是提示词里的一句话。如果你要的是"push 之前必须先过一道，而且这道不依赖模型是否记得规则"，那就该用 Hook。
+
+Hook 的核心是事件时点。PreToolUse 在一个工具调用真正执行之前触发（官方原文：Before a tool call executes. Can block it.）。触发时，你的脚本从标准输入收到一段 JSON，里面有 `tool_name` 和 `tool_input`：
+
+```json
+{
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Bash",
+  "tool_input": { "command": "git push origin main" }
+}
+```
+
+脚本读完就可以表态。要拦截，就在 `hookSpecificOutput` 里返回 `permissionDecision: "deny"`：
+
+```json
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PreToolUse",
+    "permissionDecision": "deny",
+    "permissionDecisionReason": "git push 属于对外发布动作，必须人工执行。"
+  }
+}
+```
+
+这里有一个特别容易踩的坑，值得单独强调。假如命令是安全的 `npm test`，你的脚本什么都不输出、以 exit 0 退出，会发生什么？很多人以为这等于"批准放行"。官方文档明确否认了这个理解：Exit code 0 with no output means the hook has no decision to report … The hook can deny the call, but staying silent doesn't approve it。静默退出的含义是"本 Hook 不表态"，控制权交回 Claude Code 正常的权限流程，由权限系统决定这次调用要不要问你。Hook 能拒绝，但沉默从来不是预先批准。
+
+这条语义边界决定了 Hook 该干什么、不该干什么。它擅长的是在确定的时点上做一个二元判断：拦，或者不表态。它不适合承载复杂业务逻辑——脚本拿到的只有一段事件 JSON，看不到会话上下文，无法推理，出了问题也难调试。把一整套业务编排塞进 Hook，等于用一个没有上下文、没有记忆的钩子去做本该由 Skill 或模型完成的活。
+
+## MCP：跨进程访问外部系统，也跨进了三重边界
+
+前两个机制都在本地打转：Skill 管流程，Hook 管时点。当需求变成"我要读别的系统里的数据"时，才轮到 MCP 出场。
+
+MCP（Model Context Protocol，模型上下文协议）把 Claude Code 连到外部工具、数据库和 API。官方给的触发信号很具体：当你发现自己在反复把某个工具里的数据往聊天框里贴时（copying data into chat from another tool），就该接一个 MCP server，让 Claude 直接读那个系统，而不是靠你手动搬运。本文 Showcase 里的场景正是如此——不再手动复制 issue `LP-42` 的内容，而是让一个 stdio server 把它提供出来。
+
+MCP 有多种传输方式：HTTP（官方推荐给远程服务）、stdio（本地进程）、SSE（已废弃）、WebSocket。本文只用最简单的 stdio：server 是你机器上的一个本地进程，Claude 通过它的标准输入输出用 JSON-RPC 通信。
+
+强大是有代价的。每接一个 MCP server，你就同时跨进了三重边界：
+
+- 进程边界：server 是独立进程，多一个要启动、要维护、可能会崩的东西。
+- 信任边界：你必须信任每个 server。官方文档专门警告，会抓取外部内容的 server 会让你暴露在 prompt injection 风险下（Servers that fetch external content can expose you to prompt injection risk）；项目级的 `.mcp.json` 也需要你显式批准才会生效。
+- 凭据边界：server 往往持有 API key 或 OAuth token，这些凭据活在 server 进程里，成为新的攻击面。
+
+所以 MCP 不是"更高级的 Skill"，它是一条通往外部世界的通道。只有当你确实需要跨过那道墙时，这三重边界才值得付。如果数据就在本地、流程是固定的，硬套 MCP 只会白白背上三样负担。
+
+## Showcase：release-workbench 用同一个任务证明三种机制
+
+为了让三种机制的边界看得见，Showcase 把它们放到同一个真实任务上：从 issue `LP-42` 加一段 diff，生成一份结构化发布摘要。同一个任务、四个证明，每个都有退出码。
+
+复现命令（在仓库根目录）：
+
+```bash
+node research/articles/skills-hooks-mcp-roles/showcase/release-workbench/scripts/release-gate.mjs
+```
+
+2026-07-11 的实际输出（关键行）：
+
+```text
+PASS [A] Skill 契约检查 (exit 0)
+PASS [B1] Hook 对 git push 返回 deny (exit 0)
+PASS [B2] Hook 对 npm test 不作决定/静默放行 (exit 0)
+PASS [C] MCP 子进程取回外部 issue LP-42 (exit 0)
+PASS [D1] 机制闸门放行 Skill 声明 (exit 0)
+PASS [D2] 机制闸门拒绝"本地固定流程包装成 MCP" (exit 3)
+SUMMARY 6/6 项符合预期
+```
+
+四个证明各自对应一种机制的职责：
+
+- **[A] 重复流程 → Skill**：`check-skill-contract.mjs` 读 `SKILL.md` 确认五步流程，再校验一份发布摘要满足 `issue/summary/change_type/risk/verification` 契约。通过，退出码 0。
+- **[B] 危险时点 → Hook**：用 fixture JSON 通过真实子进程 stdin 喂给 `pre-tool-use.mjs`。`git push` 事件拿到 `permissionDecision: "deny"`；`npm test` 事件 stdout 为空、exit 0——即静默不表态，交回正常权限流程，而不是批准。
+- **[C] 外部 issue → MCP**：`client-harness.mjs` 把 `issue-server.mjs` 当成真正的子进程启动，通过 stdin/stdout 依次 `initialize`、`tools/list`、`tools/call get_issue`、`resources/read`，取回 `LP-42` 数据。退出码 0。
+- **[D] 反例 → 被设计闸门拒绝**：机制闸门 `mechanism-gate.mjs` 把同一个纯本地固定流程声明成 MCP。因为它不访问任何外部系统或数据，闸门以退出码 3 拒绝，并提示正解是固化成 Skill。
+
+:::caution[这个 Showcase 不证明什么]
+`issue-server.mjs` 只实现演示所需的最小 JSON-RPC 方法（initialize / tools/list / tools/call / resources/read），不使用官方 SDK。它**只验证本文最小 JSON-RPC 边界，不宣称完整 MCP conformance，也不代表 Claude Code 的在线集成行为**。Hook 由 fixture 事件触发而非 Claude Code 在线事件；机制闸门是本文的教学模型，不是官方工具。这里证明的是机制边界与证据链，不是让某个模型在线实跑发布摘要。
+:::
+
+## 边界与反模式：什么时候不要上 MCP
+
+三个问题的答案可以同时为是，这时候就该组合——但组合的前提是各守边界。合法的组合长这样：Skill 的某一步调用 MCP tool 去取外部数据（Skill 管流程，MCP 管通道）；Hook 在 PreToolUse 拦截某个 MCP tool 的调用（Hook 管时点，MCP 管连接）。三条职责线互不侵占。
+
+真正的麻烦来自把边界搞混。下面几条反模式，每一条都对应一个具体的失败：
+
+- **把纯本地固定流程包装成 MCP**。这是最常见也最贵的错。一段本地就能跑完、不碰任何外部系统的逻辑，一旦套上 MCP，就凭空多出进程、信任、凭据三重边界。Showcase 里的机制闸门就是用退出码 3 把这种声明挡下来的。判据很简单：如果第一个问题（要不要外部数据）答否，就不该出现 MCP。
+- **用 Hook 写复杂业务逻辑**。Hook 只拿得到事件 JSON，没有会话上下文、不能推理、难调试。它适合做时点上的二元拦截，不适合当业务编排器。需要多步骤判断的活，交给 Skill 或模型。
+- **把 Skill 当 CLAUDE.md 用**。如果一段内容是每轮都要用到的事实或全局约束，写进 CLAUDE.md 或 `.claude/rules` 就好。硬做成 Skill 反而绕过了它按需加载的好处，或者干脆用不上。Skill 的价值在于流程被反复调用、而非始终在场。
+- **把 Hook 的静默当成批准**。这是安全上的坑：你以为配了 Hook 就拦住了危险操作，实际上只有明确 `deny` 才拦得住，静默只是不表态。凡是要拦的动作，必须显式返回拒绝。
+
+一句话收尾这一节：MCP 解决的是"数据在墙外"，不是"流程要复用"也不是"操作要拦截"。墙外没有东西要拿，就别去架那道通道。
+
+## 练习：给你的扩展需求做一次三问分诊
+
+找一个你最近想给 Claude Code 加的能力，按下面这张表走一遍，只填是或否：
+
+```yaml
+需求: ____________________
+Q1 需要访问外部系统或数据吗:  是 -> MCP / 否 -> 继续
+Q2 需要在某个事件时点做保证吗: 是 -> Hook / 否 -> 继续
+Q3 是同一套步骤反复执行吗:     是 -> Skill / 否 -> 写进 CLAUDE.md
+组合判断: 若多个为是，写清每个"是"对应哪条机制职责
+```
+
+验收标准：你能对着自己的答案说出每个机制负责的那一件事，并且没有出现"第一个问题答否却选了 MCP"这种矛盾。如果你选了组合，检查三条职责线有没有互相侵占——Skill 有没有偷偷承担时点保证，Hook 有没有塞进业务逻辑，MCP 有没有包住本地流程。
+
+想进一步验证，可以把本文 Showcase 跑一遍，特别是那个反例：把 `local-flow-as-mcp.json` 里的 `declared_mechanism` 改回 `skill`，看闸门从 REJECT（退出码 3）变成 ACCEPT（退出码 0）。你会直观地感到，机制选择不是风格偏好，而是可以被机械判定的对错。
+
+## 来源与延伸阅读
+
+- [Claude Code 官方文档：Skills](https://code.claude.com/docs/en/skills)
+- [Claude Code 官方文档：Hooks](https://code.claude.com/docs/en/hooks)
+- [Claude Code 官方文档：MCP](https://code.claude.com/docs/en/mcp)
+- [Claude Code 官方文档：Features overview](https://code.claude.com/docs/en/features-overview)
+- [Claude Code 橙皮书](https://github.com/alchaincyf/claude-code-orange-book)
+- [本篇研究包与可运行 Showcase](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/skills-hooks-mcp-roles)
+
+官方文档是一手来源，支撑本文所有当前产品行为，核对日期 2026-07-11、Claude Code 2.1.206。橙皮书作为中文二手主题地图，按其 CC BY-NC-SA 4.0 许可保留署名；本文的三问决策模型、论证与 Showcase 均已独立重构与复核，不代表官方统一分类。

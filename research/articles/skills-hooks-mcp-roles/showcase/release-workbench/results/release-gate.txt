@@ -1,0 +1,33 @@
+PASS [A] Skill 契约检查 (exit 0)
+     命令: node scripts/check-skill-contract.mjs
+     PASS skill: SKILL.md 固化了 5 步可复用流程
+     PASS skill: 发布摘要满足输出契约 (issue/summary/change_type/risk/verification)
+     PASS skill: change_type=fix, verification=2 条
+PASS [B1] Hook 对 git push 返回 deny (exit 0)
+     命令: node hooks/pre-tool-use.mjs < fixtures/hook-events/git-push.json
+     输出: {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"release-workbench 策略：git push 属于对外发布动作，必须人工执行，hook 直接拒绝。"}}
+PASS [B2] Hook 对 npm test 不作决定/静默放行 (exit 0)
+     命令: node hooks/pre-tool-use.mjs < fixtures/hook-events/npm-test.json
+     输出: <空> (交回正常权限流程；静默 != 预先批准)
+PASS [C] MCP 子进程取回外部 issue LP-42 (exit 0)
+     命令: node mcp/client-harness.mjs
+     PASS mcp: initialize 握手成功 (release-workbench-issue-server)
+     PASS mcp: tools/list 暴露 get_issue
+     PASS mcp: tools/call get_issue 取回 LP-42 — slugify 在连续分隔符下产生双连字符
+     PASS mcp: LP-42 acceptance 条数=2
+     PASS mcp: resources/read 取回 issue://LP-42
+     PASS mcp: 外部 issue 数据可通过独立子进程边界取得
+PASS [D1] 机制闸门放行 Skill 声明 (exit 0)
+     命令: node scripts/mechanism-gate.mjs fixtures/mechanism-specs/release-brief-as-skill.json
+     ACCEPT [从 issue + diff 生成发布摘要（固定五步，纯本地）]
+       声明机制=skill 与需求推导一致。
+PASS [D2] 机制闸门拒绝“本地固定流程包装成 MCP” (exit 3)
+     命令: node scripts/mechanism-gate.mjs fixtures/mechanism-specs/local-flow-as-mcp.json
+     REJECT [从 issue + diff 生成发布摘要（同一个纯本地固定流程，却想包装成 MCP）]
+       原因: 声明为 MCP，但该任务不访问任何外部系统或数据。
+       正解: 这是纯本地固定流程，应固化为 Skill；上 MCP 只会平白增加进程、信任与凭据边界。
+       建议机制: skill
+
+SUMMARY 6/6 项符合预期
+PASS release-workbench: 重复流程->Skill、危险时点->Hook、外部数据->MCP、错误包装->被拒 全部符合预期
+MASTER exit=0

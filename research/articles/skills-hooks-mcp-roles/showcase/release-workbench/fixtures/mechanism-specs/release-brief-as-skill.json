@@ -1,0 +1,9 @@
+{
+  "task": "从 issue + diff 生成发布摘要（固定五步，纯本地）",
+  "needs": {
+    "repeatable_workflow": true,
+    "event_timing_guarantee": false,
+    "external_system_or_data": false
+  },
+  "declared_mechanism": "skill"
+}

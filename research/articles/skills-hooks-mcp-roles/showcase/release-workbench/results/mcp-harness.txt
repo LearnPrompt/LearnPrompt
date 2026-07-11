@@ -1,0 +1,7 @@
+PASS mcp: initialize 握手成功 (release-workbench-issue-server)
+PASS mcp: tools/list 暴露 get_issue
+PASS mcp: tools/call get_issue 取回 LP-42 — slugify 在连续分隔符下产生双连字符
+PASS mcp: LP-42 acceptance 条数=2
+PASS mcp: resources/read 取回 issue://LP-42
+PASS mcp: 外部 issue 数据可通过独立子进程边界取得
+exit=0
