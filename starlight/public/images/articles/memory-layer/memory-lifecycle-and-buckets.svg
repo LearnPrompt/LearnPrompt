@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 820" role="img" aria-labelledby="title desc">
+  <title id="title">记忆层：按生命周期分五个桶，跨会话记忆按写入、召回、淘汰三段运转</title>
+  <desc id="desc">左侧按生命周期把信息分成五个桶：当前上下文活到本轮、任务状态活到本任务、持久项目指令与自动记忆与原始证据跨会话；记忆层只管跨会话这三个桶。右侧是跨会话记忆的生命周期：写入一条带事实、为什么、怎么用、验证日期、作用域的教训，进入以 MEMORY.md 索引加 topic 文件组织的记忆库；新进程通过召回闸门按相关性与时效取出并注入；过期、污染、隐私三种情况触发淘汰，不再注入。</desc>
+  <rect width="1200" height="820" fill="#f6faf8"/>
+  <text x="600" y="50" text-anchor="middle" font-family="system-ui, sans-serif" font-size="33" font-weight="700" fill="#0f2e25">记忆层：按生命周期分桶，跨会话记忆按写入 → 召回 → 淘汰运转</text>
+  <text x="600" y="86" text-anchor="middle" font-family="system-ui, sans-serif" font-size="19" fill="#3f6b5c">左边决定什么该进跨会话记忆，右边决定它何时被读取、何时被淘汰</text>
+
+  <!-- Panel A: five buckets on a lifetime axis -->
+  <g font-family="system-ui, sans-serif">
+    <rect x="36" y="116" width="546" height="646" rx="18" fill="#e8f5ef" stroke="#0d9488" stroke-width="2"/>
+    <text x="60" y="156" font-size="22" font-weight="700" fill="#0f5f52">按生命周期分五个桶</text>
+
+    <!-- lifetime axis -->
+    <text x="60" y="190" font-size="14" fill="#3f6b5c">生命周期越往下越长 →</text>
+
+    <!-- turn -->
+    <rect x="60" y="204" width="498" height="70" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="78" y="232" font-size="18" font-weight="700" fill="#334155">① 当前上下文</text>
+    <text x="78" y="256" font-size="13.5" fill="#64748b">活到本轮对话；/clear 即清、/compact 被压缩。不是记忆</text>
+    <rect x="470" y="216" width="76" height="26" rx="13" fill="#e2e8f0"/>
+    <text x="508" y="234" text-anchor="middle" font-size="12.5" fill="#475569">本轮</text>
+
+    <!-- task -->
+    <rect x="60" y="284" width="498" height="70" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="78" y="312" font-size="18" font-weight="700" fill="#334155">② 任务状态</text>
+    <text x="78" y="336" font-size="13.5" fill="#64748b">目标、进度、上次失败证据；任务完成即弃。属状态层</text>
+    <rect x="470" y="296" width="76" height="26" rx="13" fill="#e2e8f0"/>
+    <text x="508" y="314" text-anchor="middle" font-size="12.5" fill="#475569">本任务</text>
+
+    <!-- cross-session bracket -->
+    <rect x="52" y="368" width="514" height="378" rx="12" fill="#d6f0e6" stroke="#0d9488" stroke-width="2" stroke-dasharray="6 4"/>
+    <text x="72" y="396" font-size="16" font-weight="700" fill="#0f5f52">记忆层管这三个桶：跨会话持久</text>
+
+    <!-- persistent instructions -->
+    <rect x="72" y="410" width="474" height="90" rx="10" fill="#ffffff" stroke="#0d9488" stroke-width="1.5"/>
+    <text x="90" y="438" font-size="18" font-weight="700" fill="#0f5f52">③ 持久项目指令</text>
+    <text x="90" y="462" font-size="13.5" fill="#4b7d6e">你写的规则：CLAUDE.md / AGENTS.md，每次全量载入</text>
+    <text x="90" y="484" font-size="13.5" fill="#4b7d6e">谁写：人 · 何时读：每次会话 · 与指令层交叠</text>
+
+    <!-- auto memory -->
+    <rect x="72" y="510" width="474" height="98" rx="10" fill="#ffffff" stroke="#0d9488" stroke-width="2"/>
+    <text x="90" y="538" font-size="18" font-weight="700" fill="#0f5f52">④ 自动记忆 / 长期记忆　（记忆层核心）</text>
+    <text x="90" y="562" font-size="13.5" fill="#4b7d6e">模型写的教训与模式：build 命令、调试洞见、偏好</text>
+    <text x="90" y="584" font-size="13.5" fill="#4b7d6e">谁写：模型 · 何时读：索引每次载入、细节按需</text>
+
+    <!-- raw evidence -->
+    <rect x="72" y="618" width="474" height="86" rx="10" fill="#ffffff" stroke="#0d9488" stroke-width="1.5"/>
+    <text x="90" y="646" font-size="18" font-weight="700" fill="#0f5f52">⑤ 原始证据</text>
+    <text x="90" y="670" font-size="13.5" fill="#4b7d6e">日志、diff、测试报告：用指针引用，不内联进记忆</text>
+    <text x="90" y="690" font-size="13.5" fill="#4b7d6e">支撑可追溯：记忆是压缩索引，证据留在原处</text>
+
+    <text x="72" y="730" font-size="13" fill="#0f5f52">错层是常见失败：把②当记忆，或把③④每轮靠上下文重述</text>
+  </g>
+
+  <!-- Panel B: write -> recall -> evict -->
+  <g font-family="system-ui, sans-serif">
+    <rect x="600" y="116" width="564" height="646" rx="18" fill="#fff7ec" stroke="#d97706" stroke-width="2"/>
+    <text x="624" y="156" font-size="22" font-weight="700" fill="#8a4b0a">跨会话记忆的生命周期</text>
+
+    <!-- write -->
+    <rect x="624" y="176" width="516" height="118" rx="10" fill="#ffffff" stroke="#d97706" stroke-width="2"/>
+    <text x="642" y="204" font-size="18" font-weight="700" fill="#8a4b0a">① 写入：一条可审计教训</text>
+    <text x="642" y="228" font-size="13.5" fill="#6b4a1a">事实 + 为什么 + 怎么用 + 验证日期 + 作用域 + 证据指针</text>
+    <text x="642" y="250" font-size="13.5" fill="#6b4a1a">只记跨会话可复用的持久事实（第二次犯的错就该写下来）</text>
+    <text x="642" y="272" font-size="13.5" fill="#b91c1c">绝不写：密钥 / session id / 绝对路径 / 用户私密历史</text>
+
+    <text x="882" y="312" text-anchor="middle" font-size="20" fill="#d97706">▼</text>
+
+    <!-- store -->
+    <rect x="624" y="322" width="516" height="86" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+    <text x="642" y="350" font-size="17" font-weight="700" fill="#8a4b0a">② 记忆库：索引 + 细节，压缩存放</text>
+    <text x="642" y="374" font-size="13.5" fill="#6b4a1a">MEMORY.md 索引（每次只载入它）＋ topic 文件（按需再读）</text>
+    <text x="642" y="394" font-size="13.5" fill="#6b4a1a">压缩：把库读成事实索引，不把整段日志抄进上下文</text>
+
+    <text x="882" y="428" text-anchor="middle" font-size="20" fill="#d97706">▼</text>
+
+    <!-- recall gate -->
+    <rect x="624" y="438" width="516" height="96" rx="10" fill="#ffffff" stroke="#0d9488" stroke-width="2"/>
+    <text x="642" y="466" font-size="17" font-weight="700" fill="#0f5f52">③ 召回闸门：新进程按相关性 + 时效取出</text>
+    <text x="642" y="490" font-size="13.5" fill="#4b7d6e">相关性门控：trigger 命中当前任务才注入，不是全量倒入</text>
+    <text x="642" y="512" font-size="13.5" fill="#4b7d6e">召回 → 注入 → 据此行动，避开同类错误（exit 1 → 0）</text>
+
+    <!-- inject success arrow to bottom -->
+    <path d="M 700 534 V 566" fill="none" stroke="#16a34a" stroke-width="2"/>
+    <rect x="624" y="566" width="250" height="72" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+    <text x="642" y="594" font-size="15" font-weight="700" fill="#166534">命中且未过期 → 注入</text>
+    <text x="642" y="616" font-size="12.5" fill="#3f6b5c">但：不召回则零作用</text>
+    <text x="642" y="632" font-size="12.5" fill="#3f6b5c">记忆 ≠ 模型自动记住</text>
+
+    <!-- evict -->
+    <path d="M 1000 534 V 566" fill="none" stroke="#b91c1c" stroke-width="2" stroke-dasharray="5 4"/>
+    <rect x="890" y="566" width="250" height="72" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+    <text x="908" y="592" font-size="15" font-weight="700" fill="#991b1b">④ 淘汰：不再注入</text>
+    <text x="908" y="612" font-size="12.5" fill="#7c3a3a">过期：一次性状态过 expires</text>
+    <text x="908" y="630" font-size="12.5" fill="#7c3a3a">污染 / 隐私：错写或敏感即删</text>
+
+    <!-- footer note inside panel -->
+    <rect x="624" y="660" width="516" height="80" rx="10" fill="#fffdf7" stroke="#e2c48a" stroke-width="1.5"/>
+    <text x="642" y="686" font-size="13.5" fill="#6b4a1a">Showcase：无记忆时两个独立进程重复同一个错；写入一条教训后</text>
+    <text x="642" y="708" font-size="13.5" fill="#6b4a1a">新进程召回 → 先跑 setup → 校验通过；过期条目被 EVICT；</text>
+    <text x="642" y="730" font-size="13.5" fill="#6b4a1a">有记忆但不召回仍重复犯错。全程无在线大模型，不构成模型排名。</text>
+  </g>
+
+  <text x="600" y="792" text-anchor="middle" font-size="14" fill="#0f5f52">分类为 LearnPrompt 对官方两套记忆机制的操作化归纳；产品行为以官方一手文档为准，核验 2026-07-11</text>
+</svg>

@@ -1,0 +1,41 @@
+memory-recall Showcase — 冻结的脱敏运行结果
+环境：Node v24.11.0；核对 Claude Code 2.1.206、codex-cli 0.142.2；macOS。
+运行日期：2026-07-11。原始日志在工作树外（$TMPDIR）采集，本文件为脱敏摘录。
+本 Showcase 无网络依赖、未运行任何在线大模型，因此不构成任何模型排名。
+
+### 阶段1a：无记忆的独立进程（记忆库为空/从未写过）
+--- session mode=no-memory today=2026-07-11 ---
+FAIL build-token：缺少 data/fixture.json —— 该文件由 setup 生成、不入库（.gitignore），全新进程默认不存在；必须先运行 node src/setup.mjs
+result: exit=1
+
+### 阶段1b：第二个独立进程，同样没有记忆 —— 复现同一个错
+--- session mode=no-memory today=2026-07-11 ---
+FAIL build-token：缺少 data/fixture.json —— 该文件由 setup 生成、不入库（.gitignore），全新进程默认不存在；必须先运行 node src/setup.mjs
+result: exit=1
+
+### 阶段2：把一条可审计教训写入记忆库后，召回闸门能取出它
+recall tag=build-token today=2026-07-11
+RECALL fixture-before-verify [durable-lesson]
+RECALL mirror-slow-on-0711 [one-time-state]
+summary: 2 recalled, 0 evicted
+
+### 阶段3：全新独立进程，先召回再行动 —— 避开同类错误
+--- session mode=with-memory today=2026-07-11 ---
+recall tag=build-token today=2026-07-11
+RECALL fixture-before-verify [durable-lesson]
+RECALL mirror-slow-on-0711 [one-time-state]
+summary: 2 recalled, 0 evicted
+setup：已生成 data/fixture.json
+PASS build-token：fixture.json 就位，token=ready-2026
+result: exit=0
+
+### 阶段4a：过期淘汰 —— 时间推进到 2026-07-13，一次性状态被 EVICT，durable 教训存活
+recall tag=build-token today=2026-07-13
+RECALL fixture-before-verify [durable-lesson]
+EVICT  mirror-slow-on-0711 — 已过期（expires 2026-07-12 < 2026-07-13），不注入
+summary: 1 recalled, 1 evicted
+
+### 阶段4b：记忆在盘上但进程不召回 —— 教训零作用（≠模型自动记住）
+--- session mode=skip-recall today=2026-07-11 ---
+FAIL build-token：缺少 data/fixture.json —— 该文件由 setup 生成、不入库（.gitignore），全新进程默认不存在；必须先运行 node src/setup.mjs
+result: exit=1
