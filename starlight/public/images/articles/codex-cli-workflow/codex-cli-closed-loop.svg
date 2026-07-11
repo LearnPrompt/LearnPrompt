@@ -1,0 +1,71 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Codex CLI closed loop from contract to deterministic gate</title>
+  <desc id="desc">A workflow diagram showing interactive Codex discovery feeding a frozen task contract, then Codex exec producing a patch, tests, diff, and report that a deterministic gate validates.</desc>
+  <rect width="1200" height="760" fill="#F7F1E8"/>
+  <rect x="36" y="36" width="1128" height="688" rx="28" fill="#FFF9F1" stroke="#D8C5AA" stroke-width="2"/>
+
+  <text x="72" y="92" fill="#2F2419" font-size="34" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif" font-weight="700">Codex CLI 从聊天到可验证闭环</text>
+  <text x="72" y="126" fill="#6B5641" font-size="18" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">交互式 codex 负责把需求问清楚；codex exec 负责在冻结 contract 后跑一次可审查自动化。</text>
+
+  <rect x="72" y="172" width="250" height="180" rx="22" fill="#17324D"/>
+  <text x="100" y="214" fill="#F7F1E8" font-size="26" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif" font-weight="700">交互 codex</text>
+  <text x="100" y="248" fill="#D9E8F4" font-size="18" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">适合 discovery：</text>
+  <text x="100" y="278" fill="#D9E8F4" font-size="18" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">1. 看目录与工作树</text>
+  <text x="100" y="306" fill="#D9E8F4" font-size="18" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">2. 问清允许范围</text>
+  <text x="100" y="334" fill="#D9E8F4" font-size="18" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">3. 冻结验收命令</text>
+
+  <rect x="374" y="156" width="452" height="212" rx="26" fill="#FFF3D8" stroke="#C98B2E" stroke-width="3"/>
+  <text x="408" y="208" fill="#7A4C0F" font-size="28" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif" font-weight="700">冻结 task contract</text>
+  <text x="408" y="246" fill="#5E4322" font-size="19" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">goal：修什么行为</text>
+  <text x="408" y="276" fill="#5E4322" font-size="19" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">allowed_paths：只准改哪些文件</text>
+  <text x="408" y="306" fill="#5E4322" font-size="19" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">forbidden_paths：碰到哪些文件就算越界</text>
+  <text x="408" y="336" fill="#5E4322" font-size="19" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">verify：至少要跑什么测试 / diff</text>
+
+  <rect x="878" y="172" width="250" height="180" rx="22" fill="#EFE2CF" stroke="#B89972" stroke-width="2"/>
+  <text x="906" y="214" fill="#4A3420" font-size="26" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif" font-weight="700">隔离仓库</text>
+  <text x="906" y="248" fill="#6B5641" font-size="18" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">工作树外创建</text>
+  <text x="906" y="276" fill="#6B5641" font-size="18" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">临时 Git repo</text>
+  <text x="906" y="304" fill="#6B5641" font-size="18" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">raw logs 先写外部目录</text>
+  <text x="906" y="332" fill="#6B5641" font-size="18" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">repo 内只留脱敏证据</text>
+
+  <rect x="374" y="414" width="452" height="124" rx="26" fill="#204E38"/>
+  <text x="408" y="462" fill="#F3F8F4" font-size="30" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif" font-weight="700">codex exec</text>
+  <text x="408" y="498" fill="#D9EBDF" font-size="18" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">--ephemeral  --sandbox workspace-write  -a never</text>
+  <text x="408" y="526" fill="#D9EBDF" font-size="18" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">--json  --output-schema  --output-last-message</text>
+
+  <rect x="72" y="592" width="200" height="92" rx="18" fill="#FFFFFF" stroke="#1F6B53" stroke-width="2"/>
+  <text x="102" y="638" fill="#204E38" font-size="24" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif" font-weight="700">patch</text>
+  <text x="102" y="666" fill="#557565" font-size="16" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">只改允许文件</text>
+
+  <rect x="296" y="592" width="200" height="92" rx="18" fill="#FFFFFF" stroke="#1F6B53" stroke-width="2"/>
+  <text x="326" y="638" fill="#204E38" font-size="24" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif" font-weight="700">test</text>
+  <text x="326" y="666" fill="#557565" font-size="16" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">先看退出码，再看内容</text>
+
+  <rect x="520" y="592" width="200" height="92" rx="18" fill="#FFFFFF" stroke="#1F6B53" stroke-width="2"/>
+  <text x="550" y="638" fill="#204E38" font-size="24" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif" font-weight="700">diff</text>
+  <text x="550" y="666" fill="#557565" font-size="16" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">stat + 目标文件差异</text>
+
+  <rect x="744" y="592" width="200" height="92" rx="18" fill="#FFFFFF" stroke="#1F6B53" stroke-width="2"/>
+  <text x="774" y="638" fill="#204E38" font-size="24" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif" font-weight="700">report</text>
+  <text x="774" y="666" fill="#557565" font-size="16" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">JSON final message</text>
+
+  <rect x="968" y="560" width="160" height="124" rx="22" fill="#6B2E1A"/>
+  <text x="992" y="610" fill="#FFF5F1" font-size="22" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif" font-weight="700">deterministic</text>
+  <text x="1013" y="638" fill="#FFF5F1" font-size="22" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif" font-weight="700">gate</text>
+  <text x="992" y="668" fill="#F3D8CF" font-size="16" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">好 patch 重放</text>
+
+  <path d="M322 262H356" stroke="#B97922" stroke-width="6" stroke-linecap="round"/>
+  <path d="M826 262H860" stroke="#B97922" stroke-width="6" stroke-linecap="round"/>
+  <path d="M600 368V394" stroke="#1F6B53" stroke-width="6" stroke-linecap="round"/>
+  <path d="M600 538V564" stroke="#1F6B53" stroke-width="6" stroke-linecap="round"/>
+  <path d="M272 638H284" stroke="#1F6B53" stroke-width="5" stroke-linecap="round"/>
+  <path d="M496 638H508" stroke="#1F6B53" stroke-width="5" stroke-linecap="round"/>
+  <path d="M720 638H732" stroke="#1F6B53" stroke-width="5" stroke-linecap="round"/>
+  <path d="M944 638H960" stroke="#6B2E1A" stroke-width="5" stroke-linecap="round"/>
+
+  <path d="M1048 558C1048 520 1040 496 1016 476C984 448 930 446 850 446" stroke="#6B2E1A" stroke-width="5" stroke-linecap="round" stroke-dasharray="10 10"/>
+  <path d="M850 446L872 434" stroke="#6B2E1A" stroke-width="5" stroke-linecap="round"/>
+  <path d="M850 446L872 458" stroke="#6B2E1A" stroke-width="5" stroke-linecap="round"/>
+
+  <text x="890" y="430" fill="#6B2E1A" font-size="18" font-family="'Avenir Next', 'Helvetica Neue', Arial, sans-serif">不再调用模型，直接验 patch</text>
+</svg>

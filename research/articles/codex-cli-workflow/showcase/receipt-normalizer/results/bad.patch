@@ -1,0 +1,7 @@
+diff --git a/README.md b/README.md
+index bf87dae..40dcb08 100644
+--- a/README.md
++++ b/README.md
+@@ -11,0 +12,2 @@ The implementation is intentionally buggy; the tests define the intended behavio
++
++Unsafe manual README edit.

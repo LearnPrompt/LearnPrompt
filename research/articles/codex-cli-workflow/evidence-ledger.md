@@ -1,0 +1,18 @@
+# 证据台账
+
+| 编号 | claim（正文中的事实主张） | evidence（证据） | evidence type | 验证日期 | 置信度 | limitation |
+| --- | --- | --- | --- | --- | --- | --- |
+| C1 | `codex exec` 用于脚本与 CI 这类非交互场景 | [Non-interactive mode](https://learn.chatgpt.com/docs/non-interactive-mode) | 一手官方文档 | 2026-07-11 | 高 | 文档描述产品定位，不代替本机参数核对 |
+| C2 | 默认情况下，`codex exec` 把进度流到 `stderr`，最终消息写到 `stdout`；启用 `--json` 后 `stdout` 变成 JSONL 事件流 | [Non-interactive mode](https://learn.chatgpt.com/docs/non-interactive-mode)；`showcase/receipt-normalizer/results/stdout-sanitized.jsonl`；`showcase/receipt-normalizer/results/privacy-scan.txt` | 官方文档 + 真实运行 | 2026-07-11 | 高 | 本机 stderr 中还混入了本地插件/skills 警告 |
+| C3 | `--output-schema` 可以约束最终结构化输出；`--output-last-message` 可把最终消息单独写文件 | [Non-interactive mode](https://learn.chatgpt.com/docs/non-interactive-mode)；[Developer commands](https://learn.chatgpt.com/docs/developer-commands?surface=cli)；`showcase/receipt-normalizer/results/final-report.json` | 官方文档 + 真实运行 | 2026-07-11 | 高 | 结构正确不等于结论正确，仍需 deterministic gate |
+| C4 | `codex exec resume --last` 依赖已记录 session；`--ephemeral` 则不把 session rollout files 持久化到磁盘 | [Non-interactive mode](https://learn.chatgpt.com/docs/non-interactive-mode)；[Developer commands](https://learn.chatgpt.com/docs/developer-commands?surface=cli)；本机 `codex exec --help` / `codex exec resume --help` | 官方文档 + 本机 CLI | 2026-07-11 | 高 | “ephemeral run 不适合 resume”是基于两条定义的编辑部综合 |
+| C5 | `codex exec` 默认要求在 Git 仓库里运行；可用 `--skip-git-repo-check` 覆盖 | [Non-interactive mode](https://learn.chatgpt.com/docs/non-interactive-mode)；[Developer commands](https://learn.chatgpt.com/docs/developer-commands?surface=cli) | 一手官方文档 | 2026-07-11 | 高 | 本文 Showcase 没有去掉 Git 检查，而是显式保留 |
+| C6 | sandbox 与 approval policy 是两条独立轴线；`--ask-for-approval never` 可与 `workspace-write` 组合 | [Agent approvals & security](https://learn.chatgpt.com/docs/agent-approvals-security)；本机 `codex --help` | 官方文档 + 本机 CLI | 2026-07-11 | 高 | 本机 `codex exec --help` 不列出 `--ask-for-approval`，它在全局帮助里 |
+| C7 | `workspace-write` 下 `.git`、`.agents`、`.codex` 仍是受保护路径 | [Agent approvals & security](https://learn.chatgpt.com/docs/agent-approvals-security) | 一手官方文档 | 2026-07-11 | 高 | 保护语义来自默认 policy；其他外层隔离仍应另行配置 |
+| C8 | 本机当前版本是 `codex-cli 0.142.2` | 本机 `codex --version` | 本机 CLI | 2026-07-11 | 高 | 版本会变化 |
+| C9 | `codex exec` 自身支持 `--ephemeral`、`--json`、`--output-schema`、`--skip-git-repo-check`、`--ignore-user-config`、`--ignore-rules` | 本机 `codex exec --help` | 本机 CLI | 2026-07-11 | 高 | 仅代表 0.142.2 |
+| C10 | `--ask-for-approval` 是全局 flag，不是 `codex exec` 子命令自己的 option | 本机 `codex --help` 与 `codex exec --help` 对照；首次错误 raw stderr | 本机 CLI + 真实预演 | 2026-07-11 | 高 | 只证明这版 CLI 的参数分层 |
+| C11 | `gpt-5.6-sol` 在 `codex-cli 0.142.2` 上被服务端以“需要更新 CLI”拒绝 | `showcase/receipt-normalizer/results/environment-boundary.md` 中的 preflight 记录 | 真实运行 | 2026-07-11 | 高 | 只说明该模型名与该 CLI 版本不兼容，不代表模型本身不可用 |
+| C12 | 在隔离仓库里固定 `gpt-5.5` 后，真实 `codex exec` 只修改了 `src/normalizeReceipt.js`，测试通过，最终报告满足 schema，公开 research pack 中的 stdout 摘录已通过 privacy scan | `showcase/receipt-normalizer/results/good.patch`、`test-output.txt`、`final-report.json`、`stdout-sanitized.jsonl`、`privacy-scan.txt` | 真实运行 + 机械脱敏验证 | 2026-07-11 | 高 | 单次成功不代表普遍能力排名 |
+| C13 | 本文 deterministic gate 能在不调用模型的情况下离线 replay good patch，并拒绝修改 README 的 bad patch；冻结 replay 里 bad case 的真实退出码是 3 | `showcase/receipt-normalizer/results/replay-result.txt`、`release-gate-good.txt`、`release-gate-bad.txt` | 本地确定性验证 | 2026-07-11 | 高 | gate 验证的是本文 contract，不是通用 patch 安全分析器 |
+| C14 | Codex Orange Book 只保留为中文二手主题地图，公开正文删除 `SourceCard`，但保留仓库与 CC BY-NC-SA 4.0 许可说明 | [alchaincyf/codex-orange-book](https://github.com/alchaincyf/codex-orange-book) | 二手主题地图 | 2026-07-11 | 高 | 不作为现行事实权威 |

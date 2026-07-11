@@ -1,0 +1,7 @@
+diff --git a/src/normalizeReceipt.js b/src/normalizeReceipt.js
+index 03fef6c..012e6e6 100644
+--- a/src/normalizeReceipt.js
++++ b/src/normalizeReceipt.js
+@@ -15 +15 @@ export function normalizeReceipt(input) {
+-  return `RCPT-${digits.slice(0, 4).padStart(4, "0")}`;
++  return `RCPT-${digits.slice(-4).padStart(4, "0")}`;
