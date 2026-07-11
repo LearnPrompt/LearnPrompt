@@ -23,6 +23,13 @@
 | `claude-code/skills-hooks-mcp-roles.mdx` | 初审 FAIL 94/100（1 factual minor）→ 修正事实与证据台账 → PASS 94/100（0/0/0） | verified |
 | `claude-code/multi-agent-collaboration.mdx` | 初审 FAIL 84/100（1 major）→ 新增双独立 worker 实跑 → PASS 93/100（0/0/0）；合并后 Unicode 路径窄审 FAIL（1 major）→ 修复 → 新会话复审 PASS（0/0/0） | verified |
 
+## 第四对结果
+
+| 文章 | 审稿链路 | 最终状态 |
+| --- | --- | --- |
+| `claude-code/chrome-extension-prototype.mdx` | 初审 FAIL 81/100（2 major / 1 minor）→ PASS 96/100（0/0/0） | verified |
+| `claude-code/content-automation-pipeline.mdx` | 初审 FAIL 72/100（有效 blocker 1 / major 3）→ follow-up FAIL 92/100（1 major）→ PASS 100/100（0/0/0）；主分支 EOF 稳定性窄审 PASS（0/0/0） | verified |
+
 ## 关闭的问题
 
 `install-and-first-project`：
@@ -66,6 +73,21 @@
 - 合并到含中文的主仓库路径后，现场重放暴露 `URL.pathname` 与手拼 `file://` 的 percent-encoding 缺陷；四处统一改用 `fileURLToPath` / `pathToFileURL`。第一次独立窄审发现遗漏并 FAIL，补齐后新的只读会话 PASS，worker CLI、双进程集成、正负门禁与 e2e 全部重跑通过。
 - 920×560 合并门禁流程图通过视觉检查；冻结 worker SHA 已随最终源码重算并由 reviewer 核对。
 
+`chrome-extension-prototype`：
+
+- 用“当前页阅读卡”替代抽象扩展示例：快捷键触发 `activeTab`，service worker 通过 `scripting` 读取标题、URL 与选中文本，写入 `storage.local`，popup 只读展示最近成功结果与最近运行状态。
+- Chrome for Testing 150 真实完成 22 项机械检查；official branded Chrome 150 因 Chrome 137+ 的 `--load-extension` 边界，只保留 `chrome://extensions -> Load unpacked` 人工验收，不伪造自动化结果。
+- 受限 `chrome://` 页面失败不会覆盖上一张成功卡片；故意申请 `tabs + unlimitedStorage + <all_urls>` 的 manifest 被权限审计拒绝。
+- 统一 brief、正文、README 与 evidence 的浏览器口径，修复教学图三处越框和 README 占位路径；1200×720 实际渲染复审 PASS。
+
+`content-automation-pipeline`：
+
+- 将一次性“抓取、总结、发布”改成七阶段双来源周报：`snapshot / normalize / dedupe / score / draft / verify / approve`，模型摘要只作为可替换边界。
+- 一键脚本真实重放成功、缺来源字段、草稿 contract 被破坏、未人工批准四场景，退出码为 0/21/23/31；`blocked_data_quality` 不冒充 `no_content`，本地 `publish-candidate` 不冒充已外发。
+- 补齐 raw stdout/stderr 先写 `os.tmpdir()`、再读回脱敏冻结、最后清理的 provenance 闭环；四个场景只有全部 raw 写入和退出码核对成功后才更新 summary。
+- 统一六段/七阶段漂移、补齐退出码 23、修正文与工件字段名，并将教学图重排为七阶段主路径和三张互不越界的失败卡。
+- 主分支重复重放发现草稿 EOF 多写空行；修生成器后冻结工件保持无 diff，独立只读窄审确认语义不变。
+
 ## Writer 与重试记录
 
 - 两路 Claude writer 均完成一手研究、真实 Showcase 和部分工件后遇到同一外部配额错误；保留已完成工件，没有伪造或重跑结果。
@@ -73,17 +95,18 @@
 - Codex CLI 首次继承了当前安装不支持的默认模型配置，启动阶段即退出、未修改内容；固定到本机模型缓存中的 `gpt-5.4` 后恢复生产。
 - 第二对的两路 Claude 初始 writer 分别遇到认证失败与服务端持续重试；每篇只调用一次 skill，随后各使用一次 Codex GPT-5.4 恢复机会完成 partial 稿，没有重复调用 skill。
 - 第三对两路 Claude Opus writer 均一次完成 partial 稿；每篇严格只调用一次 skill，未消耗恢复重试预算。
+- 第四对两路 Claude Opus 在执行前遇到外部 503/403，token 为 0、工作树无改动，也未实际调用 Skill。Chrome 使用第 1 次 Codex GPT-5.4 恢复；内容流水线的第 1 次 Claude 恢复仍失败，随后使用第 2 次 Codex GPT-5.4 恢复。两位 Codex writer 各完整读取并使用一次本地 Skill，没有重复调用。
 - reviewer 与 writer 始终为独立会话；reviewer 使用 read-only sandbox，原始报告只写工作树外。
 
 ## 门禁结果
 
-- 本 Wave 六篇均为 `showcase_status: verified`，质量分 96、93、92、98、94、93。
-- 六张原创教学 SVG 均通过语义教学价值和 CC BY-NC-SA 4.0 许可审查。
-- 第三对两篇单独 verified validator：PASS；两条 lane 的 49 页构建：PASS。
-- 合并并修复主路径回放问题后，20 篇 verified 全量 validator：PASS。
+- 本 Wave 八篇均为 `showcase_status: verified`，质量分 96、93、92、98、94、93、96、100。
+- 八张原创教学 SVG 均通过语义教学价值和 CC BY-NC-SA 4.0 许可审查。
+- 第四对两篇单独 verified validator：PASS；两条 lane 的 49 页构建：PASS。
+- 合并并修复主分支重复重放问题后，22 篇 verified 全量 validator：PASS。
 - Validator 回归：1 positive / 3 depth negatives / 11 privacy negatives / 11 visual negatives / 7 review negatives，全部 PASS。
 - 主分支完整构建：49 页 PASS。
-- 当前全站计数：20 verified / 21 个仍含 SourceCard 的待处理深度教程。
+- 当前全站计数：22 verified / 19 个仍含 SourceCard 的待处理深度教程。
 
 ## 本地提交
 
@@ -94,5 +117,8 @@
 - `73624b8 docs(claude-code): goldenize skills hooks MCP roles (94)`
 - `30d47a7 docs(claude-code): goldenize multi-agent collaboration (93)`
 - `9ee5bcb fix(showcase): decode multi-agent fixture paths`
+- `47b713a docs(claude-code): goldenize Chrome extension prototype (96)`
+- `fe33d1d docs(claude-code): goldenize content automation pipeline (100)`
+- `ac5d600 fix(showcase): keep content drafts replay-stable`
 
 没有 push、部署或发布。
