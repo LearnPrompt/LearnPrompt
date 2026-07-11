@@ -1,0 +1,15 @@
+=== git diff（切片一，最小可读改动）===
+diff --git a/split-bill.mjs b/split-bill.mjs
+index 3def77d..5a23b0f 100644
+--- a/split-bill.mjs
++++ b/split-bill.mjs
+@@ -7,6 +7,7 @@ export function splitEvenly(totalCents, people) {
+   if (!Number.isInteger(people) || people <= 0) {
+     throw new Error("people 必须是正整数");
+   }
+-  // TODO: 待实现
+-  return [];
++  // 切片一：先做最直观的均分（四舍五入到分）。
++  const each = Math.round(totalCents / people);
++  return Array(people).fill(each);
+ }

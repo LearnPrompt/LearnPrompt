@@ -1,0 +1,37 @@
+# 命令：node --test（切片一，故意未处理余数）
+# 退出码：1
+
+✔ 整除时人人相等 (0.695417ms)
+✖ 最快检查：任何拆分结果之和必须严格等于总额（守恒） (0.370792ms)
+✔ 相邻两人差额不超过 1 分 (0.065166ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 2
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 34.768833
+
+✖ failing tests:
+
+test at split-bill.test.mjs:9:1
+✖ 最快检查：任何拆分结果之和必须严格等于总额（守恒） (0.370792ms)
+  AssertionError [ERR_ASSERTION]: sum(3333,3333,3333) 应为 10000，实际 9999
+
+  9999 !== 10000
+
+      at TestContext.<anonymous> (file://<workdir>/split-bill.test.mjs:13:12)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 9999,
+    expected: 10000,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

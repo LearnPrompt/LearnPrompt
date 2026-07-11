@@ -1,0 +1,16 @@
+# 命令：node --test（切片二，已修复守恒）
+# 退出码：0
+
+=== Verify（切片二，预期全绿）===
+✔ 整除时人人相等 (0.464416ms)
+✔ 最快检查：任何拆分结果之和必须严格等于总额（守恒） (0.089125ms)
+✔ 相邻两人差额不超过 1 分 (0.055125ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 31.975583
+SLICE2_EXIT=0

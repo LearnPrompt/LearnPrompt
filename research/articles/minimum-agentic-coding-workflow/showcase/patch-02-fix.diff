@@ -1,0 +1,17 @@
+=== git diff（切片二，相对切片一修复守恒）===
+diff --git a/split-bill.mjs b/split-bill.mjs
+index 5a23b0f..2d776d9 100644
+--- a/split-bill.mjs
++++ b/split-bill.mjs
+@@ -7,7 +7,8 @@ export function splitEvenly(totalCents, people) {
+   if (!Number.isInteger(people) || people <= 0) {
+     throw new Error("people 必须是正整数");
+   }
+-  // 切片一：先做最直观的均分（四舍五入到分）。故意先不处理余数，让守恒断言暴露缺口。
+-  const each = Math.round(totalCents / people);
+-  return Array(people).fill(each);
++  // 切片二：向下取整做基数，再把余数逐分补给前 remainder 个人，保证求和守恒。
++  const base = Math.floor(totalCents / people);
++  const remainder = totalCents - base * people;
++  return Array.from({ length: people }, (_, i) => (i < remainder ? base + 1 : base));
+ }
