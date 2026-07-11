@@ -1,0 +1,67 @@
+content-automation-pipeline 发布前机械门禁（冻结脱敏摘录）
+================================================================
+运行日期：2026-07-11
+运行位置：LearnPrompt 仓库根目录。
+说明：一键 Showcase 先在 `os.tmpdir()` 隔离目录写四场景 raw stdout / stderr，写成功后再读回做 session / request ID 与绝对 tmp 路径脱敏、80 行 / 6000 字裁剪，并在 `finally` 清理 raw 目录。repo 内只保留冻结摘要。新的独立只读终审已通过，最终状态为 verified 100/100。
+
+1. 一键 Showcase 四场景
+命令：
+  node research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/scripts/verify-showcase.mjs
+关键输出：
+  success: exit 0, candidate_ready, final_stage=approve
+  missing-source-field: exit 21, blocked_data_quality, final_stage=normalize
+  verify-failed: exit 23, failed_contract, final_stage=verify
+  no-approval: exit 31, awaiting_human_approval, final_stage=approve
+退出码：0
+
+2. 单篇 validator
+命令：
+  node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs \
+    --article starlight/src/content/docs/claude-code/content-automation-pipeline.mdx \
+    --research research/articles/content-automation-pipeline
+关键输出：
+  PASS article: starlight/src/content/docs/claude-code/content-automation-pipeline.mdx
+  PASS research: research/articles/content-automation-pipeline
+  PASS status: verified (100/100)
+退出码：0
+
+3. Starlight 完整构建
+命令：npm --prefix starlight run build
+关键输出：
+  /claude-code/content-automation-pipeline/index.html
+  Found 49 HTML files.
+  49 page(s) built in 2.35s
+  Complete!
+退出码：0
+
+4. diff 检查
+命令：
+  git status --short --untracked-files=all -- \
+    starlight/src/content/docs/claude-code/content-automation-pipeline.mdx \
+    research/articles/content-automation-pipeline \
+    starlight/public/images/articles/content-automation-pipeline
+  git diff --stat -- \
+    starlight/src/content/docs/claude-code/content-automation-pipeline.mdx \
+    research/articles/content-automation-pipeline \
+    starlight/public/images/articles/content-automation-pipeline
+  git diff --check -- \
+    starlight/src/content/docs/claude-code/content-automation-pipeline.mdx \
+    research/articles/content-automation-pipeline \
+    starlight/public/images/articles/content-automation-pipeline
+关键输出：
+  .../claude-code/content-automation-pipeline.mdx    | 439 ++++++++++++++++++++-
+  1 file changed, 420 insertions(+), 19 deletions(-)
+  git diff --check: no output
+退出码：0
+
+5. 教学图视觉复检
+命令：
+  sips -s format png \
+    starlight/public/images/articles/content-automation-pipeline/pipeline-state-gates.svg \
+    --out research/articles/content-automation-pipeline/pipeline-state-gates-visual-check.png
+关键输出：
+  PNG size: 1280 x 860
+  manual review: success-panel provenance line stays inside its box
+  manual review: footer provenance line stays inside the lower panel
+  manual review: A / B / C failure cards remain separate
+退出码：0

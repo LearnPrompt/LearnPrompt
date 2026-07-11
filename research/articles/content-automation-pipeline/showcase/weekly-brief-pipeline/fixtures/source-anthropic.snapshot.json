@@ -1,0 +1,34 @@
+{
+  "snapshot_id": "anthropic-docs-2026-07-11",
+  "source_name": "Anthropic Docs Snapshot",
+  "captured_at": "2026-07-11T09:00:00Z",
+  "items": [
+    {
+      "id": "anthropic-hooks-guide",
+      "title": "Claude Code hooks guide explains deterministic lifecycle automation",
+      "source_url": "https://code.claude.com/docs/en/hooks-guide",
+      "published_at": "2026-07-10",
+      "summary": "Hooks run at lifecycle events and can deny, ask, or allow a tool call without pretending that silence equals approval.",
+      "tags": ["claude-code", "hooks", "workflow", "docs"],
+      "importance": 3
+    },
+    {
+      "id": "anthropic-permissions",
+      "title": "Claude Code permissions page clarifies deny ask allow precedence",
+      "source_url": "https://code.claude.com/docs/en/permissions",
+      "published_at": "2026-07-09",
+      "summary": "Permission rules are enforced by Claude Code itself, and plan mode keeps edits off disk until approval.",
+      "tags": ["claude-code", "permissions", "verification", "docs"],
+      "importance": 3
+    },
+    {
+      "id": "anthropic-common-workflows",
+      "title": "Common workflows page highlights worktrees plan mode and piping into scripts",
+      "source_url": "https://code.claude.com/docs/en/common-workflows",
+      "published_at": "2026-07-08",
+      "summary": "The workflow guide recommends worktrees for isolated parallel sessions and plan mode for review before edits touch disk.",
+      "tags": ["claude-code", "workflow", "automation", "docs"],
+      "importance": 2
+    }
+  ]
+}

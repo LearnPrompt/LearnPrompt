@@ -1,37 +1,439 @@
 ---
-title: 用 Claude Code 做内容自动化流水线
-description: 把抓取、筛选、摘要、发布拆成可维护步骤。
+title: "把一次性抓取总结变成可恢复流水线：用 Claude Code 先出草稿，再等人工批准"
+description: 用两份固定离线快照和七阶段门禁，把“抓两份源顺手出周报”改写成可恢复、可追溯、默认只产草稿的 Claude Code 内容流水线。
 sidebar:
   order: 8
 difficulty: intermediate
 source_repo: alchaincyf/claude-code-orange-book
 source_url: https://github.com/alchaincyf/claude-code-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-11"
+reading_time: 18 分钟
+research_path: research/articles/content-automation-pipeline
+showcase_path: research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline
+showcase_status: verified
+quality_score: 100
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 18 分钟 | 2026-07-11 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/claude-code-orange-book" url="https://github.com/alchaincyf/claude-code-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+你让 Claude Code “抓两份源，帮我整理成本周 AI 周报，最好顺手发成候选稿”。它很可能真的给你一篇像样的 Markdown。但接下来会马上冒出三个你最不想看到的问题：
 
-## 核心概念
+1. 如果其中一份源缺了 `source_url`，它会不会把数据坏掉说成“今天没内容”？
+2. 如果同一条消息在两个源里都出现，它是怎么去重、怎么留下筛选理由的？
+3. 如果你没有明确批准，它会不会把“草稿”直接当成“可以发布”？
 
-内容自动化不要一开始做成“全自动发布”。先把每一步结果落盘，允许人工检查，再逐步自动化。
+这些问题的共性是：**一次性抓取 + 总结 + 发布**把太多状态挤进了一个动作里。你最后只看到一篇文案，却看不到中间到底发生了什么，更无法把错误定位到“抓取失败”“字段损坏”“去重不明”“打分不可解释”还是“根本没拿到人工批准”。
 
-## 流水线
+这篇教程要解决的不是“怎么再写一个抓取脚本”，而是怎么把这个需求改造成一条**可恢复、可追溯、默认只产草稿、人工批准后才进入发布候选**的七阶段内容流水线。为了把问题讲清楚，本文做了一个完全离线、零密钥的 Showcase：两份固定快照，跑一条“双来源 AI 周报”流程，输出带 `source_url` 和筛选理由的 Markdown 草稿，并真实演示三个负例：
 
-1. 抓取：保存原始数据和时间戳。
-2. 清洗：统一字段，不丢弃异常。
-3. 筛选：记录规则和命中原因。
-4. 摘要：保留来源链接。
-5. 发布：先生成草稿，再人工确认。
+- 一条来源记录缺 `source_url`，流程停在 `normalize`，退出码 `21`，不会误报“今日无内容”。
+- 草稿在 `verify` 前被故意改坏，流程停在 `verify`，退出码 `23`，不会把下游 contract 破坏默默带进候选稿。
+- 未提供人工批准工件，流程停在 `approve`，退出码 `31`，不会直接进入发布候选。
 
-## 常见错误
+先把边界说在最前面：Claude Code 官方文档并没有把内容流水线定义成 `snapshot / normalize / dedupe / score / draft / verify / approve` 这套术语。官方资料提供的是 **workflow / hooks / permissions / skills** 等工作流积木和安全边界；这篇文章是在这些原语之上，给内容生产搭了一个可审计的操作模型。你会在正文里不断看到这层区别，因为把“官方功能”和“本文建模”混在一起，是这类教程最常见的硬伤。
 
-- 把抓取失败当作“今日无内容”。
-- 摘要没有来源，无法追溯。
-- 没有历史快照，无法做增量榜单。
+![双来源 AI 周报的七阶段状态推进，以及 normalize、verify、approve 三条失败分支](/images/articles/content-automation-pipeline/pipeline-state-gates.svg)
+*图注：上半部是七阶段成功路径：冻结快照、字段 contract、去重、打分、草稿、验证和批准逐层落盘；下半部是三条真实失败分支：`source_url` 缺失停在 `normalize`，草稿 contract 破坏停在 `verify`，未提供人工批准停在 `approve`。图中的 manifest、draft、publish-candidate、`run-result.txt` 和 `command-summary.txt` 都对应 Showcase 的真实工件，其中后两者来自 `os.tmpdir()` 隔离 raw 捕获读回后的脱敏冻结。*
 
-## 实战案例
+## 读完你能做什么
 
-ClawHub 榜单日报应保存当天 JSON 快照，再和前一日比较。缺少历史切片时，日报必须写明“不能做严格日环比”。
+你会拿走四样能直接复用的东西：
+
+1. 一套把“一次性抓取总结需求”拆成可恢复流水线的思考框架，而不是继续依赖一条长 prompt。
+2. 一个真实可运行的双来源周报 Showcase，输入是固定快照，输出是带 `source_url` 与筛选理由的 Markdown 草稿。
+3. 三个负例的退出码和工件，证明“来源字段缺失”不会被系统误说成“今天没内容”，也证明“草稿 contract 破坏”和“未提供人工批准”不会被系统误说成“已准备发布”。
+4. 一条更稳的边界：模型最多只该承担中间的摘要改写，不该吞掉数据质量错误，也不该代替人工批准。
+
+这篇文章的非目标也提前说清楚：
+
+- 不做实时新闻抓取产品。Showcase 是离线回放，不连外网，不接 API，不要求密钥。
+- 不讨论哪个模型更会写周报。这里重心是状态机和证据链，不是模型跑分。
+- 不演示真实对外发布。成功路径最多进入本地 `publish-candidate/`，并明确写出 `external_publish_triggered: false`。
+
+## 先对齐官方边界：Claude Code 给的是工作流原语，不是现成术语
+
+如果你不先把官方边界对齐，后面很容易把自己设计的流程误说成 Claude Code 官方推荐的标准做法。本文最相关的三类官方资料分别是 workflow、hooks 和 permissions。
+
+### Workflow 资料告诉你怎么隔离、怎么先审后改、怎么脚本化
+
+Claude Code 官方 `Common workflows` 页面有三点和本文直接相关。
+
+第一，官方明确给出 **worktrees** 作为并行与隔离手段：要在两个终端里同时工作时，用独立 checkout，避免编辑互相碰撞。对内容流水线而言，这意味着你完全可以把“写教程正文”和“跑周报 Showcase”拆到不同 worktree 或不同会话里，而不是让一次临时试验把主工作区弄得不可追。
+
+第二，官方给出 **plan mode**：先读文件、先形成计划，等你批准以后再写磁盘。它解决的是“先审后改”的编辑边界。这个边界和本文的问题很像，因为我们同样不希望一条模糊指令直接跨过所有中间状态，最后只剩一个不可解释的结果。
+
+第三，官方把 **把 Claude 接进脚本** 当成常规工作流，而不是旁门左道。对于内容流水线，这点尤其关键。真正要复用的部分，不应该永远停留在聊天里，而应该沉淀成零密钥脚本、fixtures 和可审计输出。
+
+:::note[这里的“七阶段流水线”不是官方命名]
+官方 workflow 页面讲的是 worktrees、plan mode、批处理、session 恢复等通用工作流原语；并没有把内容流水线定义成本文这套 `snapshot / normalize / dedupe / score / draft / verify / approve`。这套命名是为了把内容生产的状态机讲清楚。
+:::
+
+### Hook 资料告诉你什么动作必须确定发生
+
+Claude Code 官方 `hooks-guide` 和 `hooks` reference 强调得很直接：Hook 是生命周期上的**确定性控制层**。它可以在 `PreToolUse` 这种事件点接到结构化输入，再用 `deny / ask / allow` 或 exit code 做出机械决定。
+
+这一点对内容流水线的价值，不在于“我们现在就要写 Hook”，而在于它帮你建立了一个判断标准：
+
+- 哪些动作只是建议？比如“摘要尽量写得自然一些”。
+- 哪些动作必须真的发生？比如“没有人工批准就不能推进到发布候选”。
+
+前者可以留给模型或编辑判断，后者必须落成机械门禁。本文的 `approve` 阶段正是按照这个思路设计的。Showcase 没有接真实 Hook，也没有对外发布，但它把“必须有批准工件”写成了确定性的最后一关，而不是写成一句软提醒。
+
+### Permissions 资料告诉你真正的裁判是谁
+
+Claude Code 官方 `permissions` 页面把一个很关键的边界说透了：allow / ask / deny 的真正执行者是 **Claude Code 权限系统**，不是你的 prompt，也不是 `CLAUDE.md` 里一句“请谨慎发布”。
+
+这会直接影响你怎么理解“人工批准后才进入发布候选”。
+
+如果你只是把这个要求写成自然语言，系统并没有真正的裁判。模型完全可能把“已经生成一篇不错的草稿”理解成“应该继续完成任务”。所以本文把批准做成一份单独工件：有批准文件，才能进入 `publish-candidate/`；没批准文件，就只能停在 `draft`，即使前面几段都跑通了也一样。
+
+这条边界看上去有点笨拙，但它比一句“别忘了确认一下”可靠得多。
+
+## 为什么“一次性抓取 + 总结 + 发布”最容易把失败说错
+
+很多团队第一次做内容自动化时，喜欢从一句看上去很省事的话开始：
+
+> 抓两份 AI 更新源，帮我整理成本周周报，如果没问题就生成发布稿。
+
+这句话的问题不在于不够详细，而在于它把五类完全不同的状态压成了一个动作：
+
+1. 抓取输入是什么？是固定快照，还是临时实时抓的？
+2. 字段是否完整？尤其 `source_url`、标题、时间、摘要是否齐全？
+3. 重复项怎么处理？同一条消息出现两次时保留哪条？
+4. 入选理由是什么？为什么进这周草稿，为什么那条没进？
+5. 草稿和发布候选之间有没有人工闸门？
+
+一旦这些状态都被压扁，你就会不断遇到三种“表面看像成功，实际上是错的”的情况。
+
+第一种是假空结果。字段坏了、源挂了、解析失败了，系统却给你一句“今天没有值得写的内容”。编辑看到的是空稿，根本不知道真实原因是数据质量问题。
+
+第二种是假去重。两个来源都提到同一条更新，草稿里却只剩一条。读者也许看不出来，但下一位编辑完全不知道它是故意去重，还是无意覆盖。
+
+第三种是假完成。系统已经写出一篇 Markdown，于是它默认认为任务已完成，甚至把“可发布”“已发布”“已上传候选”这些状态混成一件事。
+
+这三种错觉的共同修复方式，不是“把 prompt 写长一点”，而是把动作拆成状态。
+
+## 用一条状态机代替一条长 prompt：`snapshot → normalize → dedupe → score → draft → verify → approve`
+
+本文最终落下来的不是“更聪明的摘要词”，而是一条状态机。你可以把它理解成：**每一段都只解决一个问题，并留下下一段继续接手所需的工件**。
+
+### 1. `snapshot`：只承认冻结输入
+
+第一段只做一件事：确认输入是两份固定快照，而不是一边抓一边改写。Showcase 里这两份快照都是离线 JSON：
+
+- `source-anthropic.snapshot.json`
+- `source-openai.snapshot.json`
+
+这一步看起来很朴素，但它决定了整条流水线是否可回放。只要快照被冻结，下一位编辑就永远知道“这次周报到底是基于哪批材料做出来的”。将来如果你真的要加实时抓取，那也只能把抓取变成“写入一份新快照”的上游步骤，而不能直接让抓取过程影响中游和末端状态。
+
+### 2. `normalize`：把字段 contract 写死
+
+第二段不叫“顺手清洗”，故意叫 `normalize`，因为它本质上是第一道真实性闸门。
+
+Showcase 里每条记录都必须具备：
+
+- `id`
+- `title`
+- `source_url`
+- `published_at`
+- `summary`
+- `tags`
+
+任何一项缺失都不是“小问题”，尤其 `source_url`。没有 `source_url`，这条内容就无法追溯；无法追溯，就不该进入草稿，更不能被当作“今天没内容”。
+
+所以这一步的原则非常硬：
+
+- 字段齐全，才允许进入下游。
+- 字段缺失，立即停下并记录具体错误。
+- 停下时明确写出 `no_content: false`，告诉系统和编辑：不是没东西，而是东西坏了。
+
+### 3. `dedupe`：把“为什么只剩一条”写成证据
+
+双来源内容流里，重复几乎是必然的。真正的问题不是“会不会重复”，而是“重复后你还解释得清吗”。
+
+本文 Showcase 按 `source_url` 去重，并把被折叠掉的重复项记录进 `dedupe.manifest.json`。这样做的好处不是算法有多先进，而是它把“只剩一条”从一种不可解释的现象变成了一条有记录的选择：这条来源重复，所以保留 A、折叠 B。
+
+### 4. `score`：留下筛选理由，而不是只留下结果
+
+如果你只让模型自由发挥，它当然也能“挑几条看上去重要的”。但真正难的是过一周以后，有人追问：为什么是这四条？为什么不是那两条？
+
+Showcase 故意用了很土但很透明的规则：
+
+- 命中 `claude-code` 或 `codex` 主题；
+- 直接涉及 workflow、hooks、permissions、verification；
+- 来源是官方文档；
+- 人工重要度较高。
+
+它的目的不是替你找最优周报，而是强迫系统把“为什么选它”写下来。结果就是 `score.manifest.json` 里每条入选内容都带着筛选理由，而这些理由随后会被抄进草稿本身。
+
+### 5. `draft`：默认终点只能是草稿
+
+这一步是全篇最重要的实践差异。很多内容流水线把“生成 Markdown”视作天然终点；本文恰恰反过来，把它视作**默认终点**。
+
+换句话说，跑到 `draft` 不是“差一步就该发布”，而是“任务默认到这里就该停”。它要留下的是一份可编辑、可复查、可转交的草稿，而不是一个伪装成最终结果的半成品。
+
+Showcase 生成的草稿逐条保留：
+
+- `source_url`
+- 来源快照
+- 发布时间
+- 筛选理由
+- 摘要
+
+只要你看到草稿里没有这些字段，就说明这条流水线已经偏离了最核心的可追溯目标。
+
+### 6. `verify`：先验证草稿 contract 还在不在
+
+`verify` 的责任不是再做一遍打分，而是检查 `draft` 有没有忠实保留前面五段已经确定的事实与理由。它至少要确认：
+
+- 草稿里是否保留了每条入选记录的 `source_url`；
+- 是否保留了筛选理由；
+- 去重后是否还出现重复 `source_url`。
+
+这一步存在的意义，是为了拦截“输入没坏、打分没坏，但草稿被后处理改坏”的情况。Showcase 里的 `verify-failed` 场景就是故意在 `draft` 之后，把 `openai-codex-cli` 的 `source_url` 改成错误值，再让 `verify` 真实退出 `23`。
+
+### 7. `approve`：只有批准工件才能提升状态
+
+`approve` 负责状态提升：
+
+- 有批准工件，草稿才被复制到本地 `publish-candidate/`；
+- 没有批准工件，即使前面全对，也只能停在 `draft`。
+
+这就是“默认只产草稿，人工批准后才进入发布候选”的真正落地方式。`verify` 和 `approve` 都是末端门禁，但它们是两个独立阶段，既不能合并计数，也不能互相替代。
+
+## Showcase：双来源 AI 周报如何真实跑出草稿、候选和三个负例
+
+本文 Showcase 放在：
+
+```text
+research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/
+```
+
+它的目标不是模拟整套新闻编辑部，而是把这条状态机做成一个零密钥、离线可回放、结果可复核的最小样本。首选一键命令是：
+
+```bash
+node research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/scripts/verify-showcase.mjs
+```
+
+它会顺序重放四个场景、校对 `0/21/23/31`，先把每个场景的完整 stdout / stderr 写进 `os.tmpdir()` 下的隔离 raw 目录；写成功后，脚本才会从 raw 文件读回内容，移除 session / request ID 与绝对 tmp 路径，按 80 行 / 6000 字符裁剪，并冻结到 `results/<scenario>/command-summary.txt` 与根层 `results/run-result.txt`。如果你只想单独看某个阶段，也可以直接运行单场景命令：
+
+```bash
+node research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/scripts/run-pipeline.mjs --scenario success
+node research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/scripts/run-pipeline.mjs --scenario missing-source-field
+node research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/scripts/run-pipeline.mjs --scenario verify-failed
+node research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/scripts/run-pipeline.mjs --scenario no-approval
+```
+
+### 成功路径：两份快照、4 条入选、本地发布候选
+
+`success` 场景读取两份快照共 6 条记录，`normalize` 后仍是 6 条，`dedupe` 折叠 1 条重复源，`score` 最终入选 4 条。完整 raw stdout / stderr 先写进 `os.tmpdir()` 隔离目录，再读回做脱敏 / 裁剪并 finally 清理后，保留到 research 目录的冻结摘录如下：
+
+```text
+RUN scenario=success
+PASS snapshot sources=2 items=6
+PASS normalize normalized=6
+PASS dedupe unique=5 removed=1
+PASS score selected=4
+PASS draft file=drafts/2026-07-11-dual-source-ai-weekly.md
+PASS verify fields=source_url+selection_reason
+PASS approve candidate=publish-candidate/2026-07-11-dual-source-ai-weekly.md
+RESULT candidate_ready exit=0
+```
+
+这几行里最值得注意的，不是最后的 `exit=0`，而是中间每一层都留下了数量和状态。你不会只拿到“一篇稿”，而会拿到一条证据链：两份快照、一个 normalize contract、一次去重、一次可解释打分、一份草稿、一次校验、以及一份批准工件。
+
+成功场景生成的草稿也刻意保持“可追溯而非润色过度”。其中一条长这样：
+
+```md
+### Claude Code permissions page clarifies deny ask allow precedence
+- source_url: https://code.claude.com/docs/en/permissions
+- 来源快照: Anthropic Docs Snapshot
+- 发布时间: 2026-07-09
+- 筛选理由: 命中核心 AI coding 工具主题；直接解释工作流、门禁或验证机制；来源是官方文档快照，适合做本周基线；人工重要度=3
+```
+
+它并不追求像人写完的最终周报那样圆润，而是优先保留编辑接手时最需要的信息：它来自哪、为什么被选中、它现在只是草稿。
+
+### 为什么成功路径仍然不等于“已发布”
+
+即使 `success` 场景拿到了批准工件，Showcase 也只把草稿复制到本地 `publish-candidate/`。它不会外发，不会调 webhook，也不会自称“已发布”。对应的 `approve.manifest.json` 明确写着：
+
+```json
+{
+  "status": "candidate_ready",
+  "candidate_created": true,
+  "external_publish_triggered": false
+}
+```
+
+这就是本文一再强调的区分：**发布候选不是发布本身**。如果以后你真的要接 CMS、飞书草稿箱、微信公众号后台或别的外部系统，那应该是下一层动作，而且必须叠加真正的权限或 Hook 门禁。
+
+## 负例一：来源字段缺失时，为什么必须卡在 `normalize`
+
+`missing-source-field` 场景故意把第二份快照里一条 `openai-codex-cloud` 记录的 `source_url` 删掉。结果不是“系统凑合写下去”，也不是“系统说今天没内容”，而是当场停下：
+
+```text
+RUN scenario=missing-source-field
+PASS snapshot sources=2 items=6
+FAIL normalize missing_required_field=source_url entry=openai-codex-cloud
+RESULT blocked_data_quality exit=21
+```
+
+更关键的是它写出的 `normalize.manifest.json`：
+
+```json
+{
+  "status": "blocked_data_quality",
+  "error_count": 1,
+  "no_content": false,
+  "note": "字段缺失被视为数据质量阻断，不等于今日无内容。"
+}
+```
+
+这一条 `no_content: false` 就是整条负例的教学核心。很多“自动周报”失败，不是因为没有写出稿，而是因为它把失败说错了。编辑会基于错误的状态继续做错误的决定：
+
+- 以为今天真的没有内容，于是不再追数据问题；
+- 以为只是一条可忽略 warning，于是让不可追溯的内容进了草稿；
+- 以为模型自己会补全来源，于是最后连哪条结论出自哪里都说不清。
+
+如果你只记住本文一个设计准则，就记住这一条：**数据坏了和没有内容，必须是两个不同状态。**
+
+## 负例二：草稿 contract 被改坏时，为什么必须卡在 `verify`
+
+`verify-failed` 场景使用的是正常快照，也完成了 `snapshot`、`normalize`、`dedupe`、`score` 和 `draft`。它故意做的唯一一件事，是在 `draft` 之后把 `openai-codex-cli` 的 `source_url` 改成错误值，再交给 `verify` 做机械检查。
+
+脱敏摘录是：
+
+```text
+RUN scenario=verify-failed
+PASS snapshot sources=2 items=6
+PASS normalize normalized=6
+PASS dedupe unique=5 removed=1
+PASS score selected=4
+PASS draft file=drafts/2026-07-11-dual-source-ai-weekly.md
+TAMPER draft mutated_field=source_url target=openai-codex-cli
+FAIL verify error_count=1
+RESULT failed_contract exit=23
+```
+
+对应的 `verify.manifest.json` 会明确写出：
+
+```json
+{
+  "status": "failed_contract",
+  "error_count": 1,
+  "errors": [
+    "draft missing source_url for openai-codex-cli"
+  ]
+}
+```
+
+这条负例的教学价值，在于它把“输入 contract”与“出稿 contract”分开了。很多流水线只在入口检查字段，却默认草稿阶段不会出问题。真实工程里，模板拼装、后处理、人工局部编辑，都会把前面已经正确的数据重新改坏。`verify` 的工作，就是让这种坏法停在 `verify`，而不是混进 `publish-candidate/`。
+
+## 负例三：未提供人工批准时，为什么只能停在 `draft`
+
+`no-approval` 场景使用的是正常快照，所以 `snapshot`、`normalize`、`dedupe`、`score`、`draft`、`verify` 全都能过。它停下来的唯一原因，是没有批准工件。
+
+脱敏摘录是：
+
+```text
+RUN scenario=no-approval
+PASS snapshot sources=2 items=6
+PASS normalize normalized=6
+PASS dedupe unique=5 removed=1
+PASS score selected=4
+PASS draft file=drafts/2026-07-11-dual-source-ai-weekly.md
+PASS verify fields=source_url+selection_reason
+BLOCK approve missing_human_approval
+RESULT awaiting_human_approval exit=31
+```
+
+注意这和前一个负例的区别非常大。这里不是数据坏了，也不是字段缺失，而是流程有意停在“草稿已经可看，但还没被人批准”的状态。所以 `approve.manifest.json` 应该长这样：
+
+```json
+{
+  "status": "awaiting_human_approval",
+  "approval_present": false,
+  "candidate_created": false
+}
+```
+
+这条负例的价值在于，它阻止了一种非常常见的误解：**“既然草稿都生成了，那就算完成了吧。”**
+
+不是。只要系统还没有收到批准工件，任务就仍处在“待人接手”的状态，而不是“已准备发布”。这条边界越早写死，后面的自动化越不容易出事故。
+
+## 模型该放在哪里：它只能替换摘要层，不能吞掉状态机
+
+很多人看到这里会问：那模型到底还剩什么用？答案是，仍然很有用，但它的位置必须被限制住。
+
+在本文的 Showcase 里，摘要文本全部来自 fixture 里的冻结 `summary` 字段，脚本只负责模板拼装。这是刻意的，因为我们想先证明：就算完全不接模型，这条流水线也已经能把最关键的边界跑通。
+
+将来如果你真的想把“摘要”换成 Claude Code 生成，可以放在 `score` 之后、`draft` 之前，让模型只做下面这件事：
+
+- 把入选条目的摘要改写得更自然、更适合本周周报的语言风格。
+
+但无论你换成什么模型，都不应该改变下面三条：
+
+1. 事实输入仍来自冻结快照，而不是模型想象。
+2. 每条输出仍保留 `source_url` 和筛选理由，而不是只留漂亮表述。
+3. 没有批准工件就不能进入发布候选。
+
+所以更准确的说法是：**模型是可替换的摘要层，不是整条流水线的裁判，也不是发布按钮。**
+
+## 什么时候值得用这套方法，什么时候不值得
+
+这套方法不是为了让每次整理资料都变得更重，而是为了让某些任务终于能被稳定接手。
+
+### 值得用的情况
+
+- 你会重复做同类周报、情报摘要、内容候选整理。
+- 你需要把结果交给别的编辑、运营或 reviewer。
+- 你不接受“今天没内容”和“字段坏了”被说成一回事。
+- 你需要明确区分草稿、候选、已发布。
+
+### 不值得用的情况
+
+- 你只是私下快速看两份源，不打算复用，也不打算交给别人。
+- 你的来源结构还非常混乱，连最小字段 contract 都没想清楚。
+- 你根本没有人工批准这一环，或者团队不愿意查看 manifest 与失败状态。
+
+判断标准很简单：如果下一个人接手时需要知道“你当时到底看到了什么、为什么这样筛选、为什么停在这里”，那这套方法就值得。
+
+## 练习：把你自己的“一次性总结需求”改写成状态机
+
+找一个你最近常说的需求，比如：
+
+> 帮我抓三份产品更新，整理成内部晨报草稿。
+
+然后只做四件事：
+
+1. 写出最小 snapshot 格式：每条至少有哪些字段？
+2. 决定哪种字段缺失必须当场阻断，而不是自动跳过？
+3. 写清楚 draft 和 publish-candidate 的区别。
+4. 选择一个你愿意接受的人工批准工件形式：JSON、YAML、表单导出都可以，但必须可审计。
+
+验收标准不是“你写出一条很强的 prompt”，而是“你能列出至少三个不同失败状态，并让它们分别停在不同阶段”。
+
+## 来源与延伸阅读
+
+- 官方工作流资料：
+  - [Claude Code Common workflows](https://code.claude.com/docs/en/common-workflows)
+  - [How Claude Code works](https://code.claude.com/docs/en/how-claude-code-works)
+  - [Extend Claude Code](https://code.claude.com/docs/en/features-overview)
+- 官方 Hook 与权限资料：
+  - [Automate actions with hooks](https://code.claude.com/docs/en/hooks-guide)
+  - [Hooks reference](https://code.claude.com/docs/en/hooks)
+  - [Configure permissions](https://code.claude.com/docs/en/permissions)
+- 官方 Skill 资料：
+  - [Extend Claude with skills](https://code.claude.com/docs/en/skills)
+- 二手主题地图与许可：
+  - [Claude Code Orange Book](https://github.com/alchaincyf/claude-code-orange-book)
+- 本文 research pack 与 Showcase：
+  - [content-automation-pipeline research pack](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/content-automation-pipeline)
+
+官方文档支撑本文关于 workflow、Hook、权限和 Skill 的当前行为，核对日期为 2026-07-11。`alchaincyf/claude-code-orange-book` 只作为中文主题地图保留署名与链接；其 README 声明采用 CC BY-NC-SA 4.0，本文未复用其截图，也不把它当现行产品行为的事实权威。本文的 `snapshot / normalize / dedupe / score / draft / verify / approve` 是在官方原语之上建立的教学模型，真实输出与负例证据见上方 research pack。

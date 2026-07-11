@@ -1,0 +1,16 @@
+{
+  "scenario": "verify-failed",
+  "stage": "draft",
+  "status": "ok",
+  "draft_file": "drafts/2026-07-11-dual-source-ai-weekly.md",
+  "selected_count": 4,
+  "summary_boundary": "frozen-fixture-summary",
+  "post_draft_tamper": {
+    "type": "replace-source-url",
+    "target_id": "openai-codex-cli",
+    "mutated_field": "source_url",
+    "original_line": "- source_url: https://developers.openai.com/codex/cli",
+    "mutated_line": "- source_url: https://invalid.local/verify-failed-contract-breach",
+    "note": "该场景故意在 verify 之前破坏草稿 contract，用于冻结 VERIFY_FAILED=23。"
+  }
+}

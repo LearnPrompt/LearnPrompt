@@ -1,0 +1,9 @@
+RUN scenario=verify-failed
+PASS snapshot sources=2 items=6
+PASS normalize normalized=6
+PASS dedupe unique=5 removed=1
+PASS score selected=4
+PASS draft file=drafts/2026-07-11-dual-source-ai-weekly.md
+TAMPER draft mutated_field=source_url target=openai-codex-cli
+FAIL verify error_count=1
+RESULT failed_contract exit=23

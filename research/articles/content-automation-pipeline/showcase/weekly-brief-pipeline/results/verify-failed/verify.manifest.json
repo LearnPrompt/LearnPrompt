@@ -1,0 +1,9 @@
+{
+  "scenario": "verify-failed",
+  "stage": "verify",
+  "status": "failed_contract",
+  "error_count": 1,
+  "errors": [
+    "draft missing source_url for openai-codex-cli"
+  ]
+}

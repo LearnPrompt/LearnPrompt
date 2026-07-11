@@ -1,0 +1,74 @@
+git status --short --untracked-files=all -- \
+  starlight/src/content/docs/claude-code/content-automation-pipeline.mdx \
+  research/articles/content-automation-pipeline \
+  starlight/public/images/articles/content-automation-pipeline
+ M starlight/src/content/docs/claude-code/content-automation-pipeline.mdx
+?? research/articles/content-automation-pipeline/asset-ledger.md
+?? research/articles/content-automation-pipeline/brief.md
+?? research/articles/content-automation-pipeline/build-output.txt
+?? research/articles/content-automation-pipeline/control-verification.md
+?? research/articles/content-automation-pipeline/diff-check.txt
+?? research/articles/content-automation-pipeline/evidence-ledger.md
+?? research/articles/content-automation-pipeline/horizontal-research.md
+?? research/articles/content-automation-pipeline/pipeline-state-gates-visual-check.png
+?? research/articles/content-automation-pipeline/release-gate-result.txt
+?? research/articles/content-automation-pipeline/review.md
+?? research/articles/content-automation-pipeline/showcase/README.md
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/README.md
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/fixtures/approval-approved.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/fixtures/source-anthropic.snapshot.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/fixtures/source-openai-missing-source-url.snapshot.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/fixtures/source-openai.snapshot.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/missing-source-field/command-summary.txt
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/missing-source-field/normalize.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/missing-source-field/pipeline-state.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/missing-source-field/snapshot.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/no-approval/approve.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/no-approval/command-summary.txt
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/no-approval/dedupe.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/no-approval/draft.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/no-approval/drafts/2026-07-11-dual-source-ai-weekly.md
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/no-approval/normalize.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/no-approval/pipeline-state.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/no-approval/score.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/no-approval/snapshot.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/no-approval/verify.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/run-result.txt
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/success/approve.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/success/command-summary.txt
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/success/dedupe.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/success/draft.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/success/drafts/2026-07-11-dual-source-ai-weekly.md
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/success/normalize.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/success/pipeline-state.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/success/publish-candidate/2026-07-11-dual-source-ai-weekly.md
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/success/score.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/success/snapshot.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/success/verify.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/verify-failed/command-summary.txt
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/verify-failed/dedupe.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/verify-failed/draft.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/verify-failed/drafts/2026-07-11-dual-source-ai-weekly.md
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/verify-failed/normalize.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/verify-failed/pipeline-state.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/verify-failed/score.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/verify-failed/snapshot.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/results/verify-failed/verify.manifest.json
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/scripts/run-pipeline.mjs
+?? research/articles/content-automation-pipeline/showcase/weekly-brief-pipeline/scripts/verify-showcase.mjs
+?? research/articles/content-automation-pipeline/validator-output.txt
+?? research/articles/content-automation-pipeline/vertical-research.md
+?? research/articles/content-automation-pipeline/visual-check.txt
+?? starlight/public/images/articles/content-automation-pipeline/pipeline-state-gates.svg
+
+git diff --stat -- \
+  starlight/src/content/docs/claude-code/content-automation-pipeline.mdx \
+  research/articles/content-automation-pipeline \
+  starlight/public/images/articles/content-automation-pipeline
+ .../claude-code/content-automation-pipeline.mdx    | 439 ++++++++++++++++++++-
+ 1 file changed, 420 insertions(+), 19 deletions(-)
+
+git diff --check -- \
+  starlight/src/content/docs/claude-code/content-automation-pipeline.mdx \
+  research/articles/content-automation-pipeline \
+  starlight/public/images/articles/content-automation-pipeline

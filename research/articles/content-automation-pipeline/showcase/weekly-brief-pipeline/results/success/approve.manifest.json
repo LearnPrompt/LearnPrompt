@@ -1,0 +1,10 @@
+{
+  "scenario": "success",
+  "stage": "approve",
+  "status": "candidate_ready",
+  "approval_present": true,
+  "approval_id": "weekly-approval-2026-07-11",
+  "candidate_created": true,
+  "candidate_file": "publish-candidate/2026-07-11-dual-source-ai-weekly.md",
+  "external_publish_triggered": false
+}

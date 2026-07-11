@@ -1,0 +1,34 @@
+{
+  "snapshot_id": "openai-ai-coding-2026-07-11",
+  "source_name": "OpenAI AI Coding Snapshot",
+  "captured_at": "2026-07-11T09:05:00Z",
+  "items": [
+    {
+      "id": "openai-codex-cli",
+      "title": "OpenAI documents Codex CLI local agent workflows",
+      "source_url": "https://developers.openai.com/codex/cli",
+      "published_at": "2026-07-10",
+      "summary": "The Codex CLI docs focus on local execution, approvals, and terminal-first agent workflows.",
+      "tags": ["codex", "workflow", "docs", "ai-coding"],
+      "importance": 3
+    },
+    {
+      "id": "openai-harness-engineering",
+      "title": "Harness engineering reframes tools verification and control layers",
+      "source_url": "https://openai.com/index/harness-engineering/",
+      "published_at": "2026-07-09",
+      "summary": "The essay shifts attention from raw model quality to tools, context, and verification loops.",
+      "tags": ["verification", "agentic", "docs", "ai-coding"],
+      "importance": 2
+    },
+    {
+      "id": "anthropic-hooks-guide-duplicate",
+      "title": "Claude Code hooks guide explains deterministic lifecycle automation",
+      "source_url": "https://code.claude.com/docs/en/hooks-guide",
+      "published_at": "2026-07-10",
+      "summary": "A second feed mirrors the same hooks update, so dedupe should collapse it by source_url.",
+      "tags": ["claude-code", "hooks", "workflow", "syndicated"],
+      "importance": 1
+    }
+  ]
+}

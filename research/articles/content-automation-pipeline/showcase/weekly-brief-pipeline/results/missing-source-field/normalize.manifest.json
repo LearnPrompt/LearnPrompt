@@ -1,0 +1,20 @@
+{
+  "scenario": "missing-source-field",
+  "stage": "normalize",
+  "status": "blocked_data_quality",
+  "normalized_count": 5,
+  "error_count": 1,
+  "reason": "required field missing",
+  "errors": [
+    {
+      "snapshot_id": "openai-ai-coding-broken-2026-07-11",
+      "source_name": "OpenAI AI Coding Snapshot",
+      "entry_key": "openai-codex-cloud",
+      "missing_fields": [
+        "source_url"
+      ]
+    }
+  ],
+  "no_content": false,
+  "note": "字段缺失被视为数据质量阻断，不等于今日无内容。"
+}

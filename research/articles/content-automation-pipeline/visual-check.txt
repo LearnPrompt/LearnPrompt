@@ -1,0 +1,12 @@
+content-automation-pipeline 教学图视觉复检（冻结脱敏摘录）
+
+命令：
+  sips -s format png \
+    starlight/public/images/articles/content-automation-pipeline/pipeline-state-gates.svg \
+    --out research/articles/content-automation-pipeline/pipeline-state-gates-visual-check.png
+
+关键输出：
+  PNG size: 1280 x 860
+  manual review: success-panel provenance line stays inside its box
+  manual review: footer provenance line stays inside the lower panel
+  manual review: A / B / C failure cards remain separate

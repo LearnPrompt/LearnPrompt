@@ -1,0 +1,15 @@
+{
+  "scenario": "no-approval",
+  "stage": "dedupe",
+  "status": "ok",
+  "input_count": 6,
+  "unique_count": 5,
+  "duplicate_count": 1,
+  "duplicates": [
+    {
+      "kept_record": "anthropic-hooks-guide",
+      "dropped_record": "anthropic-hooks-guide-duplicate",
+      "source_url": "https://code.claude.com/docs/en/hooks-guide"
+    }
+  ]
+}

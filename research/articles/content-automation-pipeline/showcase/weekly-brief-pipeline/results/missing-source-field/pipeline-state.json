@@ -1,0 +1,54 @@
+{
+  "scenario": "missing-source-field",
+  "report_date": "2026-07-11",
+  "summary_boundary": "frozen-fixture-summary",
+  "status": "blocked_data_quality",
+  "stages": [
+    {
+      "stage": "snapshot",
+      "status": "ok",
+      "scenario": "missing-source-field",
+      "source_count": 2,
+      "item_count": 6,
+      "sources": [
+        {
+          "fixture": "source-anthropic.snapshot.json",
+          "snapshot_id": "anthropic-docs-2026-07-11",
+          "source_name": "Anthropic Docs Snapshot",
+          "captured_at": "2026-07-11T09:00:00Z",
+          "sha256": "6467052b052f63935e835be311cbffd95e8e82351e681f6481aff788b534b31a",
+          "item_count": 3
+        },
+        {
+          "fixture": "source-openai-missing-source-url.snapshot.json",
+          "snapshot_id": "openai-ai-coding-broken-2026-07-11",
+          "source_name": "OpenAI AI Coding Snapshot",
+          "captured_at": "2026-07-11T09:05:00Z",
+          "sha256": "d474b3a6f96ddc2acc51bf38ed9e73912145104b66bb6e94ccbe54dda96242d9",
+          "item_count": 3
+        }
+      ]
+    },
+    {
+      "stage": "normalize",
+      "status": "blocked_data_quality",
+      "scenario": "missing-source-field",
+      "normalized_count": 5,
+      "error_count": 1,
+      "reason": "required field missing",
+      "errors": [
+        {
+          "snapshot_id": "openai-ai-coding-broken-2026-07-11",
+          "source_name": "OpenAI AI Coding Snapshot",
+          "entry_key": "openai-codex-cloud",
+          "missing_fields": [
+            "source_url"
+          ]
+        }
+      ],
+      "no_content": false,
+      "note": "字段缺失被视为数据质量阻断，不等于今日无内容。"
+    }
+  ],
+  "exit_code": 21
+}
