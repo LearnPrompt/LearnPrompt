@@ -1,0 +1,8 @@
+worker=task-a-parser
+isolation=separate-node-process-and-temp-output
+owned_file=src/parse-orders.mjs
+unexpected_files=none
+contract_sha256=9fda86dbd946659407714b3971984562cf568fab647416dad1cad08774f55b66
+output_sha256=fc73b72e7e95cdfd96c80d17a6ccf83bed79486adcaa9d7040cbb596eea3f636
+self_test=PASS
+exit=0

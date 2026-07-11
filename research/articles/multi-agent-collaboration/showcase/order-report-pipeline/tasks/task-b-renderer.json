@@ -1,0 +1,10 @@
+{
+  "id": "task-b-renderer",
+  "owner": "worker-b",
+  "summary": "实现 Markdown 汇总渲染器，输入符合冻结 contract 的汇总对象",
+  "write_set": ["src/render-summary.mjs"],
+  "contract_path": "contract/order-summary.schema.json",
+  "contract_checksum": "9fda86dbd946659407714b3971984562cf568fab647416dad1cad08774f55b66",
+  "interface_frozen": true,
+  "depends_on": []
+}

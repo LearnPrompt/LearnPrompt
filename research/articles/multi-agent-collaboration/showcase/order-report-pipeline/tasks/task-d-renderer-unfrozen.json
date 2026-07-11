@@ -1,0 +1,10 @@
+{
+  "id": "task-d-renderer-unfrozen",
+  "owner": "worker-d",
+  "summary": "负例二：renderer 依赖的 contract 尚未冻结，且依赖 parser 任务未完成",
+  "write_set": ["src/render-summary.mjs"],
+  "contract_path": "contract/order-summary.schema.json",
+  "contract_checksum": "9fda86dbd946659407714b3971984562cf568fab647416dad1cad08774f55b66",
+  "interface_frozen": false,
+  "depends_on": ["task-a-parser"]
+}

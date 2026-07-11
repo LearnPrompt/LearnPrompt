@@ -1,0 +1,16 @@
+order-report-pipeline 负例一：两个任务都动共享 contract → 合并前拒绝
+================================================================
+运行日期：2026-07-11
+说明：以下为脱敏冻结输出，不含本机绝对路径或运行标识。
+
+命令：
+  node merge-gate.mjs tasks/task-a-parser.json tasks/task-c-bad-contract.json
+输出：
+  协调器合并门禁：order-report-pipeline
+  参与任务：task-a-parser, task-c-bad-contract
+  ----
+  REJECT  task-c-bad-contract: write set 含冻结 contract contract/order-summary.schema.json，禁止单边修改
+  REJECT  写入冲突：task-a-parser 与 task-c-bad-contract 都要改 src/parse-orders.mjs
+  ----
+  判定：REJECT CONFLICT
+退出码：3（合并动作在应用前被拒绝）

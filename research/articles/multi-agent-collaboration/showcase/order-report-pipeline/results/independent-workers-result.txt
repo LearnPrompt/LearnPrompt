@@ -1,0 +1,10 @@
+INDEPENDENT WORKER RUN
+parallel_processes=2
+worker-a: separate Node process; owned src/parse-orders.mjs; unexpected files none; self-test PASS
+worker-b: separate Node process; owned src/render-summary.mjs; unexpected files none; self-test PASS
+write_sets_disjoint=yes
+contract_unchanged=yes
+integration_inputs=worker-a-output+worker-b-output
+integration_from_worker_outputs=PASS
+RESULT PASS
+exit=0

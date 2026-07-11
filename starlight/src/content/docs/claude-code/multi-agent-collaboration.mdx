@@ -1,39 +1,268 @@
 ---
 title: 多 Agent 协作适合解决什么问题
-description: 判断什么时候该拆成多个 Agent，而不是一个 Agent 一直做。
+description: 先画依赖图、冻结接口与验收标准、分配不重叠文件所有权，再选择单 Agent / subagent / agent team / worktree，用合并门禁验证结果。
 sidebar:
   order: 6
 difficulty: intermediate
 source_repo: alchaincyf/claude-code-orange-book
 source_url: https://github.com/alchaincyf/claude-code-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-11"
+reading_time: 14 分钟
+research_path: research/articles/multi-agent-collaboration
+showcase_path: research/articles/multi-agent-collaboration/showcase/order-report-pipeline
+showcase_status: verified
+quality_score: 93
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 14 分钟 | 2026-07-11 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/claude-code-orange-book" url="https://github.com/alchaincyf/claude-code-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+你有一个稍大的任务：前端新页面加后端新接口，或者一次涉及三个模块的重构。你的第一反应是开两三个 Agent 并行跑。结果呢——两个 Agent 改了同一组文件，后写的把先写的覆盖了；接口还没定就各写各的，合并时字段对不上；下一步明明依赖上一步的结论，却被强行并行，跑出一堆要返工的半成品。
 
-## 适合拆分的任务
+问题不在工具本身。问题是并行的三个前置条件一个都没满足：没有画依赖图，没有冻结接口，没有分配不重叠的文件所有权。这篇文章从这三个前提出发，帮你在动手前做出有依据的选择，然后用一个合并门禁在应用改动前挡住冲突。
 
-- 一个 Agent 写代码，另一个 Agent 查资料。
-- 不同模块有明确文件边界。
-- 一个 Agent 实现，另一个 Agent 做 review。
-- 多个独立数据源需要并行盘点。
+## 读完你能做什么
 
-## 不适合拆分的任务
+1. 在拆分任务前先画依赖图，找出哪些任务真正独立、哪些必须串行。
+2. 冻结并行两侧共享的接口（contract），让双方的输入/输出在合并前就能对齐。
+3. 给每个 worker 分配不重叠的文件所有权，从源头消除同文件覆盖。
+4. 在单 Agent、subagent、agent team、worktree session 和独立 reviewer 之间做出有依据的选择。
+5. 运行一个零依赖的合并门禁 Showcase，亲手看到正例放行、负例被拒的退出码。
 
-- 需求还没想清楚。
-- 多个 Agent 会改同一批文件。
-- 下一步依赖某个关键结论，不能并行。
+## 从一个真实翻车开始：为什么两个 Agent 改同一组文件会出事
 
-## 操作步骤
+Claude Code 官方文档给出了最硬的一条约束：
 
-1. 先定义主 Agent 的责任。
-2. 只把 sidecar 任务交给子 Agent。
-3. 明确文件所有权。
-4. 汇总时只采纳可验证结果。
+> Two teammates editing the same file leads to overwrites. Break the work so each teammate owns a different set of files.
 
-## 常见错误
+这不是建议，是机制层面的后果。两个独立会话或进程各自写磁盘，谁最后写谁赢。没有任何锁机制帮你合并冲突——你只会在合并之后才发现一半改动消失了。这条约束不只适用于 agent team，对任何两个并行运行的 Claude Code 会话或 subagent 都成立。
 
-为了“并行”而并行。多 Agent 的收益来自边界清楚，不来自数量。
+由此反推出安全并行的三个前提：
+
+1. **依赖图**。哪些任务真正互不依赖？如果 B 需要等 A 的结论才能开始，它们就不能并行，无论你开几个 Agent。
+2. **冻结接口**。并行的两侧必须先约定一份不变的 contract（字段名、类型、格式）。任何一方想改 contract，都必须先解冻、通知另一方并重新对齐，然后才能继续——否则各写各的，合并时字段对不上。
+3. **不重叠的文件所有权**。每个 worker 只能修改它拥有的那组文件，write set 两两不重叠。这是唯一能从源头消除覆盖风险的做法。
+
+这三步做完，并行才从赌一把变成可验证。
+
+## 五种形态怎么选
+
+不是所有任务都值得拆，也不是所有拆法都一样。下面这张表按「你需要多少并行和多少协调」两个维度排列五种形态，帮你在动手前快速定位。
+
+| 形态 | 是什么 | 适合什么 | 代价 | 什么时候不适合 |
+| --- | --- | --- | --- | --- |
+| 单 Agent | 一个 Claude Code 会话顺序完成 | 任务短、强依赖、共享状态高；你能看着它做完 | 零协调开销，但长任务上下文会膨胀 | 侧任务会污染主上下文；需要并行的独立模块 |
+| subagent | 单会话内委派的辅助 Agent；有独立上下文、工具、权限，只把总结回报主会话 | 侧任务（代码搜索、日志分析、对抗式 review）需要读大量文件但你只要结论 | token 较低，结果被压缩回主上下文 | 需要多个 worker 之间互发消息或共享任务列表 |
+| agent team | 多个独立 Claude Code 会话，共享任务列表和消息系统，可直接与某个 teammate 对话 | 新模块/新 feature 的并行开发、多角度 research、竞争假说调试 | token 显著更高，协调开销随 teammate 增加；**当前为 experimental**，需设置 `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` | 顺序任务、同文件编辑、依赖链长——官方明确这些场景用单会话或 subagent 更合适 |
+| worktree session | 独立分支上的独立 checkout，在不同终端窗口运行 Claude Code | 需要真正隔离写入与分支，且你愿意手工协调合并（像 git feature branch 一样） | 合并是常规 git 流程，不自动 | 需要自动协调任务和消息；不想手工 merge |
+| 独立 reviewer | 用新上下文只读 diff 与验收标准，不让 writer 自评 | 需要第二意见——writer 容易偏袒自己刚写的代码 | 额外开一个会话或 subagent | 改动太小不值得；reviewer 被要求找 gap 时可能过度报告 |
+
+:::caution[Agent Teams 当前为 experimental]
+Agent teams 默认关闭，需要在 settings.json 或环境变量中设置 `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`。它有已知限制：不支持 in-process teammate 的 `/resume`；任务状态可能滞后；shutdown 可能较慢；每个 session 只能有一个 team，且 teammate 不能嵌套再开 team。使用前请核对官方 agent-teams 页面的 Limitations 段。
+:::
+
+选择的核心逻辑不是「能不能并行」，而是「并行之后的协调成本是否低于顺序做的等待成本」。如果任务之间共享大量状态、或后者依赖前者的结论，拆开只会把协调成本叠上去，还不如一个会话顺着做。
+
+### subagent 与 agent team 的区别
+
+官方给了一句很直接的区分：
+
+> Unlike subagents, which run within a single session and can only report back to the main agent, you can also interact with individual teammates directly without going through the lead.
+
+更具体地对比：
+
+| 维度 | subagent | agent team |
+| --- | --- | --- |
+| 上下文 | 有独立上下文；结果回报给调用者 | 有独立上下文；完全独立的 Claude Code 会话 |
+| 通信 | 只向主 Agent 回报 | teammate 之间可以直接互发消息 |
+| 协调 | 主 Agent 统管所有工作 | 共享任务列表，teammate 可以自领任务 |
+| 适合 | 只需要返回结果的聚焦任务 | 需要讨论、协作和自主协调的复杂工作 |
+| token 成本 | 较低：结果被压缩回主上下文 | 较高：每个 teammate 是独立的 Claude 实例 |
+
+简单判断：如果你只需要一个 worker 交回一个答案，用 subagent。如果你需要多个 worker 互相讨论、互相挑战、或者各自负责一块然后各自汇报给你和彼此，用 agent team。
+
+## Showcase：order-report-pipeline
+
+下面这个零依赖的小仓库把前面的原则变成了可运行的代码。它由三部分组成：
+
+1. **冻结的 contract**（`order-summary.schema.json`）：parser 的输出和 renderer 的输入都必须符合这份 JSON Schema。任何一方想改字段，都必须先解冻 contract 并通知另一方。
+2. **两个不重叠 worker**：Worker A 只拥有 `src/parse-orders.mjs`（CSV → 汇总对象），Worker B 只拥有 `src/render-summary.mjs`（汇总对象 → Markdown）。write set 两两不重叠。
+3. **合并门禁**（`merge-gate.mjs`）：在应用改动之前，机械检查四条判据。
+
+```text
+order-report-pipeline/
+├── contract/order-summary.schema.json   # 冻结接口
+├── src/parse-orders.mjs                 # Worker A 独占
+├── src/render-summary.mjs               # Worker B 独占
+├── tasks/task-a-parser.json             # 任务卡 A
+├── tasks/task-b-renderer.json           # 任务卡 B
+├── tasks/task-c-bad-contract.json       # 负例一：声明改 contract
+├── tasks/task-d-renderer-unfrozen.json  # 负例二：接口未冻结
+├── workers/run-worker.mjs               # 单 worker 只写隔离目录中的 owned file
+├── run-independent-workers.mjs          # 并行启动两进程，用其产物做集成验收
+├── merge-gate.mjs                       # 合并前门禁
+├── e2e-test.mjs                         # 合并后端到端验收
+└── results/                             # 冻结的实测输出与退出码
+```
+
+### 正例：不重叠 write set → 门禁放行 → 端到端 PASS
+
+两个 worker 的 write set 分别是 `src/parse-orders.mjs` 和 `src/render-summary.mjs`，不重叠。这里不是只在任务卡上写“独立”：`run-independent-workers.mjs` 同时启动两个 Node 子进程，为它们分配不同的系统临时目录。每个进程只写自己的 owned file、跑 self-test、报告输出 SHA；协调器再从两个临时目录加载产物做集成验收，而不是直接使用仓库终态源码。
+
+```bash
+node run-independent-workers.mjs
+# 关键输出：
+# parallel_processes=2
+# worker-a: owned_file=src/parse-orders.mjs / unexpected_files=none / self_test=PASS
+# worker-b: owned_file=src/render-summary.mjs / unexpected_files=none / self_test=PASS
+# integration_inputs=worker-a-output+worker-b-output
+# integration_from_worker_outputs=PASS
+# RESULT PASS
+# 退出码：0
+```
+
+两个 worker 产物通过审计后，合并门禁检查任务卡，最后再对仓库中的冻结候选跑端到端回归：
+
+```bash
+# 合并前门禁
+node merge-gate.mjs tasks/task-a-parser.json tasks/task-b-renderer.json
+# 输出：
+# write set 两两不重叠
+# 无任务触碰冻结 contract
+# contract 校验和与磁盘一致
+# 所有接口已冻结，依赖已满足
+# 判定：APPROVE PARALLEL
+# 退出码：0
+
+# 合并后端到端验收
+node e2e-test.mjs
+# 输出：PASS  管线输出与冻结 golden 一致
+# 退出码：0
+```
+
+### 负例一：两个任务都声明修改冻结 contract → 合并前拒绝
+
+如果某个任务的 write set 包含了冻结的 contract 文件，门禁必须在应用改动之前拒绝，而不是等写盘之后再发现冲突。
+
+```bash
+node merge-gate.mjs tasks/task-a-parser.json tasks/task-c-bad-contract.json
+# 输出：
+# REJECT  task-c-bad-contract: write set 含冻结 contract，禁止单边修改
+# REJECT  写入冲突：task-a-parser 与 task-c-bad-contract 都要改 src/parse-orders.mjs
+# 判定：REJECT CONFLICT
+# 退出码：3
+```
+
+### 负例二：接口未冻结 / 依赖未满足 → 必须串行
+
+如果 renderer 依赖的 contract 还没有冻结（`interface_frozen: false`），或者它依赖的 parser 任务还没完成，门禁判定 SEQUENTIAL——不是拒绝这个任务，而是告诉你这两个任务不能同时并行，必须先串行冻结接口和完成依赖。
+
+```bash
+node merge-gate.mjs tasks/task-a-parser.json tasks/task-d-renderer-unfrozen.json
+# 输出：
+# SEQUENTIAL  task-d-renderer-unfrozen: 接口未冻结，不能并行
+# SEQUENTIAL  task-d-renderer-unfrozen: 依赖 task-a-parser 未满足
+# 判定：SEQUENTIAL
+# 退出码：4
+```
+
+### 这个 Showcase 证明了什么和没有证明什么
+
+它证明的是流程结构：两个独立子进程分别只产出一个 owned file，协调器确实从这两个临时产物完成集成；write set 归属、冻结 contract 校验和与退出码可以机械把关，冲突路径在应用前被拒绝，通过路径在合并后被端到端验收。
+
+它没有证明 Claude 模型或 Agent Teams 产品本身的速度或质量。脚本不运行 Claude，也不运行 Agent Team。两个 worker 是独立本地 Node 进程，只用于隔离出“文件所有权、产物交接、协调门禁”这三层可验证骨架。真实的 Agent Team 需要开启 `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` 且当前为 experimental；本 Showcase 没有依赖其可用性，也没有伪造 Agent Team 运行记录。
+
+## 合并门禁的四条判据
+
+`merge-gate.mjs` 不调用任何模型，只做四条机械检查。任一条不满足就以明确退出码拒绝，绝不写盘：
+
+1. **write set 两两不重叠**。没有两个任务声明修改同一个文件。违反 → 退出码 3。
+2. **不触碰冻结 contract**。任一任务把 contract 路径列进 write set → 退出码 3。你可以**读** contract，但不能在并行分支里单边**改**它。
+3. **contract 校验和一致**。每个任务卡声明的 `contract_checksum` 必须等于磁盘上 contract 文件的实际 SHA-256。如果某个 worker 偷偷改了 contract，校验和就会不匹配。
+4. **规划闸门**。任一任务 `interface_frozen: false` 或声明的依赖未满足 → 退出码 4（SEQUENTIAL），不假装能并行。
+
+这四条判据和退出码（0/3/4）是本文 Showcase 的约定，不是 Claude Code 产品内置的功能。它们把前面那些抽象原则（不重叠、冻结接口、依赖满足）变成了机械可检查的骨架。
+
+![冻结 contract、两个不重叠 Worker 分别只改自己的文件，通过 write-set 和校验和检查后合并放行；冲突路径在门禁处被拒绝](/images/articles/multi-agent-collaboration/merge-gate-flow.svg)
+*图注：上半部分是正例路径——冻结 contract 之后两个 worker 各改各的文件，门禁四条全过，合并后端到端测试 PASS。下半部分是冲突路径——某个任务的 write set 包含冻结 contract，门禁在写盘之前就以退出码 3 拒绝。*
+
+读这张图时注意两件事。第一，两个 worker 的 write set 框里没有重叠的文件——这是并行的充要条件。第二，contract 从上往下只有箭头指出（worker 读它），没有 worker 的箭头指进来（worker 不改它）；一旦有 worker 的 write set 里出现 contract，就走冲突路径被拒。
+
+## 把这套流程映射到真实的 Claude Code 会话
+
+Showcase 里用独立本地进程扮演 worker，是因为它只需要验证协调骨架。真实使用时，你可以把 worker 换成以下任何一种形态：
+
+**两个 subagent 做不重叠的模块改动。** 你在主会话里先冻结 contract，定好两个 worker 的 write set，然后委派两个 subagent 各改各的文件。它们在各自的上下文里完成工作并回报结果。主会话收到结果后，先跑 merge gate 检查 write set 和 contract 校验和，再跑端到端测试。
+
+**两个 worktree session 在独立分支上并行开发。** 用 `claude --worktree parser-feature` 和 `claude --worktree renderer-feature` 开两个隔离 checkout。每个 session 只修改自己拥有的文件。完成后用常规 git merge 合并分支，合并前可以跑一遍 merge gate 确认 write set 不冲突。
+
+**agent team 里两个 teammate 各负责一个模块。** 开启 `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` 后，让 lead 把 parser 和 renderer 作为两个独立任务分配给两个 teammate。每个 teammate 只修改自己的文件。teammate 完成后 lead 用 merge gate 验收，或者你直接和某个 teammate 对话看进展。
+
+**一个 writer 会话 + 一个独立 reviewer subagent。** Writer 完成改动后，开一个 subagent 用 fresh context 只看 diff 和验收标准做 code review。reviewer 不知道 writer 的推理过程，只根据 diff 与验收标准评价结果。这样避免了 writer 自评时偏袒自己刚写代码的偏差。
+
+## 常见失败模式
+
+### 为了并行而并行
+
+任务之间强依赖或共享状态高，拆开只会把协调成本叠上去。如果你发现拆出来的两个 worker 需要反复对齐状态，大概率不值得并行——用一个 Agent 顺着做反而更快更稳。
+
+### 接口没冻结就开工
+
+两侧各写各的 schema，合并时字段对不上。正确做法是先在 contract 里写死字段名、类型和格式，双方按 contract 写代码。contract 变了就解冻、对齐、重新冻结之后再继续。
+
+### 文件所有权没分清
+
+两个 Agent 都声称要改同一个文件。最后一个写盘的赢，先写的那些改动消失了。正确做法是在任务卡里明确每个 worker 的 write set，并在合并前检查不重叠。
+
+### 让 writer 自己验收
+
+官方 best-practices 直说了：fresh context 能减少 writer 偏袒自己刚写代码的偏差。如果你需要对改动有信心，开一个独立的 reviewer——可以是另一个会话，也可以是一个 subagent——只给它 diff 和验收标准，不给它 writer 的推理过程。
+
+### 一上来就造复杂多 Agent 系统
+
+先让一个 Agent 在清楚边界里可靠完成一个小任务，再考虑拆分。官方 agent-teams 文档建议 3-5 个 teammate、每个 teammate 5-6 个任务是合理起步；超过这个数，协调开销的增长很可能吃掉并行收益。
+
+## 练习：给你的下一个并行任务画一张依赖图
+
+找一个你正准备用多 Agent 做的任务，用下面这个模板画一张依赖图：
+
+```yaml
+任务 A：
+  write_set: [src/module-a.ts]
+  depends_on: []
+  interface_frozen: true
+
+任务 B：
+  write_set: [src/module-b.ts]
+  depends_on: []
+  interface_frozen: true
+
+共享 contract：
+  path: contract/shared-schema.json
+  frozen_checksum: <sha256>
+```
+
+然后问自己三个问题：
+
+1. A 和 B 的 write set 有没有重叠？如果有，先调整分工。
+2. 共享的 contract 冻结了吗？如果没有，先串行冻结。
+3. B 依赖 A 的结论吗？如果依赖未满足，标 sequential，不要假装可以并行。
+
+三个问题都过了，再选形态（subagent / worktree / agent team）并行开工。完成后跑一遍 merge gate，门禁放行了再跑端到端测试。
+
+完成标准：你的依赖图有具体文件路径、具体 contract 路径和 checksum，且合并门禁以退出码 0 放行。
+
+## 来源与延伸阅读
+
+- [官方 sub-agents 文档](https://code.claude.com/docs/en/sub-agents)（一手来源：subagent 的独立上下文/工具/权限与回报机制）
+- [官方 agent-teams 文档](https://code.claude.com/docs/en/agent-teams)（一手来源：agent team 的 experimental 状态、共享任务列表、直接通信与同文件覆盖警告）
+- [官方 common-workflows 文档](https://code.claude.com/docs/en/common-workflows)（一手来源：worktree 的独立分支 checkout 与 subagent 委派模式）
+- [官方 best-practices 文档](https://code.claude.com/docs/en/best-practices)（一手来源：Writer/Reviewer 模式与 fresh context 减少偏差）
+- [Claude Code 橙皮书](https://github.com/alchaincyf/claude-code-orange-book)（二手中文主题地图，CC BY-NC-SA 4.0）
+- [本篇研究包与可运行 Showcase](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/multi-agent-collaboration)
+
+官方文档支撑当前产品行为，核验日期 2026-07-11。橙皮书作为中文主题地图，按 CC BY-NC-SA 4.0 保留署名；本文结构、论证和 Showcase 已独立组织并复核。合并门禁的判据与退出码是本文 Showcase 的教学约定，不是 Claude Code 产品内置功能，也不是行业标准。

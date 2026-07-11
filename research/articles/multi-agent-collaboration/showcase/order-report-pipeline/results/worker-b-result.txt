@@ -1,0 +1,8 @@
+worker=task-b-renderer
+isolation=separate-node-process-and-temp-output
+owned_file=src/render-summary.mjs
+unexpected_files=none
+contract_sha256=9fda86dbd946659407714b3971984562cf568fab647416dad1cad08774f55b66
+output_sha256=bd3aacb31990ab32a883c99af5fad27ac5f879405646a8271eef8f0540d3d2e1
+self_test=PASS
+exit=0

@@ -1,0 +1,10 @@
+{
+  "id": "task-c-bad-contract",
+  "owner": "worker-c",
+  "summary": "负例一：该任务想顺手改字段，声明修改共享的冻结 contract",
+  "write_set": ["src/parse-orders.mjs", "contract/order-summary.schema.json"],
+  "contract_path": "contract/order-summary.schema.json",
+  "contract_checksum": "9fda86dbd946659407714b3971984562cf568fab647416dad1cad08774f55b66",
+  "interface_frozen": true,
+  "depends_on": []
+}
