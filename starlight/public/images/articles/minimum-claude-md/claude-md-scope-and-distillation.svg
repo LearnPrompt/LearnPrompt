@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="668" viewBox="0 0 900 668" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+  <rect width="900" height="668" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="40" y="46" font-size="21" font-weight="700" fill="#1c1917">CLAUDE.md：加载作用域，以及从项目事实到可执行验收</text>
+  <text x="40" y="70" font-size="13" fill="#57534e">官方文档核实于 2026-07-11：CLAUDE.md 是 context，不是 enforced configuration</text>
+
+  <!-- ===================== Panel A: load scope ===================== -->
+  <text x="40" y="108" font-size="15" font-weight="700" fill="#1c1917">一、加载作用域：四个位置，都作为 context 一并读入</text>
+
+  <!-- four scope boxes in load order broad -> specific -->
+  <!-- box template: width 195, height 66 -->
+  <g>
+    <rect x="40" y="122" width="195" height="66" fill="#f5f5f4" stroke="#d6d3d1" stroke-width="1"/>
+    <text x="52" y="145" font-size="12" font-weight="700" fill="#1c1917">Managed policy</text>
+    <text x="52" y="164" font-size="11" fill="#57534e">组织统一下发</text>
+    <text x="52" y="180" font-size="10.5" fill="#78716c">不可被个人排除</text>
+  </g>
+  <g>
+    <rect x="243" y="122" width="195" height="66" fill="#f5f5f4" stroke="#d6d3d1" stroke-width="1"/>
+    <text x="255" y="145" font-size="12" font-weight="700" fill="#1c1917">User</text>
+    <text x="255" y="164" font-size="11" fill="#57534e">~/.claude/CLAUDE.md</text>
+    <text x="255" y="180" font-size="10.5" fill="#78716c">你的所有项目</text>
+  </g>
+  <g>
+    <rect x="446" y="122" width="195" height="66" fill="#fff7ed" stroke="#c2410c" stroke-width="1.5"/>
+    <text x="458" y="145" font-size="12" font-weight="700" fill="#9a3412">Project（本文重点）</text>
+    <text x="458" y="164" font-size="11" fill="#57534e">./CLAUDE.md</text>
+    <text x="458" y="180" font-size="10.5" fill="#78716c">随 git 与团队共享</text>
+  </g>
+  <g>
+    <rect x="649" y="122" width="211" height="66" fill="#f5f5f4" stroke="#d6d3d1" stroke-width="1"/>
+    <text x="661" y="145" font-size="12" font-weight="700" fill="#1c1917">Local</text>
+    <text x="661" y="164" font-size="11" fill="#57534e">./CLAUDE.local.md</text>
+    <text x="661" y="180" font-size="10.5" fill="#78716c">私人，加 .gitignore</text>
+  </g>
+
+  <!-- load-order arrow -->
+  <line x1="40" y1="204" x2="852" y2="204" stroke="#a8a29e" stroke-width="1"/>
+  <polygon points="852,204 844,200 844,208" fill="#a8a29e"/>
+  <text x="40" y="223" font-size="11.5" fill="#57534e">加载顺序：从广到具体，后读的更靠近你的工作目录；全部拼接进上下文，而不是互相覆盖。目标单文件 &lt; 200 行。</text>
+
+  <!-- context vs enforcement boundary -->
+  <line x1="40" y1="240" x2="860" y2="240" stroke="#1c1917" stroke-width="1" stroke-dasharray="6 4"/>
+  <text x="40" y="260" font-size="12" fill="#1c1917"><tspan font-weight="700">边界：</tspan>以上都是 context（建议，模型可能不照做）。要“硬性阻止”某个动作，不在 CLAUDE.md，而在 —</text>
+  <g>
+    <rect x="40" y="270" width="400" height="34" fill="#ffffff" stroke="#d6d3d1" stroke-width="1"/>
+    <text x="54" y="292" font-size="11.5" fill="#44403c">PreToolUse hook：在动作发生前确定性拦截</text>
+  </g>
+  <g>
+    <rect x="452" y="270" width="408" height="34" fill="#ffffff" stroke="#d6d3d1" stroke-width="1"/>
+    <text x="466" y="292" font-size="11.5" fill="#44403c">managed settings 的 permissions.deny：客户端强制执行</text>
+  </g>
+
+  <!-- adjacent mechanisms note -->
+  <text x="40" y="326" font-size="10.5" fill="#78716c">相邻机制（本文不展开）：auto memory 是 Claude 自己写的学习笔记；.claude/rules 按路径作用域拆分规则；</text>
+  <text x="40" y="342" font-size="10.5" fill="#78716c">AGENTS.md 需用 @AGENTS.md 或 symlink 复用。</text>
+
+  <!-- ===================== Panel B: distillation pipeline ===================== -->
+  <line x1="40" y1="352" x2="860" y2="352" stroke="#e7e5e4" stroke-width="1"/>
+  <text x="40" y="384" font-size="15" font-weight="700" fill="#1c1917">二、蒸馏管线：把散落的项目事实，压成一份可被机械验收的最小规则</text>
+
+  <!-- Column 1: 项目事实 -->
+  <rect x="40" y="404" width="228" height="216" fill="#f5f5f4" stroke="#d6d3d1" stroke-width="1"/>
+  <text x="56" y="430" font-size="13" font-weight="700" fill="#1c1917">项目事实（散落）</text>
+  <text x="56" y="456" font-size="11.5" fill="#57534e">README、package.json</text>
+  <text x="56" y="478" font-size="11.5" fill="#57534e">真实构建 / 测试命令</text>
+  <text x="56" y="500" font-size="11.5" fill="#57534e">哪些目录不能碰</text>
+  <text x="56" y="522" font-size="11.5" fill="#57534e">最快的验收方式</text>
+  <text x="56" y="544" font-size="11.5" fill="#57534e">你重复踩过的坑</text>
+  <text x="56" y="580" font-size="10.5" fill="#78716c">问题：每轮都要重新</text>
+  <text x="56" y="596" font-size="10.5" fill="#78716c">解释一遍，AI 重复犯错</text>
+
+  <!-- arrow 1 -->
+  <line x1="272" y1="512" x2="316" y2="512" stroke="#c2410c" stroke-width="1.5"/>
+  <polygon points="316,512 307,507 307,517" fill="#c2410c"/>
+
+  <!-- Column 2: 具体规则（五类） -->
+  <rect x="320" y="404" width="272" height="216" fill="#fff7ed" stroke="#c2410c" stroke-width="1.5"/>
+  <text x="336" y="430" font-size="13" font-weight="700" fill="#9a3412">具体规则 · CLAUDE.md 五类必要信息</text>
+  <text x="336" y="458" font-size="12" fill="#1c1917">1　真实命令（写 npm run build，不写“测试”）</text>
+  <text x="336" y="486" font-size="12" fill="#1c1917">2　允许修改范围（先报计划，只改列出文件）</text>
+  <text x="336" y="514" font-size="12" fill="#1c1917">3　禁区（点名 .env、secrets/、部署配置）</text>
+  <text x="336" y="542" font-size="12" fill="#1c1917">4　最快验收（改完跑哪个命令来验）</text>
+  <text x="336" y="570" font-size="12" fill="#1c1917">5　输出收尾（汇报文件、命令、剩余风险）</text>
+  <text x="336" y="600" font-size="10.5" fill="#78716c">短、具体、可更新：每次失败只补一条能改变行为的规则</text>
+
+  <!-- arrow 2 -->
+  <line x1="596" y1="512" x2="640" y2="512" stroke="#c2410c" stroke-width="1.5"/>
+  <polygon points="640,512 631,507 631,517" fill="#c2410c"/>
+
+  <!-- Column 3: 可执行验收 -->
+  <rect x="644" y="404" width="216" height="216" fill="#f5f5f4" stroke="#d6d3d1" stroke-width="1"/>
+  <text x="660" y="430" font-size="13" font-weight="700" fill="#1c1917">可执行验收</text>
+  <text x="660" y="456" font-size="11.5" fill="#57534e">机械检查五类是否齐全</text>
+  <text x="660" y="478" font-size="11.5" fill="#57534e">且是否足够具体</text>
+  <g>
+    <rect x="660" y="492" width="184" height="30" fill="#ffffff" stroke="#d6d3d1" stroke-width="1"/>
+    <text x="672" y="511" font-size="11" fill="#9a3412" font-weight="700">空泛说明 → 5 FAIL</text>
+  </g>
+  <g>
+    <rect x="660" y="528" width="184" height="30" fill="#ffffff" stroke="#d6d3d1" stroke-width="1"/>
+    <text x="672" y="547" font-size="11" fill="#166534" font-weight="700">最小文件 → 5 PASS</text>
+  </g>
+  <text x="660" y="582" font-size="10.5" fill="#78716c">这是字段完整度检查，</text>
+  <text x="660" y="598" font-size="10.5" fill="#78716c">不是模型遵循度实验</text>
+
+  <!-- footer -->
+  <text x="40" y="648" font-size="10.5" fill="#a8a29e">LearnPrompt 原创示意图 · 依据 code.claude.com/docs/en/memory（2026-07-11 核实）与本文 Showcase 的 fail→pass 实测绘制</text>
+</svg>
