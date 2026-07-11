@@ -1,6 +1,6 @@
 # Phase 2 Wave B 生产状态
 
-更新时间：2026-07-11
+更新时间：2026-07-12
 
 ## 第一对结果
 
@@ -36,6 +36,13 @@
 | --- | --- | --- |
 | `codex/codex-cli-workflow.mdx` | 初审 FAIL 85/100（blocker 1 / major 1）→ 修复运行标识符、绝对 shell 路径与离线 replay 门禁 → PASS 98/100（0/0/0） | verified |
 | `codex/sandbox-and-permissions.mdx` | 初审 FAIL 87/100（major 1 / minor 2）→ follow-up FAIL 81/100（major 1 / minor 2）→ 终审 FAIL 90/100（major 1，fixture marker hygiene）→ 运行时 marker 回修 → PASS 98/100（0/0/0） | verified |
+
+## 第六对结果
+
+| 文章 | 审稿链路 | 最终状态 |
+| --- | --- | --- |
+| `codex/codex-cloud-task-fit.mdx` | 主会话只读预审发现 1 major：把保守的离线优先交接门禁误写成普遍 Cloud 前提 → 收窄适用范围并补齐可配置联网边界 → 独立终审 PASS 100/100（0/0/0） | verified |
+| `codex/auto-review-boundaries.mdx` | 主会话只读预审发现教学 SVG 文字越界 → 重排并重新渲染检查 → 独立终审 PASS 100/100（0/0/0） | verified |
 
 ## 关闭的问题
 
@@ -107,6 +114,18 @@
 - runner 在用户家目录创建非 temp lab，在系统临时目录保存 raw capture；两轮生成 checksum manifest、probe summary、verifier output 与 replay stability，外部重复运行五个冻结文件哈希稳定。
 - reviewer 发现固定 fixture marker 虽非 secret 仍进入 committed 摘要；最终改为由固定非敏感种子在运行时派生 key/value，冻结工件只保留 `fixture_marker_in_logs=no` 等布尔证据，终审确认 marker hygiene 关闭。
 
+`codex-cloud-task-fit`：
+
+- 用 `timezone-rollup` clean-room replay 冻结任务契约、只应用目标 patch、执行测试并核对唯一改动文件；正例 gate/apply/test 均为 0。
+- 用 Keychain 依赖、浏览器登录、缺失验收命令和方向不清四类负例分别返回 21/22/23/24，证明门禁会把不适合当前保守交接方式的任务退回本地，而不是宣称 Codex Cloud 永远不能联网或探索。
+- 为 unified diff 的空上下文行使用仓库内占位符，回放时才恢复空格，兼顾 clean-room patch 与 `git diff --check`；privacy scan 为 0。
+
+`auto-review-boundaries`：
+
+- 在本地 fixture 上执行一次真实 Codex 结构化审查，冻结 `src/refundPolicy.js:15` 的 P1 finding：未来 `deliveredAt` 会产生负 elapsed，却仍被判定在退款窗口内。
+- good finding 通过 schema、changed-line、severity、复现与行为证据门禁；伪造的 out-of-diff finding 被 changed-line gate 以退出码 3 拒绝，离线 replay 可重复。
+- 重排 1400×900 教学 SVG 的第四步文字并重新渲染，独立终审核对右边缘溢出为 0。
+
 ## Writer 与重试记录
 
 - 两路 Claude writer 均完成一手研究、真实 Showcase 和部分工件后遇到同一外部配额错误；保留已完成工件，没有伪造或重跑结果。
@@ -116,17 +135,18 @@
 - 第三对两路 Claude Opus writer 均一次完成 partial 稿；每篇严格只调用一次 skill，未消耗恢复重试预算。
 - 第四对两路 Claude Opus 在执行前遇到外部 503/403，token 为 0、工作树无改动，也未实际调用 Skill。Chrome 使用第 1 次 Codex GPT-5.4 恢复；内容流水线的第 1 次 Claude 恢复仍失败，随后使用第 2 次 Codex GPT-5.4 恢复。两位 Codex writer 各完整读取并使用一次本地 Skill，没有重复调用。
 - 第五对两路 Codex GPT-5.4 writer 各完整读取并使用一次本地 Skill；后续 finding 回修会话均未重复读取 Skill。沙箱教程最后一次回修会话因外层 sandbox 禁止嵌套 Seatbelt 而中止、未写文件，主会话只做 marker hygiene 定向修正，随后由新的独立只读 reviewer 终审。
+- 第六对两路 Codex GPT-5.4 writer 各完整读取并使用一次本地 Skill；后续 finding 回修没有重复读取 Skill。Claude Opus/Sonnet 恢复尝试因认证或 403 失败且未写文件；主会话按已冻结 finding 做定向修正，最终由使用独立配额的 Codex Spark 只读会话完成两篇终审。
 - reviewer 与 writer 始终为独立会话；reviewer 使用 read-only sandbox，原始报告只写工作树外。
 
 ## 门禁结果
 
-- 本 Wave 十篇均为 `showcase_status: verified`，质量分 96、93、92、98、94、93、96、100、98、98。
-- 十张原创教学 SVG 均通过语义教学价值和 CC BY-NC-SA 4.0 许可审查。
-- 第五对两篇单独 verified validator：PASS；两条 lane 的 49 页构建：PASS。
-- 合并后两组 Showcase 在含中文的主仓库路径重放通过，24 篇 verified 全量 validator：PASS。
+- 本 Wave 十二篇均为 `showcase_status: verified`，质量分 96、93、92、98、94、93、96、100、98、98、100、100。
+- 十二张原创教学 SVG 均通过语义教学价值和 CC BY-NC-SA 4.0 许可审查。
+- 第六对两篇单独 verified validator：PASS；合并后两套 Showcase 重放：PASS。
+- 合并后 26 篇 verified 全量 validator：PASS。
 - Validator 回归：1 positive / 3 depth negatives / 11 privacy negatives / 11 visual negatives / 7 review negatives，全部 PASS。
 - 主分支完整构建：49 页 PASS。
-- 当前全站计数：24 verified / 17 个仍含 SourceCard 的待处理深度教程。
+- 当前全站计数：26 verified / 15 个仍含 SourceCard 的待处理深度教程。
 
 ## 本地提交
 
@@ -142,5 +162,7 @@
 - `ac5d600 fix(showcase): keep content drafts replay-stable`
 - `839db33 docs(codex): goldenize CLI workflow (98)`
 - `53039b4 docs(codex): goldenize sandbox and permissions (98)`
+- `a5e57f2 docs(codex): goldenize cloud task fit (100)`
+- `f06de92 docs(codex): goldenize auto-review boundaries (100)`
 
 没有 push、部署或发布。
