@@ -1,0 +1,1 @@
+PASS git diff --check produced no whitespace or conflict-marker issues for the allowed paths.

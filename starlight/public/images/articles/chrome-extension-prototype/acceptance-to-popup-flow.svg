@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">从验收标准到当前页阅读卡原型的权限与数据流</title>
+  <desc id="desc">展示用户快捷键如何触发 activeTab，service worker 如何用 scripting 读取页面并把结果写入 storage.local，popup 如何显示最近结果，以及 tabs 与 all urls 为什么属于越权负例。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fff7ed" />
+      <stop offset="100%" stop-color="#f5efe4" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#c2410c" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
+    <linearGradient id="ok" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0f766e" />
+      <stop offset="100%" stop-color="#14b8a6" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#6b4f2b" flood-opacity="0.18" />
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#9a3412" />
+    </marker>
+    <marker id="arrowOk" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#0f766e" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="720" fill="url(#bg)" />
+  <circle cx="1090" cy="88" r="128" fill="#fdba741a" />
+  <circle cx="118" cy="614" r="156" fill="#f59e0b12" />
+
+  <text x="64" y="74" font-size="34" font-family="'PingFang SC', 'Noto Sans CJK SC', sans-serif" fill="#7c2d12" font-weight="700">
+    当前页阅读卡：先冻结验收，再让 Claude Code 生成最小 MV3 原型
+  </text>
+  <text x="64" y="110" font-size="18" font-family="'PingFang SC', 'Noto Sans CJK SC', sans-serif" fill="#6b7280">
+    这条链路只保留三类必要权限：activeTab、scripting、storage；tabs 与 &lt;all_urls&gt; 在本题里属于越权负例。
+  </text>
+
+  <g filter="url(#shadow)">
+    <rect x="64" y="152" width="300" height="204" rx="28" fill="#fffaf5" stroke="#f1d7bd" stroke-width="2" />
+    <rect x="424" y="152" width="300" height="204" rx="28" fill="#fffaf5" stroke="#f1d7bd" stroke-width="2" />
+    <rect x="784" y="152" width="352" height="204" rx="28" fill="#fffaf5" stroke="#f1d7bd" stroke-width="2" />
+    <rect x="64" y="420" width="300" height="232" rx="28" fill="#fffaf5" stroke="#f1d7bd" stroke-width="2" />
+    <rect x="424" y="420" width="300" height="232" rx="28" fill="#fffaf5" stroke="#f1d7bd" stroke-width="2" />
+    <rect x="784" y="420" width="352" height="232" rx="28" fill="#fffaf5" stroke="#f1d7bd" stroke-width="2" />
+  </g>
+
+  <g font-family="'PingFang SC', 'Noto Sans CJK SC', sans-serif">
+    <text x="92" y="198" font-size="15" fill="#c2410c" font-weight="700">1. 验收标准先冻结</text>
+    <text x="92" y="236" font-size="26" fill="#111827" font-weight="700">只抓一张阅读卡</text>
+    <text x="92" y="274" font-size="18" fill="#374151">- 标题 / URL / 可选选中文本</text>
+    <text x="92" y="304" font-size="18" fill="#374151">- 保存到 chrome.storage.local</text>
+    <text x="92" y="334" font-size="18" fill="#374151">- popup 只显示最近结果</text>
+
+    <text x="452" y="198" font-size="15" fill="#c2410c" font-weight="700">2. 用户动作与临时权限绑定</text>
+    <text x="452" y="236" font-size="26" fill="#111827" font-weight="700">快捷键触发 activeTab</text>
+    <rect x="452" y="268" width="244" height="46" rx="20" fill="url(#accent)" />
+    <text x="490" y="298" font-size="22" fill="#ffffff" font-weight="700">⌘ / Ctrl + Shift + Y</text>
+    <text x="452" y="332" font-size="17" fill="#374151">仅限当前活动页，</text>
+    <text x="452" y="354" font-size="17" fill="#374151">离开后即失效</text>
+
+    <text x="812" y="198" font-size="15" fill="#c2410c" font-weight="700">3. service worker 只做最小后台逻辑</text>
+    <text x="812" y="236" font-size="26" fill="#111827" font-weight="700">background.js</text>
+    <text x="812" y="274" font-size="18" fill="#374151">- query 当前活动 tab 的 id</text>
+    <text x="812" y="304" font-size="18" fill="#374151">- scripting.executeScript() 读取 DOM</text>
+    <text x="812" y="334" font-size="18" fill="#374151">- 成功写 latestCard，失败写 lastRun</text>
+
+    <text x="92" y="466" font-size="15" fill="#0f766e" font-weight="700">4. 当前页读取的真实来源</text>
+    <text x="92" y="504" font-size="26" fill="#111827" font-weight="700">网页上下文</text>
+    <text x="92" y="542" font-size="18" fill="#374151">document.title</text>
+    <text x="92" y="572" font-size="18" fill="#374151">window.location.href</text>
+    <text x="92" y="602" font-size="18" fill="#374151">window.getSelection()</text>
+
+    <text x="452" y="466" font-size="15" fill="#0f766e" font-weight="700">5. 本地持久化</text>
+    <text x="452" y="504" font-size="26" fill="#111827" font-weight="700">chrome.storage.local</text>
+    <text x="452" y="542" font-size="18" fill="#374151">latestCard：最近一次成功结果</text>
+    <text x="452" y="572" font-size="18" fill="#374151">lastRun：最近一次运行状态</text>
+    <text x="452" y="602" font-size="18" fill="#374151">失败时不覆盖上一张成功卡片</text>
+
+    <text x="812" y="466" font-size="15" fill="#0f766e" font-weight="700">6. popup 只读展示，不抢权限</text>
+    <text x="812" y="504" font-size="26" fill="#111827" font-weight="700">popup.html / popup.js</text>
+    <text x="812" y="542" font-size="18" fill="#374151">- 显示最近成功结果</text>
+    <text x="812" y="572" font-size="18" fill="#374151">- 显示最近一次成功或失败状态</text>
+    <text x="812" y="602" font-size="18" fill="#374151">- 不直接拥有额外 host 权限</text>
+  </g>
+
+  <path d="M364 254 C392 254 398 254 424 254" fill="none" stroke="#9a3412" stroke-width="4" marker-end="url(#arrow)" />
+  <path d="M724 254 C750 254 756 254 784 254" fill="none" stroke="#9a3412" stroke-width="4" marker-end="url(#arrow)" />
+  <path d="M214 356 C214 390 214 390 214 420" fill="none" stroke="#9a3412" stroke-width="4" marker-end="url(#arrow)" />
+  <path d="M574 356 C574 390 574 390 574 420" fill="none" stroke="#0f766e" stroke-width="4" marker-end="url(#arrowOk)" />
+  <path d="M934 356 C934 390 934 390 934 420" fill="none" stroke="#0f766e" stroke-width="4" marker-end="url(#arrowOk)" />
+  <path d="M364 534 C392 534 398 534 424 534" fill="none" stroke="#0f766e" stroke-width="4" marker-end="url(#arrowOk)" />
+  <path d="M724 534 C750 534 756 534 784 534" fill="none" stroke="#0f766e" stroke-width="4" marker-end="url(#arrowOk)" />
+
+  <g filter="url(#shadow)">
+    <rect x="872" y="68" width="264" height="82" rx="20" fill="#fff7ed" stroke="#fdba74" stroke-width="2" />
+    <text x="904" y="106" font-size="17" font-family="'PingFang SC', 'Noto Sans CJK SC', sans-serif" fill="#9a3412" font-weight="700">
+      不申请 tabs
+    </text>
+    <text x="904" y="129" font-size="17" font-family="'PingFang SC', 'Noto Sans CJK SC', sans-serif" fill="#9a3412" font-weight="700">
+      也不申请 &lt;all_urls&gt;
+    </text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="820" y="648" width="316" height="52" rx="18" fill="#ecfdf5" stroke="#5eead4" stroke-width="2" />
+    <text x="842" y="675" font-size="15" font-family="'PingFang SC', 'Noto Sans CJK SC', sans-serif" fill="#115e59">
+      受限页负例：chrome://extensions
+    </text>
+    <text x="842" y="696" font-size="15" font-family="'PingFang SC', 'Noto Sans CJK SC', sans-serif" fill="#115e59">
+      只记失败状态，不抓内容
+    </text>
+  </g>
+</svg>

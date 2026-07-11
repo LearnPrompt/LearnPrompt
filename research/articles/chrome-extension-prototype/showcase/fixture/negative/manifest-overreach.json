@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Current Page Reading Card (Overreach Example)",
+  "version": "0.1.0",
+  "permissions": ["activeTab", "scripting", "storage", "tabs", "unlimitedStorage"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

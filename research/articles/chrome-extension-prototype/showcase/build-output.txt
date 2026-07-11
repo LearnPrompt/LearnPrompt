@@ -1,0 +1,77 @@
+
+> learnprompt-starlight@0.1.0 build
+> ASTRO_TELEMETRY_DISABLED=1 astro build
+
+21:26:35 [content] Syncing content
+21:26:35 [content] Synced content
+21:26:35 [types] Generated 217ms
+21:26:35 [build] output: "static"
+21:26:35 [build] mode: "static"
+21:26:35 [build] directory: starlight/dist/
+21:26:35 [build] Collecting build info...
+21:26:35 [build] ✓ Completed in 286ms.
+21:26:35 [build] Building static entrypoints...
+21:26:37 [vite] ✓ built in 1.53s
+21:26:37 [vite] ✓ built in 85ms
+21:26:37 [build] Rearranging server assets...
+
+ generating static routes
+21:26:37   ├─ /404.htmlEntry docs → 404 was not found.
+ (+9ms)
+21:26:37   ├─ /index.html (+1ms)
+21:26:37   ├─ /agent-engineering/constraint-layer/index.html (+6ms)
+21:26:37   ├─ /agent-engineering/feedback-loop/index.html (+3ms)
+21:26:37   ├─ /agent-engineering/instruction-layer/index.html (+4ms)
+21:26:37   ├─ /agent-engineering/memory-layer/index.html (+4ms)
+21:26:37   ├─ /agent-engineering/orchestration-layer/index.html (+6ms)
+21:26:37   ├─ /agent-engineering/what-is-harness/index.html (+4ms)
+21:26:37   ├─ /agent-frameworks/deployment-channels-cost/index.html (+3ms)
+21:26:37   ├─ /agent-frameworks/hermes-learning-loop/index.html (+2ms)
+21:26:37   ├─ /agent-frameworks/openclaw-architecture-guide/index.html (+2ms)
+21:26:37   ├─ /agent-skills/api-integration-skill-design/index.html (+2ms)
+21:26:37   ├─ /agent-skills/checklist-skill-design/index.html (+2ms)
+21:26:37   ├─ /agent-skills/first-skill-md/index.html (+3ms)
+21:26:37   ├─ /agent-skills/pipeline-skill-design/index.html (+2ms)
+21:26:37   ├─ /agent-skills/thinking-distillation-boundary/index.html (+2ms)
+21:26:37   ├─ /agent-skills/trigger-rules-and-structure/index.html (+2ms)
+21:26:37   ├─ /agent-skills/what-are-agent-skills/index.html (+2ms)
+21:26:37   ├─ /ai-coding/choose-claude-code-or-codex/index.html (+4ms)
+21:26:37   ├─ /ai-coding/minimum-agentic-coding-workflow/index.html (+3ms)
+21:26:37   ├─ /ai-coding/natural-language-to-mvp/index.html (+4ms)
+21:26:37   ├─ /ai-coding/plan-auto-approval-boundary/index.html (+3ms)
+21:26:37   ├─ /ai-coding/project-checklist/index.html (+3ms)
+21:26:37   ├─ /claude-code/advanced-conversation-patterns/index.html (+4ms)
+21:26:37   ├─ /claude-code/chrome-extension-prototype/index.html (+7ms)
+21:26:37   ├─ /claude-code/content-automation-pipeline/index.html (+2ms)
+21:26:37   ├─ /claude-code/control-style-with-claude-md/index.html (+3ms)
+21:26:37   ├─ /claude-code/install-and-first-project/index.html (+3ms)
+21:26:37   ├─ /claude-code/minimum-claude-md/index.html (+4ms)
+21:26:37   ├─ /claude-code/multi-agent-collaboration/index.html (+4ms)
+21:26:37   ├─ /claude-code/skills-hooks-mcp-roles/index.html (+3ms)
+21:26:37   ├─ /codex/auto-review-boundaries/index.html (+2ms)
+21:26:37   ├─ /codex/codex-claude-code-dual-track/index.html (+2ms)
+21:26:37   ├─ /codex/codex-cli-workflow/index.html (+2ms)
+21:26:37   ├─ /codex/codex-cloud-task-fit/index.html (+1ms)
+21:26:37   ├─ /codex/codex-form-factors/index.html (+3ms)
+21:26:37   ├─ /codex/sandbox-and-permissions/index.html (+1ms)
+21:26:37   ├─ /loop-engineering/five-moves/index.html (+4ms)
+21:26:37   ├─ /obsidian-ai/ai-maintains-knowledge-base/index.html (+2ms)
+21:26:37   ├─ /obsidian-ai/claude-md-index-navigation/index.html (+1ms)
+21:26:37   ├─ /obsidian-ai/markdown-as-agent-memory/index.html (+1ms)
+21:26:37   ├─ /obsidian-ai/obsidian-git-workflow/index.html (+1ms)
+21:26:37   ├─ /obsidian-ai/vault-directory-for-ai/index.html (+2ms)
+21:26:37   ├─ /sources/source-index/index.html (+4ms)
+21:26:37   ├─ /start-here/index.html (+2ms)
+21:26:37   ├─ /start-here/ai-practice-map/index.html (+2ms)
+21:26:37   ├─ /start-here/context-task-verification/index.html (+1ms)
+21:26:37   ├─ /start-here/how-to-use-this-wiki/index.html (+1ms)
+21:26:37   ├─ /start-here/setup-safety-basics/index.html (+2ms)
+21:26:37 ✓ Completed in 167ms.
+
+21:26:37 [build] ✓ Completed in 1.81s.
+21:26:37 [starlight:pagefind] Building search index with Pagefind...
+21:26:37 [starlight:pagefind] Found 49 HTML files.
+21:26:37 [starlight:pagefind] Finished building search index in 156ms.
+21:26:37 [@astrojs/sitemap] `sitemap-index.xml` created at `dist`
+21:26:37 [build] 49 page(s) built in 2.27s
+21:26:37 [build] Complete!

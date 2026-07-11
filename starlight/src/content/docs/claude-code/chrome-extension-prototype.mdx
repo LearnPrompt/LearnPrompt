@@ -1,33 +1,459 @@
 ---
-title: 用 Claude Code 做 Chrome 扩展原型
-description: 用最小目录和验收路径生成浏览器扩展 MVP。
+title: "用 Claude Code 做 Chrome 扩展原型：从验收标准做出权限克制的 Manifest V3 阅读卡"
+description: 从 acceptance criteria 出发，用 Claude Code 做一个真实可加载、可验证、只申请必要权限的 Chrome Manifest V3 扩展原型。
 sidebar:
   order: 7
 difficulty: intermediate
 source_repo: alchaincyf/claude-code-orange-book
 source_url: https://github.com/alchaincyf/claude-code-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-11"
+reading_time: 18 分钟
+research_path: research/articles/chrome-extension-prototype
+showcase_path: research/articles/chrome-extension-prototype/showcase
+showcase_status: verified
+quality_score: 96
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 18 分钟 | 2026-07-11 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/claude-code-orange-book" url="https://github.com/alchaincyf/claude-code-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+让 Claude Code “做一个 Chrome 扩展”并不难。真正难的是，很多人一开始就把任务写成：
 
-## 操作步骤
+```text
+帮我做一个网页信息收集扩展。
+```
 
-1. 先定义扩展只做一个动作，例如读取当前页面标题并保存。
-2. 让 Claude Code 生成 `manifest.json`、popup 和 background 的最小结构。
-3. 本地加载 unpacked extension。
-4. 在真实网页上验证按钮、权限和错误状态。
-5. 再补设置页、存储和外部 API。
+这句话几乎一定会把工程带偏。模型看见“信息收集”，很容易顺手加上 `tabs`、`<all_urls>`、选项页、后台轮询、同步存储，甚至外部 API。结果不是它不会写，而是你没有先定义**什么叫最小成功**，也没有先定义**什么权限不该申请**。
 
-## 常见错误
+这篇文章解决的不是“Claude Code 会不会写 Manifest V3”，而是更关键的问题：
 
-- 一开始就接入复杂账户系统。
-- 权限写得过大，审核和安全风险上升。
-- 没有真实浏览器验收，只看代码。
+> 怎样先写出一个可判断的验收标准，再让 Claude Code 生成一个可加载、可验证、权限克制的 Chrome 扩展原型？
 
-## 实战案例
+本文的 Showcase 不做“全能网页剪藏器”，只做一个足够收敛、却又覆盖关键机制的原型：**当前页阅读卡**。
 
-网页信息源收集器可以先做成扩展：用户点击按钮，把当前 URL、标题、选中摘要保存到本地 JSON，再由 Agent 生成日报。
+- 用户显式触发一次抓取。
+- 扩展从当前页面读取标题、URL 与可选选中文本。
+- 结果保存到 `chrome.storage.local`。
+- popup 只负责显示最近一次成功结果和最近一次运行状态。
+- 主扩展只申请 `activeTab`、`scripting`、`storage`。
+
+:::note[当前状态]
+这篇稿件先由 writer 完成 research pack、真实 fixture、确定性检查、单篇 validator 与站点 build，再由独立只读 reviewer 检查事实、Showcase 和教学图。初审发现的 2 个 major 与 1 个 minor 已全部关闭，最终状态为 `showcase_status: verified`，质量分 96/100。
+:::
+
+## 读完你能做什么
+
+读完后，你应该能独立完成四件事：
+
+1. 把“做个 Chrome 扩展”改写成一个有权限边界、有失败模式、有验证命令的 contract。
+2. 用 Claude Code 在这个 contract 之内生成一套最小 Manifest V3 文件，而不是任由它扩张范围。
+3. 解释清楚为什么本题只需要 `activeTab`、`scripting`、`storage`，以及 `tabs`、`<all_urls>` 为什么在这里属于越权。
+4. 区分三类证据：已经机械实跑的、仍需人工在 `chrome://extensions` 验收的、以及根本不该伪装成“已验证”的部分。
+
+![从验收标准、用户快捷键、service worker、页面提取到 popup 展示的最小 MV3 原型链路](/images/articles/chrome-extension-prototype/acceptance-to-popup-flow.svg)
+*图注：这条链路刻意把权限和动作一一对应：用户快捷键触发 `activeTab`，service worker 用 `scripting.executeScript()` 从当前页读取数据，结果写入 `storage.local`，popup 只读展示最近状态；`tabs` 与 `<all_urls>` 在本题里都属于越权负例。*
+
+## 先把验收标准写成 contract，而不是先问 Claude 要哪些文件
+
+如果你想让 Claude Code 帮你做扩展，第一轮最不该说的话就是“先生成一个完整脚手架”。这会让模型在错误层级上做决定。真正应该先冻结的是这六件事：
+
+| 问题 | 本文答案 |
+| --- | --- |
+| 要抓什么 | 当前页面的标题、URL、可选选中文本 |
+| 结果去哪 | `chrome.storage.local` |
+| 用户怎样触发 | 显式快捷键，不能后台常驻抓取 |
+| popup 做什么 | 只显示最近一次成功结果与最近一次运行状态 |
+| 权限上限是什么 | 只允许 `activeTab`、`scripting`、`storage` |
+| 证明方式是什么 | 真实浏览器验证 + 确定性检查 + 至少一个失败或越权负例 |
+
+把它压成 Claude Code 看得懂的任务卡，建议写成下面这样：
+
+```yaml
+goal: 做一个 Manifest V3 当前页阅读卡原型
+must_capture:
+  - document.title
+  - location.href
+  - optional selected text
+store: chrome.storage.local
+popup: 只显示最近一次成功结果和最近一次运行状态
+permissions_allow:
+  - activeTab
+  - scripting
+  - storage
+permissions_forbid:
+  - tabs
+  - host_permissions
+  - unlimitedStorage
+negative_cases:
+  - chrome://extensions 这类受限页必须显式失败
+  - 一个故意越权的 manifest 必须被检查器判定为 FAIL
+verification:
+  - Chrome for Testing 真实运行 fixture 页面
+  - popup 读到最近结果
+  - 失败时不覆盖上一次成功卡片
+```
+
+这张卡的价值不在于格式优雅，而在于它把“原型成功”压成了**可观察事实**。一旦这几个点冻结，你会发现很多“可做可不做”的功能都会自动掉出范围：
+
+- 不需要选项页。
+- 不需要同步存储。
+- 不需要账号体系。
+- 不需要内容脚本常驻注入。
+- 不需要站外 API。
+
+这正是 acceptance criteria 的作用。它不是项目管理附属品，而是 Claude Code 的**边界条件**。
+
+## 用 Claude Code 的正确起手式：先 plan，后 implement
+
+Claude Code 官方 best practices 现在讲得很直接：当你对方案还不确定、涉及多文件、或者你对目标仓库还不熟时，先把 research 和 implementation 分开。权限模式文档也说明，`plan` 模式会让 Claude 先读文件、跑只读命令、写计划，但不改源码。
+
+这篇题目非常适合这么做，因为你要先确认的不是 CSS，而是：
+
+- Manifest 究竟需要几个权限。
+- 抓取动作是由 popup 触发、快捷键触发，还是 action click 触发。
+- 失败状态应该只在 console 里留痕，还是写进 `storage.local` 让 popup 可见。
+- 真实验证应该跑 branded Chrome、Chrome for Testing，还是两者分层说明。
+
+更稳的两段式起手如下。
+
+第一段，只做 plan：
+
+```bash
+claude --permission-mode plan
+```
+
+然后直接给它明确问题：
+
+```text
+先只读分析，不要改文件。
+
+我要做一个 Chrome Manifest V3 当前页阅读卡原型。请先回答：
+1. 在不申请 tabs / host_permissions / unlimitedStorage 的前提下，最小文件结构是什么？
+2. 用 activeTab + scripting + storage 能否完成标题、URL、选中文本抓取？边界在哪里？
+3. 什么用户动作最适合作为 activeTab 的入口：popup、action click、还是快捷键？
+4. 受限页失败时，怎样让 popup 也能看到错误状态？
+5. 真实验证最小需要哪些 fixture、脚本和负例？
+```
+
+这一步的目标不是让 Claude 展示“它懂很多 Chrome API”，而是逼它先把设计空间收窄。
+
+第二段，再做 implement：
+
+```bash
+claude --permission-mode acceptEdits
+```
+
+这时再把范围冻结成实现任务：
+
+```text
+只在当前文章的 showcase 目录内创建一个最小 MV3 原型。
+
+必须满足：
+- 只能申请 activeTab、scripting、storage
+- service worker 接收显式用户动作后抓当前页标题、URL、可选选中文本
+- 结果写入 chrome.storage.local
+- popup 只显示最近一次成功结果和最近一次运行状态
+- 受限页失败时不能覆盖上一次成功结果
+- 提供 fixture、README、确定性检查、越权负例
+
+禁止：
+- tabs
+- host_permissions
+- unlimitedStorage
+- 远程托管代码
+- 账号体系、同步存储、后台轮询
+```
+
+你会发现，Claude Code 在这类题目里的强项不是“自己想产品”，而是**当你已经写清边界后，快速把数据流接通**。
+
+## 为什么这个原型只要三个权限，不是更多
+
+这一题最值得讲透的，不是 JS 语法，而是权限机制。
+
+### `activeTab`：把权限和用户动作绑在一起
+
+Chrome 官方文档对 `activeTab` 的定义很适合当前页阅读卡：用户调用扩展时，扩展获得对当前页的临时访问能力；而且这条权限**不会触发权限 warning**。对一个只在用户显式触发时才读取页面的原型来说，这就是正确层级。
+
+它解决的是：
+
+- 不需要为所有站点预先授权。
+- 不需要声明 `<all_urls>`。
+- 不需要把“我现在想抓当前页”误写成“我想长期看所有页”。
+
+它解决不了的是：
+
+- 后台自动巡检。
+- 无用户动作的批量采集。
+- 离开当前页后的长期访问。
+
+所以 `activeTab` 不只是“更安全”，它其实在帮你把产品形态压回“单次显式动作”。
+
+### `scripting`：从页面上下文读取，而不是从 tab 元数据猜
+
+本题要拿到的不只是 URL，还要拿到页面标题和当前选区。这意味着你最终得读 `document.title`、`window.location.href`、`window.getSelection()`。Chrome 官方的 MV3 做法就是 `chrome.scripting.executeScript()`。
+
+它的重要性在于：
+
+- 读取的是页面自己看到的 DOM 状态，而不是在 popup 里猜。
+- 逻辑仍在扩展包内，符合 MV3 对远程托管代码的限制。
+- 能把“当前页”这个概念直接变成一次明确注入，而不是常驻内容脚本。
+
+### `storage`：让 popup 只做显示，不做推理
+
+很多原型第一次失败，不是抓不到数据，而是抓到了也没一个稳定的落点。popup 是瞬时界面，service worker 在 MV3 下也不是常驻进程。如果你只在内存里留状态，用户关一下 popup 或 worker 休眠后，结果就没了。
+
+`chrome.storage.local` 的价值是：
+
+- 最近一次成功结果有稳定归宿。
+- 最近一次失败状态也能保留下来。
+- popup 可以变成一个纯读取界面，而不是“每次打开都重新请求权限、重新抓 DOM”。
+
+这正是本文最后采用的结构：**抓取逻辑在 service worker，结果展示在 popup。**
+
+### 为什么这里不该申请 `tabs`
+
+Chrome `tabs` 文档写得很清楚：`tabs` 权限的关键用途之一，是读取 `tabs.Tab` 上的敏感属性，例如标题和 URL。可本题故意不走这条路。原因不是“`tabs` 有毒”，而是它会弱化教学重点。
+
+在当前页阅读卡里，我们更想让读者理解：
+
+- 数据真正来自当前页 DOM。
+- URL 和标题是页面上下文的一部分。
+- 先用最小机制证明需求成立，再决定是否需要更大权限。
+
+所以这里不用 `tabs`，是一个**教学上和工程上都成立**的收敛。
+
+## Showcase：当前页阅读卡原型到底长什么样
+
+最终的真实 fixture 放在：
+
+```text
+research/articles/chrome-extension-prototype/showcase/fixture/extension/
+```
+
+关键文件只有四个角色：
+
+| 文件 | 作用 |
+| --- | --- |
+| `manifest.json` | 冻结权限、popup 入口、service worker 与快捷键 |
+| `background.js` | 响应快捷键、抓当前页、写 `storage.local` |
+| `popup.html` / `popup.css` | 展示最近一次成功结果与最近一次运行状态 |
+| `popup.js` | 只读取 storage，不直接抢当前页权限 |
+
+先看最关键的 manifest 片段：
+
+```json
+{
+  "manifest_version": 3,
+  "permissions": ["activeTab", "scripting", "storage"],
+  "background": { "service_worker": "background.js" },
+  "commands": {
+    "capture-reading-card": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      }
+    }
+  },
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
+```
+
+这里最重要的不是字段会不会背，而是它体现了一个取舍：
+
+- **抓取动作**由快捷键完成，这正好和 `activeTab` 对齐。
+- **展示动作**由 popup 完成，它只负责看 `storage.local`。
+- popup 没有任何理由再去额外声明站点权限。
+
+后台抓取逻辑也故意压到最小：
+
+```js
+chrome.commands.onCommand.addListener((command) => {
+  if (command === "capture-reading-card") {
+    void captureActiveTab();
+  }
+});
+```
+
+`captureActiveTab()` 做的事情只有三件：
+
+1. 查当前活动标签页的 `tab.id`。
+2. 用 `chrome.scripting.executeScript()` 在当前页里读 `title`、`url`、`selectedText`。
+3. 成功则写 `latestCard`，失败则写 `lastRun`，并且**不覆盖上一次成功卡片**。
+
+这一点非常关键。很多教程把失败状态只留在 console 里，结果用户打开 popup 什么也看不见。本文故意把错误写到 `storage.local`，因为这是 popup 面向读者的真实证据。
+
+popup 自己则反过来尽量“笨”：
+
+- 它读 `latestCard`。
+- 它读 `lastRun`。
+- 它把成功或失败状态渲染出来。
+
+这样做的好处是：popup 的存在不再和“当前页权限”绑死。它只是一个结果观察面，而不是权限中心。
+
+## 真实验证：哪些已经实跑，哪些还需要你到 `chrome://extensions` 看
+
+这部分最不能糊弄。
+
+### 已经实跑的部分
+
+本次 Showcase 的确定性检查脚本是：
+
+```text
+research/articles/chrome-extension-prototype/showcase/verify-extension.mjs
+```
+
+它在 Chrome for Testing 150 上确实完成了 **22 项机械检查**；下面这些是真正覆盖到的步骤，脱敏结果冻结在 `research/articles/chrome-extension-prototype/showcase/verify-output.txt`：
+
+- 审计主 manifest 是否只保留 `activeTab`、`scripting`、`storage`
+- 审计越权负例 `manifest-overreach.json`
+- 用真实浏览器打开 fixture 页面并选中预设段落
+- 触发扩展快捷键抓取
+- 验证 `chrome.storage.local` 中的最近成功卡片
+- 打开 popup 页面，验证它显示了最近一次成功状态
+- 切到 `chrome://extensions`，再次触发抓取
+- 验证失败状态被写出，且没有覆盖上一张成功卡片
+
+冻结输出里最关键的几行是：
+
+```text
+PASS browser capture on fixture page keeps the real page title: Fixture Article: Chrome Prototype Notes
+PASS browser capture on fixture page keeps the real page URL: http://127.0.0.1:<PORT>/page.html
+PASS popup displays the latest successful run status: 已保存最近一次阅读卡。
+PASS restricted page failure is surfaced: 抓取失败：Cannot access a chrome:// URL
+PASS restricted page failure does not overwrite last successful card: Fixture Article: Chrome Prototype Notes
+```
+
+这说明原型不只是“代码看起来像那么回事”，而是真正经历了：
+
+- 正向抓取；
+- popup 可见；
+- 受限页失败；
+- 上一张成功卡片保留。
+
+### 为什么机械自动化没有直接用 `/Applications/Google Chrome.app`
+
+这里必须给出真实背景。Chrome 官方 2025 年 6 月的扩展动态已经明确说明：**Chrome branded builds 从 137 开始移除 `--load-extension`**。Chromium Extensions 邮件列表又把边界说得更具体：这个变化针对 official Chrome branded builds，而 **Chromium / Chrome for Testing** 继续支持这条命令行路径。
+
+本机现场状态也和官方说法一致：
+
+- `/Applications/Google Chrome.app` 当前版本是 **150.0.7871.115**
+- 命令行 `--load-extension` 不再适合作为它的机械加载路径
+- 对 branded Chrome，真实 unpacked 安装仍应通过 `chrome://extensions` 的 **Load unpacked**
+
+因此，这轮验证采取了分层策略：
+
+- **机械自动化**：使用同版本的 Chrome for Testing 150.0.7871.115 完成真实扩展运行。
+- **branded Chrome 说明**：把命令行限制单独冻结在 `research/articles/chrome-extension-prototype/showcase/chrome-branded-load-note.txt`，并在正文中明确要求读者对 branded Chrome 走 `chrome://extensions`。
+
+这不是偷懒，而是忠实遵守 2026 年的真实平台边界。
+
+### 仍需你在 `chrome://extensions` 人工验收的部分
+
+下面这些项，本文**没有伪装成自动化已覆盖**：
+
+1. 在 branded Chrome 的扩展管理页中手动启用 Developer mode。
+2. 点击 **Load unpacked** 选择 `fixture/extension/` 目录。
+3. 看扩展卡片是否有警告、错误计数或快捷键冲突。
+4. 人眼确认 popup 视觉样式、换行和状态文案是否符合你的机器环境。
+
+如果你要在真实 branded Chrome 上做最终收口，这四步不能跳过。
+
+## 常见失败模式与越权负例
+
+这篇文章比一般“快速上手”更强调失败模式，因为浏览器扩展题目很容易把错误掩盖掉。
+
+### 失败一：受限页抓取被误判成代码坏了
+
+`chrome://extensions` 这类页面不是普通网页。本文的真实负例已经说明，当你在这类页面上触发抓取时，扩展应该给出清晰错误，而不是假装返回空对象。
+
+更重要的是，失败状态必须进入 popup 可见层，而不是只留在 console。否则用户看到的只会是“为什么点了没反应”。
+
+### 失败二：一开始就把权限申请大了
+
+这类失败更隐蔽。因为它往往不会立刻报错，反而“看起来更省事”。例如：
+
+- 为了拿 URL 和标题，直接申请 `tabs`
+- 为了避免以后再加权限，顺手加 `<all_urls>`
+- 怕 storage 不够，先上 `unlimitedStorage`
+
+这些做法在某些正式产品里也许有合理性，但在“当前页阅读卡原型”这个问题上，它们都跳过了最重要的一步：先证明最小权限已经够用。
+
+本文专门保留了一个越权 manifest 负例，并让检查脚本显式把它判成 FAIL。因为对黄金教程来说，**越权不是以后优化的事，而是当场要指出来的设计错误。**
+
+### 失败三：popup 同时负责抓取和展示，最后两头都说不清
+
+很多原型喜欢把一切都塞进 popup：打开 popup，顺手抓当前页，再顺手渲染结果。这样看似文件少，实际上会让权限、失败状态和可测试性全缠在一起。
+
+本文最后选择“快捷键抓取 + popup 只读展示”，原因就是把这两层拆开：
+
+- 抓取动作必须和 `activeTab` 的用户触发绑定。
+- 展示动作应该能离线读取上一次状态。
+
+一旦你把它们拆开，测试和失败模式都会更清楚。
+
+## 什么时候不该用这个原型
+
+当前页阅读卡是一个好原型，但它不是通用答案。下面这些情况，你应该把它当作起点，而不是成品：
+
+- 你要做后台自动扫描，而不是单次显式抓取。
+- 你要跨多个页面持续注入内容脚本。
+- 你要同步多设备，而不是只保存在本机。
+- 你要抓的不只是标题、URL、选区，而是复杂页面结构、表格或媒体资源。
+- 你需要 side panel、options page、远程服务或登录态。
+
+换句话说，这个原型最适合回答：
+
+> “在最小权限前提下，我能不能先证明当前页抓取这件事成立？”
+
+如果这个答案已经是肯定的，再去谈更大的权限和更复杂的结构，才不会本末倒置。
+
+## 练习：给你自己的扩展写一张 10 行 contract
+
+找一个你真想做的浏览器扩展，不要先写代码，先写：
+
+```yaml
+goal:
+user_action:
+page_data_needed:
+where_to_store:
+what_popup_shows:
+permissions_allow:
+permissions_forbid:
+negative_case:
+mechanical_check:
+manual_acceptance:
+```
+
+如果你写完以后，还想往 `permissions_allow` 里加 `tabs` 或 `<all_urls>`，再问自己一次：
+
+- 这是当前问题的必要条件，还是我只是怕以后改动麻烦？
+- 我有没有先证明更小权限做不到？
+- 失败状态是否已经能被 popup 或日志看见？
+
+能把这三问答清楚，Claude Code 才真正有机会帮你“加速”，而不是把一个模糊需求放大成一团更大的模糊实现。
+
+## 来源与延伸阅读
+
+- [Claude Code Overview](https://code.claude.com/docs/en/overview)
+- [Claude Code Quickstart](https://code.claude.com/docs/en/quickstart)
+- [Claude Code Permission Modes](https://code.claude.com/docs/en/permission-modes)
+- [Claude Code Permissions](https://code.claude.com/docs/en/permissions)
+- [Claude Code Best Practices](https://code.claude.com/docs/en/best-practices)
+- [Chrome Extensions: activeTab](https://developer.chrome.com/docs/extensions/develop/concepts/activeTab)
+- [Chrome Extensions: chrome.scripting](https://developer.chrome.com/docs/extensions/reference/api/scripting)
+- [Chrome Extensions: chrome.tabs](https://developer.chrome.com/docs/extensions/reference/api/tabs)
+- [Chrome Extensions: chrome.storage](https://developer.chrome.com/docs/extensions/reference/api/storage)
+- [Chrome Extensions: Add a popup](https://developer.chrome.com/docs/extensions/develop/ui/add-popup)
+- [Chrome Extensions: End-to-end testing](https://developer.chrome.com/docs/extensions/how-to/test/end-to-end-testing)
+- [Chrome Extensions: What is Manifest V3](https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3)
+- [Chrome Extensions June 2025 update](https://developer.chrome.com/blog/extension-news-june-2025)
+- [Chromium Extensions PSA: Removing `--load-extension` flag in Chrome branded builds](https://groups.google.com/a/chromium.org/g/chromium-extensions/c/1-g8EFx2BBY/m/S0ET5wPjCAAJ)
+- [Claude Code 橙皮书](https://github.com/alchaincyf/claude-code-orange-book)
+
+官方资料支撑当前的 Chrome API、Claude Code 权限模式和 branded Chrome 的命令行边界。`alchaincyf/claude-code-orange-book` 只作为中文主题地图保留署名与回链；其仓库声明的许可为 **CC BY-NC-SA 4.0**。本文的结构、fixture、验证链路和负例均已按 2026-07-11 的官方资料与真实运行重新组织和复核。

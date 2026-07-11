@@ -1,0 +1,4 @@
+Google Chrome branded build observed: 150.0.7871.115
+Mechanical result on 2026-07-11: launching /Applications/Google Chrome.app with --load-extension did not expose this unpacked prototype as a debuggable extension target.
+Interpretation: this matches Chrome's 2025 policy change removing --load-extension for branded builds; use chrome://extensions -> Load unpacked for branded Chrome, or Chrome for Testing / Chromium for command-line automation.
+Scope: this note documents the branded-Chrome manual-acceptance boundary only; it is not part of the Chrome for Testing 22-check automation.
