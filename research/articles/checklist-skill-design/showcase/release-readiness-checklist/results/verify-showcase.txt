@@ -1,0 +1,12 @@
+release-readiness-checklist offline replay
+command: node research/articles/checklist-skill-design/showcase/release-readiness-checklist/scripts/verify-showcase.mjs
+mode: offline deterministic replay only; no model call
+
+ready: exit=0
+missing-changelog: exit=21
+version-mismatch: exit=22
+unverifiable-install: exit=23
+na-without-evidence: exit=24
+privacy: exit=0
+privacy_output: PASS privacy scan: no runtime IDs, absolute temp paths, user home paths, or shell paths were committed.
+row_contract: all ready rows preserve id/question/evidence/pass_rule/severity/not_applicable_policy/result

@@ -1,0 +1,38 @@
+Reading additional input from stdin...
+2026-07-11T18:22:02.756684Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-11T18:22:02.756703Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-11T18:22:05.192452Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-11T18:22:05.193729Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-11T18:22:07.189165Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-11T18:22:07.189173Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-11T18:22:08.372066Z  WARN codex_core_skills::loader: skills scan truncated after 2000 directories (root: $HOME/.agents/skills)
+2026-07-11T18:22:08.418931Z ERROR codex_core::session::session: failed to load skill $HOME/.agents/skills/open-design/plugins/_official/scenarios/od-vue-export/SKILL.md: missing YAML frontmatter delimited by ---
+2026-07-11T18:22:08.418938Z ERROR codex_core::session::session: failed to load skill $HOME/.agents/skills/open-design/plugins/_official/scenarios/od-design-refine/SKILL.md: missing YAML frontmatter delimited by ---
+2026-07-11T18:22:08.418940Z ERROR codex_core::session::session: failed to load skill $HOME/.agents/skills/open-design/plugins/_official/scenarios/od-react-export/SKILL.md: missing YAML frontmatter delimited by ---
+2026-07-11T18:22:08.418942Z ERROR codex_core::session::session: failed to load skill $HOME/.agents/skills/open-design/plugins/_official/scenarios/od-nextjs-export/SKILL.md: missing YAML frontmatter delimited by ---
+2026-07-11T18:22:11.154318Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-11T18:22:11.167507Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-11T18:22:11.167515Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-11T18:22:11.167849Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-11T18:22:11.167855Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-11T18:22:11.168179Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-11T18:22:11.168186Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-11T18:22:11.168503Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-11T18:22:11.168510Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-11T18:22:11.168841Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-11T18:22:11.168846Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-11T18:22:11.169742Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-11T18:22:11.169747Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-11T18:22:11.361343Z  WARN codex_memories_write::phase1::job::result: Phase 1 job failed for thread <redacted-uuid>: Codex ran out of room in the model's context window. Start a new thread or clear earlier history before retrying.
+2026-07-11T18:22:11.607954Z  WARN codex_memories_write::phase1::job::result: Phase 1 job failed for thread <redacted-uuid>: Codex ran out of room in the model's context window. Start a new thread or clear earlier history before retrying.
+2026-07-11T18:22:12.911294Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-11T18:22:25.490301Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-11T18:22:32.169646Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-11T18:22:42.076371Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-11T18:22:49.685582Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-11T18:22:56.492322Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-11T18:23:07.312068Z ERROR codex_core::tools::router: error=exec_command failed for `<redacted-shell> -lc 'rm -rf .npm-cache clip-clean-1.4.0.tgz'`: CreateProcess { message: "Rejected(\"`<redacted-shell> -lc 'rm -rf .npm-cache clip-clean-1.4.0.tgz'` rejected: blocked by policy\")" }
+2026-07-11T18:23:07.324184Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-11T18:23:15.938172Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-11T18:23:19.666620Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-11T18:23:22.331374Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json

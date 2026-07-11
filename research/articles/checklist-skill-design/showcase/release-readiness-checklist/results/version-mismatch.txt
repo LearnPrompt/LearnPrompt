@@ -1,0 +1,134 @@
+scenario=version-mismatch
+collect_exit=22
+validate_exit=0
+tests_exit=0
+
+[collect output]
+{
+  "package_name": "clip-clean",
+  "expected_version": "1.4.0",
+  "release_ready": false,
+  "exit_code": 22,
+  "rows": [
+    {
+      "id": "PACK-00",
+      "question": "Does npm pack dry-run assemble a local tarball for clip-clean 1.4.0 without publishing?",
+      "evidence": "npm pack --dry-run --json exit 0; filename=clip-clean-1.4.1.tgz; entryCount=5",
+      "pass_rule": "npm pack --dry-run --json exits 0 and reports clip-clean-1.4.0.tgz.",
+      "severity": "major",
+      "not_applicable_policy": "Never N/A for an npm CLI release candidate; a package that cannot be packed cannot ship.",
+      "result": "fail"
+    },
+    {
+      "id": "CHANGELOG-21",
+      "question": "Does CHANGELOG.md contain a 1.4.0 section with at least one user-visible change?",
+      "evidence": "CHANGELOG.md inspected; first release heading=1.4.0",
+      "pass_rule": "CHANGELOG.md exists and includes a 1.4.0 heading plus at least one bullet item.",
+      "severity": "blocker",
+      "not_applicable_policy": "Never N/A for this fixture. If there is no changelog, fail the gate instead of waiving it.",
+      "result": "pass"
+    },
+    {
+      "id": "VERSION-22",
+      "question": "Do package.json, the changelog heading, and the install contract agree on 1.4.0?",
+      "evidence": "package.json=1.4.1; changelog=1.4.0; install-command=local-smoke-only",
+      "pass_rule": "package.json.version is 1.4.0; CHANGELOG.md headline is 1.4.0; the install contract does not contradict that version.",
+      "severity": "blocker",
+      "not_applicable_policy": "Only N/A if the repo proves there is no versioned package surface; cite the inspected file in evidence.",
+      "result": "fail"
+    },
+    {
+      "id": "INSTALL-23",
+      "question": "Can the committed install command be verified locally without npm publish or registry writes?",
+      "evidence": "release/install-command.txt=npm run release:smoke; smoke output=> clip-clean@1.4.1 release:smoke\n> node scripts/release-smoke.mjs\n\ntarball=clip-clean-1.4.1.tgz\ninstall=ok\nhelp=ok",
+      "pass_rule": "The committed install command is local-only and its smoke run exits 0 after packaging the tarball.",
+      "severity": "blocker",
+      "not_applicable_policy": "Only N/A if the package has no executable surface and the inspected bin mapping or CLI entrypoint proves that absence.",
+      "result": "pass"
+    }
+  ]
+}
+
+[validator output]
+PASS report contract
+
+[tests output]
+> clip-clean@1.4.1 test
+> node --test test/*.test.mjs
+
+✔ clip-clean collapses repeated blank lines from stdin (19.887666ms)
+✔ clip-clean prints help text (19.514125ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 67.725792
+
+[report excerpt]
+{
+  "package_name": "clip-clean",
+  "expected_version": "1.4.0",
+  "release_ready": false,
+  "exit_code": 22,
+  "rows": [
+    {
+      "id": "PACK-00",
+      "question": "Does npm pack dry-run assemble a local tarball for clip-clean 1.4.0 without publishing?",
+      "evidence": "npm pack --dry-run --json exit 0; filename=clip-clean-1.4.1.tgz; entryCount=5",
+      "pass_rule": "npm pack --dry-run --json exits 0 and reports clip-clean-1.4.0.tgz.",
+      "severity": "major",
+      "not_applicable_policy": "Never N/A for an npm CLI release candidate; a package that cannot be packed cannot ship.",
+      "result": "fail"
+    },
+    {
+      "id": "CHANGELOG-21",
+      "question": "Does CHANGELOG.md contain a 1.4.0 section with at least one user-visible change?",
+      "evidence": "CHANGELOG.md inspected; first release heading=1.4.0",
+      "pass_rule": "CHANGELOG.md exists and includes a 1.4.0 heading plus at least one bullet item.",
+      "severity": "blocker",
+      "not_applicable_policy": "Never N/A for this fixture. If there is no changelog, fail the gate instead of waiving it.",
+      "result": "pass"
+    },
+    {
+      "id": "VERSION-22",
+      "question": "Do package.json, the changelog heading, and the install contract agree on 1.4.0?",
+      "evidence": "package.json=1.4.1; changelog=1.4.0; install-command=local-smoke-only",
+      "pass_rule": "package.json.version is 1.4.0; CHANGELOG.md headline is 1.4.0; the install contract does not contradict that version.",
+      "severity": "blocker",
+      "not_applicable_policy": "Only N/A if the repo proves there is no versioned package surface; cite the inspected file in evidence.",
+      "result": "fail"
+    },
+    {
+      "id": "INSTALL-23",
+      "question": "Can the committed install command be verified locally without npm publish or registry writes?",
+      "evidence": "release/install-command.txt=npm run release:smoke; smoke output=> clip-clean@1.4.1 release:smoke\n> node scripts/release-smoke.mjs\n\ntarball=clip-clean-1.4.1.tgz\ninstall=ok\nhelp=ok",
+      "pass_rule": "The committed install command is local-only and its smoke run exits 0 after packaging the tarball.",
+      "severity": "blocker",
+      "not_applicable_policy": "Only N/A if the package has no executable surface and the inspected bin mapping or CLI entrypoint proves that absence.",
+      "result": "pass"
+    }
+  ]
+}
+
+
+[markdown excerpt]
+# clip-clean release readiness report (1.4.0)
+
+- Final exit code: `22`
+- Decision: blocked
+- Tests: recorded separately by the caller
+
+| id | question | result | severity | pass_rule | evidence | not_applicable_policy |
+| --- | --- | --- | --- | --- | --- | --- |
+| PACK-00 | Does npm pack dry-run assemble a local tarball for clip-clean 1.4.0 without publishing? | fail | major | npm pack --dry-run --json exits 0 and reports clip-clean-1.4.0.tgz. | npm pack --dry-run --json exit 0; filename=clip-clean-1.4.1.tgz; entryCount=5 | Never N/A for an npm CLI release candidate; a package that cannot be packed cannot ship. |
+| CHANGELOG-21 | Does CHANGELOG.md contain a 1.4.0 section with at least one user-visible change? | pass | blocker | CHANGELOG.md exists and includes a 1.4.0 heading plus at least one bullet item. | CHANGELOG.md inspected; first release heading=1.4.0 | Never N/A for this fixture. If there is no changelog, fail the gate instead of waiving it. |
+| VERSION-22 | Do package.json, the changelog heading, and the install contract agree on 1.4.0? | fail | blocker | package.json.version is 1.4.0; CHANGELOG.md headline is 1.4.0; the install contract does not contradict that version. | package.json=1.4.1; changelog=1.4.0; install-command=local-smoke-only | Only N/A if the repo proves there is no versioned package surface; cite the inspected file in evidence. |
+| INSTALL-23 | Can the committed install command be verified locally without npm publish or registry writes? | pass | blocker | The committed install command is local-only and its smoke run exits 0 after packaging the tarball. | release/install-command.txt=npm run release:smoke; smoke output=> clip-clean@1.4.1 release:smoke<br>> node scripts/release-smoke.mjs<br><br>tarball=clip-clean-1.4.1.tgz<br>install=ok<br>help=ok | Only N/A if the package has no executable surface and the inspected bin mapping or CLI entrypoint proves that absence. |
+
+## Remaining gate notes
+
+- Gate blocked with exit code 22. See the failing checklist row above.
+- This report does not publish the package. It only checks local dry-run evidence.

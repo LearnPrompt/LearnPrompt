@@ -1,0 +1,20 @@
+{
+  "name": "clip-clean",
+  "version": "1.4.0",
+  "description": "Trim duplicate blank lines from Markdown snippets before release notes are shipped.",
+  "type": "module",
+  "bin": {
+    "clip-clean": "bin/clip-clean.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "release:smoke": "node scripts/release-smoke.mjs"
+  },
+  "files": [
+    "bin",
+    "README.md",
+    "CHANGELOG.md",
+    "release"
+  ],
+  "license": "MIT"
+}
