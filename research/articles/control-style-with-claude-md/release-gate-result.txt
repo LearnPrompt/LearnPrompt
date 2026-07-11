@@ -1,0 +1,53 @@
+control-style-with-claude-md 发布前机械门禁（冻结脱敏摘录）
+=============================================================
+运行日期：2026-07-11
+运行位置：LearnPrompt 仓库根目录；Showcase 命令另行标注工作目录。
+说明：原始终端输出先在工作树外检查；以下为进程退出后冻结的关键行，不含本机绝对路径或运行标识。当前仍是 partial，不代表独立终审通过。
+
+1. Showcase before（预期失败）
+工作目录：research/articles/control-style-with-claude-md/showcase/style-scope
+命令：node verify-style-scope.mjs before
+关键输出：
+  FAIL src/ui/Button.tsx uses hard-coded color #7c3aed
+  SKIP ui-token rule for src/api/handlers/profile.ts because path does not match src/ui/**/*.tsx
+  FAIL src/api/handlers/profile.ts is missing jsonOk/jsonError helpers
+  RESULT FAIL
+退出码：1（预期）
+
+2. Showcase after
+工作目录：research/articles/control-style-with-claude-md/showcase/style-scope
+命令：node verify-style-scope.mjs after
+关键输出：
+  PASS src/ui/Button.tsx uses theme tokens and cx()
+  SKIP ui-token rule for src/api/handlers/profile.ts because path does not match src/ui/**/*.tsx
+  PASS src/api/handlers/profile.ts returns jsonOk/jsonError helpers
+  RESULT PASS
+退出码：0
+
+3. 单篇 validator
+命令：
+  node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs \
+    --article starlight/src/content/docs/claude-code/control-style-with-claude-md.mdx \
+    --research research/articles/control-style-with-claude-md
+关键输出：
+  PASS article: starlight/src/content/docs/claude-code/control-style-with-claude-md.mdx
+  PASS research: research/articles/control-style-with-claude-md
+  PASS status: partial
+退出码：0
+
+4. Starlight 完整构建
+命令：npm --prefix starlight run build
+关键输出：
+  Found 49 HTML files.
+  49 page(s) built
+  Complete!
+退出码：0
+
+5. diff 格式检查
+命令：git diff --check
+关键输出：（无输出）
+退出码：0
+
+6. 教学图浏览器复检
+命令：用 1200x820 Chrome viewport 渲染 rule-placement-loop.svg，并人工检查文本、箭头和边界。
+结果：PASS；无文本越界或裁切。

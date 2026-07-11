@@ -1,0 +1,31 @@
+Run date: 2026-07-11
+
+Command:
+cd research/articles/control-style-with-claude-md/showcase/style-scope
+node verify-style-scope.mjs before
+
+Output:
+SCENARIO before
+PASS root CLAUDE.md keeps only repo-wide instructions
+PASS UI rule is path-scoped to src/ui/**/*.tsx
+PASS API rule is path-scoped to src/api/**/*.ts
+FAIL src/ui/Button.tsx uses hard-coded color #7c3aed
+SKIP ui-token rule for src/api/handlers/profile.ts because path does not match src/ui/**/*.tsx
+FAIL src/api/handlers/profile.ts is missing jsonOk/jsonError helpers
+RESULT FAIL
+exit=1
+
+Command:
+cd research/articles/control-style-with-claude-md/showcase/style-scope
+node verify-style-scope.mjs after
+
+Output:
+SCENARIO after
+PASS root CLAUDE.md keeps only repo-wide instructions
+PASS UI rule is path-scoped to src/ui/**/*.tsx
+PASS API rule is path-scoped to src/api/**/*.ts
+PASS src/ui/Button.tsx uses theme tokens and cx()
+SKIP ui-token rule for src/api/handlers/profile.ts because path does not match src/ui/**/*.tsx
+PASS src/api/handlers/profile.ts returns jsonOk/jsonError helpers
+RESULT PASS
+exit=0

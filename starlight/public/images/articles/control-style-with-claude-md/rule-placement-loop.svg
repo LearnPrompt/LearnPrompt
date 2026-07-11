@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="820" viewBox="0 0 1200 820" role="img" aria-labelledby="title desc">
+  <title id="title">规则放置判断与维护循环</title>
+  <desc id="desc">展示一次风格失败如何被拆成根级规则、路径作用域规则、确定性检查，并进入添加验证修剪循环。</desc>
+  <rect width="1200" height="820" fill="#f7f3eb"/>
+  <rect x="40" y="40" width="1120" height="740" rx="28" fill="#fffdf7" stroke="#d6c8b0" stroke-width="2"/>
+  <text x="80" y="92" font-size="32" fill="#2a241b" font-family="Georgia, serif">一次风格失败，应该落到哪一层</text>
+  <text x="80" y="126" font-size="16" fill="#5d5447" font-family="Arial, sans-serif">从左到右阅读：先定位失败，再写成具体规则，再判断放根级、路径作用域还是机械检查，最后进入维护循环。</text>
+
+  <rect x="80" y="170" width="300" height="186" rx="20" fill="#fff4e8" stroke="#cf8b47" stroke-width="2"/>
+  <text x="104" y="210" font-size="24" fill="#5d2f07" font-family="Arial, sans-serif">1. 失败</text>
+  <text x="104" y="246" font-size="18" fill="#3e3124" font-family="Arial, sans-serif">UI 组件写了硬编码颜色</text>
+  <text x="104" y="278" font-size="18" fill="#3e3124" font-family="Arial, sans-serif">API 处理器直接 return 裸对象</text>
+  <text x="104" y="318" font-size="15" fill="#6a5847" font-family="Arial, sans-serif">症状本身还不是规则，先把“失败现象”说具体。</text>
+
+  <rect x="448" y="170" width="300" height="186" rx="20" fill="#eef8f2" stroke="#4f8c6b" stroke-width="2"/>
+  <text x="472" y="210" font-size="24" fill="#1f5037" font-family="Arial, sans-serif">2. 具体规则</text>
+  <text x="472" y="246" font-size="17" fill="#25372c" font-family="Arial, sans-serif">UI：颜色来自 token，</text>
+  <text x="472" y="270" font-size="17" fill="#25372c" font-family="Arial, sans-serif">不写十六进制</text>
+  <text x="472" y="298" font-size="17" fill="#25372c" font-family="Arial, sans-serif">API：返回 jsonOk/jsonError</text>
+  <text x="472" y="330" font-size="14" fill="#4f6458" font-family="Arial, sans-serif">先改写成可判断、可验证的句子。</text>
+
+  <line x1="380" y1="263" x2="448" y2="263" stroke="#7f6c56" stroke-width="4"/>
+  <polygon points="448,263 432,254 432,272" fill="#7f6c56"/>
+
+  <rect x="816" y="154" width="300" height="250" rx="20" fill="#f2f5ff" stroke="#5d79c6" stroke-width="2"/>
+  <text x="840" y="194" font-size="24" fill="#27428a" font-family="Arial, sans-serif">3. 放置判断</text>
+  <text x="840" y="234" font-size="17" fill="#1f2d4d" font-family="Arial, sans-serif">每次都该知道？</text>
+  <text x="840" y="260" font-size="15" fill="#4a5774" font-family="Arial, sans-serif">放根级 CLAUDE.md：命令、边界、验证入口</text>
+  <text x="840" y="300" font-size="17" fill="#1f2d4d" font-family="Arial, sans-serif">只对某类文件成立？</text>
+  <text x="840" y="326" font-size="15" fill="#4a5774" font-family="Arial, sans-serif">放 .claude/rules：UI 规则只命中 src/ui/</text>
+  <text x="840" y="366" font-size="17" fill="#1f2d4d" font-family="Arial, sans-serif">可以稳定判定 pass/fail？</text>
+  <text x="840" y="392" font-size="14" fill="#4a5774" font-family="Arial, sans-serif">放脚本 / lint / hook：让检查器做裁判</text>
+
+  <line x1="748" y1="263" x2="816" y2="263" stroke="#7f6c56" stroke-width="4"/>
+  <polygon points="816,263 800,254 800,272" fill="#7f6c56"/>
+
+  <rect x="86" y="430" width="1028" height="136" rx="18" fill="#faf7ff" stroke="#9d7ec2" stroke-width="2"/>
+  <text x="114" y="466" font-size="24" fill="#5b3f83" font-family="Arial, sans-serif">4. 作用域证据</text>
+  <text x="114" y="500" font-size="17" fill="#3a2f4f" font-family="Arial, sans-serif">before：UI 文件 FAIL，API 文件 FAIL</text>
+  <text x="114" y="526" font-size="17" fill="#3a2f4f" font-family="Arial, sans-serif">轨迹：SKIP ui-token rule for src/api/handlers/profile.ts ...</text>
+  <text x="114" y="552" font-size="15" fill="#67577f" font-family="Arial, sans-serif">结论：UI 规则不应作用于 API；脚本只证明机械约束，不证明模型一定遵守。</text>
+
+  <circle cx="240" cy="676" r="94" fill="#fff1db" stroke="#d29b48" stroke-width="2"/>
+  <text x="208" y="662" font-size="24" fill="#7a4a12" font-family="Arial, sans-serif">添加</text>
+  <text x="176" y="696" font-size="15" fill="#694c24" font-family="Arial, sans-serif">只补一条会改变行为的规则</text>
+
+  <circle cx="598" cy="676" r="94" fill="#e9f7ef" stroke="#58a27b" stroke-width="2"/>
+  <text x="566" y="662" font-size="24" fill="#216647" font-family="Arial, sans-serif">验证</text>
+  <text x="530" y="696" font-size="15" fill="#305b47" font-family="Arial, sans-serif">记录 before FAIL -> after PASS</text>
+
+  <circle cx="956" cy="676" r="94" fill="#eef2ff" stroke="#6f85d0" stroke-width="2"/>
+  <text x="924" y="662" font-size="24" fill="#304c97" font-family="Arial, sans-serif">修剪</text>
+  <text x="896" y="696" font-size="15" fill="#485b93" font-family="Arial, sans-serif">删除重复、失效、已脚本化内容</text>
+
+  <path d="M334 676 C 392 616, 458 616, 504 676" fill="none" stroke="#7f6c56" stroke-width="4"/>
+  <polygon points="504,676 488,668 490,684" fill="#7f6c56"/>
+  <path d="M692 676 C 752 616, 818 616, 864 676" fill="none" stroke="#7f6c56" stroke-width="4"/>
+  <polygon points="864,676 848,668 850,684" fill="#7f6c56"/>
+  <path d="M956 770 C 752 814, 438 814, 240 770" fill="none" stroke="#7f6c56" stroke-width="4" stroke-dasharray="10 10"/>
+  <polygon points="240,770 256,760 254,778" fill="#7f6c56"/>
+</svg>
