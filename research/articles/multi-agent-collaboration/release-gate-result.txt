@@ -86,3 +86,21 @@ multi-agent-collaboration 发布前机械门禁（冻结脱敏摘录）
 输出：
   9fda86dbd946659407714b3971984562cf568fab647416dad1cad08774f55b66
 说明：与 task-a / task-b 任务卡声明的 contract_checksum 一致；改动 contract 会改变该值并触发门禁拒绝。
+
+9. 主仓库 Unicode 路径回放与独立窄审
+命令：
+  node src/parse-orders.mjs fixtures/orders.csv
+  node src/render-summary.mjs <parser-output.json>
+  node run-independent-workers.mjs
+  node merge-gate.mjs tasks/task-a-parser.json tasks/task-b-renderer.json
+  node e2e-test.mjs
+关键结果：
+  worker CLI：PASS
+  independent workers：PASS
+  merge gate 正例：退出码 0
+  conflict 负例：退出码 3
+  sequential 负例：退出码 4
+  e2e：PASS
+说明：合并回含中文的真实仓库路径后发现 URL percent-encoding 问题；四处路径处理已改用
+fileURLToPath / pathToFileURL。第一次独立只读窄审因两个 worker CLI 遗漏判 FAIL；修正后新的独立
+只读会话复审 PASS（blocker 0 / major 0 / minor 0），并重算确认冻结 worker SHA 与当前源码一致。

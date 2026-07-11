@@ -19,6 +19,7 @@
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const cardPaths = process.argv.slice(2);
 if (cardPaths.length < 2) {
@@ -26,7 +27,7 @@ if (cardPaths.length < 2) {
   process.exit(2);
 }
 
-const root = path.dirname(new URL(import.meta.url).pathname);
+const root = path.dirname(fileURLToPath(import.meta.url));
 const cards = cardPaths.map((p) => JSON.parse(readFileSync(p, "utf8")));
 
 function actualChecksum(relPath) {

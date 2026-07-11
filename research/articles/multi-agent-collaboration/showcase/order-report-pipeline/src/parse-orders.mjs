@@ -6,6 +6,8 @@
 // Worker A 的 write set 只有这一个文件：src/parse-orders.mjs。
 
 import { readFileSync } from "node:fs";
+import path from "node:path";
+import { pathToFileURL } from "node:url";
 
 export function parseOrders(csvText) {
   const lines = csvText.trim().split("\n");
@@ -38,7 +40,7 @@ export function parseOrders(csvText) {
   };
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   const target = process.argv[2];
   const summary = parseOrders(readFileSync(target, "utf8"));
   process.stdout.write(JSON.stringify(summary, null, 2) + "\n");

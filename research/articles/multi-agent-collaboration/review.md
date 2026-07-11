@@ -21,6 +21,17 @@
 
 follow-up reviewer 检查脚本逻辑、任务卡、SHA 和冻结结果，确认“独立执行 → owned output → 协调器消费临时产物 → 集成 PASS”的 major 已关闭；原有冲突拒绝与 sequential 负例仍一致。
 
+### 主仓库 Unicode 路径 follow-up
+
+合并后在含中文的主仓库绝对路径重放时，`merge-gate.mjs` 与 `e2e-test.mjs` 暴露出直接读取
+`URL.pathname` 会保留 percent-encoding 的问题。第一次独立只读窄审进一步发现两个 worker 模块的
+CLI 入口仍用手拼 `file://`，因此判定 FAIL（blocker 0 / major 1 / minor 0）。
+
+四处实现随后统一改为 Node 标准 `fileURLToPath` / `pathToFileURL`，并在主仓库重跑 worker CLI、
+双独立进程集成、正例门禁、冲突负例、sequential 负例与 e2e。新的独立只读 follow-up 会话检查中文、
+空格和字面 `%` 的 round-trip，检索同类残留，并重算两份冻结 worker SHA；结论 PASS，blocker 0 /
+major 0 / minor 0。该修正不改变原终审分数。
+
 ## 独立复审结论
 
 终审结论：PASS 93/100

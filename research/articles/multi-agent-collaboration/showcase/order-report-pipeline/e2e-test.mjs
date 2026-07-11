@@ -9,10 +9,11 @@
 
 import { readFileSync } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { parseOrders } from "./src/parse-orders.mjs";
 import { renderSummary } from "./src/render-summary.mjs";
 
-const root = path.dirname(new URL(import.meta.url).pathname);
+const root = path.dirname(fileURLToPath(import.meta.url));
 const csv = readFileSync(path.join(root, "fixtures/orders.csv"), "utf8");
 const expected = readFileSync(path.join(root, "fixtures/expected-summary.md"), "utf8");
 

@@ -27,6 +27,11 @@
 - 本机未开启 `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`，未真实运行 Agent Team，也未伪造其运行记录；
   两个 worker 由两个独立本地进程（各只被授予一个文件所有权）扮演，只验证协调与合并门禁骨架。
 - 原始输出先写在工作树外的 `$TMPDIR`，进程结束并完成脱敏检查后才冻结进研究包 results/。
+- 合并回主仓库后，在含中文的真实绝对路径下重放发现 `URL.pathname` 与手拼 `file://` 会保留或错配
+  percent-encoding。四处路径处理已分别改为 Node 标准 `fileURLToPath` / `pathToFileURL`；worker CLI、
+  双进程集成、正例与两个负例全部在主仓库重跑通过。第一次独立窄审发现两个 worker CLI 仍有遗漏并判
+  FAIL；修正后由新的独立只读会话复审为 PASS（blocker 0 / major 0 / minor 0），同时重算并确认两份
+  冻结 worker SHA 与当前源码一致。
 
 ## 发布前机械门禁
 
@@ -34,4 +39,5 @@
 - 独立 worker 集成与三个门禁分支：退出码 0 / 0 / 3 / 4，与冻结结果一致。
 - `npm --prefix starlight run build`：49 页构建成功；冻结摘录见 `release-gate-result.txt`。
 - `git diff --check` 与 `git add -A && git diff --cached --check`：均通过。
-- 当前仍等待独立只读 reviewer；writer 未自评、未写质量分或 PASS，`showcase_status` 保持 partial。
+- 独立终审 PASS 93/100，blocker 0 / major 0 / minor 0；Unicode 路径修复的独立 follow-up 复审亦 PASS。
+- 最终元数据由 reviewer 结论驱动：`showcase_status: verified`、`quality_score: 93`。

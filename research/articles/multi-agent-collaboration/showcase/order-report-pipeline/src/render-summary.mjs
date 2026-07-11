@@ -5,6 +5,9 @@
 // 它只依赖 contract 约定的字段，不关心 CSV 长什么样，也不修改 contract。
 // Worker B 的 write set 只有这一个文件：src/render-summary.mjs。
 
+import path from "node:path";
+import { pathToFileURL } from "node:url";
+
 export function renderSummary(summary) {
   const statusLines = Object.keys(summary.by_status)
     .sort()
@@ -25,7 +28,7 @@ export function renderSummary(summary) {
   ].join("\n");
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   const { readFileSync } = await import("node:fs");
   const target = process.argv[2];
   const summary = JSON.parse(readFileSync(target, "utf8"));
