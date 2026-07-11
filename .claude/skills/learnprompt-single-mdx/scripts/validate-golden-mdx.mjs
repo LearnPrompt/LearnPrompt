@@ -354,10 +354,25 @@ if (data.source_url && !/^https:\/\//.test(data.source_url)) fail("source_url mu
 if (!/^\d{4}-\d{2}-\d{2}$/.test(data.verified_at ?? "")) {
   fail("verified_at must be a quoted YYYY-MM-DD string");
 }
-if (body.length < 2500) fail(`article body is too short (${body.length} characters)`);
+if (body.length < 5000) {
+  fail(`article body is too short (${body.length} characters; minimum 5000)`);
+}
+const explanatoryBody = body
+  .replace(/```[\s\S]*?```/g, "")
+  .replace(/`[^`\n]+`/g, "");
+const chineseExplanatoryCharacters =
+  explanatoryBody.match(/[\u3400-\u9fff]/g)?.length ?? 0;
+if (chineseExplanatoryCharacters < 1800) {
+  fail(
+    `article has too little Chinese explanatory prose (${chineseExplanatoryCharacters} characters; minimum 1800)`,
+  );
+}
 if (/\bSourceCard\b/.test(body)) fail("public article must not import, render, or mention SourceCard");
 
 const h2Headings = [...body.matchAll(/^##\s+(.+?)\s*$/gm)];
+if (h2Headings.length < 6) {
+  fail(`article has too few H2 sections (${h2Headings.length}; minimum 6)`);
+}
 const sourceHeading = [...h2Headings]
   .reverse()
   .find((heading) => /(来源|参考资料|延伸阅读)/.test(heading[1]));

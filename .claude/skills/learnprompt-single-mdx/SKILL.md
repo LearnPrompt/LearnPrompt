@@ -67,6 +67,8 @@ If a real run cannot be completed, set `showcase_status: partial`. Never invent 
 
 Follow [references/article-contract.md](references/article-contract.md). Start from a real problem, explain the mechanism and trade-offs, show the evidence, state when not to use the method, and end with an exercise and sources.
 
+Treat the depth floor as a release gate, not a target: a deep tutorial needs at least 5,000 body characters, at least 1,800 Chinese explanatory characters after fenced code is removed, and at least six H2 sections. Do not pad with repetition, oversized code dumps, source lists, or decorative markup. Navigation and index pages use a separate workflow and must not be forced through this deep-tutorial skill.
+
 Include at least one local teaching image that explains a mechanism, decision, sequence, comparison, or verified result. Follow [references/visual-assets.md](references/visual-assets.md): use a descriptive alt, an immediate `图注：` line, a matching `asset-ledger.md` row, and source/license disclosure. A cover, logo, or decorative banner does not satisfy this requirement.
 
 Never import or render `SourceCard` in a public tutorial. When rewriting a legacy page, remove the import and component only after its bottom source section accurately lists the material actually used and the applicable attribution or license.

@@ -132,6 +132,36 @@ try {
 
   unlinkSync(leakFile);
   const validArticle = readFileSync(articleTarget, "utf8");
+  const depthCases = [
+    {
+      label: "article body is too short",
+      content: validArticle.replace(
+        /\n---\n[\s\S]*$/,
+        "\n---\n## 学习目标\n\n这是故意缩短的验证器负例。\n",
+      ),
+    },
+    {
+      label: "too little Chinese explanatory prose",
+      content: validArticle.replace(/[\u3400-\u9fff]/g, "x"),
+    },
+    {
+      label: "too few H2 sections",
+      content: validArticle.replace(/^##\s/gm, "### "),
+    },
+  ];
+
+  for (const testCase of depthCases) {
+    writeFileSync(articleTarget, testCase.content);
+    const result = runValidator();
+    const output = `${result.stdout}${result.stderr}`;
+    if (result.status === 0 || !output.includes(testCase.label)) {
+      throw new Error(
+        `${testCase.label} was not rejected as expected:\n${output}`,
+      );
+    }
+  }
+  writeFileSync(articleTarget, validArticle);
+
   const assetLedgerFile = path.join(researchTarget, "asset-ledger.md");
   const validAssetLedger = readFileSync(assetLedgerFile, "utf8");
   const visualCases = [
@@ -357,7 +387,7 @@ try {
   writeFileSync(reviewFile, validReview);
 
   console.log(
-    `PASS validator regression suite: 1 positive, ${negativeCases.length} privacy negatives, ${visualCases.length + 8} visual negatives, ${reviewCases.length} review negatives`,
+    `PASS validator regression suite: 1 positive, ${depthCases.length} depth negatives, ${negativeCases.length} privacy negatives, ${visualCases.length + 8} visual negatives, ${reviewCases.length} review negatives`,
   );
 } finally {
   rmSync(temporaryRoot, { recursive: true, force: true });

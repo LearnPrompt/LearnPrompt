@@ -41,6 +41,16 @@ Adapt headings to the subject, but include every function:
 9. An exercise with observable completion criteria.
 10. A final bottom source section with primary sources, clearly labeled secondary topic maps, and applicable attribution or license notes.
 
+## Depth floor
+
+For a deep tutorial, the deterministic release floor is:
+
+- at least 5,000 body characters;
+- at least 1,800 Chinese explanatory characters after fenced code and inline code are removed;
+- at least six H2 sections.
+
+These numbers are minimum guardrails, not writing targets. Do not reach them by repeating conclusions, pasting oversized code, inflating tables, or listing unused sources. The reviewer still decides whether the central question has enough mechanism, evidence, trade-offs, failure modes, and teaching progression. Navigation and index pages use a separate contract and do not invoke this skill.
+
 ## Visual contract
 
 - Include at least one image that teaches a mechanism, decision, sequence, comparison, or verified result. Decorative covers, logos, and banners do not count.

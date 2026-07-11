@@ -31,9 +31,16 @@
 - 两篇单独 validator：PASS。
 - 两条 lane 的 49 页完整构建：PASS。
 - 合并后 8 篇 verified 全量 validator：PASS。
-- Validator 回归：1 positive / 11 privacy negatives / 11 visual negatives / 7 review negatives，全部 PASS。
+- Validator 回归：1 positive / 3 depth negatives / 11 privacy negatives / 11 visual negatives / 7 review negatives，全部 PASS。
 - 主分支完整构建：49 页 PASS。
 - 当前全站计数：8 verified / 33 个仍含 SourceCard 的待处理深度教程。
+
+## 深度门禁加固
+
+- 深度教程确定性下限收紧为：正文至少 5,000 字符、去除 fenced/inline code 后至少 1,800 个中文解释字符、至少 6 个 H2。
+- 三项只用于拒绝短占位稿；是否有足够机制、证据、权衡、失败模式和教学递进仍由独立 reviewer 判断。
+- 当前 8 篇 verified 教程全部重新通过新门禁。
+- Skill 已重新打包为 `.claude/packages/learnprompt-single-mdx.skill`，SHA-256 `b54196deb98a2d449170a3f43571df7b842b50c33023dd6fbde50764d01d4bc4`，压缩包完整性检查通过。
 
 ## 本地提交
 

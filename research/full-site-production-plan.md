@@ -48,6 +48,7 @@
 - 至少有一张解释机制、决策、流程、对比或验证结果的教学图片；素材位于 `starlight/public/images/articles/<slug>/`，并有 alt、图注和许可闭环。
 - 具备 `brief.md`、横向研究、纵向研究、证据台账、资产台账、Showcase 和 `review.md`。
 - Showcase 保存真实输入、环境、命令或步骤、输出、失败和复现边界。
+- 深度教程至少有 5,000 个正文字符、去除代码后的 1,800 个中文解释字符和 6 个 H2；这是拒绝占位稿的下限，不是统一篇幅目标。
 - 独立审稿得分至少 85/100，且 blocker、major、minor 全部关闭。
 - 单篇 validator 通过，Starlight 完整构建通过。
 - 最终 frontmatter 使用 `showcase_status: verified` 和审稿确认的 `quality_score`。
