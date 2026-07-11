@@ -10,6 +10,14 @@ const resultsDir = path.join(showcaseRoot, "results");
 
 const scenario = process.argv[2];
 
+function normalizeTestOutput(output) {
+  return output
+    .replace(/\(\d+(?:\.\d+)?ms\)/g, "(<duration-ms>)")
+    .replace(/duration_ms \d+(?:\.\d+)?/g, "duration_ms <duration-ms>")
+    .trim()
+    .concat("\n");
+}
+
 const scenarios = {
   normal: {
     batch: "incoming/normal-batch/receipts.json",
@@ -83,7 +91,10 @@ if (scenario === "normal") {
     encoding: "utf8"
   });
   const testCombined = [testResult.stdout, testResult.stderr].filter(Boolean).join("").trim();
-  writeFileSync(path.join(resultsDir, "gate-rerun-test-output.txt"), `${testCombined}\n`);
+  writeFileSync(
+    path.join(resultsDir, "gate-rerun-test-output.txt"),
+    normalizeTestOutput(testCombined)
+  );
   if (testResult.status !== 0) {
     console.error(testCombined);
     console.error("FAIL normal: npm test did not pass");

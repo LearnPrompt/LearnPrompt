@@ -1,6 +1,6 @@
 # LearnPrompt 全站黄金化生产计划
 
-状态：Phase 0、Phase 1、Phase 2 Wave A、Phase 2 Wave B 已完成；当前全站 27 verified / 14 待处理深度教程
+状态：Phase 0、Phase 1、Phase 2 Wave A、Phase 2 Wave B 已完成；Phase 2 Wave C 第一对已完成；当前全站 29 verified / 12 待处理深度教程
 基线日期：2026-07-10
 仓库：`LearnPrompt/LearnPrompt`
 站点目录：`starlight/src/content/docs/`
@@ -170,15 +170,17 @@ Wave B 最后一篇已于 2026-07-12 完成：`codex-claude-code-dual-track` 用
 
 ### Wave C：Agent Skills（7 篇）
 
-- [ ] `what-are-agent-skills.mdx`
+- [x] `what-are-agent-skills.mdx`（Phase 2，verified 96/100）
 - [x] `first-skill-md.mdx`（Phase 1，verified 93/100）
-- [ ] `trigger-rules-and-structure.mdx`
+- [x] `trigger-rules-and-structure.mdx`（Phase 2，verified 93/100）
 - [ ] `checklist-skill-design.mdx`
 - [ ] `pipeline-skill-design.mdx`
 - [ ] `api-integration-skill-design.mdx`
 - [ ] `thinking-distillation-boundary.mdx`
 
 这一波必须避免七篇重复解释 `SKILL.md`。每篇只承担一个中心问题，并通过相互链接组成递进路径。
+
+Wave C 第一对已于 2026-07-12 完成：`what-are-agent-skills` 用真实 `$receipt-renamer` 显式调用、dry-run 报告、4/4 tests 与 0/21/23 gate 区分 prompt、Skill、脚本、MCP 和 plugin；`trigger-rules-and-structure` 用 broad / bounded 各四次 fresh implicit run 与一次 explicit control 测量路由边界，并如实保留“两版本轮同为 TP2/FP0/FN0/TN2”的负结果。两篇独立终审为 96/100 与 93/100。合并后为 29 篇 verified / 12 篇待处理；Showcase 在中文主仓库路径重放通过，29 篇全量 validator、回归集和 49 页构建通过。详细记录见 [`research/phase2-wave-c-status.md`](./phase2-wave-c-status.md)。
 
 ### Wave D：知识工作台与 Agent 框架（8 篇）
 

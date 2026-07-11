@@ -40,8 +40,11 @@ if (privacyCheck.status !== 0) {
 const matrixCheck = runNode(path.join(scriptDir, "evaluate-results.mjs"), [
   "--results-dir",
   path.join(labRoot, "results"),
-  "--allow-incomplete",
 ]);
+if (matrixCheck.status !== 0) {
+  process.stderr.write(matrixCheck.stderr);
+  process.exit(matrixCheck.status ?? 1);
+}
 
 console.log(
   JSON.stringify(
@@ -50,7 +53,7 @@ console.log(
       malformed_result_rejected: malformedCheck.status !== 0,
       privacy_scan: privacyCheck.stdout.trim(),
       matrix_status: matrixCheck.stdout.trim(),
-      showcase_status: "partial",
+      showcase_status: "verified",
     },
     null,
     2,
