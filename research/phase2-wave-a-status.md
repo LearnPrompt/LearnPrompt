@@ -48,22 +48,44 @@
 - 增加控制面 0/5→5/5、测试失败→通过与构建记录。
 - 对初审 100 分主动追加严格校准，最终采用 93 分，避免评分膨胀。
 
+## 第三对结果
+
+| 文章 | 审稿链路 | 最终状态 |
+| --- | --- | --- |
+| `agent-engineering/constraint-layer.mdx` | 初审 FAIL 87/100（1 major / 1 minor）→ PASS 95/100（0/0/0） | verified |
+| `agent-engineering/feedback-loop.mdx` | 初审 FAIL 84/100（1 major）→ PASS 94/100（0/0/0） | verified |
+
+### 第三对关闭的问题
+
+`constraint-layer`：
+
+- 补齐 Codex `approval_policy` 的 granular 对象形态与当前五类提示控制，不再把三个字符串写成完整枚举。
+- 更新 Claude Code 当前权限模式，加入 `auto`、`dontAsk` 与 `manual` alias 边界。
+- 明确软提醒阶段只是直接 shell 写入，不包装成在线 Agent 违背指令实测；policy gate 只作为教学模型。
+- 控制面复现软提醒、2/5 allow gate、read-only 沙箱写拒绝/读通过。
+
+`feedback-loop`：
+
+- 删除“一次失败唯一推出两行补丁”的过度结论，明确反馈只能缩小搜索空间。
+- 候选 patch 收敛为只新增 `.toLowerCase()` 一行，并重新复现 fail→pass 与真实单行 diff。
+- 正文、Showcase、result、research ledger、asset ledger 和 SVG 统一为“候选修复，不证明唯一实现”。
+
 ## 门禁结果
 
-- Phase 2 当前 4 篇最终 `showcase_status: verified`，分数为 94、96、89、93。
-- 4 张教学 SVG 均通过语义教学价值和 CC BY-NC-SA 4.0 许可审查。
-- 4 篇单独 validator：PASS。
+- Phase 2 当前 6 篇最终 `showcase_status: verified`，分数为 94、96、89、93、95、94。
+- 6 张教学 SVG 均通过语义教学价值和 CC BY-NC-SA 4.0 许可审查。
+- 6 篇单独 validator：PASS。
 - 两条 lane 的 49 页完整构建：PASS。
-- 合并后 10 篇 verified 全量 validator：PASS。
+- 合并后 12 篇 verified 全量 validator：PASS。
 - Validator 回归：1 positive / 3 depth negatives / 11 privacy negatives / 11 visual negatives / 7 review negatives，全部 PASS。
 - 主分支完整构建：49 页 PASS。
-- 当前全站计数：10 verified / 31 个仍含 SourceCard 的待处理深度教程。
+- 当前全站计数：12 verified / 29 个仍含 SourceCard 的待处理深度教程。
 
 ## 深度门禁加固
 
 - 深度教程确定性下限收紧为：正文至少 5,000 字符、去除 fenced/inline code 后至少 1,800 个中文解释字符、至少 6 个 H2。
 - 三项只用于拒绝短占位稿；是否有足够机制、证据、权衡、失败模式和教学递进仍由独立 reviewer 判断。
-- 当前 10 篇 verified 教程全部重新通过新门禁。
+- 当前 12 篇 verified 教程全部重新通过新门禁。
 - Skill 已重新打包为 `.claude/packages/learnprompt-single-mdx.skill`，SHA-256 `b54196deb98a2d449170a3f43571df7b842b50c33023dd6fbde50764d01d4bc4`，压缩包完整性检查通过。
 
 ## 本地提交
@@ -72,5 +94,7 @@
 - `95d35a0 docs(ai-coding): goldenize natural language MVP (96)`
 - `37fd2ac docs(ai-coding): goldenize approval boundaries (89)`
 - `e761f2d docs(agent-engineering): goldenize instruction layer (93)`
+- `8884f0e docs(agent-engineering): goldenize constraint layer (95)`
+- `f655107 docs(agent-engineering): goldenize feedback loop (94)`
 
 没有 push、部署或发布。

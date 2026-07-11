@@ -1,6 +1,6 @@
 # LearnPrompt 全站黄金化生产计划
 
-状态：Phase 0、Phase 1 已完成；Phase 2 Wave A 进行中，当前全站 10 verified / 31 待处理深度教程
+状态：Phase 0、Phase 1 已完成；Phase 2 Wave A 进行中，当前全站 12 verified / 29 待处理深度教程
 基线日期：2026-07-10
 仓库：`LearnPrompt/LearnPrompt`
 站点目录：`starlight/src/content/docs/`
@@ -125,12 +125,12 @@ Phase 1 的三篇计入下列 38 篇总数，不重复生成。
 `agent-engineering/`：
 
 - [x] `instruction-layer.mdx`（Phase 2，verified 93/100）
-- [ ] `constraint-layer.mdx`
-- [ ] `feedback-loop.mdx`
+- [x] `constraint-layer.mdx`（Phase 2，verified 95/100）
+- [x] `feedback-loop.mdx`（Phase 2，verified 94/100）
 - [ ] `memory-layer.mdx`
 - [ ] `orchestration-layer.mdx`
 
-Wave A 前两对已于 2026-07-11 完成：4 篇均完成独立只读终审并关闭全部 finding；10 篇 verified 全量 validator、验证器负例回归和主分支 49 页构建通过。生产记录见 [`research/phase2-wave-a-status.md`](./phase2-wave-a-status.md)。
+Wave A 前三对已于 2026-07-11 完成：6 篇均完成独立只读终审并关闭全部 finding；12 篇 verified 全量 validator、验证器负例回归和主分支 49 页构建通过。生产记录见 [`research/phase2-wave-a-status.md`](./phase2-wave-a-status.md)。
 
 ### Wave B：Claude Code 与 Codex 当前工作流（14 篇）
 
