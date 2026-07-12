@@ -1,6 +1,6 @@
 # LearnPrompt 全站黄金化生产计划
 
-状态：Phase 0、Phase 1、Phase 2 Wave A、Phase 2 Wave B 已完成；Phase 2 Wave C 前两对已完成；当前全站 31 verified / 10 待处理深度教程
+状态：Phase 0、Phase 1、Phase 2 Wave A、Phase 2 Wave B、Phase 2 Wave C 已完成；当前全站 33 verified / 8 待处理深度教程
 基线日期：2026-07-10
 仓库：`LearnPrompt/LearnPrompt`
 站点目录：`starlight/src/content/docs/`
@@ -175,14 +175,16 @@ Wave B 最后一篇已于 2026-07-12 完成：`codex-claude-code-dual-track` 用
 - [x] `trigger-rules-and-structure.mdx`（Phase 2，verified 93/100）
 - [x] `checklist-skill-design.mdx`（Phase 2，verified 97/100）
 - [x] `pipeline-skill-design.mdx`（Phase 2，verified 98/100）
-- [ ] `api-integration-skill-design.mdx`
-- [ ] `thinking-distillation-boundary.mdx`
+- [x] `api-integration-skill-design.mdx`（Phase 2，verified 100/100）
+- [x] `thinking-distillation-boundary.mdx`（Phase 2，verified 99/100）
 
 这一波必须避免七篇重复解释 `SKILL.md`。每篇只承担一个中心问题，并通过相互链接组成递进路径。
 
 Wave C 第一对已于 2026-07-12 完成：`what-are-agent-skills` 用真实 `$receipt-renamer` 显式调用、dry-run 报告、4/4 tests 与 0/21/23 gate 区分 prompt、Skill、脚本、MCP 和 plugin；`trigger-rules-and-structure` 用 broad / bounded 各四次 fresh implicit run 与一次 explicit control 测量路由边界，并如实保留“两版本轮同为 TP2/FP0/FN0/TN2”的负结果。两篇独立终审为 96/100 与 93/100。合并后为 29 篇 verified / 12 篇待处理；Showcase 在中文主仓库路径重放通过，29 篇全量 validator、回归集和 49 页构建通过。详细记录见 [`research/phase2-wave-c-status.md`](./phase2-wave-c-status.md)。
 
 Wave C 第二对已于 2026-07-12 完成：`checklist-skill-design` 用 `release-readiness-checklist` 把 row contract、N/A policy 与 0/21/22/23/24 gate 落到真实 npm CLI dry-run；`pipeline-skill-design` 用 `docs-migration-pipeline` 的五阶段 receipt、crash 30、resume 0、stale 32、receipt issue 33 与稳定 candidate hash 教清可验证恢复。两篇独立终审为 97/100 与 98/100。合并后为 31 篇 verified / 10 篇待处理；两套 Showcase、31 篇全量 validator、回归集和 49 页构建通过。详细记录见 [`research/phase2-wave-c-status.md`](./phase2-wave-c-status.md)。
+
+Wave C 最后一对已于 2026-07-12 完成：`api-integration-skill-design` 用真实 loopback release feed 验证 GET、串行分页、429 / 5xx、schema drift、41/42/43/44 gate 与 gpt-5.5 显式 Skill 调用；`thinking-distillation-boundary` 用完全合成 observable receipts、candidate Skill、4/4 holdout 与 51/52/53/54 拒绝边界区分可观察证据和 hidden CoT。两篇独立终审为 100/100 与 99/100。合并后为 33 篇 verified / 8 篇待处理；两套 Showcase 在中文主仓库路径重放通过，33 篇全量 validator、回归集和 49 页构建通过。详细记录见 [`research/phase2-wave-c-status.md`](./phase2-wave-c-status.md)。
 
 ### Wave D：知识工作台与 Agent 框架（8 篇）
 
