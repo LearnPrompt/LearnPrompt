@@ -1,6 +1,6 @@
 # LearnPrompt 全站黄金化生产计划
 
-状态：Phase 0、Phase 1、Phase 2 Wave A、Phase 2 Wave B、Phase 2 Wave C 已完成，Wave D 进行中；当前全站 37 verified / 4 待处理深度教程
+状态：Phase 0、Phase 1、Phase 2 Wave A、Phase 2 Wave B、Phase 2 Wave C 已完成，Wave D 进行中；当前全站 39 verified / 2 待处理深度教程
 基线日期：2026-07-10
 仓库：`LearnPrompt/LearnPrompt`
 站点目录：`starlight/src/content/docs/`
@@ -194,11 +194,11 @@ Wave C 最后一对已于 2026-07-12 完成：`api-integration-skill-design` 用
 - [x] `vault-directory-for-ai.mdx`（Phase 2，verified 96/100）
 - [x] `claude-md-index-navigation.mdx`（Phase 2，verified 100/100）
 - [x] `ai-maintains-knowledge-base.mdx`（Phase 2，verified 97/100）
-- [ ] `obsidian-git-workflow.mdx`
+- [x] `obsidian-git-workflow.mdx`（Phase 2，verified 86/100）
 
 `agent-frameworks/`：
 
-- [ ] `hermes-learning-loop.mdx`
+- [x] `hermes-learning-loop.mdx`（Phase 2，verified 100/100）
 - [ ] `openclaw-architecture-guide.mdx`
 - [ ] `deployment-channels-cost.mdx`
 
@@ -207,6 +207,8 @@ Wave C 最后一对已于 2026-07-12 完成：`api-integration-skill-design` 用
 Wave D 第一对已于 2026-07-12 完成：`markdown-as-agent-memory` 用五文件 durable handoff packet、fresh `gpt-5.5` live report 与 `0/41/42/43/44` gate 教清 Markdown 何时才算可交接记录；`vault-directory-for-ai` 用 12 条完全合成 inbox、role/canonical path/reject contract、fresh `gpt-5.5` placement plan 与 `0/51/52/53/54/55` gate 教清可审计目录分流。两篇独立只读终审为 97/100 与 96/100，视觉均 PASS。合并后为 35 篇 verified / 6 篇待处理；两套 Showcase 在中文主仓库路径重放通过，35 篇全量 validator、回归集和 49 页构建通过。详细记录见 [`research/phase2-wave-d-status.md`](./phase2-wave-d-status.md)。
 
 Wave D 第二对已于 2026-07-12 完成：`claude-md-index-navigation` 用 26 文件 synthetic vault、四任务精确 10-read trace 与 `0/61/62/63/64/65` gate 教清 `CLAUDE.md + index.md` 路由预算；`ai-maintains-knowledge-base` 用 11 篇 synthetic notes、六类 proposal、三层 live 证据与 `0/71/72/73/74/75` gate 教清“只提案、不直接改库”。两篇独立只读终审为 100/100 与 97/100，视觉均 PASS。合并路径重放还暴露并修复了维护篇脚本的 Unicode URL 解码问题；修复后为 37 篇 verified / 4 篇待处理，两套 Showcase、37 篇全量 validator、回归集和 49 页构建全部通过。详细记录见 [`research/phase2-wave-d-status.md`](./phase2-wave-d-status.md)。
+
+Wave D 第三对已于 2026-07-12 完成：`obsidian-git-workflow` 用 clean baseline、candidate worktree、无损 accepted diff 与 `0/81/82/83/84/85` gate 教清同步、备份、Git 和 Agent 候选边界；`hermes-learning-loop` 用 6 条 synthetic lessons、memory/Skill 分流、人工 approval 与 `0/91/92/93/94/95` gate 教清可观察持久化而非“训练权重”。两篇独立终审为 86/100 与 100/100，均为 0/0/0、视觉 PASS。Git 篇的 whitespace archive 与主路径随机 report hash 均在额外独立窄审后关闭，连续两次 research tree 重放哈希一致。合并后为 39 篇 verified / 2 篇待处理；两套 Showcase、39 篇全量 validator、回归集和 49 页构建全部通过。详细记录见 [`research/phase2-wave-d-status.md`](./phase2-wave-d-status.md)。
 
 ## 7. Phase 3：导航与来源索引收口（6 篇）
 
