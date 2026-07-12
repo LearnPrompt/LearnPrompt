@@ -1,0 +1,15 @@
+PASS vault-git-change-gate deterministic verifier
+fixture markdown notes: 10
+fixture nested .git: no
+valid: expected 0, actual 0
+default-branch-no-isolation: expected 81, actual 81
+outside-allowed-paths: expected 82, actual 82
+secret-shaped-change: expected 83, actual 83
+broken-internal-link: expected 84, actual 84
+missing-receipt: expected 85, actual 85
+privacy: run scripts/privacy-scan.mjs
+live patch archive: lossless JSON lines, sha256 f7063cb8af376abfee66eb83b52c2c4f03c0604cc39e4bf17ea9681826bc9219
+changed paths: notes/projects/alpha-plan.md, notes/research/git-boundaries.md, receipts/candidate-receipt.md
+diff line budget: 17/120
+baseline main unchanged: yes
+temporary worktree safe to discard: yes

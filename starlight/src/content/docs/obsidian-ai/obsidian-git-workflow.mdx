@@ -1,36 +1,365 @@
 ---
-title: Obsidian + Git 的版本控制工作流
-description: 用 Git 给知识库和项目自动化保留回滚路径。
+title: "Obsidian + Git 工作流：把同步、备份、版本控制和 Agent 批量改动拆开"
+description: "学会用 clean baseline、独立 worktree、diff gate 和人工 review，让 Obsidian vault 的 AI 批量改动可接受、可丢弃、可恢复。"
 sidebar:
   order: 5
 difficulty: intermediate
 source_repo: alchaincyf/obsidian-ai-orange-book
 source_url: https://github.com/alchaincyf/obsidian-ai-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-12"
+reading_time: 18 分钟
+research_path: research/articles/obsidian-git-workflow
+showcase_path: research/articles/obsidian-git-workflow/showcase/vault-git-change-gate
+showcase_status: verified
+quality_score: 86
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后核对 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 18 分钟 | 2026-07-12 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/obsidian-ai-orange-book" url="https://github.com/alchaincyf/obsidian-ai-orange-book" updatedFrom="2026-05" note="参考主题结构，正文重新组织。" />
+你让 Agent 给 Obsidian vault 批量更新 30 篇笔记：补链接、合并术语、重写项目状态。它完成得很快，Obsidian 也马上刷新了文件。几分钟后，iCloud 或 OneDrive 把这些改动同步到另一台设备。第二天你发现三篇私人笔记被误改、两个 Wiki 链接断了、一份导出 PDF 也进了仓库。
 
-## 为什么需要 Git
+这时最危险的反应，是把所有工具混成一个模糊的“保险”：
 
-iCloud 适合同步设备，但不适合解释“哪次自动化改坏了什么”。Git 适合保留 diff、分支和回滚点。
+- “我有同步，所以不怕丢。”
+- “我有 Git，所以就是备份。”
+- “我能 reset，所以先恢复再说。”
+- “Agent 说完成了，所以可以 merge。”
 
-## 操作步骤
+这篇文章只处理一个问题：**怎样把 Obsidian 的同步、独立备份、Git 版本控制和 Agent 候选改动验收拆成四条边界，让批量改笔记先变成可审查候选，而不是直接污染主 vault。**
 
-1. 把需要自动化维护的子目录纳入 git。
-2. 不提交密钥、缓存和大二进制。
-3. Agent 批量改笔记前先建分支或提交快照。
-4. 每次自动化后检查 diff。
+本文不重讲前四篇的 placement、Markdown handoff、index routing 或维护 proposal。这里默认你已经知道“材料该放哪”“Agent 该读哪个入口”“维护建议怎样排队”。现在的问题更靠后：当候选真的改了文件，你怎样看 diff、拒绝越界、接受一部分，或者安全丢弃。
 
-## 常见错误
+## 读完你能做什么
 
-- iCloud 和 git 同时处理大量移动，产生冲突。
-- 把 `.obsidian` 插件缓存全部提交。
-- 没有 `.gitignore`。
+读完后，你应该能把一次 Obsidian vault 自动化拆成七个可检查动作：
 
-## 实战案例
+1. 先确认 vault 是本地 Markdown 文件夹，Obsidian Sync、iCloud、OneDrive、Git 各自只解决一部分问题。
+2. 用 clean baseline 给 Agent 改动前留一个明确起点。
+3. 用独立 branch 或 worktree 让候选改动不碰默认分支。
+4. 写 `.gitignore`，把 workspace、缓存、回收站、导出物、凭证和大二进制挡在版本历史外。
+5. 用 `git status` / `git diff` / link check / secret gate 判断候选能否进入人审。
+6. 遇到冲突时先停自动化，读冲突标记并人工合并语义，而不是把破坏性恢复当第一反应。
+7. 在远端、访问控制、加密和独立备份都单独决定之前，不把私密 vault 默认推到公开远端。
 
-如果 Mac Mini 空间有限，可以先让 iCloud 保持同步，再把关键项目目录单独 git 化，避免把整个 vault 当代码仓库。
+## 先把四条边界拆开
+
+Obsidian 官方边界很朴素：vault 是本地文件系统上的 folder，notes 是 Markdown plain text files，外部编辑器和文件管理器改了文件后，Obsidian 会刷新。这个特性让 Git、脚本和 Agent 都能直接处理笔记；但它也意味着，**Agent 改的不是模拟状态，而是真文件**。
+
+四个常被混用的词，要先分开：
+
+| 层 | 解决什么 | 不解决什么 |
+| --- | --- | --- |
+| Sync | 让多个设备看到同一组当前文件 | 不保证坏改动不会传播；不是备份 |
+| Backup | 在另一处保存独立、单向、可恢复副本 | 不提供逐行 diff review；不是实时协作 |
+| Git | 记录 snapshot、branch、diff、commit、merge | 不自动跨设备同步；不替代独立异地备份 |
+| Agent candidate | 生成一组待验收改动 | 不代表语义正确；不能绕过人审和 gate |
+
+Obsidian 的备份页直接提醒：同步不是备份。同步的目标是让文件在设备间保持一致；如果你删错一批笔记，错误也可能被一致地传播。备份则应该是另一处的恢复副本，通常是单向、独立、异地，不能被实时同步误伤。
+
+Obsidian 的同步页也把 Git 放在“version control”类方法里，并提醒 Git 同步不是自动发生的：你需要 commit、push，在另一台设备 pull。换句话说，Git 能解释“哪次改了什么”，但它不等于 Obsidian Sync，也不等于独立备份。
+
+还有两个实操边界要提前写进规则：
+
+- 如果 vault 在 iCloud、OneDrive 或 Google Drive 里，先按系统设置让 vault 文件保持本地可用。Obsidian 官方建议 iCloud 用 Keep Downloaded，OneDrive 用 Always keep on this device / Available Offline，避免 offload 让 Obsidian 以为文件丢了。
+- 不要把同一个 vault 同时交给多个同步服务。官方同步页明确建议避免混用 Obsidian Sync 和 iCloud 这类组合，以免冲突或损坏。
+
+## Git 的工具边界：每个命令只回答一个问题
+
+Git 很适合 Obsidian vault，不是因为笔记“像代码”，而是因为 Markdown 是普通文本，Git 能把变更压成可审查 diff。但你要避免把 Git 命令当咒语。每个命令只回答一个窄问题：
+
+| 命令 / 机制 | 它回答的问题 | 在 vault 里怎么用 |
+| --- | --- | --- |
+| `git status` | 工作树、暂存区、HEAD 和未跟踪文件之间有什么差异 | 批量改动前后先看有没有脏 baseline、越界文件、冲突 |
+| `git diff` | 具体哪些行变了，工作树/暂存区/commit/branch 之间怎么不同 | 人审 Agent 候选；限制 diff budget |
+| `branch` | 这组改动属于哪条历史线 | 把候选和主线分开 |
+| `worktree` | 同一个仓库能否有另一个独立工作目录 | 让 Agent 在 candidate 目录改，main 目录不动 |
+| `commit` | 把当前验收过的 snapshot 固定下来 | 通过 gate 后记录候选或合并结果 |
+| `restore` | 从指定来源恢复路径内容 | 只在确认要丢弃哪些未提交改动后使用 |
+| merge conflict | 两边改了同一处，Git 无法自动合并 | 停自动化，人工读冲突标记并合并语义 |
+
+`git status` 的官方描述强调它显示三类差异：index 与 HEAD、working tree 与 index、未被 Git 跟踪且未忽略的文件。对 Obsidian 来说，这能回答“Agent 前是不是 clean”“Agent 后多了什么”“有没有 `.obsidian/workspace.json` 这种噪声混进来”。
+
+`git diff` 的官方文档覆盖 working tree、index、commit、branch 和文件之间的比较。对文章写作或知识库维护来说，diff 是人审入口：你不该只看 Agent 的总结，而要看每一段 note 文本到底怎样变了。
+
+`git worktree` 的价值尤其大。它允许同一个仓库挂多个 working tree。你可以让默认分支保持在主 vault，另开一个 candidate worktree 给 Agent 改。候选失败时，删除 candidate worktree 和 branch，比在主 vault 里恢复一堆混乱改动更清楚。
+
+`git restore` 不是“慌了就运行”的按钮。官方文档说明它会从某个 source 恢复路径；如果 tracked path 在 source 中不存在，它会被移除以匹配 source。也就是说，执行前必须知道自己在丢弃什么，尤其要先确认有没有未提交的人类改动。
+
+## `.gitignore`：挡噪声，不替团队做配置哲学
+
+Obsidian 的 `.obsidian` 目录保存 vault-specific settings，例如 hotkeys、themes、community plugins。官方也特别提到，`.obsidian/workspace.json` 和 `.obsidian/workspaces.json` 会在你打开新文件时更新，如果用 Git 管 vault，可以考虑把它们加入 `.gitignore`。
+
+这不等于“整个 `.obsidian` 永远不能提交”。团队要自己决定哪些配置值得共享：
+
+- 个人 workspace layout 通常不提交。
+- team 共同使用的 CSS snippets、hotkeys、模板、部分插件设置，可能值得提交。
+- 插件缓存、索引、临时状态通常不提交。
+- 含 token、账号、私有路径的插件配置绝不提交。
+
+一个可作为起点的 `.gitignore`：
+
+```text
+# Obsidian workspace state
+.obsidian/workspace.json
+.obsidian/workspaces.json
+
+# Cache and local indexes
+.obsidian/cache/
+.obsidian/plugins/*/data.json
+.trash/
+.DS_Store
+Thumbs.db
+
+# Exports and generated files
+exports/
+dist/
+*.pdf
+*.zip
+
+# Credentials and local secrets
+.env
+*.pem
+*.key
+credentials.*
+secrets.*
+
+# Large binary captures
+*.mov
+*.mp4
+*.psd
+*.sqlite
+```
+
+这份清单的重点是“先挡明显噪声和危险物”，不是宣布 `.obsidian` 其他配置的唯一答案。你可以在团队 README 里单独写：
+
+```md
+We commit shared vault configuration only after review.
+Workspace layouts, plugin caches, local exports, credentials, and large binaries stay ignored.
+```
+
+## Agent 批量改动前：先建候选区，不要直接改主线
+
+一次安全的 Agent 批量改笔记，至少需要这组前置条件：
+
+1. **Clean baseline**：`git status --short` 没有未解释改动。否则你无法区分 Agent 改动和人类未提交工作。
+2. **独立 branch/worktree**：候选改动发生在 `candidate/...`，主线保持不变。
+3. **允许路径**：任务合同写清 Agent 只能改哪些 note、receipt、report。
+4. **diff budget**：限制新增/删除行数，防止一次“整理”变成全库重写。
+5. **秘密和二进制 gate**：拒绝 token、private key、`.env`、大视频、数据库、导出包。
+6. **链接检查**：Wiki links 和 Markdown links 都要检查，rename 必须同步更新引用。
+7. **人工 review**：只有通过机械 gate 后，人才看语义和文风。
+
+可以把任务合同写成普通 Markdown：
+
+```md
+# Agent note update contract
+
+Allowed write paths:
+- notes/projects/alpha-plan.md
+- notes/research/git-boundaries.md
+- receipts/candidate-receipt.md
+
+Hard gates:
+- Do not edit the default branch directly.
+- Do not change paths outside the allowlist.
+- Do not add secret-shaped text or large binaries.
+- Keep diff under 120 changed lines.
+- Do not create broken Wiki or Markdown links.
+- Write a receipt with changed paths and acceptance status.
+```
+
+这份合同不靠模型自觉。真正的安全来自后面的 deterministic gate：它读 Git 状态、路径、diff、文件大小、链接和 receipt，决定候选能不能进入人审。
+
+## 一张安全轨：候选通过才接受，失败直接丢弃
+
+![Obsidian vault 的 Agent 改动安全轨：baseline snapshot 进入独立 candidate worktree，Agent 只改允许 notes 并写 receipt，deterministic diff gate 检查 81-85 后进入 accept commit/merge 或 discard branch；图中同时标出 main unchanged，以及 sync、backup、Git、privacy 四条边界。](/images/articles/obsidian-git-workflow/vault-git-safety-rail.svg)
+*图注：图里的关键不是某条命令，而是“main 不动，candidate 可丢”。同步负责传播当前文件，备份负责独立恢复副本，Git 负责 diff 与 snapshot；Agent 候选只有通过 81-85 gate 后才值得人审。*
+
+把这个流程写成自然语言，就是：
+
+1. 在 main 上确认 clean baseline。
+2. 从 baseline 创建 candidate worktree。
+3. Agent 只在 candidate worktree 改允许路径，并写 receipt。
+4. Gate 检查 candidate 和 baseline 的差异。
+5. 通过后，人类 review diff，决定 commit/merge。
+6. 不通过时，删除 candidate worktree/branch；main 没动，不需要对主 vault 做破坏性恢复。
+
+这就是为什么本文更偏向 `worktree`。如果 Agent 直接在主 vault 改，失败后你要回答“哪些是 Agent 改的、哪些是我刚才手动改的、哪些已经被同步服务传播”。如果 Agent 在 candidate worktree 改，失败就是一个目录和一条 branch 的生命周期问题。
+
+## Showcase：`vault-git-change-gate`
+
+本文的 Showcase 位于：
+
+```text
+research/articles/obsidian-git-workflow/showcase/vault-git-change-gate/
+```
+
+它提交的是一个完全合成 vault：
+
+- 10 个 Markdown 文件，其中 9 篇是 synthetic note，另有任务合同。
+- 一个 `.gitignore`，覆盖 workspace、缓存、回收站、导出物、凭证和大二进制。
+- 一个 `.obsidian/workspace.json` 样例，用来证明 workspace layout 文件存在但应被 ignore。
+- 一个 `TASK_CONTRACT.md`，声明允许路径、receipt 和 hard gates。
+- 没有嵌套 `.git`。
+
+脚本运行时会把 fixture 复制到系统临时目录，在那里初始化 Git repo、创建 baseline commit，再创建 `candidate/agent-note-update` worktree。它不会在 LearnPrompt 仓库本身执行 `git restore`、切分支、commit 或 reset。
+
+复现 deterministic gate：
+
+```bash
+node research/articles/obsidian-git-workflow/showcase/vault-git-change-gate/scripts/verify-showcase.mjs
+node research/articles/obsidian-git-workflow/showcase/vault-git-change-gate/scripts/privacy-scan.mjs
+```
+
+2026-07-12 的实际结果：
+
+```text
+PASS vault-git-change-gate deterministic verifier
+fixture markdown notes: 10
+fixture nested .git: no
+valid: expected 0, actual 0
+default-branch-no-isolation: expected 81, actual 81
+outside-allowed-paths: expected 82, actual 82
+secret-shaped-change: expected 83, actual 83
+broken-internal-link: expected 84, actual 84
+missing-receipt: expected 85, actual 85
+changed paths: notes/projects/alpha-plan.md, notes/research/git-boundaries.md, receipts/candidate-receipt.md
+diff line budget: 17/120
+baseline main unchanged: yes
+temporary worktree safe to discard: yes
+```
+
+privacy scan 也通过：仓库内 committed artifact 没有 secret、账号标识、本机用户路径或运行时临时路径。
+
+fresh `gpt-5.5` 的运行历史保留了三层结果，而不是只展示最后一次成功。writer 阶段首次尝试被宿主的只读 state DB 挡在模型执行前；外层第一次重试实际改对了三条路径，但 receipt 没有精确写出 `link_check: passed` 与 baseline tree hash，gate 以 `85` 拒绝。收紧 receipt 合同后的最后一次允许重试才通过：exec `0`、validator `0`、只改两篇指定 note 和一份 receipt、diff 13 行、main baseline unchanged。失败摘要、`85` 无效摘要、最终 patch/receipt 与成功 summary 分别保留在 `results/`，没有把模型完成消息当成验收。
+
+这次 Showcase 证明的是工作流边界，不是模型能力排名。deterministic baseline 与 fresh-model candidate 都由 validator 机械检查：
+
+- default branch / 缺隔离 = `81`
+- 越过 allowed paths = `82`
+- secret-shaped text、大二进制或 diff 过大 = `83`
+- broken internal link / rename 未更新 = `84`
+- 缺 receipt、缺 acceptance 或空改动 = `85`
+- privacy scan = `0`
+
+## 冲突处理：先停自动化，再读语义
+
+Git 的 merge conflict 不是坏事。它是在告诉你：两条历史线改了同一处，Git 无法安全猜哪边正确。Pro Git 的基础合并章节说明，Git 会暂停 merge，把文件列为 unmerged，并在文件里插入 conflict markers。
+
+Obsidian vault 里的冲突通常长这样：
+
+```md
+marker: <<<<<<< HEAD
+同步只是让多个设备保持当前文件一致；备份另存一份恢复副本。
+marker: =======
+同步就是备份，所以不需要额外副本。
+marker: >>>>>>> candidate/agent-note-update
+```
+
+正确处理顺序：
+
+1. 先停 Agent、自动脚本和同步触发器，避免冲突文件继续被改。
+2. 运行 `git status`，看哪些文件 unmerged。
+3. 打开冲突文件，读 `<<<<<<<`、`=======`、`>>>>>>>` 两边含义。
+4. 人工写出正确版本，删除冲突标记。
+5. 运行链接检查和必要的笔记校验。
+6. `git add` 标记已解决，再继续 commit 或 merge。
+
+不要让模型“随便选 ours/theirs”。笔记冲突往往是语义冲突，不是格式冲突。上面的例子里，一边正确区分 sync/backup，另一边是危险误解；自动选择任一边都可能留下错误教程。
+
+## 恢复与丢弃：不要把 `reset --hard` 当第一反应
+
+如果 candidate worktree 失败，最干净的恢复通常不是恢复文件，而是丢弃候选：
+
+```bash
+git worktree remove ../vault-candidate
+git branch -D candidate/agent-note-update
+```
+
+前提是：你确认所有 Agent 改动只在 candidate worktree，main baseline 没动。这就是前面反复强调 isolation 的原因。
+
+如果你已经在主 vault 里有未提交改动，先别急着运行破坏性命令。最小排查顺序是：
+
+```bash
+git status --short
+git diff
+git diff --cached
+```
+
+先回答三个问题：
+
+- 哪些文件被改了？
+- 哪些改动还没 staged？
+- 有没有人类手动写的内容混在里面？
+
+`git restore <path>` 可以用于恢复特定路径，但它会让路径内容回到指定来源；如果 source 中没有该 tracked path，路径可能被移除。只有当你明确“这一条路径的未提交改动可以丢弃”时，才教用户执行。不要把 `git reset --hard` 放在教程第一步，因为它会把未提交状态整体抹掉，常常先毁掉证据。
+
+## 隐私：远端位置、访问控制和加密是独立决策
+
+私密 vault 不应该默认推到公开 GitHub 仓库。Git 只是版本控制；remote 是另一个系统，访问控制和加密是另一个决策，备份又是另一个决策。
+
+把 vault 推到远端前，至少回答：
+
+| 问题 | 为什么重要 |
+| --- | --- |
+| 远端是公开、私有、组织内，还是自托管？ | 决定谁能看到历史和误提交 |
+| 历史里是否已经有 secret 或私密 note？ | `.gitignore` 只能挡未来，不能自动清理历史 |
+| 是否需要端到端加密或本地加密备份？ | Git hosting 的私有权限不等于内容加密 |
+| 哪台设备负责做独立备份？ | 同步服务没有 primary device 概念，备份要人为指定策略 |
+| Agent 是否允许读全 vault？ | 读权限本身也可能泄露私密内容 |
+
+如果你的 vault 包含日记、医疗、财务、客户资料、合同或账号信息，先把可自动化的公共/合成子集拆出来练习。不要用“反正仓库是 private”替代隐私设计。
+
+## 什么时候不要用这套 Git 工作流
+
+如果你的 vault 只有少量私人碎片，而且不会让 Agent 或脚本批量改，手工备份加同步可能已经足够，不必为了仪式感上 Git。
+
+如果你的主要问题是“新材料该放哪个目录”，先补 placement contract。Git 只能告诉你改了什么，不能决定材料角色。
+
+如果你的主要问题是“Agent 应该读哪个入口”，先补 index routing。Git 不会减少模型读取范围。
+
+如果你的主要问题是“AI 该不该提出维护建议”，先补 proposal queue。本文处理的是候选真的改了文件之后怎样验收。
+
+如果你不能接受任何远端暴露风险，可以只在本地使用 Git 做 diff 和 snapshot，再用独立加密备份做恢复策略。Git remote 不是必选项。
+
+## 动手练习：给一个小 vault 建 change gate
+
+不要一上来用真实私密 vault。先合成 8 到 12 篇 Markdown 笔记，模拟一次 Agent 批量修改。
+
+1. 写 `.gitignore`，至少忽略 `.obsidian/workspace.json`、`.obsidian/workspaces.json`、缓存、回收站、导出物、凭证和大二进制。
+2. 在 main 上 commit baseline，并确认 `git status --short` 为空。
+3. 创建 candidate worktree。
+4. 写任务合同：允许路径、diff budget、receipt 字段、link check、secret gate。
+5. 让 Agent 只在 candidate 改两篇 note，并写 receipt。
+6. 跑 gate：路径、diff 行数、secret/binary、Wiki/Markdown links、baseline hash、candidate commit、main unchanged。
+7. 人审 diff；通过后 merge，不通过就删除 candidate worktree/branch。
+
+完成标准：
+
+- main 在 Agent 运行期间 byte-identical。
+- 候选只改允许路径。
+- receipt 能列出 changed paths、baseline tree hash 和 candidate commit。
+- 断链、secret-shaped text、越界路径、缺 receipt 都能稳定失败。
+- 你能解释 sync、backup、Git 和 Agent candidate 各自负责什么。
+
+## 来源与延伸阅读
+
+- Obsidian 官方文档：[Back up your Obsidian files](https://obsidian.md/help/backup)
+- Obsidian 官方文档：[Sync your notes across devices](https://obsidian.md/help/sync-notes)
+- Obsidian 官方文档：[How Obsidian stores data](https://obsidian.md/help/Files%2Band%2Bfolders/How%2BObsidian%2Bstores%2Bdata)
+- Git 官方文档：[git-status](https://git-scm.com/docs/git-status)
+- Git 官方文档：[git-diff](https://git-scm.com/docs/git-diff)
+- Git 官方文档：[git-worktree](https://git-scm.com/docs/git-worktree)
+- Git 官方文档：[git-restore](https://git-scm.com/docs/git-restore)
+- Pro Git book：[Basic Branching and Merging](https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging)
+- 中文主题地图：[Obsidian AI Orange Book](https://github.com/alchaincyf/obsidian-ai-orange-book)
+- 本文研究包与 Showcase：`research/articles/obsidian-git-workflow/`
+
+Obsidian 官方资料支撑本文关于 vault 是本地 Markdown 文件夹、`.obsidian` 配置目录、workspace 文件、同步不是备份、Git 需要主动 push/pull、iCloud/OneDrive offload 风险和不要混用同步服务的当前事实。Git 官方资料支撑 status、diff、worktree、restore、branch、merge 和 conflict 的机制边界。
+
+`Obsidian AI Orange Book` 只作为 §09 进阶主题地图，作者为花叔 / `alchaincyf`。其 README 许可表述是“免费分享、学习交流、转载引用注明出处”，不是标准 CC 或 OSI 许可证。本文没有复制该 PDF 正文、截图、图表或图片；正文结构、证据、Showcase 和教学图均重新组织。教学图 `vault-git-safety-rail.svg` 为 LearnPrompt 原创，按 CC BY-NC-SA 4.0 记录在 `asset-ledger.md`。

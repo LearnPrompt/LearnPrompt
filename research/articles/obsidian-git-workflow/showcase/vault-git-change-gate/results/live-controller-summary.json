@@ -1,0 +1,22 @@
+{
+  "attempted_at": "2026-07-12",
+  "attempt": "final outer-controller retry after writer block and receipt-contract rejection",
+  "model": "gpt-5.5",
+  "status": "completed",
+  "command": "codex exec - -m gpt-5.5 -s workspace-write --json --ephemeral --ignore-user-config --ignore-rules -C <temporary-candidate-worktree> -o <temporary-outside-worktree>",
+  "exec_exit_code": 0,
+  "validation": {
+    "code": 0,
+    "reason": "valid candidate",
+    "changed_paths": [
+      "notes/projects/alpha-plan.md",
+      "notes/research/git-boundaries.md",
+      "receipts/candidate-receipt.md"
+    ],
+    "diff_lines": 13
+  },
+  "baseline_main_unchanged": true,
+  "temporary_repo_only": true,
+  "stderr_excerpt": "",
+  "stdout_excerpt": ""
+}

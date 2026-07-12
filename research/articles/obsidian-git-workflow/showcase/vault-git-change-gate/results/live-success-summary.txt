@@ -1,0 +1,1 @@
+Fresh gpt-5.5 retry completed in a temporary candidate worktree. Validation: 0; main unchanged: true.

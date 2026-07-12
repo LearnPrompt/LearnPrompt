@@ -1,0 +1,29 @@
+# Obsidian workspace state
+.obsidian/workspace.json
+.obsidian/workspaces.json
+
+# Cache and local indexes
+.obsidian/cache/
+.obsidian/plugins/*/data.json
+.trash/
+.DS_Store
+Thumbs.db
+
+# Exports and generated files
+exports/
+dist/
+*.pdf
+*.zip
+
+# Credentials and local secrets
+.env
+*.pem
+*.key
+credentials.*
+secrets.*
+
+# Large binary captures
+*.mov
+*.mp4
+*.psd
+*.sqlite
