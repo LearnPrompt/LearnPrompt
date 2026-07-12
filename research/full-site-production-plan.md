@@ -1,6 +1,6 @@
 # LearnPrompt 全站黄金化生产计划
 
-状态：Phase 0、Phase 1、Phase 2（Wave A–D）已完成；当前全站 41 verified / 0 待处理深度教程，Phase 3 收口中
+状态：Phase 0–Phase 5 已完成；当前全站 41 verified / 0 待处理深度教程，最终独立审计中
 基线日期：2026-07-10
 仓库：`LearnPrompt/LearnPrompt`
 站点目录：`starlight/src/content/docs/`
@@ -216,14 +216,16 @@ Wave D 最后一对已于 2026-07-12 完成：`openclaw-architecture-guide` 用 
 
 深度教程稳定后再修改入口页，避免在生产过程中反复改链接：
 
-- [ ] `start-here/index.mdx`
-- [ ] `start-here/how-to-use-this-wiki.mdx`
-- [ ] `start-here/ai-practice-map.mdx`
-- [ ] `start-here/context-task-verification.mdx`
-- [ ] `start-here/setup-safety-basics.mdx`
-- [ ] `sources/source-index.mdx`
+- [x] `start-here/index.mdx`
+- [x] `start-here/how-to-use-this-wiki.mdx`
+- [x] `start-here/ai-practice-map.mdx`
+- [x] `start-here/context-task-verification.mdx`
+- [x] `start-here/setup-safety-basics.mdx`
+- [x] `sources/source-index.mdx`
 
 完成后运行全站链接检查、完整构建，并人工走一遍三条读者路径：第一次使用 AI 编程、已经使用 Claude Code/Codex、准备建设长期 Agent 工作流。
+
+Phase 3 已于 2026-07-12 完成。六页按三个双 lane 批次生产，每个 lane 有独立 `node_modules`，每两页合并后主路径 49 页构建均通过。初审发现 Claude-only / Codex-only / 双工具路线混写、编辑状态命名和来源核验日期措辞问题；另一位来源 reviewer 发现许可元数据泛化与 Codex security 旧链接误分类。全部 findings 在稳定提交 `5a5e1bf` 关闭，两位 reviewer 最终均为 0/0/0 clean PASS。详细记录见 [`research/phase3-navigation-audit.md`](./phase3-navigation-audit.md)。
 
 ## 8. Phase 4：全站 SourceCard 清零与发布候选审计
 
@@ -246,6 +248,8 @@ git diff --check
 
 确认 `SourceCard` 在公开站点零引用以后，再单独决定是否删除 `starlight/src/components/SourceCard.astro`。不要在还有引用时提前删组件。
 
+Phase 4 已于 2026-07-12 完成 release-candidate 审计：公开 MDX 中 `SourceCard` 零匹配；41/41 深度教程的研究合同和最终 PASS 齐全；内部链接零缺失；外链按直接 200、反自动访问、待 push 的本仓库 research 深链接和合成 fixture 分层记录；49 页构建、validator 与负例回归通过。组件文件保留，未擅自删除；没有 push、部署或发布。详见 [`research/phase4-release-candidate-audit.md`](./phase4-release-candidate-audit.md)。
+
 ## 9. Phase 5：新章节缺口审计
 
 当前 44 篇收口解决的是“已有页面质量”，不代表新课程目录已经完整。
@@ -260,6 +264,8 @@ git diff --check
 - 哪些内容只是书中结构，不值得进入 LearnPrompt。
 
 只有 manifest 经人工确认后，才进入新增 MDX 阶段。
+
+Phase 5 已于 2026-07-12 完成 manifest，但没有自动创建新 MDX。九个橙皮书 section 与现有 41 篇逐项去重后，建议新增 4 篇独立教程：Loop readiness gate、durable state/resume、能说“不”的 evaluator、unattended operations。其余主题并入现有文章或作为案例，不机械拆成九篇。详见 [`research/phase5-new-chapter-manifest.md`](./phase5-new-chapter-manifest.md)；是否进入新增生产需用户另行确认。
 
 ## 10. `/goal` 编排规则
 
