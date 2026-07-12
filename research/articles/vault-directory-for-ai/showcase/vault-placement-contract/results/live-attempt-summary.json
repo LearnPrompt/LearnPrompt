@@ -1,0 +1,19 @@
+{
+  "attempted_at": "2026-07-12",
+  "command": "codex exec - -C . -m gpt-5.5 -s workspace-write --json --ephemeral --ignore-user-config --ignore-rules --output-schema response-schema.json -o <outside-worktree-last-message>",
+  "status": "completed",
+  "exec_exit_code": 0,
+  "reports_written": {
+    "json": true,
+    "markdown": true
+  },
+  "validation_exit_code": 0,
+  "fixture_manifest_changed": false,
+  "fixture_inventory_changed": false,
+  "changed_paths": [
+    "reports/placement-plan.json",
+    "reports/placement-plan.md"
+  ],
+  "raw_capture": "stored outside the worktree in a tmpdir and redacted from committed artifacts",
+  "stderr_excerpt": ""
+}

@@ -1,0 +1,138 @@
+{
+  "contract_version": "2026-07-12",
+  "note": "Synthetic LearnPrompt fixture. Do not replace with a real vault.",
+  "items": [
+    {
+      "id": "inbox-01",
+      "source_path": "00_收件箱/项目A-发布决策.md",
+      "title": "项目A 发布决策",
+      "artifact_kind": "decision-note",
+      "scope_folder": "Apollo 发布会",
+      "filename_slug": "2026-07-产品发布决策",
+      "extension": "md",
+      "sensitivity": "public-synthetic",
+      "summary": "当前项目的发布决策，后续仍会驱动执行。"
+    },
+    {
+      "id": "inbox-02",
+      "source_path": "00_收件箱/项目A-下周任务清单.md",
+      "title": "项目A 下周任务清单",
+      "artifact_kind": "task-list",
+      "scope_folder": "Apollo 发布会",
+      "filename_slug": "下周执行清单",
+      "extension": "md",
+      "sensitivity": "public-synthetic",
+      "summary": "与当前项目直接绑定的待办和 owner。"
+    },
+    {
+      "id": "inbox-03",
+      "source_path": "00_收件箱/Obsidian-Agent-访谈综合.md",
+      "title": "Obsidian Agent 访谈综合",
+      "artifact_kind": "synthesis-note",
+      "scope_folder": "Agent 协作",
+      "filename_slug": "obsidian-agent-访谈综合",
+      "extension": "md",
+      "sensitivity": "public-synthetic",
+      "summary": "多份访谈被合并后的可复用结论。"
+    },
+    {
+      "id": "inbox-04",
+      "source_path": "00_收件箱/案例-中文路径-角色判定.md",
+      "title": "案例：中文路径角色判定",
+      "artifact_kind": "synthesis-note",
+      "scope_folder": "案例库",
+      "filename_slug": "中文路径-角色判定",
+      "extension": "md",
+      "sensitivity": "public-synthetic",
+      "summary": "解释中文路径和角色映射的可复用案例。"
+    },
+    {
+      "id": "inbox-05",
+      "source_path": "00_收件箱/博客草稿-放置contract.mdx",
+      "title": "博客草稿：放置 contract",
+      "artifact_kind": "draft-deliverable",
+      "scope_folder": "博客",
+      "filename_slug": "obsidian-vault-placement-contract",
+      "extension": "mdx",
+      "sensitivity": "public-synthetic",
+      "summary": "准备公开发布的长文草稿。"
+    },
+    {
+      "id": "inbox-06",
+      "source_path": "00_收件箱/演讲提纲-知识库整理.md",
+      "title": "演讲提纲：知识库整理",
+      "artifact_kind": "draft-deliverable",
+      "scope_folder": "分享",
+      "filename_slug": "知识库整理演讲提纲",
+      "extension": "md",
+      "sensitivity": "public-synthetic",
+      "summary": "对外分享用的演讲提纲。"
+    },
+    {
+      "id": "inbox-07",
+      "source_path": "00_收件箱/OpenAI-AGENTS-页面快照.md",
+      "title": "OpenAI AGENTS 页面快照",
+      "artifact_kind": "source-snapshot",
+      "scope_folder": "OpenAI",
+      "filename_slug": "agents-page-snapshot",
+      "extension": "md",
+      "sensitivity": "public-synthetic",
+      "summary": "外部文档快照和链接，不是整理后的知识结论。"
+    },
+    {
+      "id": "inbox-08",
+      "source_path": "00_收件箱/Obsidian-help-目录摘录.md",
+      "title": "Obsidian help 目录摘录",
+      "artifact_kind": "source-snapshot",
+      "scope_folder": "Obsidian",
+      "filename_slug": "vault-help-目录摘录",
+      "extension": "md",
+      "sensitivity": "public-synthetic",
+      "summary": "官方帮助页摘录，需保留来源边界。"
+    },
+    {
+      "id": "inbox-09",
+      "source_path": "00_收件箱/vault-audit-runbook.md",
+      "title": "vault audit runbook",
+      "artifact_kind": "runbook",
+      "scope_folder": "runbooks",
+      "filename_slug": "vault-audit-runbook",
+      "extension": "md",
+      "sensitivity": "public-synthetic",
+      "summary": "重复执行的审计流程说明。"
+    },
+    {
+      "id": "inbox-10",
+      "source_path": "00_收件箱/project-note-template.md",
+      "title": "project note template",
+      "artifact_kind": "template",
+      "scope_folder": "templates",
+      "filename_slug": "project-note-template",
+      "extension": "md",
+      "sensitivity": "public-synthetic",
+      "summary": "后续项目反复复用的模板。"
+    },
+    {
+      "id": "inbox-11",
+      "source_path": "00_收件箱/placement-contract-review-checklist.md",
+      "title": "placement contract review checklist",
+      "artifact_kind": "synthesis-note",
+      "scope_folder": "流程设计",
+      "filename_slug": "placement-contract-review-checklist",
+      "extension": "md",
+      "sensitivity": "public-synthetic",
+      "summary": "来自多次审稿的可复用检查表。"
+    },
+    {
+      "id": "inbox-12",
+      "source_path": "00_收件箱/SENSITIVE-marker-credential.txt",
+      "title": "SENSITIVE marker credential",
+      "artifact_kind": "sensitive-marker",
+      "scope_folder": "reject",
+      "filename_slug": "SENSITIVE-marker-credential",
+      "extension": "txt",
+      "sensitivity": "reject-sensitive",
+      "summary": "用于验证 reject 路径的合成敏感标记，不应进入共享 vault。"
+    }
+  ]
+}

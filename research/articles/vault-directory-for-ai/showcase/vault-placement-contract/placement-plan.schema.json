@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Vault placement plan",
+  "type": "object",
+  "required": ["summary", "rows"],
+  "properties": {
+    "summary": {
+      "type": "object",
+      "required": [
+        "accounted_items",
+        "placed_items",
+        "rejected_items",
+        "canonical_destinations"
+      ],
+      "properties": {
+        "accounted_items": { "type": "integer", "minimum": 0 },
+        "placed_items": { "type": "integer", "minimum": 0 },
+        "rejected_items": { "type": "integer", "minimum": 0 },
+        "canonical_destinations": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "rows": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "source_item",
+          "action",
+          "destination",
+          "role",
+          "reason",
+          "canonical",
+          "sensitivity_decision"
+        ],
+        "properties": {
+          "source_item": {
+            "type": "object",
+            "required": ["id", "path", "title"],
+            "properties": {
+              "id": { "type": "string" },
+              "path": { "type": "string" },
+              "title": { "type": "string" }
+            },
+            "additionalProperties": false
+          },
+          "action": {
+            "type": "string",
+            "enum": ["place", "reject"]
+          },
+          "destination": {
+            "type": ["string", "null"]
+          },
+          "role": {
+            "type": "string",
+            "enum": ["project", "knowledge", "output", "resource", "system", "reject"]
+          },
+          "reason": { "type": "string", "minLength": 1 },
+          "canonical": { "type": "boolean" },
+          "sensitivity_decision": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,166 @@
+{
+  "summary": {
+    "accounted_items": 12,
+    "placed_items": 11,
+    "rejected_items": 1,
+    "canonical_destinations": 11
+  },
+  "rows": [
+    {
+      "source_item": {
+        "id": "inbox-01",
+        "path": "00_收件箱/项目A-发布决策.md",
+        "title": "项目A 发布决策"
+      },
+      "action": "place",
+      "destination": "10_项目/Apollo 发布会/决策/2026-07-产品发布决策.md",
+      "role": "project",
+      "reason": "这是当前项目的执行决策，应进入 active project decision 区。",
+      "canonical": true,
+      "sensitivity_decision": "public-ok"
+    },
+    {
+      "source_item": {
+        "id": "inbox-02",
+        "path": "00_收件箱/项目A-下周任务清单.md",
+        "title": "项目A 下周任务清单"
+      },
+      "action": "place",
+      "destination": "10_项目/Apollo 发布会/任务/下周执行清单.md",
+      "role": "project",
+      "reason": "这是当前项目的任务列表，不是长期知识卡。",
+      "canonical": true,
+      "sensitivity_decision": "public-ok"
+    },
+    {
+      "source_item": {
+        "id": "inbox-03",
+        "path": "00_收件箱/Obsidian-Agent-访谈综合.md",
+        "title": "Obsidian Agent 访谈综合"
+      },
+      "action": "place",
+      "destination": "20_知识库/Agent 协作/obsidian-agent-访谈综合.md",
+      "role": "knowledge",
+      "reason": "这是多来源合成后的可复用知识，应离开项目上下文。",
+      "canonical": true,
+      "sensitivity_decision": "public-ok"
+    },
+    {
+      "source_item": {
+        "id": "inbox-04",
+        "path": "00_收件箱/案例-中文路径-角色判定.md",
+        "title": "案例：中文路径角色判定"
+      },
+      "action": "place",
+      "destination": "20_知识库/案例库/中文路径-角色判定.md",
+      "role": "knowledge",
+      "reason": "这是可复用案例，适合作为知识库条目，并保留 Unicode 目的地。",
+      "canonical": true,
+      "sensitivity_decision": "public-ok"
+    },
+    {
+      "source_item": {
+        "id": "inbox-05",
+        "path": "00_收件箱/博客草稿-放置contract.mdx",
+        "title": "博客草稿：放置 contract"
+      },
+      "action": "place",
+      "destination": "30_输出/博客/obsidian-vault-placement-contract.mdx",
+      "role": "output",
+      "reason": "这是准备发布的交付稿，应该进入输出区而非知识区。",
+      "canonical": true,
+      "sensitivity_decision": "public-review-before-publish"
+    },
+    {
+      "source_item": {
+        "id": "inbox-06",
+        "path": "00_收件箱/演讲提纲-知识库整理.md",
+        "title": "演讲提纲：知识库整理"
+      },
+      "action": "place",
+      "destination": "30_输出/分享/知识库整理演讲提纲.md",
+      "role": "output",
+      "reason": "面向外部分享的稿件属于 deliverable，不属于长期知识库存档。",
+      "canonical": true,
+      "sensitivity_decision": "public-review-before-publish"
+    },
+    {
+      "source_item": {
+        "id": "inbox-07",
+        "path": "00_收件箱/OpenAI-AGENTS-页面快照.md",
+        "title": "OpenAI AGENTS 页面快照"
+      },
+      "action": "place",
+      "destination": "50_资源/OpenAI/agents-page-snapshot.md",
+      "role": "resource",
+      "reason": "这是外部来源快照，应保留资源边界和出处。",
+      "canonical": true,
+      "sensitivity_decision": "retain-source-boundary"
+    },
+    {
+      "source_item": {
+        "id": "inbox-08",
+        "path": "00_收件箱/Obsidian-help-目录摘录.md",
+        "title": "Obsidian help 目录摘录"
+      },
+      "action": "place",
+      "destination": "50_资源/Obsidian/vault-help-目录摘录.md",
+      "role": "resource",
+      "reason": "官方帮助页摘录仍是外部资料快照，不应伪装成内部结论。",
+      "canonical": true,
+      "sensitivity_decision": "retain-source-boundary"
+    },
+    {
+      "source_item": {
+        "id": "inbox-09",
+        "path": "00_收件箱/vault-audit-runbook.md",
+        "title": "vault audit runbook"
+      },
+      "action": "place",
+      "destination": "99_系统/runbooks/vault-audit-runbook.md",
+      "role": "system",
+      "reason": "重复执行的流程说明属于系统 runbook。",
+      "canonical": true,
+      "sensitivity_decision": "public-ok"
+    },
+    {
+      "source_item": {
+        "id": "inbox-10",
+        "path": "00_收件箱/project-note-template.md",
+        "title": "project note template"
+      },
+      "action": "place",
+      "destination": "99_系统/templates/project-note-template.md",
+      "role": "system",
+      "reason": "模板是系统层可复用资产，不是知识卡或项目记录。",
+      "canonical": true,
+      "sensitivity_decision": "public-ok"
+    },
+    {
+      "source_item": {
+        "id": "inbox-11",
+        "path": "00_收件箱/placement-contract-review-checklist.md",
+        "title": "placement contract review checklist"
+      },
+      "action": "place",
+      "destination": "20_知识库/流程设计/placement-contract-review-checklist.md",
+      "role": "knowledge",
+      "reason": "这是跨项目复用的审稿检查表，适合进入知识库。",
+      "canonical": true,
+      "sensitivity_decision": "public-ok"
+    },
+    {
+      "source_item": {
+        "id": "inbox-12",
+        "path": "00_收件箱/SENSITIVE-marker-credential.txt",
+        "title": "SENSITIVE marker credential"
+      },
+      "action": "reject",
+      "destination": null,
+      "role": "reject",
+      "reason": "这是合成敏感标记，用于验证 reject 路径，不能进入共享 vault。",
+      "canonical": false,
+      "sensitivity_decision": "reject-sensitive"
+    }
+  ]
+}

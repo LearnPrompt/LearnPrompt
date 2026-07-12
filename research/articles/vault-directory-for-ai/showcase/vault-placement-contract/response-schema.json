@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Nested Codex placement summary",
+  "type": "object",
+  "required": [
+    "status",
+    "reports_written",
+    "moved_files",
+    "manifest_changed",
+    "notes"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["completed", "blocked", "failed"]
+    },
+    "reports_written": {
+      "type": "object",
+      "required": ["json", "markdown"],
+      "properties": {
+        "json": { "type": "boolean" },
+        "markdown": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "moved_files": { "type": "boolean" },
+    "manifest_changed": { "type": "boolean" },
+    "notes": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

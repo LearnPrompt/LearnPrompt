@@ -1,0 +1,70 @@
+{
+  "contract_version": "2026-07-12",
+  "editorial_note": "This is a LearnPrompt placement contract example, not an Obsidian standard.",
+  "vault_root": "synthetic-vault",
+  "intake_root": "00_收件箱",
+  "roles": {
+    "project": {
+      "root": "10_项目",
+      "description": "Active project decisions and tasks."
+    },
+    "knowledge": {
+      "root": "20_知识库",
+      "description": "Reusable synthesized knowledge."
+    },
+    "output": {
+      "root": "30_输出",
+      "description": "Publishable deliverables."
+    },
+    "resource": {
+      "root": "50_资源",
+      "description": "External source snapshots and links."
+    },
+    "system": {
+      "root": "99_系统",
+      "description": "Scripts, config templates, and runbooks."
+    }
+  },
+  "kind_to_role": {
+    "decision-note": "project",
+    "task-list": "project",
+    "synthesis-note": "knowledge",
+    "draft-deliverable": "output",
+    "source-snapshot": "resource",
+    "runbook": "system",
+    "template": "system",
+    "sensitive-marker": "reject"
+  },
+  "placement_templates": {
+    "decision-note": "10_项目/{scope_folder}/决策/{filename_slug}.{extension}",
+    "task-list": "10_项目/{scope_folder}/任务/{filename_slug}.{extension}",
+    "synthesis-note": "20_知识库/{scope_folder}/{filename_slug}.{extension}",
+    "draft-deliverable": "30_输出/{scope_folder}/{filename_slug}.{extension}",
+    "source-snapshot": "50_资源/{scope_folder}/{filename_slug}.{extension}",
+    "runbook": "99_系统/runbooks/{filename_slug}.{extension}",
+    "template": "99_系统/templates/{filename_slug}.{extension}"
+  },
+  "sensitivity_rules": {
+    "reject-sensitive": {
+      "action": "reject",
+      "destination": null,
+      "role": "reject",
+      "canonical": false,
+      "sensitivity_decision": "reject-sensitive"
+    }
+  },
+  "path_rules": {
+    "canonical_paths_only": true,
+    "unknown_roots_forbidden": true,
+    "intake_root_cannot_be_destination": true
+  },
+  "exit_codes": {
+    "valid_plan": 0,
+    "orphan_or_unaccounted": 51,
+    "folder_role_mismatch": 52,
+    "unstable_or_unknown_root": 53,
+    "sensitive_item_placed": 54,
+    "duplicate_canonical_destination": 55,
+    "privacy_scan": 0
+  }
+}

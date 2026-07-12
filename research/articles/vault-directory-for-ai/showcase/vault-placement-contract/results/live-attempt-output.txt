@@ -1,0 +1,12 @@
+vault placement contract live attempt
+===================================
+status: completed
+exec_exit_code: 0
+reports_written: json=true markdown=true
+validation_exit_code: 0
+fixture_manifest_changed: false
+fixture_inventory_changed: false
+changed_paths: reports/placement-plan.json, reports/placement-plan.md
+
+stderr_excerpt:
+(none)
