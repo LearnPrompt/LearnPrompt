@@ -1,0 +1,46 @@
+{
+  "fixture_id": "gateway-node-channel-route-gate",
+  "fixture_sha256": "97c93a9b405c8e5a461e92f9999295bff070b88ab0d8280c5b024cf54b8d33e3",
+  "allowed_report_paths": [
+    "reports/route-audit.json",
+    "reports/route-audit.md"
+  ],
+  "required_gateway_ownership": [
+    "channels",
+    "sessions",
+    "pairing",
+    "node-registry",
+    "control-plane"
+  ],
+  "node_forbidden_ownership": [
+    "channels",
+    "sessions",
+    "pairing",
+    "node-registry",
+    "control-plane"
+  ],
+  "required_transport": "gateway-websocket",
+  "required_operator_scope": "operator.write",
+  "required_node_command": "camera.capture",
+  "rejection_codes": {
+    "channel_bypasses_gateway": 101,
+    "node_impersonates_gateway_or_owns_state": 102,
+    "role_scope_pairing_or_capability_escalation": 103,
+    "non_loopback_without_auth_or_insecure_remote": 104,
+    "removed_bridge_or_missing_gateway_ws": 105,
+    "unexpected_write_path": 106
+  },
+  "privacy_forbid_regex": [
+    "\\/Users\\/",
+    "\\/home\\/[^/\\s]+\\/",
+    "\\/private\\/tmp\\/",
+    "BEGIN\\s+PRIVATE\\s+KEY",
+    "g[h]p_",
+    "s[k]-",
+    "x[o]xb-",
+    "session[_-]?id",
+    "thread[_-]?id",
+    "request[_-]?id",
+    "account[_-]?id"
+  ]
+}

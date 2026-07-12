@@ -1,0 +1,45 @@
+{
+  "fixture_id": "gateway-node-channel-route-gate",
+  "generated_at": "2026-07-12",
+  "generated_by": "deterministic-route-audit-builder",
+  "synthetic_only": true,
+  "verdict": "accept-current-gateway-ws-route",
+  "transport": "gateway-websocket",
+  "observed_trace": [
+    "channel.inbound->gateway.channel.adapter",
+    "gateway.channel.adapter->gateway.session.route",
+    "gateway.session.route->gateway.agent.run",
+    "gateway.agent.run->gateway.node.invoke",
+    "gateway.node.invoke->node.camera.capture",
+    "node.camera.capture->gateway.node.result",
+    "gateway.node.result->gateway.channel.reply"
+  ],
+  "gateway_owns": [
+    "channels",
+    "sessions",
+    "pairing",
+    "node-registry",
+    "control-plane"
+  ],
+  "node_owns": [],
+  "operator_role": "operator",
+  "operator_scopes": [
+    "operator.read",
+    "operator.write"
+  ],
+  "node_role": "node",
+  "device_paired": true,
+  "approved_command": "camera.capture",
+  "remote_exposure": {
+    "bind": "loopback",
+    "auth_present": true,
+    "secure_transport": true
+  },
+  "legacy_bridge_current": false,
+  "protected_files_unchanged": true,
+  "limitations": [
+    "Synthetic topology only.",
+    "No live OpenClaw Gateway, channel, or Node was contacted.",
+    "A model completion message is not the release gate; the deterministic validator is authoritative."
+  ]
+}

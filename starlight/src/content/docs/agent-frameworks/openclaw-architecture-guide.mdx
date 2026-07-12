@@ -1,34 +1,244 @@
 ---
-title: OpenClaw 的 Gateway-Node-Channel 架构导读
-description: 用高层结构理解 OpenClaw 的接入方式。
+title: OpenClaw 架构导读：沿一条消息看懂 Gateway、Node 与 Channel
+description: 从合成消息的完整路径出发，判断 Gateway、Node、Channel、pairing、scope 与远程接入分别在哪一层生效。
 sidebar:
   order: 2
 difficulty: advanced
 source_repo: alchaincyf/openclaw-orange-book
 source_url: https://github.com/alchaincyf/openclaw-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-12"
+reading_time: 18 分钟
+research_path: research/articles/openclaw-architecture-guide
+showcase_path: research/articles/openclaw-architecture-guide/showcase
+showcase_status: verified
+quality_score: 98
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 18 分钟 | 2026-07-12 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/openclaw-orange-book" url="https://github.com/alchaincyf/openclaw-orange-book" updatedFrom="2026-05" note="许可证不明确，仅做高层架构导读并保留来源链接。" />
+一条私信进入 OpenClaw，Agent 需要读取会话，可能调用另一台设备的相机，最后把结果发回原渠道。你该把渠道 token 放在哪台机器？Node 断线后，消息会不会直接找它？给一个 operator `operator.write`，是否等于给了它完整主机权限？
 
-## 核心概念
+如果只记住“Gateway 是入口、Node 是执行、Channel 是渠道”这三个标签，上述问题依然答不出来。更可靠的理解方式是沿着一条消息追踪**谁持有状态、谁建立连接、谁做授权、谁只能声明能力**。截至 2026-07-12，OpenClaw 当前稳定版是 `v2026.6.11`；官方在线文档仍可能继续更新，所以本文把 release 边界与文档核验日期同时写明。
 
-Agent 框架通常要解决三件事：用户从哪里进来、任务在哪里执行、结果发回哪里。Gateway、Node、Channel 可以分别对应入口、执行和渠道。
+> 当前架构的中心不是三个并列方框，而是一个由 Gateway 拥有的控制平面：Channel、operator 和 Node 都围绕它连接；Node 不是第二个 Gateway，Channel 也不会绕过 Gateway 直达 Node。
 
-## 读法
+## 读完你能做什么
 
-1. Gateway：看它如何接收请求和鉴权。
-2. Node：看任务如何被调度、执行和隔离。
-3. Channel：看它如何接入 IM、网页或其他客户端。
-4. Skill：看可复用能力如何被加载。
+读完后，你应该能完成五个判断：
 
-## 常见错误
+1. 画出 `channel inbound → Gateway → session/agent → node.invoke → Gateway → channel reply` 的真实主链路。
+2. 解释 Gateway 持有哪些状态，以及 Node 明确不持有哪些状态。
+3. 分清 channel allowlist、DM pairing、device pairing、node capability approval、role 与 scope 的生效位置。
+4. 在 loopback、SSH/Tailscale 与直接 non-loopback 暴露之间做安全选择。
+5. 用 status、RPC probe 与 channel probe 区分“配置文件里写了”与“运行链路真的健康”。
 
-只看模型配置，不看消息链路。真实系统的稳定性往往取决于队列、重试、权限和日志。
+![OpenClaw 中 Channel、Operator 与 Node 都经 Gateway 控制平面连接，且 101 至 105 错误架构会被拒绝](/images/articles/openclaw-architecture-guide/openclaw-control-plane-route.svg)
+*图注：上半部分沿一条合成消息展示当前 Gateway WebSocket 主链路；下方拒绝轨把绕过 Gateway、Node 冒充 Gateway、权限越界、不安全暴露和复活 legacy bridge 分开。*
 
-## 实战案例
+## 先建立正确的所有权模型
 
-把 Claude Code 接到飞书时，问题可能不在模型，而在进程退出、消息桥接、权限或超时策略。
+OpenClaw 的 Gateway 是单个长运行进程。官方远程访问文档明确把 sessions、auth profiles、channels 与 state 放在 Gateway 一侧；网络文档则说明它拥有 channel connections 和 WebSocket control plane。这里的“拥有”不只是流量经过，而是**状态与决策的权威来源在这里**。
+
+| 角色 | 它实际负责什么 | 它不是什么 |
+| --- | --- | --- |
+| Gateway | 维护渠道连接、会话与状态；接收 operator/node WS 握手；执行路由、RPC、pairing 与授权判断 | 不是可以随意暴露到公网的普通无状态代理 |
+| Channel | Telegram、Slack 等消息适配层；把入站事件交给 Gateway，并从 Gateway 接收回复 | 不是直连某个 Node 的消息总线 |
+| Operator | CLI、Control UI、自动化等控制面客户端；以 `role: operator` 和 scopes 调用 RPC | 不是天然可信的任意主机管理员 |
+| Node | macOS、iOS、Android 或 headless capability host；通过 `node.invoke` 暴露已声明、已批准的命令面 | 不运行 Gateway，也不拥有 channel/session state |
+
+官方协议把 Gateway WS 称为 OpenClaw 的单一 control plane 与 node transport。operator 与 node 都先连接这条 WebSocket，并在握手时声明 role 和 scope。Node 可以声明 `caps`、`commands` 与细粒度 `permissions`，但这些只是 claims；Gateway 仍会按服务器侧 allowlist 和已批准能力过滤。
+
+这带来一个很实用的排错原则：先问“权威状态在哪”，再问“哪个客户端断了”。如果 channel 配置存在但 Gateway 没有运行，Node 无法接管渠道；如果 Node 断线，Gateway 仍是会话和渠道的权威，只是依赖该 Node 的 capability 暂时不可用。
+
+## 一条消息究竟怎样走
+
+以完全合成的相机请求为例：未知私信已通过渠道 pairing，channel adapter 收到一条 `请拍一张实验台照片` 的消息；Gateway 把它路由到既有 session，Agent 判断需要调用已配对 Node 的 `camera.capture`。
+
+```text
+1. Channel adapter  → Gateway：接收入站事件并执行 DM/group policy
+2. Gateway          → session：找到或创建会话，交给 Agent 运行
+3. Agent/Gateway    → Node：经当前 Gateway WS 发起 node.invoke
+4. Node             → Gateway：返回受批准 capability 的结果
+5. Gateway          → Channel：按原渠道上下文发送回复
+```
+
+这里有三个容易被画错的地方。
+
+第一，Channel 与 Node 之间没有直连箭头。官方 Gateway runbook 还给出安全保证：Gateway protocol client 在 Gateway 不可用时快速失败，不会偷偷退化为 direct-channel fallback。
+
+第二，`node.invoke` 是可选分支，不是每条消息都必须经过 Node。只做文本推理时，主链可能在 Gateway 内完成 session/agent 运行后直接回复；调用相机、画布、位置或远端系统命令时，才需要 Node capability。
+
+第三，Node 的返回仍回到 Gateway，由它继续 Agent 运行和渠道回复。把 Node 画成独立 worker 并不算错，但如果图上让 Node 拥有会话、渠道 token 或直接回消息，就已经改变了信任边界。
+
+## 四类门禁不要混成一个“已授权”
+
+OpenClaw 的门禁分布在不同层。把它们都叫 pairing，会让配置审查失去精度。
+
+### Channel policy：谁可以发来消息
+
+官方 channel 配置说明，DM 默认 policy 是 `pairing`：未知发送者拿到一次性 pairing code，所有者批准后才进入；group policy 默认是 allowlist。具体 channel 可能属于 core，也可能由官方插件安装，键名与能力会演进，因此应以当前 channel 文档为准。
+
+这层回答“这个发送者或群能否进入系统”，不回答 Node 能否拍照，也不授予 operator RPC。
+
+### Device pairing：这个 Node 能否连接
+
+Node 以 `role: node` 连接 Gateway WS。device pairing 决定握手是否被接受，记录保存在 Gateway 的设备状态中。它回答“这台 capability host 能否成为当前 Gateway 的客户端”。
+
+### Capability approval：已连接 Node 能暴露什么
+
+官方 Node pairing 文档把它列为第二层：Gateway 比较 Node 声明的 capability/command surface 与已批准 surface；新增或扩大的能力先成为 pending。在批准之前，相关 Node 命令仍被过滤。也就是说，“Node 已配对”不等于“所有能力都放行”。
+
+### Role 与 scope：operator 能调用哪些控制面方法
+
+本文讨论的通用 Gateway WS 客户端路径包含 `operator` 与 `node` 两种 role。operator 常见 scope 包括只读的 `operator.read`、可变更/发消息/中继 Node 命令的 `operator.write`，以及高风险管理动作所需的 `operator.admin`；Node 侧只能调用 node-originated 方法。当前协议文档还列出使用独立 closed protocol 的 `worker` role，它不走本文讲解的通用 operator/node 路径，因此不在这张主链图中展开。
+
+这些 scope 是同一个可信 Gateway operator domain 内的控制面护栏。官方特别提醒：它们不是 hostile multi-tenant isolation。若要隔离不同人员、团队或机器，应使用独立 Gateway，并进一步分开 OS user 或 host，而不是给同一个 Gateway 多配几个 scope 就宣称完成强隔离。
+
+## 本地、远程与暴露面怎么选
+
+Gateway 默认 WebSocket 地址是 `ws://127.0.0.1:18789`，即 loopback first。官方网络文档指出，non-loopback bind 在没有有效 Gateway auth path 时会拒绝启动；可接受路径包括 token/password，或正确配置的 trusted-proxy 模式。
+
+| 场景 | 推荐连接方式 | 仍然必须做什么 | 不应推断什么 |
+| --- | --- | --- | --- |
+| 同机 operator / Node | 默认 loopback WS | 保持 Gateway auth 与 pairing 规则 | loopback 不等于所有客户端自动拥有 admin |
+| 远端可信设备 | Tailscale/VPN，或 SSH tunnel | 客户端仍携带满足 Gateway 的 auth | SSH tunnel 不会绕过 Gateway auth |
+| 直接 LAN/tailnet bind | 有效 auth、明确 allowed origins、受控网络 | 审核暴露面和配对请求 | 能启动不等于适合公网裸露 |
+| 强隔离租户/团队 | 独立 Gateway + OS user/host | 分开 config、state、workspace 与端口 | operator scopes 不能替代隔离边界 |
+
+SSH 的典型做法是把远端 Gateway 的 loopback 端口转发到本地，再让客户端连接本地端口：
+
+```bash
+ssh -N -L 18789:127.0.0.1:18789 user@gateway-host
+```
+
+随后客户端仍连接 `ws://127.0.0.1:18789`，但 token/password 等 Gateway auth 要求仍然存在。示例中的主机名只是占位符；不要把真实凭证写入教程、截图或 Showcase。
+
+多 Gateway 也不是横向扩容的默认答案。官方 runbook 推荐大多数安装一台机器一个 Gateway；确需隔离或 rescue bot 时，每个实例至少分开 port、config path、state dir 与 workspace root。多个可达 identity 混在一起会让 operator、Node 和渠道指向错误控制面，造成比“进程没启动”更难排查的状态分裂。
+
+## 配置存在不等于链路健康
+
+本文环境没有安装 `openclaw`，以下命令来自 2026-07-12 核验过的官方 runbook，并未在本机实跑。它们的价值在于区分三种证据强度。
+
+```bash
+# 服务与基础连接状态
+openclaw gateway status
+
+# 把 read-scope RPC 成功作为硬要求，而不只看可达性
+openclaw gateway status --require-rpc
+
+# 对已连接 Gateway 做逐账户 channel live probe；不可达时会退回 config-only 摘要
+openclaw channels status --probe
+```
+
+`gateway status` 可以告诉你运行态与 connectivity probe；`--require-rpc` 要求真正完成 read-scope RPC，适合自动化闸门。`channels status --probe` 在 Gateway 可达时运行逐账户 live probe，但 Gateway 不可达时只会显示 config-only summary。因此看到一段渠道配置，不足以宣称“渠道健康”；验收报告至少要写清楚是配置解析、Gateway RPC，还是渠道 live probe。
+
+同理，`gateway status --deep` 是额外扫描系统服务，不是“更深的 RPC probe”。把命令名字里的 deep 理解成端到端健康，会得到错误结论。
+
+## Showcase：让架构图接受机械反例
+
+本篇的 `gateway-node-channel-route-gate` 不读取真实 OpenClaw profile，也不连接真实 Gateway、channel 或 Node。它冻结一份合成 topology、一条合成 channel event、operator/node role 与 scope、pairing/capability declarations，以及预期 trace。验证器检查报告是否保持当前 Gateway WS 主链。
+
+从仓库根目录运行：
+
+```bash
+node research/articles/openclaw-architecture-guide/showcase/scripts/build-route-audit.mjs
+node research/articles/openclaw-architecture-guide/showcase/scripts/verify-showcase.mjs
+node research/articles/openclaw-architecture-guide/showcase/scripts/privacy-scan.mjs
+```
+
+确定性验证结果为：valid `0`，并逐一构造五个应失败的反例：
+
+| 退出码 | 被拒绝的架构 | 为什么必须失败 |
+| ---: | --- | --- |
+| 101 | Channel 绕过 Gateway，直接发往 Node | 当前协议没有 direct-channel fallback |
+| 102 | Node 宣称拥有 channel/session state 或 Gateway 身份 | Node 只是 capability host |
+| 103 | role/scope、device pairing 或 capability approval 越权 | 声明能力不等于服务器批准 |
+| 104 | non-loopback bind 无 auth，或远程 transport 不安全 | 扩大暴露面必须有有效 auth path |
+| 105 | 把 removed TCP bridge 当现行 transport，或 trace 缺 Gateway WS | legacy bridge 只可作为历史材料 |
+| 106 | 模型在最小临时执行目录写出两个报告之外的任何文件 | harness 必须拒绝越界写入；它不是 OpenClaw 产品错误码 |
+
+该 Showcase 证明“这份合成架构报告符合冻结合同”，不证明某台真实 OpenClaw 已部署正确。fresh model 环节在仓库外最小临时目录中运行，目录只含合成 fixture、contract 与空 reports；外层对执行前后的完整文件/目录清单和 SHA-256 做差，只允许精确的两份 route audit report，任何其他新增、删除或修改都以 `106` 拒绝。通过边界后才把报告交给 trace/fixture validator。模型说“完成”不能替代这些 gate。
+
+2026-07-12 的 fresh `gpt-5.4` 受控环节在写报告前命中 Codex usage limit；初次加两次重试都没有产生允许报告。研究包逐次记录三次的模型、退出码、报告存在性、完整 changed/unexpected paths 与 protected-files 结论。因此本篇只把确定性 0/101–106 矩阵当作已完成证据，模型层如实记为 blocked，不能升级成“模型验证成功”。
+
+完整输入、脚本、真实输出与受限说明保存在[研究目录](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/openclaw-architecture-guide/showcase)。writer 阶段保持 `partial`，独立 reviewer 通过前不会把它标为 verified；reviewer 还需要判断 blocked 模型层是否会阻止最终发布。
+
+## 五类错误架构如何排查
+
+### 把 Node 当作小型 Gateway
+
+症状是 Node 配置里出现渠道连接、会话数据库或“直接回复渠道”的职责。修正方式不是再加一个同步队列，而是把 channel/session 所有权移回 Gateway，Node 只保留被批准的 command surface。
+
+### 把“已配对”当作全能力放行
+
+先分别检查 device pairing 与 capability approval。前者只决定 Node 能否握手，后者决定哪些新增/扩展命令可见；命令还要继续受正常 policy 约束。
+
+### 用 operator scope 宣称多租户安全
+
+scope 能限制 RPC 方法，但同一 Gateway 仍处于一个可信 operator domain。面对互不信任的人员、机器或客户数据，应拆成独立 Gateway、OS user 或 host，并分开状态目录与 workspace。
+
+### 直接开放 non-loopback，却只相信“内网”
+
+检查 bind、auth、allowed origins 与网络路径。能从另一台机器连接只是可达性证据，不是授权证据。优先 Tailscale/VPN 或 SSH tunnel；直接 bind 时保留有效 auth 与明确暴露面。
+
+### 从旧文章复活 bridge
+
+官方 bridge 页面现在明确标注：TCP bridge 已移除，`bridge.*` 配置键也不再属于 schema。当前 operator/node client 应使用 Gateway protocol。旧端口 `18790` 只能作为历史排错线索，不能画进现行主链。
+
+## 什么时候不该只靠这张架构图
+
+这篇导读聚焦消息路由与信任边界，不覆盖模型供应商、Agent workspace、sandbox/tool policy、插件实现、渠道供应商限流和生产可观测性。以下任务需要继续查专门文档：
+
+- 要开放公网入口：阅读 Gateway exposure、authentication、trusted proxy 与反向代理文档。
+- 要运行高风险系统命令：继续设计 Node command policy、sandbox、独立主机和人工审批。
+- 要做多租户托管：不要从 operator scopes 推导隔离结论，按官方 multi-tenant hosting 边界设计。
+- 要判断某个具体 channel 是否 core/plugin、支持哪些策略：查当前 channel 页面，不从本文列表硬推。
+- 要验证真实部署：运行真实的 RPC/channel probes，并对日志和状态做脱敏留证。
+
+## 练习：审一张你自己的 OpenClaw 拓扑
+
+画一条真实但脱敏的消息路径，给每条箭头标出 transport，给每个方框写一行“拥有的状态”。然后用下列清单验收：
+
+```yaml
+gateway:
+  owns: [channels, sessions, pairing, node-registry, control-plane]
+  bind: loopback | tailnet | lan
+  auth_path: token | password | trusted-proxy
+channel:
+  inbound_policy: pairing | allowlist | open | disabled
+operator:
+  role: operator
+  scopes: [operator.read]
+node:
+  role: node
+  device_paired: true
+  approved_commands: [camera.capture]
+trace:
+  - channel.inbound -> gateway.channel.adapter
+  - gateway.session.route -> gateway.agent.run
+  - gateway.node.invoke -> node.camera.capture
+  - node.result -> gateway.channel.reply
+```
+
+完成标准不是“图看起来合理”，而是：Channel 没有直连 Node；Node 没有 channel/session 所有权；每个远程连接都有 Gateway WS 与 auth path；pairing、capability approval、scope 和 channel policy 分别标在正确层；当前图中不存在 legacy bridge。
+
+## 来源与延伸阅读
+
+- [OpenClaw 官方：Network](https://docs.openclaw.ai/network)
+- [OpenClaw 官方：Gateway runbook](https://docs.openclaw.ai/gateway)
+- [OpenClaw 官方：Gateway protocol](https://docs.openclaw.ai/gateway/protocol)
+- [OpenClaw 官方：Operator scopes](https://docs.openclaw.ai/gateway/operator-scopes)
+- [OpenClaw 官方：Node pairing](https://docs.openclaw.ai/gateway/pairing)
+- [OpenClaw 官方：Channel configuration](https://docs.openclaw.ai/gateway/config-channels)
+- [OpenClaw 官方：Nodes](https://docs.openclaw.ai/nodes)
+- [OpenClaw 官方：Remote access](https://docs.openclaw.ai/gateway/remote)
+- [OpenClaw 官方：Bridge protocol（历史参考）](https://docs.openclaw.ai/gateway/bridge-protocol)
+- [OpenClaw v2026.6.11 release](https://github.com/openclaw/openclaw/releases/tag/v2026.6.11)
+- [OpenClaw 橙皮书](https://github.com/alchaincyf/openclaw-orange-book)
+
+官方资料支撑本文截至 2026-07-12 的产品行为，稳定版边界为 2026-06-30 发布的 `v2026.6.11`。OpenClaw 橙皮书由 Huashu（花叔 / alchaincyf）整理，本文只把它作为 2026-04 的中文二手主题地图；仓库没有发布标准 LICENSE 或 CC/OSI 许可，因此本文没有复制或改编其 PDF、截图、图表、图片与段落。本文原创教学图由 LearnPrompt 编辑部以 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 提供。

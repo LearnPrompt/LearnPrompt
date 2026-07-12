@@ -1,0 +1,50 @@
+{
+  "fixture_id": "gateway-node-channel-route-gate",
+  "release_boundary": "v2026.6.11",
+  "synthetic_only": true,
+  "gateway": {
+    "identity": "gateway-lab",
+    "transport": "gateway-websocket",
+    "url_shape": "ws://127.0.0.1:18789",
+    "bind": "loopback",
+    "auth_path": "placeholder-token",
+    "owns": [
+      "channels",
+      "sessions",
+      "pairing",
+      "node-registry",
+      "control-plane"
+    ]
+  },
+  "channel": {
+    "adapter": "synthetic-chat",
+    "dm_policy": "pairing",
+    "group_policy": "allowlist",
+    "sender": "synthetic-sender",
+    "message": "Capture a synthetic lab image and summarize it."
+  },
+  "operator": {
+    "role": "operator",
+    "scopes": ["operator.read", "operator.write"],
+    "requested_method": "node.invoke"
+  },
+  "node": {
+    "identity": "node-camera-lab",
+    "role": "node",
+    "device_paired": true,
+    "declared_caps": ["camera"],
+    "approved_caps": ["camera"],
+    "declared_commands": ["camera.capture"],
+    "approved_commands": ["camera.capture"],
+    "owns": []
+  },
+  "expected_trace": [
+    "channel.inbound->gateway.channel.adapter",
+    "gateway.channel.adapter->gateway.session.route",
+    "gateway.session.route->gateway.agent.run",
+    "gateway.agent.run->gateway.node.invoke",
+    "gateway.node.invoke->node.camera.capture",
+    "node.camera.capture->gateway.node.result",
+    "gateway.node.result->gateway.channel.reply"
+  ]
+}

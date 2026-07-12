@@ -1,0 +1,11 @@
+PASS gateway-node-channel-route-gate deterministic verifier
+valid: expected 0, actual 0
+channel-bypass: expected 101, actual 101
+node-owns-state: expected 102, actual 102
+scope-escalation: expected 103, actual 103
+unsafe-exposure: expected 104, actual 104
+legacy-bridge: expected 105, actual 105
+unexpected-report-path: expected 106, actual 106
+privacy: expected 0, actual 0
+fixture hash unchanged: yes
+allowed report paths: reports/route-audit.json, reports/route-audit.md
