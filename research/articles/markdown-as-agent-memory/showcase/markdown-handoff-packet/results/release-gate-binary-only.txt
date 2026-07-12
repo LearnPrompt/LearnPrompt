@@ -1,0 +1,6 @@
+scenario: binary-only
+exit_code: 44
+reason: non-text memory record: memory/status.md
+source_packet_unchanged: yes
+reports_written: none
+assertions: not-run

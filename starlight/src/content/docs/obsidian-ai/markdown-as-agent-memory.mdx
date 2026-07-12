@@ -1,36 +1,192 @@
 ---
-title: 为什么 Markdown 适合作为 Agent 记忆接口
-description: 用普通文件承载可读、可搜索、可迁移的长期上下文。
+title: Markdown 何时才算 Agent 可交接记忆：把项目交接写成可验证记录
+description: 学会用一个小型 Markdown handoff packet 记录状态、决策、证据、下一条命令和限制，让新开的 Agent 会话能接着干。
 sidebar:
   order: 1
-difficulty: beginner
+difficulty: intermediate
 source_repo: alchaincyf/obsidian-ai-orange-book
 source_url: https://github.com/alchaincyf/obsidian-ai-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-12"
+reading_time: 15 分钟
+research_path: research/articles/markdown-as-agent-memory
+showcase_path: research/articles/markdown-as-agent-memory/showcase/markdown-handoff-packet
+showcase_status: verified
+quality_score: 97
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 15 分钟 | 2026-07-12 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/obsidian-ai-orange-book" url="https://github.com/alchaincyf/obsidian-ai-orange-book" updatedFrom="2026-05" note="参考主题结构，正文重新组织。" />
+昨天你已经把一个“日报定时器为什么漂了 8 小时”的事故查明白了：问题不是模型不会读代码，而是 worker 回退到了 UTC，而你的验收夹具仍然把 Asia/Shanghai 当成基准。今天你开一个新会话，让一个刚拿到文件系统权限的 Agent 继续处理。它该看到什么，才能不重新翻聊天记录、不乱猜背景、也不把旧结论写成新事实？
 
-## 核心概念
+很多团队的第一反应，是把整段聊天导出来，或者把“上次都讨论过了”写成一篇松散的 Markdown 会议纪要。但新会话真正需要的不是聊天全文，而是一份小而硬的交接记录：当前状态是什么，已经接受了什么决策，证据在哪里，下一条命令是什么，已知限制是什么，这份记录作用于哪个范围，最后一次验证是在什么时候。只有这些字段都写清，一个新开的 Agent 才能把它当成可执行的 handoff packet，而不是一份气氛友好的回忆录。
 
-Markdown 是 Agent 友好的记忆接口：人能读，git 能跟踪，搜索工具能索引，AI 能直接引用。
+## 读完你能做什么
 
-## 适合保存
+读完后，你应该能把一个跨会话交接压成一组可审计的 Markdown 文件，而不是继续依赖聊天残影：
 
-- 项目背景和决策。
-- 常用命令和失败记录。
-- 选题卡和资料链接。
-- Skill 使用说明。
+1. 给每条记录写出明确的 `status`、`decision`、`evidence pointer`、`next command`、`known limitation`、`scope` 和 `verified at`。
+2. 区分“可交接记录”和聊天 dump、产品指令文件、任务状态、数据库条目、秘密存储。
+3. 让一个 fresh Agent 在只读 packet 的前提下，产出带精确路径 citation 的 handoff 结果。
+4. 设计拒绝条件，让缺证据、互相矛盾、带敏感标记、或者根本不是文本的“记忆”直接失败。
 
-## 不适合保存
+![五个 durable record 字段经过 fresh Agent 读取后产出可引用 handoff，并在缺证据、矛盾、敏感标记和非文本输入时进入 41/42/43/44 拒绝分支](/images/articles/markdown-as-agent-memory/durable-memory-record.svg)
+*图注：左侧是 durable record 必须显式写出的字段，中间是 fresh Agent 只读 packet 后生成 `handoff.json` 与 `handoff.md`，右侧四条红色分支对应本文 Showcase 的 `41 / 42 / 43 / 44` 机械拒绝条件。*
 
-- API Key、token、私钥。
-- 需要数据库事务的一致性数据。
-- 大量二进制文件。
+:::note[先把边界说清]
+Markdown 只是 durable record 的载体，不会自动变成产品记忆。Obsidian 把笔记存成普通文件，Claude Code 有自己的 `CLAUDE.md` 与 auto memory，Codex 有自己的 `AGENTS.md` 指令面；但任意一个项目里的任意 Markdown 文件，只有在你明确让 Agent 去读时，才会进入这次交接。
+:::
 
-## 实战案例
+## 为什么“有个 Markdown 文件”还不等于 Agent 记忆
 
-把 AI 新闻聚合项目的源、筛选规则、发布流程写进 Markdown，Agent 下次就能接着维护，而不是重新问一遍。
+问题不在于你有没有把内容写进 `.md`，而在于这份文件是否满足交接合同。
+
+Obsidian 官方文档给了这个话题一个很重要的地板：笔记就是本地文件系统里的 Markdown 纯文本文件，vault 本质上是一个文件夹，外部编辑器和文件管理器也可以直接改它。这个特性让 Markdown 很适合做交接记录，因为它天然兼容文件系统、版本控制和外部脚本。但同一份官方文档也暗示了反面：它只说明“文件怎样保存”，并没有承诺“任何 Agent 都会自动把这些文件当记忆读进去”。
+
+再往下看两层细节，这个边界会更清楚：
+
+- Obsidian 的 Properties 文档把 YAML 属性定义为适合存放“小而原子的、人和机器都可读”的字段。这很适合作为 `verified_at`、`scope`、`status` 一类 metadata 的设计灵感。
+- CommonMark 规范只定义 Markdown 语法，不定义“什么是 Agent 记忆”。
+- `git diff` 文档只告诉你如何比较工作树、索引、提交和磁盘文件；它给交接记录提供的是审计能力，而不是语义。
+
+也就是说，Markdown 之所以适合做 handoff packet，不是因为它“自带记忆功能”，而是因为它同时满足三件基础设施需求：
+
+1. 人能直接读，不用先反序列化数据库。
+2. Agent 能用普通文件工具读取、搜索、引用和写回。
+3. Git 能把每次交接的增删改查成可 review 的 diff。
+
+如果缺少第 2 条和第 3 条中的任何一条，Markdown 也可能退化成普通备忘录。一个没有固定字段、没有证据指针、没有验证日期的 `handoff.md`，和把聊天记录粘到记事本里，在交接效果上没有本质区别。
+
+## 一份可交接记录至少要回答六个问题
+
+一份 fresh Agent 真能用的记录，不需要很长，但至少要把六个问题写死。少一个，下一次会话就会开始补猜。
+
+| 问题 | 为什么必须写 | 典型字段 |
+| --- | --- | --- |
+| 现在处于什么状态？ | Agent 要先判断自己是在继续收尾，还是仍在定位问题。 | `Current status` |
+| 已经接受了什么决策？ | 否则每个新会话都可能重新争论“要不要换方案”。 | `Accepted decision` |
+| 这个决策凭什么成立？ | 没有证据指针，记录就会从“可审计”变成“请你信我”。 | `Decision rationale` + `Evidence path` |
+| 下一条命令是什么？ | 交接不是摘要，应该把下一个动作降到可执行。 | `Next command` |
+| 已知限制是什么？ | 不写限制，后续会话很容易把局部结论误当全局真相。 | `Known limitation` |
+| 这条记录适用到哪里、何时验证过？ | 没有范围和日期，旧记录会在错误的地方继续生效。 | `Scope` + `Verified at` + `Provenance` |
+
+你会注意到，这里面没有“把上次聊天摘要完整抄一遍”。因为 handoff packet 的目标不是保存叙事，而是保存下一次执行所需的最小真相。
+
+本文的冻结 fixture 就把这六个问题压成五个文件：
+
+```text
+MEMORY_INDEX.md
+memory/context.md
+memory/decision.md
+memory/runbook.md
+memory/status.md
+```
+
+其中 `MEMORY_INDEX.md` 只负责说明这包记录由哪些文件构成，另外四个文件分别回答背景、决策、下一条动作和当前状态。每个文件都带 `Scope`、`Verified at` 和 `Provenance`，这样新会话不会把“谁写的、什么时候验证的、适用于哪里”留给猜测。
+
+## 为什么它不是聊天 dump、AGENTS、任务状态、数据库或秘密箱
+
+要把 handoff packet 写对，最有效的方法不是学一个新术语，而是先学会排除几个最像它、但又不是它的东西。
+
+| 看起来很像 | 实际解决什么 | 为什么不等于本文的 durable record |
+| --- | --- | --- |
+| 聊天 dump | 保存完整对话轨迹 | 信息太长、字段不稳定、证据和决策常混在一起；fresh Agent 得先二次摘要。 |
+| `CLAUDE.md` / `AGENTS.md` | 给产品提供持续指令、约定和工作方式 | 它们是 instruction surface，不是项目某次事故的 handoff 记录；更适合写规则，不适合写“这次漂时区的证据和下一条命令”。 |
+| 任务状态卡 | 表示一个任务当前做到哪一步 | 生命周期通常只覆盖当前任务；任务结束后就该淘汰，不应冒充长期交接记录。 |
+| 数据库或 issue 系统 | 存大量结构化、可查询、可事务化的数据 | 适合管全量状态，不适合塞给一个 fresh Agent 当最小上下文；直接暴露又常常太重。 |
+| 密钥或环境变量文档 | 解决秘密注入 | 任何 secret 都不该进入 handoff packet；交接记录只写“需要 secret”这一事实，不写值本身。 |
+
+这里最容易混淆的是产品边界。
+
+Claude Code 的官方 memory 文档说明得很直接：每次会话从 fresh context window 开始，`CLAUDE.md` 和 auto memory 都是被“加载进上下文”的材料，而不是强制配置。所以 `CLAUDE.md` 更像一份长期规则册，不是一次事故的项目交接单。Codex 的 `AGENTS.md` 官方指南同样强调，它会在做事前读取这些文件，用来理解项目约定与工作方式。它也是 instruction surface，不是“所有 Markdown 都会自动当记忆读”的通用协议。
+
+本文说的 packet 和它们的关系只有一句：你可以用 `CLAUDE.md` 或 `AGENTS.md` 告诉 Agent “先去读 `memory/status.md`”，但 packet 本身仍然是人类可审计的项目记录，不会凭空变成产品记忆功能。
+
+:::caution[不要把秘密也一起 handoff]
+如果一条记录需要 secret，请写成“运行下一条命令前需要可用凭据”，而不是把 token、cookie、session id 或本机绝对路径塞进记录。本文 Showcase 的 `43` 就专门拒绝这种“结构像交接，内容却是敏感标记”的输入。
+:::
+
+## 五个文件怎么分工，fresh Agent 才能直接产出带引用 handoff
+
+一份可交接 packet 的关键，不是“每个文件都长得像文档”，而是每个文件都承担唯一职责。
+
+`memory/context.md` 负责把事故压缩成一句能被下次会话复用的上下文：发生了什么、为什么重要、证据摘要是什么。`memory/decision.md` 负责把已经接受的选择钉死，例如“继续用 Asia/Shanghai 作为 canonical timezone”，并给出 rationale 与 evidence pointer。`memory/runbook.md` 只写下一条命令和验证命令，避免把“该做什么”埋在一段叙述里。`memory/status.md` 负责回答现在是不是 still blocked，以及已知限制还剩什么。`MEMORY_INDEX.md` 则告诉 fresh Agent：这包记录只由这五个文件组成，你可以回答哪些问题，不要去猜第六个隐形文件。
+
+这就是为什么本文的 Showcase 明确要求 fresh `gpt-5.5` Codex invocation 只读这五个文件，再写出 `reports/handoff.json` 和 `reports/handoff.md`。交接能不能用，不看模型是否“悟到了上下文”，而看两件事：
+
+1. 它能不能直接复制 packet 里的字段，准确回答状态、决策、证据、下一条命令和限制。
+2. 它有没有在输出里给出精确文件路径 citation，让后来的人能回到 packet 本身核对。
+
+冻结 fixture 的 normal 分支证明了这件事可以被机械检查。离线 replay 不依赖在线模型，稳定产出：
+
+```text
+exit_code: 0
+current_status: Blocked until the digest fixture is replayed with Asia/Shanghai as the canonical timezone.
+accepted_decision: Keep Asia/Shanghai as the canonical scheduler timezone for this tutorial fixture.
+next_command: node scripts/replay-digest.mjs --timezone Asia/Shanghai
+cited_paths: MEMORY_INDEX.md, memory/context.md, memory/decision.md, memory/runbook.md, memory/status.md
+```
+
+真实 live run 使用 fresh `gpt-5.5`，只读五个 packet 文件，并且只写 `reports/handoff.json` 与 `reports/handoff.md`。机械检查确认 source packet unchanged、两份 live report 与 deterministic reference 一致、所有 assertions 通过，输出也确实引用了五条精确路径。首次 writer-side 调用曾因命令形状不兼容而失败；外层控制器没有篡改那次历史，而是按修正后的同一冻结合同重新执行成功。独立只读终审随后以 `97/100`、`0 blocker / 0 major / 0 minor` 和视觉 PASS 确认这条证据链，本文才被标记为 `verified`。
+
+## 为什么 41 / 42 / 43 / 44 应该直接拒绝
+
+真正耐用的交接记录，不只要会通过，还要会拒绝。本文的 frozen showcase 没有把“坏 packet”留给 reviewer 靠肉眼兜底，而是给它们定义了稳定退出码。
+
+`41` 拒绝“缺证据或缺 provenance”。这类文件最常见的幻觉是：它看起来像完成了交接，实际却只留下结论，没有告诉下一个会话去哪里核对。比如有了 `Accepted decision` 却没有 `Evidence path`，它就不再是可审计记录，而只是一个没有出处的口头裁决。
+
+`42` 拒绝“状态和决策互相矛盾”。本文负例里，`memory/decision.md` 说 canonical timezone 是 `Asia/Shanghai`，但 `memory/status.md` 又要求用 `UTC` 重跑。只要这两条能同时存在，fresh Agent 就没有理由相信哪一条才是最新真相。
+
+`43` 拒绝“结构化敏感标记”。有些团队知道不能把真 token 放进去，于是改成“把 session id 占位符也写在 packet 里”。这仍然在教后续会话去找秘密，而不是去找证据和动作。本文把这种输入单独列成一类，就是为了提醒：handoff 记录应该描述权限需求，而不是保存秘密表位。
+
+`44` 拒绝“二进制或非文本 memory”。这条尤其重要，因为很多人会把截图、导出的 PDF、数据库快照压缩包也叫“记忆”。它们当然可以是证据，但不是 fresh Agent 可以直接读取、引用、复制字段的 durable record。一个 `.md` 扩展名里塞了 PNG 头，本质上还是二进制，不会因为后缀变成可交接记录。
+
+换句话说，本文的 contract 不是“只要有 Markdown 就算交接”，而是“只有满足字段、证据、范围、日期和文本可读性，才允许被当成交接”。
+
+## 什么时候不要用 Markdown handoff packet
+
+这个方法并不是每次都该拿出来。
+
+如果你要表达的是长期规则，例如“这个仓库默认先跑哪条测试”“哪些目录不能改”“commit message 应遵守什么规范”，那应该写进 `CLAUDE.md` 或 `AGENTS.md` 这一类 instruction surface，而不是塞进一次事故的 handoff packet。
+
+如果你要管理的是高频变化、可查询、需要多人并发更新的大量状态，例如发布流水线、工单队列、库存、埋点报表，那应该放数据库、工单系统或结构化后台。Markdown packet 适合的是“下一位接手者必须马上知道的最小真相”，不是整个系统的运行时事实表。
+
+如果你只是想保留完整上下文，聊天 dump 当然可以单独归档，但它应该作为原始证据或附录存在，而不是直接冒充交接记录。fresh Agent 要的是可执行字段，不是十几段来回推理。
+
+最后，如果某条信息一旦泄漏就属于安全事故，不要因为“这只是内部 handoff”就把它塞进 packet。秘密仍然应该留在环境变量、密钥管理器或权限系统里。
+
+## 动手练习：把你的项目交接压成一个最小 packet
+
+找一个你最近已经排查过、但下次很可能还会交接给新会话的问题，按下面的顺序做一遍：
+
+1. 先只写五个文件：`MEMORY_INDEX.md`、`memory/context.md`、`memory/decision.md`、`memory/runbook.md`、`memory/status.md`。
+2. 在每个文件顶部都写上 `Record kind`、`Scope`、`Verified at` 和 `Provenance`。
+3. 确保整个 packet 能明确回答六个问题：当前状态、已接受决策、决策理由/证据、下一条命令、已知限制、范围与验证日期。
+4. 再写一个最小 gate：缺 `Evidence path` 就失败，状态和决策冲突就失败，出现敏感标记就失败，非文本文件就失败。
+5. 最后让一个新会话只读这五个文件，要求它写一份带精确路径 citation 的 handoff。
+
+完成标准不是“你觉得写得挺完整”，而是下面四条同时成立：
+
+- 新会话不需要翻聊天记录，也能回答当前状态和下一条命令。
+- 输出里引用的是精确文件路径，而不是“来自某份笔记”。
+- packet 源文件在读取后保持不变。
+- 你能说清楚这份记录为什么不是聊天 dump、不是 `AGENTS.md`、不是任务状态、也不是秘密箱。
+
+如果做完后你发现 fresh Agent 仍然要自己补猜“为什么这么决定”，那就回到 packet，把 `Decision rationale` 和 `Evidence path` 写硬。多数交接失败，都是因为这两项被省掉了。
+
+## 来源与延伸阅读
+
+- [Obsidian 官方文档：How Obsidian stores data](https://obsidian.md/help/Files%2Band%2Bfolders/How%2BObsidian%2Bstores%2Bdata)
+- [Obsidian 官方文档：Properties](https://obsidian.md/help/properties)
+- [CommonMark Spec 0.31.2](https://spec.commonmark.org/spec)
+- [Git 官方文档：git diff](https://git-scm.com/docs/git-diff)
+- [Claude Code 官方文档：How Claude remembers your project](https://code.claude.com/docs/en/memory)
+- [OpenAI Codex 官方文档：Custom instructions with AGENTS.md](https://developers.openai.com/codex/guides/agents-md)
+- [Obsidian AI Orange Book](https://github.com/alchaincyf/obsidian-ai-orange-book)
+- [本文 research pack 与 frozen showcase](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/markdown-as-agent-memory)
+
+前六条为当前行为的一手或官方材料：它们分别支撑“Obsidian 文件如何落盘”“YAML 属性适合小型原子字段”“Markdown 语法本身不定义 Agent 记忆”“Git diff 为什么能审计文件变更”“Claude Code 的 `CLAUDE.md` / auto memory 是 context 而非强制规则”“Codex 会在做事前读取 `AGENTS.md` 作为项目指令面”。`Obsidian AI Orange Book` 只作为中文主题地图和相邻话题参考，作者为花叔 / alchaincyf，仓库 README 说明可在学习与交流场景下保留署名传播；它不是标准 CC/OSI 许可证。本文没有复制其 PDF 正文、截图或图片，只使用了官方页面、一份原创教学图和合成 fixture。

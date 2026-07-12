@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "codex_cli_version": "codex-cli 0.142.2",
+  "model": "gpt-5.5",
+  "prompt_file": "contracts/prompt.md",
+  "schema_file": "contracts/final-report.schema.json",
+  "exec_exit_code": 0,
+  "packet_unchanged": true,
+  "reports_written": {
+    "json": true,
+    "markdown": true
+  },
+  "report_match": true,
+  "assertions": "pass",
+  "changed_files": [
+    "?? reports/"
+  ],
+  "redaction_note": "Absolute temp paths, runtime identifiers, raw shell paths, and credential-shaped substrings were redacted before commit."
+}

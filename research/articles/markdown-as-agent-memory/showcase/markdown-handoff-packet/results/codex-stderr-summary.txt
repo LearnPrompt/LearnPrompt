@@ -1,0 +1,33 @@
+Reading additional input from stdin...
+2026-07-12T09:05:15.574711Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-12T09:05:15.574732Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-12T09:05:16.698613Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-12T09:05:16.700990Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-12T09:05:19.015954Z  WARN codex_core_skills::loader: skills scan truncated after 2000 directories (root: $HOME/.agents/skills)
+2026-07-12T09:05:19.034167Z ERROR codex_core::session::session: failed to load skill $HOME/.agents/skills/open-design/plugins/_official/scenarios/od-vue-export/SKILL.md: missing YAML frontmatter delimited by ---
+2026-07-12T09:05:19.034171Z ERROR codex_core::session::session: failed to load skill $HOME/.agents/skills/open-design/plugins/_official/scenarios/od-design-refine/SKILL.md: missing YAML frontmatter delimited by ---
+2026-07-12T09:05:19.034173Z ERROR codex_core::session::session: failed to load skill $HOME/.agents/skills/open-design/plugins/_official/scenarios/od-react-export/SKILL.md: missing YAML frontmatter delimited by ---
+2026-07-12T09:05:19.034174Z ERROR codex_core::session::session: failed to load skill $HOME/.agents/skills/open-design/plugins/_official/scenarios/od-nextjs-export/SKILL.md: missing YAML frontmatter delimited by ---
+2026-07-12T09:05:19.154332Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-12T09:05:19.154339Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-12T09:05:20.102501Z  WARN codex_core_skills::loader: skills scan truncated after 2000 directories (root: $HOME/.agents/skills)
+2026-07-12T09:05:20.102506Z  WARN codex_core_skills::loader: skills scan truncated after 2000 directories (root: $HOME/.agents/skills)
+2026-07-12T09:05:22.081118Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-12T09:05:22.104608Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-12T09:05:22.104624Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-12T09:05:22.105058Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-12T09:05:22.105066Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-12T09:05:22.106294Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-12T09:05:22.106299Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-12T09:05:22.106698Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-12T09:05:22.106703Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-12T09:05:22.107126Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-12T09:05:22.107133Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-12T09:05:22.107996Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-12T09:05:22.108001Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-12T09:05:22.457123Z  WARN codex_memories_write::phase1::job::result: Phase 1 job failed for thread <redacted-uuid>: Codex ran out of room in the model's context window. Start a new thread or clear earlier history before retrying.
+2026-07-12T09:05:23.221773Z  WARN codex_memories_write::phase1::job::result: Phase 1 job failed for thread <redacted-uuid>: Codex ran out of room in the model's context window. Start a new thread or clear earlier history before retrying.
+2026-07-12T09:05:23.884174Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-12T09:05:41.088132Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-12T09:05:50.494395Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-12T09:06:03.065315Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=$HOME/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json

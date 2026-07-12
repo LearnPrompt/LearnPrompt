@@ -1,0 +1,6 @@
+scenario: missing-evidence
+exit_code: 41
+reason: missing Evidence path in memory/decision.md
+source_packet_unchanged: yes
+reports_written: none
+assertions: not-run
