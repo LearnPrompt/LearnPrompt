@@ -1,0 +1,11 @@
+scenario: schema-drift
+command: node .agents/skills/release-feed-api/scripts/fetch-releases.mjs
+exit_code: 42
+{
+  "status": "contract_violation",
+  "exit_code": 42,
+  "message": "release field missing: published_at",
+  "request_count": 1,
+  "retry_count": 0,
+  "reports_written": false
+}

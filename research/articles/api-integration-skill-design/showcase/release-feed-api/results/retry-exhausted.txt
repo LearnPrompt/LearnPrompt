@@ -1,0 +1,11 @@
+scenario: retry-exhausted
+command: node .agents/skills/release-feed-api/scripts/fetch-releases.mjs
+exit_code: 43
+{
+  "status": "retry_exhausted",
+  "exit_code": 43,
+  "message": "received 503 after 2 retries",
+  "request_count": 3,
+  "retry_count": 3,
+  "reports_written": false
+}

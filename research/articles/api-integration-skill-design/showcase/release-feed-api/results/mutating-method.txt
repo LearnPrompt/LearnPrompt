@@ -1,0 +1,11 @@
+scenario: mutating-method
+command: node .agents/skills/release-feed-api/scripts/fetch-releases.mjs
+exit_code: 44
+{
+  "status": "mutating_method_rejected",
+  "exit_code": 44,
+  "message": "configured method POST is not allowed for this read-only integration",
+  "request_count": 0,
+  "retry_count": 0,
+  "reports_written": false
+}

@@ -1,0 +1,104 @@
+release-feed-api showcase replay
+
+fixture_tests_command:
+  npm test
+fixture_tests_exit:
+  0
+fixture_tests_key_output:
+  > release-feed-api-fixture@0.0.0 test
+  > node --test test/*.test.mjs
+
+  ✔ two-page success writes redacted reports (<duration>ms)
+  ✔ 429 once then success records one retry (<duration>ms)
+  ✔ missing credential exits 41 before network (<duration>ms)
+  ✔ schema drift exits 42 (<duration>ms)
+  ✔ 503 retry exhausted exits 43 (<duration>ms)
+  ✔ mutating method is rejected before network (<duration>ms)
+  ✔ loopback preflight is either available or explicitly blocked by the host (<duration>ms)
+  ℹ tests 7
+  ℹ suites 0
+  ℹ pass 7
+  ℹ fail 0
+  ℹ cancelled 0
+  ℹ skipped 0
+  ℹ todo 0
+  ℹ duration_ms <duration>
+
+two-page-success_command:
+  node research/articles/api-integration-skill-design/showcase/release-feed-api/scripts/release-gate.mjs two-page-success
+two-page-success_exit:
+  0
+two-page-success_output:
+  {
+    "runner_exit_code": 0,
+    "scenario": "two-page-success",
+    "status": "completed",
+    "fetch_exit_code": 0
+  }
+
+rate-limit-once_command:
+  node research/articles/api-integration-skill-design/showcase/release-feed-api/scripts/release-gate.mjs rate-limit-once
+rate-limit-once_exit:
+  0
+rate-limit-once_output:
+  {
+    "runner_exit_code": 0,
+    "scenario": "rate-limit-once",
+    "status": "completed",
+    "fetch_exit_code": 0
+  }
+
+missing-credential_command:
+  node research/articles/api-integration-skill-design/showcase/release-feed-api/scripts/release-gate.mjs missing-credential
+missing-credential_exit:
+  0
+missing-credential_output:
+  {
+    "runner_exit_code": 0,
+    "scenario": "missing-credential",
+    "status": "completed",
+    "fetch_exit_code": 41
+  }
+
+schema-drift_command:
+  node research/articles/api-integration-skill-design/showcase/release-feed-api/scripts/release-gate.mjs schema-drift
+schema-drift_exit:
+  0
+schema-drift_output:
+  {
+    "runner_exit_code": 0,
+    "scenario": "schema-drift",
+    "status": "completed",
+    "fetch_exit_code": 42
+  }
+
+retry-exhausted_command:
+  node research/articles/api-integration-skill-design/showcase/release-feed-api/scripts/release-gate.mjs retry-exhausted
+retry-exhausted_exit:
+  0
+retry-exhausted_output:
+  {
+    "runner_exit_code": 0,
+    "scenario": "retry-exhausted",
+    "status": "completed",
+    "fetch_exit_code": 43
+  }
+
+mutating-method_command:
+  node research/articles/api-integration-skill-design/showcase/release-feed-api/scripts/release-gate.mjs mutating-method
+mutating-method_exit:
+  0
+mutating-method_output:
+  {
+    "runner_exit_code": 0,
+    "scenario": "mutating-method",
+    "status": "completed",
+    "fetch_exit_code": 44
+  }
+
+privacy_command:
+  node research/articles/api-integration-skill-design/showcase/release-feed-api/scripts/privacy-scan.mjs
+privacy_exit:
+  0
+privacy_output:
+  PASS privacy scan: no runtime IDs, absolute temp paths, user home paths, shell paths, or bearer token material were committed.
