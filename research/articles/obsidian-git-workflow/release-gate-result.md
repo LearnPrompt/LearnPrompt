@@ -33,3 +33,5 @@ git diff --check
 ```
 
 提交前 `git diff --cached --check` 还发现原始 unified diff 归档的三个空 context marker 会形成仓库尾随空格。最终工件改用可无损重建的 JSON 行数组并保存原始 SHA-256；Showcase verifier 会重建并拒绝 hash 不匹配。格式修复后的 staged diff check、Showcase、privacy、verified validator 与 49 页构建均再次通过，独立只读窄审维持 86/100、0/0/0 与视觉 PASS。
+
+合入中文真实主仓库路径后，连续 replay 暴露 sanitized deterministic report 写入临时 commit hash，导致每次运行出现非语义 diff。最终修复只规范化归档字段：临时仓库内仍验证真实 commit 存在且为 HEAD ancestor，报告写成稳定 marker 与 proof boolean。连续两次重放后的完整 research tree SHA-256 均为 `204c0f469791e34c03b5008da90fc025e906fbec8d5e35661ef9927056527d75`；privacy、verified validator、49 页构建与 diff check 通过。

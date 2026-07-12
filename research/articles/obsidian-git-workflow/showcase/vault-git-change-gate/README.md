@@ -33,3 +33,5 @@ The fixture uses only synthetic note content. The privacy scan rejects private k
 ## Live history
 
 The preserved history has three stages: writer-side state DB block; first outer retry rejected with `85` for an incomplete receipt contract; final allowed retry accepted with validator `0`, exactly three changed paths, 13 diff lines, and the main baseline unchanged. Raw streams stayed outside the worktree; only sanitized failure evidence, the accepted receipt, the accepted diff as a lossless JSON line array, and summaries are committed. JSON line-array storage preserves the single-space marker used for blank diff context lines without creating trailing-whitespace violations in the repository.
+
+The deterministic verifier validates a real temporary candidate commit and its ancestry before writing the report. The committed report replaces that nondeterministic temporary hash with `<verified-candidate-commit>` plus `candidate_commit_exists_and_is_ancestor: true`, so repeated verification is byte-stable without weakening the actual gate.

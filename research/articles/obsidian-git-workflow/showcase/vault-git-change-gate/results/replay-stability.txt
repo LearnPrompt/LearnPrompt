@@ -1,0 +1,9 @@
+PASS consecutive main-path replay stability
+runs: 2
+research_tree_sha256_run_1: 204c0f469791e34c03b5008da90fc025e906fbec8d5e35661ef9927056527d75
+research_tree_sha256_run_2: 204c0f469791e34c03b5008da90fc025e906fbec8d5e35661ef9927056527d75
+candidate_commit_archive: <verified-candidate-commit>
+candidate_commit_exists_and_is_ancestor: true
+verified_validator: PASS 86/100
+privacy: PASS
+starlight_build: PASS 49 pages
