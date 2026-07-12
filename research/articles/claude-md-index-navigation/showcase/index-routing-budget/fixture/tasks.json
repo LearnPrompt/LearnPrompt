@@ -1,0 +1,34 @@
+[
+  {
+    "id": "task-release-checklist",
+    "area": "projects",
+    "request": "Find the canonical release checklist for Project Atlas.",
+    "route_key": "release-checklist",
+    "target": "projects/release-checklist.md",
+    "required_citation": "projects/release-checklist.md"
+  },
+  {
+    "id": "task-citation-policy",
+    "area": "research",
+    "request": "Find the citation policy for research notes.",
+    "route_key": "citation-policy",
+    "target": "research/citation-policy.md",
+    "required_citation": "research/citation-policy.md"
+  },
+  {
+    "id": "task-newsletter-runbook",
+    "area": "publishing",
+    "request": "Find the newsletter runbook for weekly publishing.",
+    "route_key": "newsletter-runbook",
+    "target": "publishing/newsletter-runbook.md",
+    "required_citation": "publishing/newsletter-runbook.md"
+  },
+  {
+    "id": "task-vault-audit",
+    "area": "systems",
+    "request": "Find the vault audit runbook for maintenance.",
+    "route_key": "vault-audit-runbook",
+    "target": "systems/vault-audit-runbook.md",
+    "required_citation": "systems/vault-audit-runbook.md"
+  }
+]

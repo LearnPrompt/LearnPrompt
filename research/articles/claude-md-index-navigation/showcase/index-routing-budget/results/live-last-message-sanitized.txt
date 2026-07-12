@@ -1,0 +1,15 @@
+完成。
+
+变更文件：
+- [reports/routes.json](<showcase>/reports/routes.json)
+- [reports/routes.md](<showcase>/reports/routes.md)
+- `reports/read-trace.log` 仅由 wrapper 生成
+
+执行情况：
+- 按指定顺序完成正好 10 次 wrapper read。
+- 未做递归 inventory。
+- 未修改 fixture、contracts、scripts、cases、results。
+- 未运行额外验证命令，避免额外读取。
+
+Lessons learned:
+固定路由任务应只使用声明索引和 canonical target，避免用仓库扫描替代索引导航。

@@ -1,0 +1,15 @@
+{
+  "attempted_at": "2026-07-12",
+  "model": "gpt-5.5",
+  "command": "codex exec --model gpt-5.5 --ask-for-approval never <prompt>",
+  "status": 2,
+  "signal": null,
+  "blocked": true,
+  "sanitized_stdout_excerpt": "",
+  "sanitized_stderr_excerpt": "WARNING: proceeding, even though we could not create PATH aliases: Operation not permitted (os error 1)\nerror: unexpected argument '--ask-for-approval' found\n\n  tip: to pass '--ask-for-approval' as a value, use '-- --ask-for-approval'\n\nUsage: codex exec [OPTIONS] [PROMPT]\n       codex exec [OPTIONS] <COMMAND> [ARGS]\n\nFor more information, try '--help'.\n",
+  "allowed_live_outputs": [
+    "reports/routes.json",
+    "reports/routes.md",
+    "reports/read-trace.log"
+  ]
+}

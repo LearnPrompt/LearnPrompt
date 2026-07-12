@@ -1,0 +1,58 @@
+{
+  "generated_at": "2026-07-12",
+  "model": "deterministic-replay",
+  "budget": {
+    "routed_reads": 10,
+    "naive_inventory_files": 26
+  },
+  "routes": [
+    {
+      "task_id": "task-release-checklist",
+      "route_key": "release-checklist",
+      "area": "projects",
+      "area_index": "projects/index.md",
+      "target": "projects/release-checklist.md",
+      "owner": "Project editor",
+      "verified_date": "2026-07-12",
+      "fallback": "Ask owner before broad scan",
+      "citation": "projects/release-checklist.md",
+      "target_heading": "Release checklist"
+    },
+    {
+      "task_id": "task-release-checklist",
+      "route_key": "citation-policy",
+      "area": "research",
+      "area_index": "research/index.md",
+      "target": "research/citation-policy.md",
+      "owner": "Research lead",
+      "verified_date": "2026-07-12",
+      "fallback": "Ask owner before broad scan",
+      "citation": "research/citation-policy.md",
+      "target_heading": "Citation policy"
+    },
+    {
+      "task_id": "task-newsletter-runbook",
+      "route_key": "newsletter-runbook",
+      "area": "publishing",
+      "area_index": "publishing/index.md",
+      "target": "publishing/newsletter-runbook.md",
+      "owner": "Publishing editor",
+      "verified_date": "2026-07-12",
+      "fallback": "Ask owner before broad scan",
+      "citation": "publishing/newsletter-runbook.md",
+      "target_heading": "Newsletter runbook"
+    },
+    {
+      "task_id": "task-vault-audit",
+      "route_key": "vault-audit-runbook",
+      "area": "systems",
+      "area_index": "systems/index.md",
+      "target": "systems/vault-audit-runbook.md",
+      "owner": "Systems maintainer",
+      "verified_date": "2026-07-12",
+      "fallback": "Ask owner before broad scan",
+      "citation": "systems/vault-audit-runbook.md",
+      "target_heading": "Vault audit runbook"
+    }
+  ]
+}

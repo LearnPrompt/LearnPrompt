@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">Index routing budget mechanism</title>
+  <desc id="desc">A task is routed through CLAUDE.md, the root index, one area index, and one canonical target. The valid path reads ten of twenty-six files, while five rejection branches catch missing, duplicate, recursive, stale, and sensitive routes.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
+    </marker>
+    <marker id="redArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b91c1c"/>
+    </marker>
+    <style>
+      .bg { fill: #f8fafc; }
+      .panel { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; rx: 16; }
+      .node { fill: #eef6ff; stroke: #2563eb; stroke-width: 2; rx: 14; }
+      .index { fill: #ecfdf5; stroke: #047857; stroke-width: 2; rx: 14; }
+      .target { fill: #fff7ed; stroke: #c2410c; stroke-width: 2; rx: 14; }
+      .reject { fill: #fef2f2; stroke: #b91c1c; stroke-width: 2; rx: 12; }
+      .budget { fill: #312e81; stroke: #1e1b4b; stroke-width: 2; rx: 18; }
+      .text { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #0f172a; }
+      .small { font-size: 22px; }
+      .body { font-size: 25px; }
+      .title { font-size: 34px; font-weight: 750; }
+      .label { font-size: 20px; fill: #475569; }
+      .white { fill: #ffffff; }
+      .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: 20px; }
+      .line { stroke: #334155; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .rejectLine { stroke: #b91c1c; stroke-width: 2.5; fill: none; marker-end: url(#redArrow); stroke-dasharray: 8 7; opacity: .68; }
+    </style>
+  </defs>
+  <rect class="bg" width="1400" height="900"/>
+
+  <text class="text title" x="70" y="66">CLAUDE.md + index.md routing budget</text>
+  <text class="text label" x="72" y="102">Instruction defines behavior; authored indexes expose canonical entrypoints. A plain index.md is read only when the workflow points to it.</text>
+
+  <rect class="panel" x="55" y="135" width="1290" height="470"/>
+
+  <rect class="node" x="95" y="220" width="190" height="105"/>
+  <text class="text body" x="130" y="263">Task</text>
+  <text class="text small" x="120" y="297">one question</text>
+
+  <rect class="node" x="345" y="205" width="210" height="135"/>
+  <text class="text body" x="382" y="249">CLAUDE.md</text>
+  <text class="text small" x="374" y="283">routing rule</text>
+  <text class="text label" x="376" y="313">read root index</text>
+
+  <rect class="index" x="625" y="205" width="210" height="135"/>
+  <text class="text body" x="665" y="249">root index</text>
+  <text class="text small" x="656" y="283">area chooser</text>
+  <text class="text label" x="665" y="313">4 entrypoints</text>
+
+  <rect class="index" x="905" y="205" width="210" height="135"/>
+  <text class="text body" x="942" y="249">area index</text>
+  <text class="text small" x="936" y="283">route table</text>
+  <text class="text label" x="934" y="313">5 targets max</text>
+
+  <rect class="target" x="1180" y="205" width="130" height="135"/>
+  <text class="text body" x="1204" y="249">Target</text>
+  <text class="text small" x="1198" y="283">canonical</text>
+  <text class="text label" x="1206" y="313">cite path</text>
+
+  <path class="line" d="M 285 272 L 345 272"/>
+  <path class="line" d="M 555 272 L 625 272"/>
+  <path class="line" d="M 835 272 L 905 272"/>
+  <path class="line" d="M 1115 272 L 1180 272"/>
+
+  <rect class="budget" x="160" y="415" width="505" height="120"/>
+  <text class="text title white" x="200" y="466">Valid trace: 10 reads</text>
+  <text class="text small white" x="200" y="500">CLAUDE.md + root index</text>
+  <text class="text small white" x="200" y="528">+ 4 area indexes + 4 targets</text>
+
+  <rect class="panel" x="720" y="415" width="520" height="120"/>
+  <text class="text title" x="760" y="466">Naive inventory: 26 files</text>
+  <text class="text small" x="760" y="505">synthetic comparison only, not universal token savings</text>
+
+  <path class="line" d="M 665 475 L 720 475"/>
+
+  <rect class="panel" x="55" y="650" width="1290" height="185"/>
+  <text class="text title" x="85" y="700">Deterministic rejection branches</text>
+
+  <rect class="reject" x="90" y="735" width="220" height="64"/>
+  <text class="text code" x="115" y="775">61 missing route</text>
+
+  <rect class="reject" x="335" y="735" width="235" height="64"/>
+  <text class="text code" x="360" y="775">62 duplicate route</text>
+
+  <rect class="reject" x="595" y="735" width="245" height="64"/>
+  <text class="text code" x="620" y="775">63 scan / budget</text>
+
+  <rect class="reject" x="865" y="735" width="245" height="64"/>
+  <text class="text code" x="890" y="775">64 stale target</text>
+
+  <rect class="reject" x="1135" y="735" width="180" height="64"/>
+  <text class="text code" x="1160" y="775">65 private</text>
+
+  <path class="rejectLine" d="M 1010 340 C 1010 420 200 420 200 735"/>
+  <path class="rejectLine" d="M 1010 340 C 1010 450 452 450 452 735"/>
+  <path class="rejectLine" d="M 730 340 C 730 500 718 500 718 735"/>
+  <path class="rejectLine" d="M 1245 340 C 1245 455 988 455 988 735"/>
+  <path class="rejectLine" d="M 1245 340 C 1245 455 1225 455 1225 735"/>
+
+  <text class="text label" x="88" y="862">Schema per route: route key, scope/purpose, canonical entrypoint, owner, verified date, fallback.</text>
+</svg>
