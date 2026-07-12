@@ -1,6 +1,6 @@
 # LearnPrompt 全站黄金化生产计划
 
-状态：Phase 0–Phase 5 已完成；当前全站 41 verified / 0 待处理深度教程，最终独立审计中
+状态：完成；Phase 0–Phase 5 与最终独立审计全部 PASS，当前全站 41 verified / 0 待处理深度教程
 基线日期：2026-07-10
 仓库：`LearnPrompt/LearnPrompt`
 站点目录：`starlight/src/content/docs/`
@@ -342,3 +342,5 @@ todo
 - 公开站点 `SourceCard` 引用归零。
 - 全站构建、链接、diff 和最终独立审计通过。
 - 新章节缺口 manifest 单独交付，不与现有 44 篇的完成状态混算。
+
+最终独立只读审计已于 2026-07-12 对固定提交 `8beb238` 执行。Reviewer 不依赖控制面自述，重新运行 41 篇 validator、完整负例回归、49 页隔离构建、内部/外部链接分类、研究合同与图片检查，并核对 Git/远端边界。初审只发现 Phase 4 对 4 个 `example.com` fixture 的分类统计少算 1 个；修正后为 0 blocker / 0 major / 0 minor，详细证据见 [`research/full-site-final-audit.md`](./full-site-final-audit.md)。
