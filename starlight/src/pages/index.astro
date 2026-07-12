@@ -129,32 +129,27 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
         </div>
       </section>
 
-      <section class="lp-metrics" aria-label="核心学习产出">
+      <section class="lp-metrics" aria-label="教程质量证据">
         <div>
           <span>01</span>
-          <strong>任务卡</strong>
-          <p>把想法写成目标、边界和验收命令。</p>
+          <strong>41 篇教程</strong>
+          <p>每篇都有来源、教学图、Showcase 和独立审稿。</p>
         </div>
         <div>
           <span>02</span>
-          <strong>可审查改动</strong>
-          <p>让 Agent 交付一份范围清楚、能逐行检查的 diff。</p>
+          <strong>8 条路径</strong>
+          <p>按你正在做的事选入口，不要求顺序读完整站。</p>
         </div>
         <div>
           <span>03</span>
-          <strong>验收记录</strong>
-          <p>留下命令、退出码、页面检查和没有证明的部分。</p>
+          <strong>可重放 Showcase</strong>
+          <p>正常路径要跑，失败场景和越界反例也要跑。</p>
         </div>
         <div>
           <span>04</span>
-          <strong>规则与 Skill</strong>
-          <p>把反复出现的经验整理成下一次还能复用的做法。</p>
+          <strong>一手来源</strong>
+          <p>命令、权限和版本回到官方资料核对，页面标明核验日期。</p>
         </div>
-      </section>
-
-      <section class="lp-quote" aria-label="LearnPrompt promise">
-        <p>一页有没有用，看你读完后手里多了什么。</p>
-        <span>一张任务卡、一份可审查的 diff、一段验收记录，或者一条下次还能用的规则。只“看懂了”不算。</span>
       </section>
 
       <section id="paths" class="lp-section lp-paths">
@@ -496,7 +491,6 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
 
   .lp-metrics,
   .lp-section,
-  .lp-quote,
   .lp-footer {
     width: min(1180px, calc(100% - 2rem));
     margin-inline: auto;
@@ -530,30 +524,6 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
     margin: 0.85rem 0 0;
     color: rgba(245, 239, 229, 0.62);
     line-height: 1.72;
-  }
-
-  .lp-quote {
-    padding: clamp(4.5rem, 8vw, 8rem) 0;
-    text-align: center;
-  }
-
-  .lp-quote p {
-    margin: 0;
-    color: #fff8ec;
-    font-family: "Avenir Next Condensed", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-    font-size: clamp(2.8rem, 6vw, 6.4rem);
-    font-weight: 700;
-    letter-spacing: -0.07em;
-    line-height: 1;
-  }
-
-  .lp-quote span {
-    display: block;
-    max-width: 46rem;
-    margin: 1.4rem auto 0;
-    color: rgba(245, 239, 229, 0.66);
-    font-size: 1.04rem;
-    line-height: 1.85;
   }
 
   .lp-section {
