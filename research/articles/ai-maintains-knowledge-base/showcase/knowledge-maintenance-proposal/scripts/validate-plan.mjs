@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { createHash } from "node:crypto";
+import { fileURLToPath } from "node:url";
 import path from "node:path";
 
-const root = path.resolve(new URL("..", import.meta.url).pathname);
+const root = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const planPath = path.resolve(process.argv[2] ?? path.join(root, "reports/maintenance-plan.json"));
 
 function exit(code, message) {

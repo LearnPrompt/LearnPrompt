@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import { readFileSync, readdirSync, statSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import path from "node:path";
 
-const root = path.resolve(new URL("..", import.meta.url).pathname);
+const root = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const patterns = [
   /\b(?:session|thread|turn|item|request)[ _-]?id\b["']?\s*[:=]\s*["']?[A-Za-z0-9][A-Za-z0-9_-]{7,}/i,
   /\b(?:account[ _-]?id|chatgpt-account-id)\b["']?\s*[:=]\s*["']?[A-Za-z0-9][A-Za-z0-9_-]{7,}/i,
@@ -33,4 +34,3 @@ for (const file of walk(root)) {
 }
 
 console.log("PASS privacy scan: no credential, runtime id, account id, or local absolute path leakage found.");
-

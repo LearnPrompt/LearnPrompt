@@ -47,3 +47,9 @@
 - Raw final report was captured outside the worktree; in-repo normalization only removed local-link risk and one duplicated identical verdict heading.
 - Verdict: PASS 97/100; blocker/major/minor = 0/0/0; final visual assessment PASS.
 - Final state: `showcase_status: verified`, `quality_score: 97`.
+
+## Merged-path replay
+
+- The first replay from the real repository path failed because four scripts derived filesystem paths from `new URL(...).pathname`, leaving Chinese path segments percent-encoded.
+- `verify-showcase.mjs`, `validate-plan.mjs`, `privacy-scan.mjs`, and `run-codex-live.mjs` now decode file URLs with Node.js `fileURLToPath`.
+- After the fix, the full `0/71/72/73/74/75` matrix and privacy `0` replayed successfully from the Chinese repository path; source inventory and hashes remained unchanged.

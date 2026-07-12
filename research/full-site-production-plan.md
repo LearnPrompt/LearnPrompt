@@ -1,6 +1,6 @@
 # LearnPrompt 全站黄金化生产计划
 
-状态：Phase 0、Phase 1、Phase 2 Wave A、Phase 2 Wave B、Phase 2 Wave C 已完成，Wave D 进行中；当前全站 35 verified / 6 待处理深度教程
+状态：Phase 0、Phase 1、Phase 2 Wave A、Phase 2 Wave B、Phase 2 Wave C 已完成，Wave D 进行中；当前全站 37 verified / 4 待处理深度教程
 基线日期：2026-07-10
 仓库：`LearnPrompt/LearnPrompt`
 站点目录：`starlight/src/content/docs/`
@@ -192,8 +192,8 @@ Wave C 最后一对已于 2026-07-12 完成：`api-integration-skill-design` 用
 
 - [x] `markdown-as-agent-memory.mdx`（Phase 2，verified 97/100）
 - [x] `vault-directory-for-ai.mdx`（Phase 2，verified 96/100）
-- [ ] `claude-md-index-navigation.mdx`
-- [ ] `ai-maintains-knowledge-base.mdx`
+- [x] `claude-md-index-navigation.mdx`（Phase 2，verified 100/100）
+- [x] `ai-maintains-knowledge-base.mdx`（Phase 2，verified 97/100）
 - [ ] `obsidian-git-workflow.mdx`
 
 `agent-frameworks/`：
@@ -205,6 +205,8 @@ Wave C 最后一对已于 2026-07-12 完成：`api-integration-skill-design` 用
 涉及个人工作流的 Showcase 必须使用脱敏样例或可公开 mock，不得把本地隐私资料、账号、token 或真实聊天内容写进仓库。
 
 Wave D 第一对已于 2026-07-12 完成：`markdown-as-agent-memory` 用五文件 durable handoff packet、fresh `gpt-5.5` live report 与 `0/41/42/43/44` gate 教清 Markdown 何时才算可交接记录；`vault-directory-for-ai` 用 12 条完全合成 inbox、role/canonical path/reject contract、fresh `gpt-5.5` placement plan 与 `0/51/52/53/54/55` gate 教清可审计目录分流。两篇独立只读终审为 97/100 与 96/100，视觉均 PASS。合并后为 35 篇 verified / 6 篇待处理；两套 Showcase 在中文主仓库路径重放通过，35 篇全量 validator、回归集和 49 页构建通过。详细记录见 [`research/phase2-wave-d-status.md`](./phase2-wave-d-status.md)。
+
+Wave D 第二对已于 2026-07-12 完成：`claude-md-index-navigation` 用 26 文件 synthetic vault、四任务精确 10-read trace 与 `0/61/62/63/64/65` gate 教清 `CLAUDE.md + index.md` 路由预算；`ai-maintains-knowledge-base` 用 11 篇 synthetic notes、六类 proposal、三层 live 证据与 `0/71/72/73/74/75` gate 教清“只提案、不直接改库”。两篇独立只读终审为 100/100 与 97/100，视觉均 PASS。合并路径重放还暴露并修复了维护篇脚本的 Unicode URL 解码问题；修复后为 37 篇 verified / 4 篇待处理，两套 Showcase、37 篇全量 validator、回归集和 49 页构建全部通过。详细记录见 [`research/phase2-wave-d-status.md`](./phase2-wave-d-status.md)。
 
 ## 7. Phase 3：导航与来源索引收口（6 篇）
 
