@@ -1,0 +1,74 @@
+{
+  "fixture": "knowledge-maintenance-proposal",
+  "generated_by": "deterministic-reference",
+  "source_preservation_rule": "Preserve every source note and frozen manifest byte-for-byte; write a proposal only.",
+  "proposals": [
+    {
+      "action": "merge-candidate",
+      "note_paths": ["notes/alpha-project-brief.md", "notes/alpha-accessibility-notes.md"],
+      "evidence_paths": ["maintenance-manifest.json", "notes/alpha-project-brief.md", "notes/alpha-accessibility-notes.md"],
+      "observed_fact": "Both notes share canonical_key alpha-launch-plan and contain complementary launch requirements.",
+      "proposed_change": "Create a human-reviewed merge proposal that keeps roadmap and accessibility evidence sections separate before any note is edited.",
+      "confidence": "high",
+      "requires_human_approval": true,
+      "source_preservation_rule": "Do not delete or overwrite either source note; preserve both paths until a human approves.",
+      "reason": "The merge signal is the frozen canonical key plus complementary content, not title similarity."
+    },
+    {
+      "action": "stale-flag",
+      "note_paths": ["notes/payment-policy.md"],
+      "evidence_paths": ["notes/payment-policy.md", "current-sources.json"],
+      "observed_fact": "The note says invoices are due in 30 days while current-sources.json says new contracts are due in 14 days.",
+      "proposed_change": "Flag the note as stale and ask a human to update the payment term after checking the current billing source.",
+      "confidence": "high",
+      "requires_human_approval": true,
+      "source_preservation_rule": "Do not rewrite the note automatically; preserve the original wording and source path in the proposal.",
+      "reason": "Stale status requires a contradiction with the current source, which is present here."
+    },
+    {
+      "action": "source-needed",
+      "note_paths": ["notes/vendor-summary.md"],
+      "evidence_paths": ["notes/vendor-summary.md", "maintenance-manifest.json"],
+      "observed_fact": "The source_path property is empty and the body names no source file or URL.",
+      "proposed_change": "Ask the human owner to attach a real source or mark the claim as unsupported; do not invent a URL.",
+      "confidence": "medium",
+      "requires_human_approval": true,
+      "source_preservation_rule": "Do not fabricate provenance and do not edit the note without approval.",
+      "reason": "Missing provenance can be detected, but the correct source is an editorial decision."
+    },
+    {
+      "action": "orphan-review",
+      "note_paths": ["notes/lonely-idea.md"],
+      "evidence_paths": ["notes/lonely-idea.md", "link-graph.json"],
+      "observed_fact": "The frozen link graph gives notes/lonely-idea.md zero incoming links and zero outgoing links.",
+      "proposed_change": "Queue the note for human review: link it to a project, keep it as a seed, or archive it after approval.",
+      "confidence": "high",
+      "requires_human_approval": true,
+      "source_preservation_rule": "Do not move or delete the orphan candidate during proposal generation.",
+      "reason": "Orphan review is supported only because the frozen graph shows zero in-degree and zero out-degree."
+    },
+    {
+      "action": "conflict-review",
+      "note_paths": ["notes/pricing-public.md", "notes/pricing-sales.md"],
+      "evidence_paths": ["notes/pricing-public.md", "notes/pricing-sales.md", "current-sources.json"],
+      "observed_fact": "The public pricing source says per-seat monthly pricing while the sales memo says annual-only contracted pricing.",
+      "proposed_change": "Create a conflict review card that preserves both source paths and asks a human to scope which audience each statement applies to.",
+      "confidence": "medium",
+      "requires_human_approval": true,
+      "source_preservation_rule": "Preserve both competing source paths; do not collapse one into the other.",
+      "reason": "The proposal should expose the conflict rather than choose a winner."
+    },
+    {
+      "action": "no-op",
+      "note_paths": ["notes/team-rituals.md"],
+      "evidence_paths": ["notes/team-rituals.md", "link-graph.json"],
+      "observed_fact": "The note has a source path, current status, and graph links; no contradiction or missing provenance is present.",
+      "proposed_change": "No maintenance change proposed.",
+      "confidence": "high",
+      "requires_human_approval": true,
+      "source_preservation_rule": "Leave the note unchanged.",
+      "reason": "A maintenance assistant must demonstrate restraint when observable signals do not justify an action."
+    }
+  ]
+}
+

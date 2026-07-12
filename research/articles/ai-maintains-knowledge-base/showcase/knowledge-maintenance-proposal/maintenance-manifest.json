@@ -1,0 +1,86 @@
+{
+  "fixture": "knowledge-maintenance-proposal",
+  "generated_at": "2026-07-12",
+  "notes": [
+    {
+      "path": "notes/alpha-project-brief.md",
+      "canonical_key": "alpha-launch-plan",
+      "expected_outcome": "merge-candidate",
+      "evidence_paths": ["maintenance-manifest.json", "notes/alpha-project-brief.md", "notes/alpha-accessibility-notes.md"]
+    },
+    {
+      "path": "notes/alpha-accessibility-notes.md",
+      "canonical_key": "alpha-launch-plan",
+      "expected_outcome": "merge-candidate",
+      "evidence_paths": ["maintenance-manifest.json", "notes/alpha-project-brief.md", "notes/alpha-accessibility-notes.md"]
+    },
+    {
+      "path": "notes/payment-policy.md",
+      "canonical_key": "payment-policy",
+      "expected_outcome": "stale-flag",
+      "evidence_paths": ["notes/payment-policy.md", "current-sources.json"]
+    },
+    {
+      "path": "notes/vendor-summary.md",
+      "canonical_key": "vendor-summary",
+      "expected_outcome": "source-needed",
+      "evidence_paths": ["notes/vendor-summary.md", "maintenance-manifest.json"]
+    },
+    {
+      "path": "notes/lonely-idea.md",
+      "canonical_key": "lonely-idea",
+      "expected_outcome": "orphan-review",
+      "evidence_paths": ["notes/lonely-idea.md", "link-graph.json"]
+    },
+    {
+      "path": "notes/pricing-public.md",
+      "canonical_key": "pricing-page",
+      "expected_outcome": "conflict-review",
+      "evidence_paths": ["notes/pricing-public.md", "notes/pricing-sales.md", "current-sources.json"]
+    },
+    {
+      "path": "notes/pricing-sales.md",
+      "canonical_key": "pricing-page",
+      "expected_outcome": "conflict-review",
+      "evidence_paths": ["notes/pricing-public.md", "notes/pricing-sales.md", "current-sources.json"]
+    },
+    {
+      "path": "notes/team-rituals.md",
+      "canonical_key": "team-rituals",
+      "expected_outcome": "no-op",
+      "evidence_paths": ["notes/team-rituals.md", "link-graph.json"]
+    },
+    {
+      "path": "notes/research-index.md",
+      "canonical_key": "research-index",
+      "expected_outcome": "no-op",
+      "evidence_paths": ["notes/research-index.md", "link-graph.json"]
+    },
+    {
+      "path": "notes/glossary.md",
+      "canonical_key": "glossary",
+      "expected_outcome": "no-op",
+      "evidence_paths": ["notes/glossary.md", "maintenance-manifest.json"]
+    },
+    {
+      "path": "notes/customer-interview.md",
+      "canonical_key": "customer-interview",
+      "expected_outcome": "no-op",
+      "evidence_paths": ["notes/customer-interview.md", "link-graph.json"]
+    }
+  ],
+  "required_actions": {
+    "merge-candidate": 1,
+    "stale-flag": 1,
+    "source-needed": 1,
+    "orphan-review": 1,
+    "conflict-review": 1,
+    "no-op": 1
+  },
+  "allowed_changed_paths": [
+    "reports/maintenance-plan.json",
+    "reports/maintenance-plan.md"
+  ],
+  "source_preservation_rule": "Source notes and frozen manifests must remain byte-identical; AI may write only a maintenance proposal."
+}
+

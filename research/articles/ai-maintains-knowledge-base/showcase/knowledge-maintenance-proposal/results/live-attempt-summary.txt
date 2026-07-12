@@ -1,0 +1,9 @@
+live_attempted: true
+model: gpt-5.5
+command: codex exec --model gpt-5.5 --skip-git-repo-check <prompt>
+exit_code: 1
+signal: none
+reports_json_exists: false
+reports_md_exists: false
+stdout_summary: none
+stderr_summary: codex_state runtime failed to open local state database; host reported readonly database and no reports were produced. Local path redacted.

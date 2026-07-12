@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Knowledge maintenance proposal",
+  "type": "object",
+  "required": ["fixture", "generated_by", "source_preservation_rule", "proposals"],
+  "properties": {
+    "fixture": { "const": "knowledge-maintenance-proposal" },
+    "generated_by": { "type": "string" },
+    "source_preservation_rule": { "type": "string" },
+    "proposals": {
+      "type": "array",
+      "minItems": 6,
+      "items": {
+        "type": "object",
+        "required": [
+          "action",
+          "note_paths",
+          "evidence_paths",
+          "observed_fact",
+          "proposed_change",
+          "confidence",
+          "requires_human_approval",
+          "source_preservation_rule",
+          "reason"
+        ],
+        "properties": {
+          "action": {
+            "enum": ["merge-candidate", "stale-flag", "source-needed", "orphan-review", "conflict-review", "no-op"]
+          },
+          "note_paths": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "evidence_paths": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "observed_fact": { "type": "string" },
+          "proposed_change": { "type": "string" },
+          "confidence": { "enum": ["low", "medium", "high"] },
+          "requires_human_approval": { "const": true },
+          "source_preservation_rule": { "type": "string" },
+          "reason": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

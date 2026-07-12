@@ -1,0 +1,19 @@
+{
+  "attempted_at": "2026-07-12",
+  "model": "gpt-5.5",
+  "command": "codex exec - -m gpt-5.5 -s workspace-write --json --ephemeral --ignore-user-config --ignore-rules -C <showcase> -o <outside-worktree>",
+  "status": "completed",
+  "exec_exit_code": 0,
+  "reports_written": {
+    "json": true,
+    "markdown": true
+  },
+  "validation_exit_code": 0,
+  "protected_files_unchanged": true,
+  "changed_paths": [
+    "reports/maintenance-plan.json",
+    "reports/maintenance-plan.md"
+  ],
+  "raw_capture": "stored outside the worktree; only sanitized summary and final artifacts are committed",
+  "stderr_excerpt": ""
+}

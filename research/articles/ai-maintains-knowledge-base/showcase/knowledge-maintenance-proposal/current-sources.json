@@ -1,0 +1,24 @@
+{
+  "sources/billing-policy-2026.md": {
+    "claim": "Invoices for new contracts are due in 14 days.",
+    "supersedes_note_path": "notes/payment-policy.md",
+    "verified_at": "2026-07-12"
+  },
+  "sources/pricing-public.md": {
+    "claim": "Pro is priced per seat per month on the public page.",
+    "verified_at": "2026-07-12"
+  },
+  "sources/pricing-sales.md": {
+    "claim": "Contracted Pro accounts use annual-only pricing in the sales memo.",
+    "verified_at": "2026-07-12"
+  },
+  "sources/product-roadmap.md": {
+    "claim": "Alpha beta depends on accessibility pass and partner review.",
+    "verified_at": "2026-07-12"
+  },
+  "sources/a11y-checklist.md": {
+    "claim": "Alpha requires keyboard navigation, contrast review, and reduced motion.",
+    "verified_at": "2026-07-12"
+  }
+}
+

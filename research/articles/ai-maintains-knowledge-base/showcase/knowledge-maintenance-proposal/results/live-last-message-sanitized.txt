@@ -1,0 +1,13 @@
+已完成。
+
+变更文件：
+- `reports/maintenance-plan.json`
+- `reports/maintenance-plan.md`
+
+验证：
+- `python` 不存在
+- `python3 -m json.tool reports/maintenance-plan.json >/dev/null` 通过
+
+Lessons learned:
+- 本 fixture 的维护任务只允许写 proposal，源 notes 和 frozen manifests 必须保持不变。
+- `source-needed` 只能请求人工补源，不能为缺源 note 编造 URL。

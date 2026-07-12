@@ -1,36 +1,256 @@
 ---
-title: 让 AI 维护知识库，而不是只检索知识库
-description: 把 AI 从搜索助手升级为知识库维护者。
+title: 让 AI 维护知识库而不直接改库：把合并、过期和孤立笔记变成审批队列
+description: 用 Obsidian 的 Search、properties、backlinks 和 links 收集信号，让 AI 只生成带证据的维护提案，等人批准后再进入后续应用流程。
 sidebar:
   order: 4
 difficulty: intermediate
 source_repo: alchaincyf/obsidian-ai-orange-book
 source_url: https://github.com/alchaincyf/obsidian-ai-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-12"
+reading_time: 16 分钟
+research_path: research/articles/ai-maintains-knowledge-base
+showcase_path: research/articles/ai-maintains-knowledge-base/showcase/knowledge-maintenance-proposal
+showcase_status: verified
+quality_score: 97
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后核对 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 16 分钟 | 2026-07-12 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/obsidian-ai-orange-book" url="https://github.com/alchaincyf/obsidian-ai-orange-book" updatedFrom="2026-05" note="参考主题结构，正文重新组织。" />
+你的 Obsidian vault 开始变大以后，最烦人的问题通常不是“找不到任何东西”，而是“找到了三份差不多的东西，但不知道该信哪份”。一份笔记说发票期限是 30 天，另一份新资料说 14 天；两个项目复盘都在讲同一个 launch plan，却分别保存了路线图和无障碍检查；某条想法没有任何链接，看起来像孤岛，但也可能只是一个值得保留的种子。
 
-## 核心概念
+这时让 AI “帮我整理知识库”很诱人，也很危险。真正危险的不是 AI 提错建议，而是它在你没有看证据前就把源笔记改了、删了、合并了。知识库维护不是一次搜索，也不是一次自动批量替换。更稳的做法是把 AI 限定在一条审批队列里：
 
-只检索知识库会让旧信息越积越多。更好的方式是让 AI 帮你合并重复内容、标记过时、补充来源和生成索引。
+> AI 负责发现信号、整理证据、写维护提案；人负责判断是否合并、标过期、补来源、加链接、保留冲突或暂不处理。
 
-## 操作步骤
+## 读完你能做什么
 
-1. 新资料先进入收件箱。
-2. AI 生成摘要和候选归档位置。
-3. 人确认后移动到项目或资源目录。
-4. 每周让 AI 找重复、过时和孤立笔记。
+读完后，你应该能设计一条不会静默改库的维护流程：
 
-## 常见错误
+1. 用 Obsidian Search、properties、backlinks 和 links 收集可观察信号，同时知道这些信号的盲区。
+2. 把 `duplicate`、`stale`、`orphan`、`conflict` 从“模型判断”改写成“带证据的编辑问题”。
+3. 让 AI 输出维护提案：路径、证据、观察事实、建议改动、置信度、人工审批标记和来源保留规则。
+4. 用确定性 gate 拒绝缺证据、自动应用、无支撑合并、无来源矛盾的过期标记，以及没有零度图证据的孤立判断。
+5. 在真实 vault 前先用合成 fixture 练习，确认源笔记和 manifest 在提案阶段保持 byte-identical。
 
-- 自动移动文件却没有审计记录。
-- 把 AI 摘要当原文，丢掉来源链接。
-- 不区分事实、观点和待验证猜测。
+本文不重复讲 inbox 放置；那是前一篇 `vault-directory-for-ai` 的主题。本文也不展开 Git 分支、回滚和冲突恢复；那是下一篇版本控制工作流要处理的边界。
 
-## 实战案例
+## 维护不是检索：检索回答问题，维护改变结构
 
-同步 Riley Brown 的 Codex 视频后，可以让 AI 生成选题卡，并把原链接、转发链接和纠正记录都保留下来。
+检索的目标是回答“这条信息在哪里”。维护的目标更接近“这批信息之间的关系是否还健康”。两者都可能用到 Search、链接和 metadata，但风险完全不同。
+
+如果你只是问“Alpha launch 的无障碍要求是什么”，AI 读几篇相关笔记后给出答案，最多需要引用来源。如果你让 AI “把 Alpha launch 的重复笔记整理一下”，它可能会碰到四类更重的决定：
+
+| 维护问题 | 看起来像事实 | 实际是编辑判断 |
+| --- | --- | --- |
+| duplicate / merge | 两篇笔记相似，或共享一个 key | 是否合并、保留两个视角、还是只建互链 |
+| stale | `last_verified` 很旧，或新来源矛盾 | 是否过期、是否只适用于旧合同、谁有权更新 |
+| orphan | 链接图里没有入边/出边 | 是孤立垃圾、未整理种子、还是故意隔离的私人记录 |
+| conflict | 两个来源说法不同 | 谁是 authoritative source，是否按受众或时间拆分 |
+
+所以本文的核心不是“让 AI 更会猜”，而是**不让猜测直接变成改动**。AI 可以把问题排成队列，但队列里的每一项都必须能回答：我凭什么被提出，涉及哪些源文件，建议怎么改，为什么现在不能自动应用。
+
+## Obsidian 能给哪些可观察信号
+
+Obsidian 官方资料能支撑的是底层信号，不是自动维护结论。
+
+Search 是 core plugin，可以用 search terms 和 operators 查 note 与 canvas。它支持 `file:`、`path:`、`content:`、`tag:`、`line:` 等操作符，也支持 property 查询，例如 `[aliases]`、`[aliases:Name]`、`[aliases:null]`。这让你可以把维护候选先缩小到“有某个属性”“某个属性为空”“路径在某个区域”“正文含某个过期词”的集合。
+
+Properties 是文件顶部的 YAML structured data。官方说明它适合小而原子的 human- and machine-readable values，例如 `status`、`source_path`、`last_verified`、`canonical_key`。但官方也明确列出限制：nested properties 不直接作为完整交互体验支持；properties 不是 Markdown 正文；更深入的 bulk property editing 需要 VS Code、脚本或 community plugins。换句话说，properties 适合做信号，不适合承载整段维护理由。
+
+Backlinks 能显示从其他 note 指向当前 note 的链接，并区分 linked mentions 和 unlinked mentions。Internal links 文档说明 Obsidian 支持 Wikilinks 和 Markdown links，链接能形成知识网络。对维护来说，这些信号可以帮助你问“这篇是不是没人引用”“这两个来源是不是互相指向”“这个项目索引有没有把相关材料连起来”。
+
+但有两个限制必须写进流程：
+
+- Search 的 excluded files 不会出现在搜索结果里；Backlinks 的 unlinked mentions 也受 excluded files 影响。你不能把“当前 UI 没看到”当作“全库一定没有”。
+- Obsidian 的链接和属性告诉你“可观察到什么”，不告诉你“该怎么编辑”。合并、过期、孤立和冲突仍然是编辑决策。
+
+## 维护提案的最小 schema
+
+我建议把一次维护输出限制成 proposal，而不是 patch。最小字段如下：
+
+```json
+{
+  "action": "stale-flag",
+  "note_paths": ["notes/payment-policy.md"],
+  "evidence_paths": ["notes/payment-policy.md", "current-sources.json"],
+  "observed_fact": "The note says invoices are due in 30 days while current source says 14 days.",
+  "proposed_change": "Flag the note as stale and ask a human to update the payment term after checking the source.",
+  "confidence": "high",
+  "requires_human_approval": true,
+  "source_preservation_rule": "Do not rewrite the note automatically.",
+  "reason": "Stale status requires a contradiction with a current source."
+}
+```
+
+这里最重要的不是字段名，而是边界：
+
+- `note_paths` 指向被讨论的笔记。
+- `evidence_paths` 指向可核对的证据，不接受“我看过上下文所以知道”。
+- `observed_fact` 只写观察到的事实，不写结论膨胀。
+- `proposed_change` 写成 diff-like 建议，但不应用。
+- `requires_human_approval` 必须为 `true`。
+- `source_preservation_rule` 明确源笔记、旧来源和冲突来源在审批前不能被覆盖。
+
+你也可以把 proposal 存成 Markdown 卡片，方便人在 Obsidian 里 review。但机器可验证的 JSON 更适合做 gate：缺字段、缺证据、越界路径、自动应用，都可以直接失败。
+
+![知识库维护提案控制环：信号检测进入证据卡，再进入提案队列，由人批准或拒绝，后续 apply 被单独边界隔开，并标出 71 到 75 的拒绝门和 source unchanged invariant](/images/articles/ai-maintains-knowledge-base/knowledge-maintenance-control-loop.svg)
+*图注：AI 在这条控制环里只能把 Search、properties、backlinks 和 links 变成证据卡与提案；真正改动笔记的 apply 步骤在人工批准之后，且属于另一条流程。*
+
+## 六类 outcome 怎么判断
+
+下面这张表把常见维护动作拆成“信号”和“不能越过的判断”：
+
+| Outcome | 可接受信号 | 必须保留的边界 |
+| --- | --- | --- |
+| `merge-candidate` | 共享冻结 `canonical_key`，且内容互补 | 只提出合并候选，不删除任一源笔记 |
+| `stale-flag` | 当前来源与笔记正文有明确矛盾 | 旧日期不等于 stale；必须引用 current source |
+| `source-needed` | `source_path` 为空，正文也无可核对来源 | 不准补造 URL；只能要求人补来源或降级为 unsupported |
+| `orphan-review` | 冻结 link graph 中入度 0、出度 0 | orphan 不是删除指令；可能是种子、私密笔记或待链接材料 |
+| `conflict-review` | 两个来源路径给出竞争说法 | 保留两个来源路径，不让 AI 自己选赢家 |
+| `no-op` | 没有缺来源、矛盾、孤立或合并证据 | 维护系统必须会克制，不应为了显得有用而制造动作 |
+
+注意 `duplicate` 不是“相似度超过 0.85”。相似度可以做排序线索，但真正的合并提案至少要说明：为什么这两个 note 归同一个 canonical key，内容是重复还是互补，合并后哪些来源段落必须保留，哪些冲突不能自动解决。
+
+同理，`stale` 也不是“超过 90 天没更新”。老笔记可能仍然正确。本文 Showcase 要求 stale 必须有 `current-sources.json` 的矛盾证据，就是为了阻止“按年龄清库”的误伤。
+
+## Showcase：合成知识库维护提案
+
+本篇 Showcase 位于：
+
+```text
+research/articles/ai-maintains-knowledge-base/showcase/knowledge-maintenance-proposal/
+```
+
+它是一个完全合成的知识库，不含真实 vault、真实账号、真实聊天或私有链接。目录结构的关键部分是：
+
+```text
+notes/
+maintenance-manifest.json
+link-graph.json
+current-sources.json
+contracts/
+scripts/
+results/
+reports/
+```
+
+其中 `notes/` 有 11 篇 Markdown 笔记，`maintenance-manifest.json` 冻结每篇 note 的 canonical key 和 expected outcome，`link-graph.json` 冻结链接图，`current-sources.json` 冻结当前来源事实。validator 不接受模型自报成功，它会机械检查：
+
+- valid plan 退出 `0`；
+- missing provenance/evidence 退出 `71`；
+- destructive mutation 或 auto-apply 退出 `72`；
+- unsupported merge 退出 `73`；
+- stale flag without current-source contradiction 退出 `74`；
+- orphan claim without zero-degree graph evidence 退出 `75`；
+- privacy scan 退出 `0`。
+
+复现命令：
+
+```bash
+node research/articles/ai-maintains-knowledge-base/showcase/knowledge-maintenance-proposal/scripts/verify-showcase.mjs
+node research/articles/ai-maintains-knowledge-base/showcase/knowledge-maintenance-proposal/scripts/privacy-scan.mjs
+```
+
+2026-07-12 的 deterministic verifier 输出摘要：
+
+```text
+valid plan: expected 0, actual 0
+missing provenance/evidence: expected 71, actual 71
+destructive mutation or auto-apply: expected 72, actual 72
+unsupported merge: expected 73, actual 73
+stale flag without contradiction: expected 74, actual 74
+orphan without zero-degree graph: expected 75, actual 75
+privacy scan: expected 0, actual 0
+PASS source inventory and hashes unchanged
+```
+
+这份 gate 还检查 action counts、exact evidence、source inventory、source hashes 和 allowed changed paths。允许 live run 写入的路径只有：
+
+```text
+reports/maintenance-plan.json
+reports/maintenance-plan.md
+```
+
+writer 阶段尝试了一次 fresh `gpt-5.5` nested run：
+
+```bash
+CODEX_NESTED_MODEL=gpt-5.5 node research/articles/ai-maintains-knowledge-base/showcase/knowledge-maintenance-proposal/scripts/run-codex-live.mjs
+```
+
+宿主在 Codex 初始化本地状态时返回只读数据库错误，退出 `1`，没有生成 reports；该历史保存在 `results/live-attempt-summary.txt`，没有被伪装成成功。外层控制器随后按同一冻结 fixture 补跑。第一次补跑虽然生成了六类看似合理的 proposal，却漏了 JSON 顶层 `fixture` 合同，validator 正确以 `71` 拒绝；摘要保存在 `results/live-controller-attempt-1-invalid.md`。
+
+收紧 prompt 后的最后一次允许重试通过：fresh `gpt-5.5` 只写 `maintenance-plan.json` 和 `.md`，六类 action 各一条，validator exit `0`，protected files、source inventory 和 source hashes 全部 unchanged。成功证据位于 `results/live-controller-summary.json`、`results/live-maintenance-plan.*` 和 `results/live-validation.txt`。
+
+这段历史很重要：**“模型完成了、六类提案也齐了”仍不等于通过；漏掉顶层合同就必须拒绝。** 独立只读 reviewer 随后复核正文、研究包、三层 live 证据与最终渲染，以 97/100、0 个未关闭问题和视觉 PASS 将文章升级为 `verified`。
+
+## 人工审批时看什么
+
+维护队列不是让人重新读全库，而是把人类判断集中到少数问题上。
+
+审核 `merge-candidate` 时，不要只看两篇标题像不像。先看 canonical key 是否来自你冻结的 manifest，再看内容是互补还是互相覆盖。如果一篇保留路线图，一篇保留无障碍检查，合并建议应写成“保留两个来源段落并生成一份新结构”，而不是“删掉其中一篇”。
+
+审核 `stale-flag` 时，先问 current source 是否真的与 note 矛盾。如果只是 `last_verified` 旧，最多进入 “needs review”，不能写成 stale。旧资料也可能仍然是历史事实，适合加时间范围，而不是覆盖。
+
+审核 `source-needed` 时，重点是拒绝来源幻觉。AI 可以说“这条 claim 缺 source_path”，不能说“我找到一个看起来像的官网链接”。缺来源的正确动作通常是 ask owner、降级 claim、补真实来源、或暂时移出可发布知识区。
+
+审核 `orphan-review` 时，零入度零出度只证明“在这次冻结图里没有链接”。它不证明这篇笔记没有价值。你可以选择加链接、保留为 seed、转进个人 scratch、或归档，但都应该是人的选择。
+
+审核 `conflict-review` 时，最重要的是保留双方来源。很多知识库被 AI 维护搞坏，不是因为它发现不了冲突，而是因为它太快把冲突“解决”成单一答案。实际工作里，冲突常常说明两个来源适用于不同时间、不同受众、不同合同或不同产品层级。
+
+## 失败模式和调试顺序
+
+如果你的维护流程频繁给出坏提案，按这个顺序查：
+
+1. **证据路径是否存在**：没有 `evidence_paths` 的提案直接拒绝，不进入人工队列。
+2. **信号是否完整**：Search 和 unlinked mentions 是否受 excluded files 影响？link graph 是否来自同一次冻结快照？
+3. **属性是否过载**：properties 是否只放小型原子字段？有没有把整段判断塞进 YAML，导致批量编辑变脆？
+4. **动作是否越界**：提案阶段是否只写 reports？如果改了 notes，就是 `72` 级别失败。
+5. **结论是否偷换**：old 不等于 stale；similar 不等于 duplicate；zero-degree 不等于 delete；conflict 不等于 choose winner。
+
+最小调试原则是：先让 validator 拒绝坏输出，再让人类决定好输出是否值得应用。不要反过来让人类靠肉眼从一堆自动改动里捞事故。
+
+## 什么时候不要用这种方法
+
+如果你的 vault 主要是私人日记、尚未整理的灵感碎片，或者你并不打算让任何自动化读取它，就不需要建立完整维护队列。手工整理少量关键笔记更合适。
+
+如果你真正需要的是批量迁移、移动文件、重命名、回滚和冲突恢复，请先补 Git 工作流和备份策略。本文只处理“提案阶段”，不替代版本控制。
+
+如果你的来源仍然混在聊天记录、网页截图、转发消息和个人记忆里，先做 source capture。没有来源边界，AI 维护只能把不确定性包装得更像真相。
+
+如果你希望 AI 直接维护一个会影响公开发布、合同、医学、法律或财务判断的知识库，不要跳过人审。高风险知识的维护提案可以由 AI 起草，但审批责任必须留在人类流程里。
+
+## 动手练习：把一次维护跑成审批队列
+
+找一个可以公开或合成的小型 vault 样本，至少准备 10 篇 Markdown note。不要用真实私密 vault 做第一次练习。
+
+1. 给每篇 note 加上小型 properties：`canonical_key`、`status`、`source_path`、`last_verified`。
+2. 冻结一份 `maintenance-manifest.json`，写明哪些 note 预期进入 merge、stale、source-needed、orphan、conflict、no-op。
+3. 冻结一份 `link-graph.json`，不要让 AI 在运行中重新解释图。
+4. 冻结一份 `current-sources.json`，只把可核对的当前来源矛盾写进去。
+5. 让 AI 只写 `reports/maintenance-plan.json` 和 `reports/maintenance-plan.md`。
+6. 写一个最小 validator：缺证据失败、自动应用失败、无支撑合并失败、无 current-source 矛盾的 stale 失败、无零度图证据的 orphan 失败。
+
+完成标准：
+
+- 你能解释每个提案的 `note_paths` 和 `evidence_paths`。
+- 源 note 和 manifest 在提案阶段 hash 不变。
+- 至少有一个 `no-op`，证明系统会克制。
+- 缺来源的 note 没有被补造 URL。
+- 冲突提案保留双方来源路径。
+- 人类批准前，没有任何笔记内容被改写。
+
+## 来源与延伸阅读
+
+- Obsidian 官方文档：[Search](https://obsidian.md/help/Plugins/Search)
+- Obsidian 官方文档：[Properties](https://obsidian.md/help/properties)
+- Obsidian 官方文档：[Backlinks](https://obsidian.md/help/Plugins/Backlinks)
+- Obsidian 官方文档：[Internal links](https://obsidian.md/help/links)
+- 二级主题地图：[Obsidian AI Orange Book](https://github.com/alchaincyf/obsidian-ai-orange-book)
+- 本文研究包与合成 Showcase：`research/articles/ai-maintains-knowledge-base`
+
+前四条为官方资料，支撑本文关于 Search、properties、backlinks、links 及其限制的当前行为。`Obsidian AI Orange Book` 只作为中文主题地图，尤其是 §06 的 compiler/wiki framing；作者为花叔 / alchaincyf。其 README 写明作品可免费用于学习交流，转载和引用需注明出处，但这不是标准 CC/OSI 许可证。本文没有复制该 PDF 的正文、截图、图表或图片，也没有把其中关于规模、RAG、社交影响力或自治维护的说法当作当前事实。

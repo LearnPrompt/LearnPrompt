@@ -1,0 +1,46 @@
+{
+  "nodes": [
+    "notes/alpha-project-brief.md",
+    "notes/alpha-accessibility-notes.md",
+    "notes/payment-policy.md",
+    "notes/vendor-summary.md",
+    "notes/lonely-idea.md",
+    "notes/pricing-public.md",
+    "notes/pricing-sales.md",
+    "notes/team-rituals.md",
+    "notes/research-index.md",
+    "notes/glossary.md",
+    "notes/customer-interview.md"
+  ],
+  "edges": [
+    {
+      "from": "notes/team-rituals.md",
+      "to": "notes/alpha-project-brief.md"
+    },
+    {
+      "from": "notes/research-index.md",
+      "to": "notes/team-rituals.md"
+    },
+    {
+      "from": "notes/research-index.md",
+      "to": "notes/payment-policy.md"
+    },
+    {
+      "from": "notes/customer-interview.md",
+      "to": "notes/research-index.md"
+    },
+    {
+      "from": "notes/alpha-project-brief.md",
+      "to": "notes/alpha-accessibility-notes.md"
+    },
+    {
+      "from": "notes/pricing-public.md",
+      "to": "notes/pricing-sales.md"
+    },
+    {
+      "from": "notes/pricing-sales.md",
+      "to": "notes/pricing-public.md"
+    }
+  ]
+}
+

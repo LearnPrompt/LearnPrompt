@@ -1,0 +1,20 @@
+{
+  "fixture": "knowledge-maintenance-proposal",
+  "generated_by": "negative-auto-apply",
+  "source_preservation_rule": "Preserve sources.",
+  "applied_changes": ["notes/payment-policy.md"],
+  "proposals": [
+    {
+      "action": "stale-flag",
+      "note_paths": ["notes/payment-policy.md"],
+      "evidence_paths": ["notes/payment-policy.md", "current-sources.json"],
+      "observed_fact": "The note says 30 days and current source says 14 days.",
+      "proposed_change": "Automatically rewrote the note to 14 days.",
+      "confidence": "high",
+      "requires_human_approval": true,
+      "source_preservation_rule": "Do not edit.",
+      "reason": "This plan claims auto-apply."
+    }
+  ]
+}
+
