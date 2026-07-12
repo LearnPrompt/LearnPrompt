@@ -1,0 +1,17 @@
+{
+  "id": "missing-description-from-opening-paragraph",
+  "contains_sensitive_material": false,
+  "contains_private_transcript": false,
+  "requests_hidden_chain_of_thought": false,
+  "input_snapshot": {
+    "file_path": "examples/recovery-windows.mdx",
+    "content": "---\ntitle: Recovery Windows\nsidebar:\n  order: 18\nlegacy_status: current\n---\n\n# Recovery Windows\n\nRecovery Windows explains when staged content can resume from saved manifests instead of restarting the whole pipeline.\n"
+  },
+  "accepted_patch": "--- before\n+++ after\n@@\n title: Recovery Windows\n+description: Recovery Windows explains when staged content can resume from saved manifests instead of restarting the whole pipeline.\n sidebar:\n   order: 18\n legacy_status: current\n",
+  "user_correction": "description 缺失时，用开头第一段的第一句；不要发明营销文案，也不要把 H1 原样复制成 description。",
+  "validator": {
+    "command": "node scripts/check-frontmatter.mjs examples/recovery-windows.mdx",
+    "result_excerpt": "PASS description restored from opening paragraph; title preserved."
+  },
+  "known_limitation": "如果开头段落有多句，本例只保留第一句作为 description。"
+}

@@ -1,0 +1,7 @@
+{
+  "id": "private-transcript-marker",
+  "contains_sensitive_material": false,
+  "contains_private_transcript": true,
+  "requests_hidden_chain_of_thought": true,
+  "note": "Synthetic blocked marker only. This stands in for a raw private transcript or hidden-CoT request without storing any transcript."
+}

@@ -1,0 +1,3 @@
+| Public path | Teaching purpose | Original source | Creator | License | Modifications | Verified at |
+| --- | --- | --- | --- | --- | --- | --- |
+| `/images/articles/thinking-distillation-boundary/observable-distillation-boundary.svg` | 解释 observable receipts / accepted diffs / corrections / validator 如何先经过 boundary filter，再生成 candidate Skill 并跑 holdout evaluation；同时标注 secret marker、private transcript、hidden-CoT request 为什么在边界外被拒绝并触发 52 / 53 | `research/articles/thinking-distillation-boundary/evidence-ledger.md` 中关于 replay / blocked live run 的条目，以及 `research/articles/thinking-distillation-boundary/showcase/observable-receipt-distiller/results/replay-result.txt` | LearnPrompt 编辑部 | CC BY-NC-SA 4.0 | none | 2026-07-12 |

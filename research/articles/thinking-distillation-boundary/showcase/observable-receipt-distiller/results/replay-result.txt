@@ -1,0 +1,134 @@
+observable-receipt-distiller offline replay
+normal_command: node research/articles/thinking-distillation-boundary/showcase/observable-receipt-distiller/scripts/release-gate.mjs normal
+normal_exit_code: 0
+scenario: normal
+exit_code: 0
+distill_exit_code: 0
+evaluation_exit_code: 0
+tests_exit_code: 0
+source_receipts_unchanged: true
+holdout_result: 4/4
+candidate_written: true
+changed_files:
+  ?? .agents/skills/frontmatter-repair/
+  ?? reports/
+
+distill_stdout:
+{
+  "exit_code": 0,
+  "status": "candidate_written",
+  "training_receipt_ids": [
+    "missing-title-from-first-h1",
+    "missing-description-from-opening-paragraph",
+    "invalid-sidebar-order-fallback"
+  ],
+  "candidate_dir": ".agents/skills/frontmatter-repair",
+  "extracted_rules": [
+    "title_from_first_h1",
+    "description_from_opening_sentence",
+    "invalid_sidebar_order_to_999",
+    "already_valid_noop"
+  ],
+  "candidate_files": [
+    "SKILL.md",
+    "references/frontmatter-contract.md",
+    "scripts/repair-frontmatter.mjs"
+  ]
+}
+
+evaluation_summary:
+{"exit_code":0,"passed":4,"failed":0,"total":4,"cases":[{"file":"01-missing-title.mdx","passed":true,"actual":{"title":"Fallback Routes","description":"Keep fallback routes explicit so reviewers can see when a repair path was chosen.","sidebar_order":21,"body_unchanged":true,"noop_satisfied":true},"expected":{"file":"01-missing-title.mdx","title":"Fallback Routes","description":"Keep fallback routes explicit so reviewers can see when a repair path was chosen.","sidebar_order":21,"expect_noop":false}},{"file":"02-missing-description.mdx","passed":true,"actual":{"title":"Replay Ledger","description":"Replay Ledger explains how a replay file captures commands, exit codes, and the smallest proof needed to re-run the repair.","sidebar_order":22,"body_unchanged":true,"noop_satisfied":true},"expected":{"file":"02-missing-description.mdx","title":"Replay Ledger","description":"Replay Ledger explains how a replay file captures commands, exit codes, and the smallest proof needed to re-run the repair.","sidebar_order":22,"expect_noop":false}},{"file":"03-invalid-sidebar-order.mdx","passed":true,"actual":{"title":"Boundary Markers","description":"Separate rejected private material from publishable repair evidence.","sidebar_order":999,"body_unchanged":true,"noop_satisfied":true},"expected":{"file":"03-invalid-sidebar-order.mdx","title":"Boundary Markers","description":"Separate rejected private material from publishable repair evidence.","sidebar_order":999,"expect_noop":false}},{"file":"04-already-valid.mdx","passed":true,"actual":{"title":"No-op Case","description":"Leave already-valid files unchanged so reviewers can trust the candidate did not rewrite healthy metadata.","sidebar_order":8,"body_unchanged":true,"noop_satisfied":true},"expected":{"file":"04-already-valid.mdx","title":"No-op Case","description":"Leave already-valid files unchanged so reviewers can trust the candidate did not rewrite healthy metadata.","sidebar_order":8,"expect_noop":true}}]}
+
+evidence_poor_command: node research/articles/thinking-distillation-boundary/showcase/observable-receipt-distiller/scripts/release-gate.mjs evidence-poor
+evidence_poor_exit_code: 51
+scenario: evidence-poor
+exit_code: 51
+distill_exit_code: 51
+evaluation_exit_code: not-run
+tests_exit_code: not-run
+source_receipts_unchanged: true
+holdout_result: not-run
+candidate_written: false
+changed_files:
+  ?? reports/
+
+distill_stdout:
+(none)
+
+sensitive_marker_command: node research/articles/thinking-distillation-boundary/showcase/observable-receipt-distiller/scripts/release-gate.mjs sensitive-marker
+sensitive_marker_exit_code: 52
+scenario: sensitive-marker
+exit_code: 52
+distill_exit_code: 52
+evaluation_exit_code: not-run
+tests_exit_code: not-run
+source_receipts_unchanged: true
+holdout_result: not-run
+candidate_written: false
+changed_files:
+  ?? reports/
+
+distill_stdout:
+(none)
+
+transcript_marker_command: node research/articles/thinking-distillation-boundary/showcase/observable-receipt-distiller/scripts/release-gate.mjs transcript-marker
+transcript_marker_exit_code: 53
+scenario: transcript-marker
+exit_code: 53
+distill_exit_code: 53
+evaluation_exit_code: not-run
+tests_exit_code: not-run
+source_receipts_unchanged: true
+holdout_result: not-run
+candidate_written: false
+changed_files:
+  ?? reports/
+
+distill_stdout:
+(none)
+
+holdout_fail_command: node research/articles/thinking-distillation-boundary/showcase/observable-receipt-distiller/scripts/release-gate.mjs holdout-fail
+holdout_fail_exit_code: 54
+scenario: holdout-fail
+exit_code: 54
+distill_exit_code: 0
+evaluation_exit_code: 54
+tests_exit_code: not-run
+source_receipts_unchanged: true
+holdout_result: 1/4
+candidate_written: true
+changed_files:
+  ?? .agents/skills/frontmatter-repair/
+  ?? reports/
+
+distill_stdout:
+{
+  "exit_code": 0,
+  "status": "candidate_written",
+  "training_receipt_ids": [
+    "missing-title-from-first-h1",
+    "missing-description-from-opening-paragraph",
+    "invalid-sidebar-order-fallback"
+  ],
+  "candidate_dir": ".agents/skills/frontmatter-repair",
+  "extracted_rules": [
+    "title_from_first_h1",
+    "description_from_opening_sentence",
+    "invalid_sidebar_order_to_999",
+    "already_valid_noop"
+  ],
+  "candidate_files": [
+    "SKILL.md",
+    "references/frontmatter-contract.md",
+    "scripts/repair-frontmatter.mjs"
+  ]
+}
+
+evaluation_summary:
+{"exit_code":54,"passed":1,"failed":3,"total":4,"cases":[{"file":"01-missing-title.mdx","passed":false,"actual":{"title":"","description":"Keep fallback routes explicit so reviewers can see when a repair path was chosen.","sidebar_order":21,"body_unchanged":true,"noop_satisfied":false},"expected":{"file":"01-missing-title.mdx","title":"Fallback Routes","description":"Keep fallback routes explicit so reviewers can see when a repair path was chosen.","sidebar_order":21,"expect_noop":false}},{"file":"02-missing-description.mdx","passed":false,"actual":{"title":"Replay Ledger","description":"","sidebar_order":22,"body_unchanged":true,"noop_satisfied":false},"expected":{"file":"02-missing-description.mdx","title":"Replay Ledger","description":"Replay Ledger explains how a replay file captures commands, exit codes, and the smallest proof needed to re-run the repair.","sidebar_order":22,"expect_noop":false}},{"file":"03-invalid-sidebar-order.mdx","passed":false,"actual":{"title":"Boundary Markers","description":"Separate rejected private material from publishable repair evidence.","sidebar_order":7,"body_unchanged":true,"noop_satisfied":true},"expected":{"file":"03-invalid-sidebar-order.mdx","title":"Boundary Markers","description":"Separate rejected private material from publishable repair evidence.","sidebar_order":999,"expect_noop":false}},{"file":"04-already-valid.mdx","passed":true,"actual":{"title":"No-op Case","description":"Leave already-valid files unchanged so reviewers can trust the candidate did not rewrite healthy metadata.","sidebar_order":8,"body_unchanged":true,"noop_satisfied":true},"expected":{"file":"04-already-valid.mdx","title":"No-op Case","description":"Leave already-valid files unchanged so reviewers can trust the candidate did not rewrite healthy metadata.","sidebar_order":8,"expect_noop":true}}]}
+
+privacy_command: node research/articles/thinking-distillation-boundary/showcase/observable-receipt-distiller/scripts/privacy-scan.mjs
+privacy_exit_code: 0
+privacy_output: privacy_scan: PASS
+target: research/articles/thinking-distillation-boundary
+files_checked: 64

@@ -1,0 +1,17 @@
+{
+  "id": "invalid-sidebar-order-fallback",
+  "contains_sensitive_material": false,
+  "contains_private_transcript": false,
+  "requests_hidden_chain_of_thought": false,
+  "input_snapshot": {
+    "file_path": "examples/shipping-notes.mdx",
+    "content": "---\ntitle: Shipping Notes\ndescription: Keep generated release notes auditable before publish.\nsidebar:\n  order: later\nlegacy_status: current\n---\n\n# Shipping Notes\n\nShipping Notes keeps metadata deterministic even when the draft was copied out of chat.\n"
+  },
+  "accepted_patch": "--- before\n+++ after\n@@\n title: Shipping Notes\n description: Keep generated release notes auditable before publish.\n sidebar:\n-  order: later\n+  order: 999\n legacy_status: current\n",
+  "user_correction": "当 sidebar.order 不是正整数、又没有可靠章节顺序证据时，回退到 999，把它标成待人工排位，而不是硬猜。",
+  "validator": {
+    "command": "node scripts/check-frontmatter.mjs examples/shipping-notes.mdx",
+    "result_excerpt": "PASS sidebar.order coerced to 999 because the source value was non-numeric."
+  },
+  "known_limitation": "999 只是合成 fixture 的保守回退值，不代表真实站点的最终排序。"
+}

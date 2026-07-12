@@ -1,36 +1,330 @@
 ---
-title: 思维蒸馏型 Skill 的边界和风险
-description: 把方法论写成 Skill 时如何避免玄学化。
+title: 观察性思维蒸馏的边界：怎样把重复判断提炼成 Skill，而不是索取隐藏思维链
+description: 用 receipts、accepted diffs、corrections 和 validator，把可观察的专家修复方法提炼成候选 Skill，并用 holdout 证明它没有越界到 secret、私有 transcript 或 raw chain-of-thought。
 sidebar:
   order: 7
 difficulty: advanced
 source_repo: alchaincyf/agent-skills-orange-book
 source_url: https://github.com/alchaincyf/agent-skills-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-12"
+reading_time: 17 分钟
+research_path: research/articles/thinking-distillation-boundary
+showcase_path: research/articles/thinking-distillation-boundary/showcase/observable-receipt-distiller
+showcase_status: verified
+quality_score: 99
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后核对 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 17 分钟 | 2026-07-12 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/agent-skills-orange-book" url="https://github.com/alchaincyf/agent-skills-orange-book" updatedFrom="2026-05" note="仅参考主题结构，正文重新组织。" />
+你已经见过这种冲动了。
 
-## 核心概念
+团队里某位高手连续三次把同类问题修得很好，你马上想把“他的思路”写成 Skill。于是最危险的一步就发生了：大家开始问“能不能把完整思维链保留下来”“能不能把原始聊天 transcript 直接喂给下一个 agent”“能不能从模型脑子里抠出真正的判断过程”。
 
-思维蒸馏型 Skill 把一套判断框架写给 Agent，例如产品评审、设计 critique、选题分析。它最容易变成空泛口号。
+这一步一旦走偏，Skill 就不再是 workflow 的可复用封装，而会滑向三类风险：
 
-## 写法
+1. **把不可公开的内容当作训练语料。**
+2. **把一次偶然成功路径误写成通用规则。**
+3. **把产品允许展示的 reasoning summary，误认成可抓取的 raw chain-of-thought。**
 
-1. 给出明确适用场景。
-2. 拆成少量维度。
-3. 每个维度要求证据。
-4. 输出必须包含取舍和下一步。
+本文只回答一个中心问题：**当你想把重复出现的专家判断方法沉淀成 Skill 时，哪些输入是可观察、可发布、可验证的，哪些输入必须在边界外被拒绝？**
 
-## 常见错误
+:::caution[先讲清术语]
+本文里的“思维蒸馏型”是 LearnPrompt 借用橙皮书主题地图整理出来的中文教学说法，不是 Agent Skills 官方术语，也不是模型训练里的 knowledge distillation。
+:::
 
-- 维度太多，结果像模板填空。
-- 只产出评价，不产出行动。
-- 没有和具体材料绑定。
+## 读完你能做什么
 
-## 实战案例
+你会带走一个更严格的 distillation 卡片，而不是一句空泛的“把经验变成 Skill”：
 
-用 Superpower 和 Office Hour 方法论优化产品时，不能只说“更有产品思维”。要落到用户、使用频率、传播路径、首次成功体验和发布材料。
+```yaml
+allowed_inputs:
+  - input snapshot
+  - accepted patch
+  - user correction
+  - validator command/result
+  - known limitation
+rejected_inputs:
+  - secret-bearing material
+  - raw private transcript
+  - hidden chain-of-thought request
+output:
+  - candidate skill
+  - holdout evaluation
+  - human approval gate
+```
+
+你还会看到一个真实可重放的 synthetic Showcase：[`observable-receipt-distiller`](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/thinking-distillation-boundary/showcase/observable-receipt-distiller)。它只用 3 份完全合成的 frontmatter 修复 receipts，生成一个 `.agents/skills/frontmatter-repair/` candidate，再用 4 个留出任务做机械验收。
+
+![可观察 receipts、accepted diff、corrections 和 validator 先经过 boundary filter，再生成 candidate Skill 并跑 holdout；secret marker、raw private transcript、hidden-CoT request 在边界外被拒绝](/images/articles/thinking-distillation-boundary/observable-distillation-boundary.svg)
+*图注：真正能进入 distillation 的，不是“模型脑内过程”，而是可观察工件；candidate 生成后还必须过 holdout，secret marker 与 private transcript / hidden-CoT request 则在边界外直接拒绝。*
+
+## 先回答：这篇里的“蒸馏”不是训练蒸馏，也不是挖隐藏思维链
+
+如果你不先把这个边界钉死，整篇文章会迅速滑向玄学。
+
+OpenAI 当前 reasoning 文档把产品边界说得很明确：API **不直接暴露 raw reasoning tokens**；能拿到的是显式 opt-in 的 **reasoning summary**。这句话的工程含义非常直接：
+
+- 你不能把“我想知道模型真正怎么想的”当作普通 Skill 输入需求。
+- 你也不能把 reasoning summary 倒过来解释成“这就是完整的 chain-of-thought”。
+- 更不能因为某次聊天里看到了漂亮的分析过程，就默认它适合作为团队可发布的 Skill 素材。
+
+所以本文的 distillation，不是恢复模型内部推理，而是**从外显结果里提取稳定规则**。如果你最后留下来的工件只有“这次它想得挺好”，那不是 distillation，只是主观印象。
+
+## 什么才算可发布的蒸馏输入
+
+一个足够强的 distillation 输入，不是“内容很多”，而是“证据层次完整”。这篇文章把最小可用集合固定成 5 类 observable receipts：
+
+| 证据层 | 它回答什么 | 为什么可复用 |
+| --- | --- | --- |
+| `input snapshot` | 当时到底面对了什么输入 | 后人能回到相同起点 |
+| `accepted patch` | 真正被接受的修改是什么 | 规则不是停在口头表扬 |
+| `user correction` | 上一次错在哪、这次为什么改 | 可以把误判边界写出来 |
+| `validator command/result` | 怎样机械地证明结果合格 | 让规则能过 holdout |
+| `known limitation` | 这条规则暂时不覆盖什么 | 防止过度泛化 |
+
+这和“保留完整聊天”是两种完全不同的设计哲学。
+
+完整聊天当然可能包含更多上下文，但它也更容易混进：
+
+- 身份、路径、会话、账号、临时目录等隐私；
+- 临场探索、跑题分支、情绪化表达；
+- prompt injection、越权要求、未经确认的假设。
+
+也就是说，**transcript 更原始，不等于更适合公开蒸馏。** 它往往只是更嘈杂、更高风险。
+
+:::note[为什么 accepted patch 很关键]
+如果没有 accepted patch，你根本不知道“被团队吸收的规则”究竟落在正文、frontmatter、validator 还是输出格式。只看结论很容易把偶然路径升格成 universal rule。
+:::
+
+## 边界过滤器：为什么 secret、private transcript 和 hidden-CoT request 要先被拒绝
+
+真正的 distillation 不是先生成 candidate，而是先过一层 boundary filter。
+
+这层过滤器至少要做三种拒绝：
+
+| 拒绝类型 | LearnPrompt exit code | 为什么必须先拒绝 |
+| --- | ---: | --- |
+| evidence-poor：只有结论，没有输入/补丁/validator | `51` | 根本没有足够证据提炼规则 |
+| sensitive marker：材料含敏感内容 | `52` | 必须先停在隐私边界，不谈复用 |
+| raw private transcript / hidden-CoT request marker | `53` | 输入本身就越界，不能当作 Skill 素材 |
+
+这三个拒绝码故意都不是“模型答错了”。它们描述的是**输入不合格**，不是能力不够。
+
+这也是为什么 reasoning summary、rationale、decision record 和 raw chain-of-thought 必须分开写：
+
+- **reasoning summary**：产品允许暴露给调用方的高层摘要；
+- **rationale / decision record**：团队自己写的外显决策记录；
+- **raw chain-of-thought**：模型内部推理 token，不直接暴露。
+
+前两者可以进入 research pack，只要你不把它们冒充成“模型全部内部思维”。第三类则不该默认索取，更不该进入公开 Showcase。
+
+## Showcase：`observable-receipt-distiller` 如何从 3 份 receipts 生成 candidate，并用 4 个 holdout 验证 `4/4`
+
+为了把边界讲清，本文故意不用真实用户材料，而是冻结了一个完全合成的 frontmatter 修复实验。
+
+Skill 目录位于 fixture repo 的：
+
+```text
+.agents/skills/observable-receipt-distiller/
+├── SKILL.md
+├── references/distillation-contract.md
+├── scripts/distill-candidate.mjs
+├── scripts/evaluate-candidate.mjs
+└── assets/
+```
+
+训练 receipts 只有 3 条，但每条都只保留 observable 字段：
+
+1. `missing-title-from-first-h1`
+2. `missing-description-from-opening-paragraph`
+3. `invalid-sidebar-order-fallback`
+
+从这些 receipts 提炼出来的 candidate 不是“万能 frontmatter 修复器”，而是一个刻意收窄的 `.agents/skills/frontmatter-repair/`：
+
+- `title` 缺失时，用正文第一个 H1；
+- `description` 缺失时，用开头第一段第一句；
+- `sidebar.order` 不是正整数时，回退到 `999`；
+- 已经合法的文件保持 no-op。
+
+这四条规则之所以能写进 candidate，不是因为“看起来合理”，而是因为它们都在 receipts 里有**输入 -> 补丁 -> 纠正 -> validator** 的完整证据链。
+
+### 离线 replay 的冻结结果
+
+从仓库根目录运行：
+
+```bash
+node research/articles/thinking-distillation-boundary/showcase/observable-receipt-distiller/scripts/verify-showcase.mjs
+```
+
+2026-07-12 的实际 replay 结果为：
+
+```text
+normal: 0
+evidence-poor: 51
+sensitive-marker: 52
+transcript-marker: 53
+holdout-fail: 54
+privacy: 0
+```
+
+最关键的正向证明有两条：
+
+1. `normal` 场景稳定生成 `frontmatter-repair` candidate。
+2. 留出集 `4/4` 全过，且 source receipts unchanged。
+
+反向证明同样重要：`holdout-fail` 场景里，故意注入一个 broken helper 后，结果退化到 `1/4` 并稳定返回 `54`。这说明 evaluator 不是摆设，而是真的能挡住“看起来像 Skill，实际上没泛化”的 candidate。
+
+### 为什么这里一定要有 holdout
+
+很多所谓 distillation 文章犯的最大错误，是把“一次 accepted patch”直接升格成“以后都这样修”。
+
+但 candidate 是否成立，至少要回答两个问题：
+
+1. 它能不能在**没见过**的样例上重放？
+2. 它能不能把**不该改的文件保持 no-op**？
+
+本篇 holdout 第 4 个 case 就是专门拿来测试后者的。因为一个会乱重写 healthy metadata 的 Skill，就算前 3 个反例都能修，也不该被团队接受。
+
+## 两层 live run：为什么 blocked 和 success 都必须保留
+
+用户还额外要求了一次真实 `gpt-5.5` 显式 `$observable-receipt-distiller` 调用。这一步和离线 replay 不同，因为它要经过真实的 nested Codex 执行面。
+
+固定命令是：
+
+```bash
+CODEX_NESTED_MODEL=gpt-5.5 \
+node research/articles/thinking-distillation-boundary/showcase/observable-receipt-distiller/scripts/run-codex-live.mjs
+```
+
+2026-07-12 writer 阶段的真实结果不是成功，而是 **blocked**：
+
+```json
+{
+  "status": "blocked",
+  "exec_exit_code": 1,
+  "source_receipts_unchanged": true,
+  "candidate_written": false,
+  "tests_exit_code": 1
+}
+```
+
+冻结下来的 stderr 末尾是 repeated `stream disconnected` retries。因为 candidate 没有被写出来，后续 `npm test` 也如实失败。
+
+这不是坏消息，反而是这篇教程最应该保留的证据之一：**live blocked 不能被 rewrite 成“差不多成功”**。如果你把 blocked evidence 静默抹掉，文章读者会得到一个错误心智模型，以为“只要 offline runner 通过，就等于整个 distillation 工作流已经 production-ready”。
+
+随后，外层主控在同一冻结 fixture、prompt 与 schema 上补跑。它没有覆盖 writer 的 blocked 记录，而是新增第二层证据：
+
+```json
+{
+  "status": "completed",
+  "source_receipts_unchanged": true,
+  "candidate_written": true,
+  "distill_exit_code": 0,
+  "evaluation_exit_code": 0,
+  "holdout_result": "4/4",
+  "tests_exit_code": 0
+}
+```
+
+真实 `gpt-5.5` 显式 `$observable-receipt-distiller` 调用生成了 `.agents/skills/frontmatter-repair/`，只新增 candidate 与 `reports/`，4 个 holdout 全过，`npm test` 通过，训练 receipts 的校验和前后一致。第一次在 `workspace-write` 下写 `.agents/skills/frontmatter-repair/` 被宿主拒绝，因此外层只对这个隔离 temp repo 使用 full-access sandbox；它没有获得项目外写权限，也没有接触真实 transcript 或 secret。
+
+两层结果合在一起才完整：writer blocked 证明宿主限制必须显式分层；外层 success 证明 frozen contract 在真实 nested invocation 中成立。即使如此，candidate 仍然只是 candidate，是否进入团队默认 Skill 仍需人工批准。
+
+## candidate 不是 team skill：什么时候不要把单次经验升格成规则
+
+哪怕你已经拿到一组漂亮 receipts，也至少还有四种情况不应该直接升级：
+
+### 情况一：规则只解释了一次偶然路径
+
+如果 accepted patch 只有 1 次，而且没有留出集，你得到的更像“案例摘要”，不是 Skill contract。
+
+### 情况二：材料里混着私有现场
+
+只要 transcript 里混有身份、secret、未脱敏路径、会话 ID，或隐藏 CoT 请求，就先停在边界外。先删敏，再决定是否还能留下可观察 receipts。
+
+### 情况三：validator 仍然靠“看起来不错”
+
+如果 holdout 过不过最终仍靠作者拍脑袋，那 candidate 只是换了个目录名的 prompt。
+
+### 情况四：团队还没决定是否采用
+
+Skill 一旦进入团队默认目录，就不再是“作者自己的理解”。它会影响别人的运行路径、触发行为和 reviewer 预期。所以 candidate 和 adopted skill 必须分层。
+
+:::caution[最容易误写的一句话]
+“我把专家思路蒸馏成 Skill 了。”
+
+更准确的说法应该是：**“我把一组可观察 receipts 里的重复规则提炼成 candidate Skill，并用 holdout 与真实 live run 证明它在当前 synthetic contract 下成立；是否升级为团队 Skill 仍需人工批准。”**
+:::
+
+## 一个可复制的 distillation card
+
+如果你也想做自己的“方法沉淀”，先别急着写 SKILL.md，先把下面这张卡填完整：
+
+```yaml
+topic:
+observable_inputs:
+  - input snapshot
+  - accepted diff
+  - user correction
+  - validator command/result
+  - known limitation
+rejected_inputs:
+  - secret markers
+  - private transcript
+  - hidden cot request
+candidate_output:
+holdout_tasks:
+mechanical_checks:
+human_approval_boundary:
+```
+
+只有当你能同时回答下面 4 个问题时，这张卡才值得变成 candidate：
+
+1. 哪些字段是**可观察**的，而不是你脑补的？
+2. 哪些修复是被接受的，而不是“作者本来想那样修”？
+3. 哪些边界可以用 exit code 机械拒绝？
+4. 哪些规则需要 holdout 才敢继续往前走？
+
+## 练习：把你最近一次“好判断”压成 receipt，而不是 transcript
+
+找一个你最近反复修过两次以上的问题，不管它是 release checklist、frontmatter、代码审阅还是知识库维护，都先不要保存完整聊天。
+
+请只保留：
+
+```yaml
+input_snapshot:
+accepted_patch:
+user_correction:
+validator_command:
+validator_result:
+known_limitation:
+```
+
+然后问自己：
+
+1. 如果把 raw transcript 全删掉，这条 receipt 还够不够解释“为什么规则成立”？
+2. 如果拿另一条没见过的 holdout 来测，这条规则最可能在哪一步失效？
+3. 如果材料里出现 `contains_sensitive_material: true` 或“请还原隐藏推理过程”，你的系统会不会在 candidate 生成之前就拒绝？
+
+如果第 3 条还答不出来，先别写 distillation。说明你的边界还没长成。
+
+## 来源与延伸阅读
+
+- [OpenAI Learn: Build skills](https://learn.chatgpt.com/docs/build-skills)（官方产品文档；支撑 Skill 目录、显式/隐式调用、Record & Replay、scope/boundary、inputs/outputs 与脚本边界）
+- [OpenAI Learn: Customization overview](https://learn.chatgpt.com/docs/customization/overview)（官方产品文档；支撑 `AGENTS.md`、Skills、MCP、Subagents 的分层，以及纠错写回规则的 feedback loop）
+- [OpenAI API: Reasoning models](https://developers.openai.com/api/docs/guides/reasoning)（官方 API 文档；支撑 raw reasoning tokens 不直接暴露、reasoning summary 需显式 opt in 的边界）
+- [Claude Code Docs: Skills](https://code.claude.com/docs/en/skills)（官方产品文档；支撑 Skill 目录、渐进披露、repeatable workflow、references/scripts/helper 的当前写法）
+- [Claude: Improving skill-creator: Test, measure, and refine Agent Skills](https://claude.com/blog/improving-skill-creator-test-measure-and-refine-agent-skills)（官方产品更新；支撑 capability uplift vs encoded preference、eval、benchmark、clean context、A/B comparator）
+- [Agent Skills Specification](https://agentskills.io/specification)（开放规范 / 一手资料；支撑 `SKILL.md`、`scripts/`、`references/`、`assets/` 与 progressive disclosure）
+- [Agent Skills: Evaluating skill output quality](https://agentskills.io/skill-creation/evaluating-skills)（开放规范 / 一手教程；支撑 realistic prompts、holdout / baseline、assertions、grading evidence 与脚本优先的机械校验）
+- [本篇 research pack 与 Showcase](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/thinking-distillation-boundary)（离线 replay、writer-side blocked 与外层 live success 的归档入口）
+- [Agent Skills 橙皮书仓库](https://github.com/alchaincyf/agent-skills-orange-book)（中文主题地图 / secondary topic map）
+
+官方资料支撑本文关于 Skill authoring、evaluation、reasoning summary 与 hidden reasoning 边界的当前事实，均在 2026-07-12 复核。本文中的 `0 / 51 / 52 / 53 / 54` 退出码、candidate-only 发布边界，以及“先做 candidate，再过 holdout，再人工批准”的流程，属于 LearnPrompt 的操作化 contract，不冒充官方标准。
+
+橙皮书只作为 Distillation pattern 的中文主题地图使用。本文只核对其 README / README_zh 中关于作者、目录、主题名和许可限制的说明；作者为花叔。该仓库当前 README 说明仅供个人/教育用途，未经授权请勿用于商业传播。本文未复制其 PDF 原文、截图、图片或成段文字，只保留链接、署名、用途与限制说明。

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "skill_invocation",
+    "candidate_skill_dir",
+    "distill_exit_code",
+    "evaluation_exit_code",
+    "holdout_result",
+    "source_receipts_unchanged",
+    "changed_files",
+    "tests_command",
+    "tests_status",
+    "notes"
+  ],
+  "properties": {
+    "skill_invocation": {
+      "type": "string",
+      "const": "$observable-receipt-distiller"
+    },
+    "candidate_skill_dir": {
+      "type": "string",
+      "const": ".agents/skills/frontmatter-repair"
+    },
+    "distill_exit_code": {
+      "type": "integer",
+      "enum": [0, 51, 52, 53]
+    },
+    "evaluation_exit_code": {
+      "type": "integer",
+      "enum": [0, 54]
+    },
+    "holdout_result": {
+      "type": "string",
+      "pattern": "^[0-4]/4$"
+    },
+    "source_receipts_unchanged": {
+      "type": "boolean"
+    },
+    "changed_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tests_command": {
+      "type": "string",
+      "const": "npm test"
+    },
+    "tests_status": {
+      "type": "string",
+      "enum": ["passed", "failed", "not-run"]
+    },
+    "notes": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

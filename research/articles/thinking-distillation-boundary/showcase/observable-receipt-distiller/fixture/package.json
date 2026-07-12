@@ -1,0 +1,8 @@
+{
+  "name": "observable-receipt-distiller-fixture",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}
