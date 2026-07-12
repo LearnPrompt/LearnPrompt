@@ -1,0 +1,3 @@
+| Public path | Teaching purpose | Original source | Creator | License | Modifications | Verified at |
+| --- | --- | --- | --- | --- | --- | --- |
+| `/images/articles/hermes-learning-loop/hermes-learning-approval-loop.svg` | Shows the observable Hermes learning loop from session evidence through background review, fact/procedure split, pending approval, human approve/reject, next-session memory / on-demand Skill, rejection rails 91-95, and Curator as a side maintenance path. | Derived from `vertical-research.md`, `evidence-ledger.md`, and `showcase/contracts/proposal-contract.json`. | LearnPrompt 编辑部 | CC BY-NC-SA 4.0 | Original SVG diagram, no external image assets. | 2026-07-12 |

@@ -1,0 +1,49 @@
+{
+  "fixture_id": "learning-write-approval-gate",
+  "allowed_report_paths": [
+    "reports/learning-proposals.json",
+    "reports/learning-proposals.md"
+  ],
+  "allowed_actions": [
+    "stage-memory",
+    "stage-skill",
+    "reject-transient",
+    "reject-sensitive",
+    "needs-more-evidence"
+  ],
+  "expected_action_counts": {
+    "stage-memory": 2,
+    "stage-skill": 1,
+    "reject-transient": 1,
+    "reject-sensitive": 1,
+    "needs-more-evidence": 1
+  },
+  "stage_actions_require": {
+    "requires_human_approval": true,
+    "fields": [
+      "evidence_paths",
+      "target_store",
+      "reason",
+      "version_scope"
+    ]
+  },
+  "rejection_codes": {
+    "missing_provenance_or_evidence": 91,
+    "wrong_memory_skill_store": 92,
+    "sensitive_content_in_proposal": 93,
+    "auto_applied_or_approval_false": 94,
+    "unknown_action_or_missing_version_scope": 95
+  },
+  "privacy": {
+    "forbid_regex": [
+      "\\/Users\\/",
+      "BEGIN\\s+PRIVATE\\s+KEY",
+      "g[h]p_",
+      "s[k]-",
+      "x[o]xb-",
+      "session[_-]id",
+      "thread[_-]id",
+      "request[_-]id"
+    ]
+  }
+}

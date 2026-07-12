@@ -1,0 +1,61 @@
+{
+  "fixture_id": "learning-write-approval-gate",
+  "generated_at": "2026-07-12",
+  "description": "Synthetic candidate lessons from a Hermes-like session. No real user memory, config, credential, path, or transcript is included.",
+  "candidates": [
+    {
+      "id": "c01-user-pref-brief-chinese",
+      "observed": "The user explicitly asked for concise Chinese explanations and concrete steps in durable operating instructions.",
+      "evidence_paths": ["fixture/session-lessons.json#c01"],
+      "proposed_store": "memory:user",
+      "version_scope": "Hermes docs verified 2026-07-12; local probe v0.17.0",
+      "stability": "stable",
+      "category": "user_preference"
+    },
+    {
+      "id": "c02-project-env-starlight",
+      "observed": "This project uses a Starlight docs app under starlight/ and validates article metadata through starlight/src/content.config.ts.",
+      "evidence_paths": ["fixture/session-lessons.json#c02"],
+      "proposed_store": "memory:memory",
+      "version_scope": "Repository state on 2026-07-12",
+      "stability": "stable",
+      "category": "project_environment_fact"
+    },
+    {
+      "id": "c03-publish-flow",
+      "observed": "For this article family, the reusable release flow is research pack -> showcase validator -> single article validator -> Starlight build -> diff check -> external review.",
+      "evidence_paths": ["fixture/session-lessons.json#c03"],
+      "proposed_store": "skill",
+      "version_scope": "LearnPrompt article workflow on 2026-07-12",
+      "stability": "stable",
+      "category": "reusable_procedure"
+    },
+    {
+      "id": "c04-one-time-503",
+      "observed": "A single documentation request returned HTTP 503 during one fetch attempt.",
+      "evidence_paths": ["fixture/session-lessons.json#c04"],
+      "proposed_store": "memory:memory",
+      "version_scope": "Single synthetic run only",
+      "stability": "transient",
+      "category": "one_time_failure"
+    },
+    {
+      "id": "c05-secret-shaped-token",
+      "observed": "A log line contained token-like text REDACTED_SECRET_TOKEN_SHAPE_32_CHARS.",
+      "evidence_paths": ["fixture/session-lessons.json#c05"],
+      "proposed_store": "memory:memory",
+      "version_scope": "Synthetic security fixture only",
+      "stability": "sensitive",
+      "category": "credential_like"
+    },
+    {
+      "id": "c06-single-tool-behavior",
+      "observed": "One tool invocation appeared slower when verbose output was enabled.",
+      "evidence_paths": ["fixture/session-lessons.json#c06"],
+      "proposed_store": "skill",
+      "version_scope": "Single synthetic observation only",
+      "stability": "insufficient",
+      "category": "under-evidenced_tool_behavior"
+    }
+  ]
+}

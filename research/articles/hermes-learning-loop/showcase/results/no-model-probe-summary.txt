@@ -1,0 +1,5 @@
+Hermes Agent v0.17.0 (2026.6.19)
+skills_subcommands=browse,search,install,inspect,list,check,update,audit,uninstall,reset,list-modified,diff,opt-out,opt-in,repair-official,publish,snapshot,tap,config
+curator_subcommands=status,run,pause,resume,pin,unpin,restore,list-archived,archive,prune,backup,rollback
+memory_subcommands=setup,status,off,reset
+probe_scope=no-model; read-only help/version; sanitized; no config/status/memory/skill content read

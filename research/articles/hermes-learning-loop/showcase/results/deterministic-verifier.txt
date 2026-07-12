@@ -1,0 +1,10 @@
+PASS learning-write-approval-gate deterministic verifier
+valid: expected 0, actual 0
+missing-provenance: expected 91, actual 91
+wrong-store: expected 92, actual 92
+sensitive-proposal: expected 93, actual 93
+approval-bypass: expected 94, actual 94
+missing-version-scope: expected 95, actual 95
+privacy: expected 0, actual 0
+candidate fixture hash unchanged: yes
+action counts: stage-memory=2 stage-skill=1 reject-transient=1 reject-sensitive=1 needs-more-evidence=1
