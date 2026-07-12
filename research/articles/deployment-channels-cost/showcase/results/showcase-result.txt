@@ -1,0 +1,11 @@
+PASS deployment-budget-safety-gate deterministic verifier
+valid: expected 0, actual 0
+missing-availability-persistence: expected 111, actual 111
+unsafe-public-channel: expected 112, actual 112
+missing-variable-cost: expected 113, actual 113
+config-only-health: expected 114, actual 114
+missing-kill-switch: expected 115, actual 115
+privacy: expected 0, actual 0
+fixture hash unchanged: yes (4cf82e987c89769cb648b647ea9fca0aa1732fc685a7fabb9f2a01a6c139bdc3)
+selected candidate: vps-container; example monthly total: 80.24; cap: 100.00
+no real deployment, account connection, credential read, or provider invoice

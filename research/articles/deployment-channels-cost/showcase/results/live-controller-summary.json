@@ -1,0 +1,15 @@
+{
+  "attempted_at": "2026-07-12",
+  "model": "gpt-5.4",
+  "status": "blocked",
+  "exec_exit_code": 1,
+  "reports_written": {
+    "json": false,
+    "markdown": false
+  },
+  "validation_exit_code": null,
+  "protected_files_unchanged": true,
+  "changed_paths": [],
+  "raw_capture": "captured outside the worktree and removed after sanitization; only the sanitized summary and accepted artifacts may enter the research pack",
+  "stderr_excerpt": "startup warnings only; process exited before either allowed report existed"
+}

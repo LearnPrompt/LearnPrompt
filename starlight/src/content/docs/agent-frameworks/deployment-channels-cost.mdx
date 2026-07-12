@@ -1,38 +1,260 @@
 ---
-title: Agent 框架的部署、渠道接入与成本控制
-description: 从上线角度评估一个 Agent 框架是否可持续。
+title: OpenClaw 上线决策：部署、渠道安全与可重算成本
+description: 用工作负载、信任边界和预算公式选择本地、VPS 或托管模板，并建立可验证的上线门禁。
 sidebar:
   order: 3
 difficulty: advanced
 source_repo: alchaincyf/openclaw-orange-book
 source_url: https://github.com/alchaincyf/openclaw-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-12"
+reading_time: 19 分钟
+research_path: research/articles/deployment-channels-cost
+showcase_path: research/articles/deployment-channels-cost/showcase
+showcase_status: verified
+quality_score: 100
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 高级 | 19 分钟 | 2026-07-12 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/openclaw-orange-book" url="https://github.com/alchaincyf/openclaw-orange-book" updatedFrom="2026-05" note="许可证不明确，仅做高层架构导读并保留来源链接。" />
+你在笔记本上接通了一个 Telegram bot，发一句话就能让 OpenClaw 调模型、跑工具并回消息。于是你准备把它迁到云上，给团队全天使用。真正的上线问题此时才出现：笔记本合盖后谁接消息？容器重建后状态还在不在？公开入口由谁鉴权？陌生人能不能私聊？模型、搜索、媒体和工具调用把月账单推高时，系统怎样自动降级？
 
-## 上线前检查
+“选一个最便宜的云主机”回答不了这些问题。OpenClaw Gateway 是路由、控制平面和渠道连接的常驻进程；部署方案必须同时满足可用性、持久化、暴露方式、信任边界和预算约束。本文给出一套可重算的方法，不抄任何厂商的固定报价，也不把本地估算冒充供应商账单。
 
-- 部署方式：本地、VPS、serverless 还是容器。
-- 渠道：网页、飞书、Telegram、Slack、邮件。
-- 模型：成本、速率、上下文和失败降级。
-- 日志：能否定位一次失败的完整链路。
-- 权限：谁能触发高风险任务。
+## 读完你能做什么
 
-## 成本控制
+完成本文后，你能做五件事：
 
-1. 给不同任务分配不同模型。
-2. 缓存可复用结果。
-3. 对长上下文做摘要和索引。
-4. 为批量任务设置每日上限。
+1. 根据是否需要 24/7、是否依赖本地设备、状态是否持久化和故障预算，选择本地、VPS/容器或托管模板。
+2. 把成本拆成固定基础设施、模型 token、工具/媒体、渠道插件、出网与可观测性，而不是只看主机月费。
+3. 用可替换变量计算月度预算、单次上限和峰值并发，并设计 fallback 与 kill switch。
+4. 把 Gateway auth、DM pairing、group allowlist、SecretRef 和 secret rotation 放进同一条安全门禁。
+5. 用 RPC、渠道 live probe、health、logs 与 doctor 证明“真的能用”，而不是只证明配置文件存在。
 
-## 常见错误
+![OpenClaw 部署成本控制面：工作负载依次经过拓扑、暴露与渠道策略、固定和变量成本台账、预算护栏，最终进入接受或拒绝；111 到 115 分别拦截缺可用性、暴露失控、成本缺项、凭据或假健康以及无预算熔断。](/images/articles/deployment-channels-cost/deployment-cost-control-plane.svg)
+*图注：部署不是价格表选择题；只有工作负载、信任边界、成本公式和运行验收同时通过，候选方案才能进入上线队列。*
 
-只在单人本地跑通，就认为可以公开使用。公开使用后，失败输入、成本峰值和滥用风险都会变多。
+## 先写工作负载，再选择部署形态
 
-## 实战案例
+先冻结一张 deployment card。不要写“流量不大”“偶尔使用”这类无法验证的形容词，至少写清下面这些变量：
 
-给普通用户发布“淘金”Skill 时，要默认支持无 API Key 的公开网页抓取；X、邮箱等需要密钥或授权的能力应作为进阶模块。
+| 决策变量 | 要回答的问题 | 会淘汰什么方案 |
+| --- | --- | --- |
+| `availability_required` | 仅操作员在线时可用，还是 24/7？ | 24/7 会淘汰会休眠、合盖或频繁断网的本地机 |
+| `persistence_required` | 会话、channel/provider state、workspace 是否必须跨重启保留？ | 无持久卷的临时容器 |
+| `local_device_required` | 是否必须操作本机 GUI、摄像头或只存在于本机的文件？ | 纯云端运行可能失去设备能力 |
+| `requests_per_day` | 平均请求量与峰值时段是多少？ | 无法承受峰值或费率限制的规格 |
+| `peak_concurrency` | 同时最多有多少轮执行？ | 资源太小或没有并发护栏的方案 |
+| `exposure` | 仅 loopback、内网隧道，还是公网反向代理？ | 没有匹配鉴权与 origin 策略的暴露方式 |
+| `trust_boundary` | 单人、可信小团队，还是互不信任的多个租户？ | 一个共享 Gateway 不能充当敌对多租户隔离层 |
+| `recovery_target` | 最多能接受多久中断、丢多少状态？ | 没有备份、恢复演练或健康重启的方案 |
+
+三类候选不是按“高级程度”排序，而是解决不同问题：
+
+### 本地笔记本或工作站
+
+适合个人实验、依赖本机设备能力、只在操作员在线时运行的场景。默认 loopback 暴露面最小，现有硬件的增量主机费用可能接近零，但它仍有电力、维护和模型 API 成本。合盖、断网、系统更新和操作员离线都会影响可用性，所以不要把“在我电脑上能跑”写成 24/7 承诺。
+
+### 常驻 VPS 或自管容器
+
+适合需要全天连接渠道、能自行维护系统和备份的小团队。你控制镜像、volume、反向代理和升级节奏，也承担补丁、磁盘、日志、告警与恢复。官方 Docker 文档截至 2026-07-12 提醒：源码构建至少准备 2 GB RAM；在 VPS/public host 上还要检查网络 hardening。容器本身不是持久化，state/workspace 必须落到受管理的 volume，并纳入备份。
+
+### 托管模板
+
+Railway、Render、Fly.io 等官方路径降低了首次部署摩擦，但不会替你消除状态和安全问题。Railway 模板要求挂载 `/data` volume 才能保留状态；Render 免费方案会休眠且没有持久盘，重部署会重置状态；Fly.io 示例也要求 volume 和 secret。托管平台提供的 TLS、health check 或重启能力只是基础设施能力，Gateway auth、渠道策略、备份与预算仍由你负责。
+
+Kubernetes 也不是“自动生产级”。官方 Kubernetes 页面明确把示例称为 minimal starting point，而不是 production-ready deployment。只有当团队已经具备集群升级、PVC、Secret、网络策略、观测与恢复能力时，Kubernetes 才可能减少总体风险；否则它只会增加控制面。
+
+一个实用的选择顺序是：先淘汰不满足 24/7 和持久化的候选，再淘汰暴露与信任边界不匹配的候选，最后才比较满足条件者的总成本与运维负担。
+
+## Gateway、暴露面与渠道策略是一套门禁
+
+OpenClaw 官方 Gateway runbook 将 Gateway 描述为一个常驻的路由与控制平面进程。默认 bind 是 loopback；在检测到容器环境时，当前文档说明有效默认值可能变为 `auto` 并解析到 `0.0.0.0` 以便端口转发。因此，“我没显式写公网监听”不等于容器一定只绑定 loopback，必须检查实际启动参数、网络映射和反向代理。
+
+远程访问优先保留 loopback，再通过 SSH tunnel 或受控的 Tailscale 路径连接。例如 SSH tunnel 把远端 Gateway 映射到本机 `127.0.0.1`。如果确实使用 non-loopback 或公网代理，则至少需要：
+
+- 有效的 `gateway.auth` token/password 或经过明确设计的 trusted proxy 模式；
+- 非 loopback Control UI 的精确 `allowedOrigins`，不要在生产环境把 `"*"` 当作安全默认值；
+- TLS 终止、主机防火墙和容器端口暴露审计；
+- 不把 token 放进教程、日志、命令历史或截图；本文所有配置都只使用占位符。
+
+渠道入口还要做身份和范围控制。官方安全文档建议先确定“谁能说话”，再确定“能在哪里行动”：
+
+| 场景 | DM 策略 | 群组策略 | 说明 |
+| --- | --- | --- | --- |
+| 个人 bot | `pairing` | `allowlist` + `requireMention` | 陌生人先配对；群里只在被点名时处理 |
+| 可信小团队 | `allowlist` 或 `pairing` | 明确 group allowlist | 名单变更要有审核记录 |
+| 公开服务 | 不应仅靠 `open` | 独立入口、限流和强隔离 | 公开用户会扩大提示注入、滥用和成本风险 |
+| 禁止私聊 | `disabled` | 需要的群组单独允许 | 最小化不必要入口 |
+
+`dmPolicy="open"` 与 `groupPolicy="open"` 是显式扩大信任边界，不是“接通渠道”的默认完成状态。更不能把 operator scopes 当成敌对多租户隔离：官方当前文档将一个 Gateway 视为一个可信 operator domain；互不信任的租户应分离 Gateway、OS user/host，风险更高时使用独立 VM 或机器。
+
+### SecretRef 解决什么，不解决什么
+
+当前官方 secrets 文档支持将受支持凭据写成 SecretRef，由 env、file 或 exec provider 在启动/重载时解析到内存快照。生产迁移至少应执行：
+
+```bash
+openclaw secrets audit --check
+openclaw secrets configure --apply
+openclaw secrets audit --check
+openclaw secrets reload
+```
+
+命令只是操作顺序，运行前要按你的版本阅读完整文档。SecretRef 可以减少明文凭据落盘，但不是进程隔离边界；agent 能读到的任意旧 `.env`、备份或未迁移配置仍可能泄漏。轮换后要 reload，并重新做 audit；不能只改 secret manager 中的值就宣布完成。
+
+## 成本模型：固定、变量和运维三本账
+
+主机费只是固定成本的一部分。一个可审计的月度公式可以写成：
+
+```text
+R = requests_per_day × days_per_month
+
+model_input  = R × input_tokens_per_request  ÷ 1,000,000 × input_price_per_million
+model_output = R × output_tokens_per_request ÷ 1,000,000 × output_price_per_million
+tool         = R × tool_calls_per_request × tool_cost_per_call
+media        = media_calls_per_day × days_per_month × media_cost_per_call
+
+monthly_total = fixed_infra
+              + model_input + model_output + tool + media
+              + channel_plugin + egress_observability
+```
+
+这里的 price 都是**可替换输入**。请在预算评审当天从实际供应商的官方定价/账单面填写，不要从本文复制示例数字。OpenClaw `/status`、`/usage full` 与 Control UI 能依据本地 pricing 配置和 usage metadata 显示 token 与估算成本；官方文档明确说明这些 session-derived totals 不是 provider invoice，也不是 lifetime billing ledger。订阅/OAuth/CLI runtime 可能只显示 token 或在 OpenClaw 之外结算。
+
+还要把非核心模型调用放进账本：media understanding、embedding、web/search、voice、第三方 Skill、provider usage probe 和 compaction 都可能调用外部服务。某项当前免费，也应保留一行和上限，因为套餐、免费额度和计费方式会变化。
+
+### 一组完全合成的演算
+
+本文 Showcase 使用如下**示例假设，不是报价**：每天 120 次请求、每月 30 天、每次 4500 input tokens、1200 output tokens、2 次工具调用；每天 8 次媒体处理。示例单价为 input `$0.80/M`、output `$4.00/M`、工具 `$0.002/call`、媒体 `$0.015/call`。渠道插件示例 `$6/月`，出网与可观测性示例 `$8/月`。
+
+计算结果：
+
+```text
+R = 120 × 30 = 3,600 requests/month
+input  = 3,600 × 4,500 / 1,000,000 × 0.80 = $12.96
+output = 3,600 × 1,200 / 1,000,000 × 4.00 = $17.28
+tool   = 3,600 × 2 × 0.002                  = $14.40
+media  = 8 × 30 × 0.015                     = $3.60
+variable subtotal                            = $48.24
+optional channel + egress/observability      = $14.00
+```
+
+如果自管 VPS 的示例固定成本输入为 `$18`，则示例月总额是 `$80.24`；托管模板固定输入为 `$30`，则是 `$92.24`。本地候选的示例固定增量为 `$0`，总额更低，却因为工作负载要求 24/7 而被淘汰。因此最终选择 VPS 不是因为它“全场最低价”，而是因为它在满足 24/7、持久化、鉴权和渠道策略的合格候选中成本更低。
+
+## 预算护栏必须在上线前有动作
+
+“月底看账单”不是成本控制。至少建立五层护栏：
+
+1. **monthly cap**：累计预测或 provider-reported spend 接近月上限时，停用非必要媒体/搜索，再切低成本模型。
+2. **per-run cap**：单次执行达到 token、工具调用或金额上限就停止继续循环，返回可恢复状态。
+3. **rate limit**：按用户、渠道和全局限制请求速率，避免公开入口被刷。
+4. **concurrency limit**：限制同时运行数，排队而不是让峰值同时放大内存与模型调用。
+5. **fallback 与 kill switch**：主模型超预算/限流时使用批准过的替代模型；异常持续时能关闭高成本工具、渠道或整个入口。
+
+护栏需要明确责任人和触发动作。例如：预测总额达到月 cap 的 70% 发告警；达到 85% 切换 fallback 并停用媒体；达到 100% 触发 kill switch，只保留管理员诊断路径。比例是团队策略，不是 OpenClaw 固定标准。还要区分本地估算与供应商账单：本地 usage 用于快速控制，最终结算与异常调查仍对账 provider-reported 数据。
+
+## 上线验收：配置存在不等于渠道健康
+
+一条最小的只读验收链是：
+
+```bash
+openclaw gateway status --require-rpc
+openclaw channels status --probe
+openclaw health --json
+openclaw doctor
+openclaw logs --follow
+```
+
+逐条解释它们证明什么：
+
+- `gateway status --require-rpc` 不只检查服务进程和 WebSocket connect，还要求 read-scope RPC 成功；它不证明管理员写操作或业务任务一定成功。
+- `channels status --probe` 在 Gateway 可达时运行 per-account live probe 和可选 audit。Gateway 不可达时，CLI 可能退回 config-only summary，所以报告里必须标注是哪一种。
+- `health` 给出 Gateway 视角的健康快照；容器平台 `/health` 只证明 HTTP 端点状态，不能替代渠道 socket probe。
+- `doctor` 检查配置/服务问题；它不能替代真实消息往返。
+- logs 用于确认重连、拒绝、配对、限流和失败原因。归档日志前先脱敏，不保留消息正文、token 或账号标识。
+
+上线 receipt 应至少包含：版本、部署 commit/image digest、持久卷与备份检查、实际 bind/exposure、auth mode、DM/group policy、RPC 结果、channel probe 结果、预算 cap、fallback/kill switch、回滚责任人。没有这些字段，就不能从“部署成功”推导“可安全运营”。
+
+## Showcase：deployment-budget-safety-gate
+
+可复现材料位于：
+
+```text
+research/articles/deployment-channels-cost/showcase/
+```
+
+输入只有合成的 workload、候选拓扑和示例 pricing assumptions，不读取真实 OpenClaw 配置、云账号、channel token 或 account ID，也没有执行部署。确定性脚本先生成 recommendation，再用固定 fixture hash 和公式核对报告：
+
+```bash
+node research/articles/deployment-channels-cost/showcase/scripts/generate-recommendation.mjs
+node research/articles/deployment-channels-cost/showcase/scripts/validate-recommendation.mjs
+node research/articles/deployment-channels-cost/showcase/scripts/verify-showcase.mjs
+node research/articles/deployment-channels-cost/showcase/scripts/privacy-scan.mjs
+```
+
+截至 2026-07-12 的确定性结果为 `valid 0`，并正确拒绝五类错误：
+
+| 退出码 | 拒绝条件 |
+| ---: | --- |
+| 111 | 缺 24/7 availability 或 persistence 假设 |
+| 112 | non-loopback/public 暴露无 auth，或 DM/group policy 失控 |
+| 113 | 缺 token/media/tool 变量，公式不一致，或把 estimate 冒充 provider invoice |
+| 114 | 泄漏 secret/真实账号标识，或只凭配置声称渠道健康 |
+| 115 | 缺 monthly/per-run cap、rate/concurrency limit、fallback 或 kill switch |
+
+fresh-model 层只允许读取合成 fixture 与 contract，最多写两份 recommendation report；它无权部署、连接云账号或读取真实 profile。2026-07-12 的 `gpt-5.4` 受限尝试在报告生成前退出：进程 exit `1`，两份允许报告均未写入，受保护文件保持不变，因此本篇不声称模型层成功。确定性生成器随后恢复参考报告并重跑 0/111-115 与 privacy gate。独立只读 reviewer 最终确认：本 Showcase 的权威证明对象是可重放的成本公式和安全拒绝门禁，透明 blocked 的模型层没有被冒充为成功，也不削弱这些确定性结论。
+
+## 失败模式、边界与什么时候不要这样部署
+
+### 失败模式 1：把本地成功当成公网就绪
+
+本地 loopback 少了公网扫描、陌生消息、代理配置和多用户并发。迁移时必须重新做威胁建模，不能复制端口映射后沿用同一结论。
+
+### 失败模式 2：容器可重启，却没有持久状态
+
+restart policy 只能拉起进程。没有 volume、备份和恢复演练时，auth profiles、channel/provider state、sessions 与 workspace 仍可能随重建丢失。先做恢复测试，再谈可用性。
+
+### 失败模式 3：渠道显示 configured 就宣布健康
+
+config-only summary 只说明配置可被发现。Gateway 不可达时它甚至可能是 fallback。只有 live probe、实际消息往返和日志一起通过，才接近业务健康。
+
+### 失败模式 4：只限制 token，不限制工具和媒体
+
+一次请求可能触发多轮模型、搜索、抓取、媒体理解和语音服务。单看最后一条回复的 token 会漏掉大量变量成本。按完整 run 建账，并给工具和媒体独立配额。
+
+### 失败模式 5：一个共享 Gateway 服务互不信任的租户
+
+operator scopes 是可信控制域里的 guardrail，不是租户授权边界。敌对用户、不同客户或不同组织不要共享同一 Gateway/OS user；为每个信任域分离状态、凭据、workspace、channel account 和运行实例。
+
+以下情况不要急着上云：任务强依赖本机设备且没有远程 Node/权限设计；需求只有短期演示；团队没有 secret 管理、备份和告警责任人；无法为公开用户建立隔离、滥用防护和预算；不知道故障时谁能执行 kill switch。此时保持 loopback 本地试验，通常比制造一个无人维护的公网入口更安全。
+
+## 练习：做一张你自己的上线 receipt
+
+复制 Showcase 的合成 fixture，替换为你自己的**非敏感汇总变量**，不要写 token、真实 account ID 或消息内容：
+
+1. 写明 availability、persistence、local device、requests/day 与 peak concurrency。
+2. 从当天官方页面或内部采购单填入 host 与 provider pricing inputs，并记录核验日期。
+3. 计算 fixed、model input/output、tool、media、channel、egress/observability 和 monthly total。
+4. 为 public/non-loopback 入口写出 auth、DM、group、origin 与 secret rotation 条件。
+5. 设置 monthly cap、per-run cap、rate/concurrency limit、fallback 与 kill switch。
+6. 在测试实例运行 RPC、channel probe、health、doctor 和日志检查；只归档脱敏摘要。
+
+完成标准：至少一个廉价候选因不满足 24/7 或持久化而被淘汰；最终候选同时通过预算和信任边界；任何价格都标明“输入与核验日期”；receipt 能区分 config-only 与 live probe；失败时有明确的降级、停止和恢复动作。
+
+## 来源与延伸阅读
+
+- [OpenClaw 官方安装总览](https://docs.openclaw.ai/install)：安装、验证与 hosting 路径。核验日期：2026-07-12。
+- [OpenClaw 官方 Docker 文档](https://docs.openclaw.ai/install/docker)：2 GB 构建内存提醒、volume、public host hardening、health 与容器运行边界。核验日期：2026-07-12。
+- [OpenClaw 官方 Railway](https://docs.openclaw.ai/install/railway)、[Render](https://docs.openclaw.ai/install/render)、[Fly.io](https://docs.openclaw.ai/install/fly) 与 [Kubernetes](https://docs.openclaw.ai/install/kubernetes)：托管路径、持久化、休眠、volume 与 K8s 非 production-ready 边界。核验日期：2026-07-12。
+- [OpenClaw 官方 Gateway runbook](https://docs.openclaw.ai/gateway)、[远程访问](https://docs.openclaw.ai/gateway/remote) 与 [安全文档](https://docs.openclaw.ai/gateway/security)：常驻控制平面、loopback/remote、鉴权、DM/group policy 与多租户边界。核验日期：2026-07-12。
+- [OpenClaw 官方 Channels CLI](https://docs.openclaw.ai/cli/channels) 与 [Gateway CLI](https://docs.openclaw.ai/cli/gateway)：`channels status --probe`、config-only fallback 与 `gateway status --require-rpc` 的证明范围。核验日期：2026-07-12。
+- [OpenClaw 官方 Secrets management](https://docs.openclaw.ai/gateway/secrets)：SecretRef、audit/configure/apply/reload、明文残留与进程隔离边界。核验日期：2026-07-12。
+- [OpenClaw 官方 Token use](https://docs.openclaw.ai/reference/token-use)、[API usage and costs](https://docs.openclaw.ai/reference/api-usage-costs) 与 [Usage tracking](https://docs.openclaw.ai/concepts/usage-tracking)：token、估算成本、外部 API 成本面与 provider invoice 边界。核验日期：2026-07-12。
+- [OpenClaw v2026.6.11 官方 release](https://github.com/openclaw/openclaw/releases/tag/v2026.6.11)：截至核验日的最新稳定发布，发布时间 2026-06-30。核验日期：2026-07-12。
+- [OpenClaw Orange Book](https://github.com/alchaincyf/openclaw-orange-book)：二手中文主题地图，作者 Huashu/花叔/alchaincyf，发布于 2026-04。README 仅说明用于 educational purposes，仓库没有标准 CC/OSI `LICENSE`；本文没有复制或改编其 PDF、截图、图表、图片或段落，产品事实均按上述一手官方资料重核。
+
+教学图 `/images/articles/deployment-channels-cost/deployment-cost-control-plane.svg` 由 LearnPrompt 编辑部原创，基于本文 research pack 与 Showcase 合约绘制，许可为 CC BY-NC-SA 4.0。
