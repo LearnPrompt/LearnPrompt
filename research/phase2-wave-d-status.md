@@ -1,7 +1,7 @@
 # Phase 2 Wave D 状态
 
 日期：2026-07-12
-状态：进行中，前三对完成；当前全站 39 verified / 2 待处理深度教程。
+状态：完成，四对共 8 篇全部 verified；当前全站 41 verified / 0 待处理深度教程。
 
 ## 第一对结果
 
@@ -28,6 +28,15 @@
 
 第三对继续使用两个独立 worktree lane 和独立 `node_modules`；两位 writer 各只完整读取并使用一次项目 Skill，reviewer 均为新的只读会话，raw final reports 先写在 worktree 外。Git 篇合并后额外暴露两处归档工程问题：unified diff 空 context marker 触发 trailing whitespace，以及 sanitized report 写入随机临时 commit hash。前者改为带原始 SHA-256 的无损 JSON 行数组，后者只在验证后的报告层写稳定 marker；真实 commit 存在性和 ancestor gate 未削弱。连续两次主路径 replay 的完整 research tree SHA-256 一致。
 
+## 第四对结果
+
+| 教程 | Frozen Showcase 与实跑 | 独立终审 | 最终状态 |
+| --- | --- | --- | --- |
+| `agent-frameworks/openclaw-architecture-guide.mdx` | `gateway-node-channel-route-gate`：valid `0`，channel bypass `101`、node owns Gateway state `102`、role/scope/pair/capability escalation `103`、unsafe exposure `104`、legacy bridge/current WS mismatch `105`、unexpected write path `106`，privacy `0`。三次 live writer 均在模型前因共享用量限制退出，0 report、protected files unchanged；确定性合同成为权威证据。初审指出允许路径未覆盖完整文件集合后，控制器改为仓库外最小工作区，并机械拒绝新增、修改、删除和 symlink 替换 | 初审 89/100 后关闭 1 major / 2 minor；全新只读复审 98/100，blocker/major/minor = 0/0/0，视觉 PASS | verified |
+| `agent-frameworks/deployment-channels-cost.mdx` | `deployment-budget-safety-gate`：valid `0`，缺 availability/persistence `111`、unsafe public/channel `112`、missing variable cost `113`、config-only fake health `114`、no caps/fallback/kill `115`，privacy `0`；合成预算月度总额 80.24、cap 100，明确不是价格或账单。live writer 在模型前因共享用量限制退出，0 report、protected files unchanged；确定性成本与安全合同为权威证据 | 全新只读终审 100/100，blocker/major/minor = 0/0/0，视觉 PASS | verified |
+
+第四对继续使用两个独立 worktree lane 和独立 `node_modules`；两位 writer 各只完整读取并使用一次项目 Skill，reviewer 与 writer 为独立会话。外部 CLI 的用量限制发生在模型调用、Skill 读取和文件写入之前，失败历史保留在 worktree 外，没有伪装成 live 成功；每篇在允许的两次重试预算内完成确定性证据与独立终审。
+
 ## 隔离、重试与隐私边界
 
 - 两篇分别位于两个独立 worktree lane，分别安装依赖，不共享 `node_modules`。
@@ -43,13 +52,13 @@
 - 两张图均有具体 alt、紧随图注、`asset-ledger.md` 与 CC BY-NC-SA 4.0 记录，不是装饰性封面。
 - 两篇公开 MDX 均无 `SourceCard`；底部保留官方来源、Orange Book 署名、非标准许可证边界，以及“未复制 PDF 正文、截图或图片”的说明。
 
-## 最新合并后机械门禁
+## 最终合并后机械门禁
 
-- 第三对两套 Showcase 从包含中文的真实主仓库路径重放。Hermes 篇直接 PASS；Git 篇在关闭无损补丁归档与稳定 report hash 后连续两次 research tree SHA-256 完全一致，0/81–85、privacy 与 main unchanged 均保持 PASS。
-- 39 篇 verified 全量 validator：PASS。
+- 四对 8 套 Showcase 均从包含中文的真实主仓库路径重放；全部有效场景、负例、privacy 和写边界通过。
+- 41 篇 verified 全量 validator：PASS。
 - Validator 回归：1 positive / 3 depth negatives / 11 privacy negatives / 11 visual negatives / 7 review negatives，全部 PASS。
 - Starlight 完整构建：49 pages PASS。
-- 当前全站计数：39 verified / 2 个仍含 SourceCard 的待处理深度教程。
+- 当前全站计数：41 verified / 0 个待处理深度教程；公开 MDX 中 `SourceCard` 零匹配。
 - 主仓库在门禁后保持 clean。
 
 ## 本地提交
@@ -61,11 +70,12 @@
 - `24e05af docs(obsidian-ai): goldenize git workflow (86)`
 - `64027e3 docs(agent-frameworks): goldenize hermes learning loop (100)`
 - `fc05b96 fix(showcase): stabilize obsidian git replay`
+- `22b533f docs(agent-frameworks): goldenize openclaw architecture (98)`
+- `51c0ed3 docs(agent-frameworks): goldenize deployment cost guide (100)`
 - 本状态提交只更新 Wave D 控制面与全站计数。
 
 没有 push、部署或发布。
 
-## 剩余 Wave D
+## Wave D 结论
 
-- `agent-frameworks/openclaw-architecture-guide.mdx`
-- `agent-frameworks/deployment-channels-cost.mdx`
+8/8 verified，0 review、0 partial、0 blocked。跨页边界、来源、图片、许可和外链结果见 [`phase2-wave-d-audit.md`](./phase2-wave-d-audit.md)。
