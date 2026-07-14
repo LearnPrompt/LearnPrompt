@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@astrojs/mdx": "latest",
-    "@astrojs/starlight": "latest",
-    "astro": "latest",
+    "@astrojs/starlight": "^0.41.3",
+    "astro": "^7.0.9",
     "sharp": "latest"
   },
   "devDependencies": {
