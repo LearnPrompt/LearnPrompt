@@ -1,0 +1,7 @@
+{
+  "id": "sensitive-marker",
+  "contains_sensitive_material": true,
+  "contains_private_transcript": false,
+  "requests_hidden_chain_of_thought": false,
+  "note": "Synthetic blocked marker only. No secret value is stored here."
+}

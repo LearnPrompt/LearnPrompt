@@ -1,0 +1,13 @@
+scenario: rate-limit-once
+command: node .agents/skills/release-feed-api/scripts/fetch-releases.mjs
+exit_code: 0
+{
+  "status": "success",
+  "exit_code": 0,
+  "release_count": 3,
+  "report_json": "reports/releases.json",
+  "report_markdown": "reports/releases.md",
+  "request_count": 3,
+  "retry_count": 1,
+  "reports_written": true
+}

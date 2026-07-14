@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">Knowledge maintenance proposal control loop</title>
+  <desc id="desc">A mechanism diagram showing signal detection, evidence cards, proposal queue, human approve or reject, later apply boundary, validation gates 71 to 75, and a source unchanged invariant.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#31415f"/>
+    </marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#24324d" flood-opacity="0.14"/>
+    </filter>
+    <style>
+      .bg { fill: #f7f6f0; }
+      .band { fill: #ece8dc; }
+      .panel { fill: #fffdf8; stroke: #c9c1ac; stroke-width: 2; rx: 8; filter: url(#shadow); }
+      .source { fill: #e9f3ef; stroke: #7fa596; }
+      .proposal { fill: #f7ebd6; stroke: #c99a52; }
+      .human { fill: #eef0f7; stroke: #8794b6; }
+      .reject { fill: #f8e5e1; stroke: #cf776b; }
+      .apply { fill: #e7f0f8; stroke: #7297b8; }
+      .title { font: 700 34px system-ui, -apple-system, Segoe UI, sans-serif; fill: #24324d; }
+      .h { font: 700 22px system-ui, -apple-system, Segoe UI, sans-serif; fill: #26364f; }
+      .t { font: 500 17px system-ui, -apple-system, Segoe UI, sans-serif; fill: #31415f; }
+      .s { font: 500 14px system-ui, -apple-system, Segoe UI, sans-serif; fill: #53617a; }
+      .code { font: 700 17px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #7a382d; }
+      .gate { font: 700 15px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #7a382d; }
+      .line { stroke: #31415f; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #9b6b43; stroke-width: 3; fill: none; stroke-dasharray: 8 8; marker-end: url(#arrow); }
+      .invariant { font: 800 21px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #276149; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1400" height="900"/>
+  <rect class="band" x="0" y="745" width="1400" height="155"/>
+
+  <text class="title" x="70" y="70">AI knowledge maintenance without silent rewrites</text>
+  <text class="t" x="72" y="105">Detect signals, attach evidence, draft a proposal, then wait for human approval before any later apply step.</text>
+
+  <rect class="panel source" x="70" y="155" width="250" height="185"/>
+  <text class="h" x="95" y="195">1. Observable signals</text>
+  <text class="t" x="95" y="232">Search queries</text>
+  <text class="t" x="95" y="262">Properties</text>
+  <text class="t" x="95" y="292">Backlinks and links</text>
+  <text class="s" x="95" y="322">Excluded files and bulk limits apply</text>
+
+  <rect class="panel" x="390" y="155" width="260" height="185"/>
+  <text class="h" x="415" y="195">2. Evidence card</text>
+  <text class="t" x="415" y="232">note_paths</text>
+  <text class="t" x="415" y="262">evidence_paths</text>
+  <text class="t" x="415" y="292">observed_fact</text>
+  <text class="s" x="415" y="322">No claim without a path</text>
+
+  <rect class="panel proposal" x="720" y="155" width="270" height="185"/>
+  <text class="h" x="745" y="195">3. Proposal queue</text>
+  <text class="t" x="745" y="232">merge-candidate</text>
+  <text class="t" x="745" y="262">stale / orphan / conflict</text>
+  <text class="t" x="745" y="292">diff-like suggested change</text>
+  <text class="s" x="745" y="322">requires_human_approval: true</text>
+
+  <rect class="panel human" x="1060" y="155" width="270" height="185"/>
+  <text class="h" x="1085" y="195">4. Human decision</text>
+  <text class="t" x="1085" y="232">Approve</text>
+  <text class="t" x="1085" y="262">Reject</text>
+  <text class="t" x="1085" y="292">Ask for more evidence</text>
+  <text class="s" x="1085" y="322">Editorial decision, not model fact</text>
+
+  <path class="line" d="M320 247 H382"/>
+  <path class="line" d="M650 247 H712"/>
+  <path class="line" d="M990 247 H1052"/>
+
+  <rect class="panel apply" x="845" y="440" width="305" height="135"/>
+  <text class="h" x="875" y="480">Later apply boundary</text>
+  <text class="t" x="875" y="517">Separate workflow may edit notes</text>
+  <text class="s" x="875" y="548">Only after approved proposal</text>
+  <path class="dash" d="M1175 340 C1175 390 1085 405 1040 432"/>
+
+  <rect class="panel reject" x="250" y="420" width="470" height="250"/>
+  <text class="h" x="280" y="460">Validator rejection gates</text>
+  <text class="gate" x="280" y="500">71</text><text class="t" x="325" y="500">missing provenance or evidence path</text>
+  <text class="gate" x="280" y="535">72</text><text class="t" x="325" y="535">destructive mutation or auto-apply</text>
+  <text class="gate" x="280" y="570">73</text><text class="t" x="325" y="570">merge without shared canonical key</text>
+  <text class="gate" x="280" y="605">74</text><text class="t" x="325" y="605">stale without current-source contradiction</text>
+  <text class="gate" x="280" y="640">75</text><text class="t" x="325" y="640">orphan without zero-degree graph evidence</text>
+
+  <path class="dash" d="M855 340 C835 380 720 405 660 430"/>
+  <path class="dash" d="M520 340 C520 372 508 395 495 425"/>
+
+  <rect x="70" y="770" width="1260" height="82" rx="8" fill="#fffdf8" stroke="#b9c8bd" stroke-width="2"/>
+  <text class="invariant" x="100" y="816">SOURCE UNCHANGED INVARIANT</text>
+  <text class="t" x="475" y="815">During proposal generation, notes and frozen manifests remain byte-identical.</text>
+  <text class="s" x="475" y="842">Allowed changed paths: reports/maintenance-plan.json and reports/maintenance-plan.md</text>
+</svg>

@@ -1,0 +1,38 @@
+{
+  "scenario": "success",
+  "stage": "score",
+  "status": "ok",
+  "scored_count": 5,
+  "selected_count": 4,
+  "threshold": 65,
+  "selected_items": [
+    {
+      "id": "anthropic-hooks-guide",
+      "title": "Claude Code hooks guide explains deterministic lifecycle automation",
+      "source_url": "https://code.claude.com/docs/en/hooks-guide",
+      "score": 100,
+      "selection_reason": "命中核心 AI coding 工具主题；直接解释工作流、门禁或验证机制；来源是官方文档快照，适合做本周基线；人工重要度=3"
+    },
+    {
+      "id": "anthropic-permissions",
+      "title": "Claude Code permissions page clarifies deny ask allow precedence",
+      "source_url": "https://code.claude.com/docs/en/permissions",
+      "score": 100,
+      "selection_reason": "命中核心 AI coding 工具主题；直接解释工作流、门禁或验证机制；来源是官方文档快照，适合做本周基线；人工重要度=3"
+    },
+    {
+      "id": "openai-codex-cli",
+      "title": "OpenAI documents Codex CLI local agent workflows",
+      "source_url": "https://developers.openai.com/codex/cli",
+      "score": 100,
+      "selection_reason": "命中核心 AI coding 工具主题；直接解释工作流、门禁或验证机制；来源是官方文档快照，适合做本周基线；人工重要度=3"
+    },
+    {
+      "id": "anthropic-common-workflows",
+      "title": "Common workflows page highlights worktrees plan mode and piping into scripts",
+      "source_url": "https://code.claude.com/docs/en/common-workflows",
+      "score": 90,
+      "selection_reason": "命中核心 AI coding 工具主题；直接解释工作流、门禁或验证机制；来源是官方文档快照，适合做本周基线；人工重要度=2"
+    }
+  ]
+}

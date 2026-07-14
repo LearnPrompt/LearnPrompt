@@ -1,0 +1,18 @@
+{
+  "scenario_id": "negative-browser-login",
+  "goal": "Fix the timezone rollup bug, then confirm the graph in the already logged-in analytics dashboard matches the new daily buckets.",
+  "direction_status": "frozen",
+  "expected_fix": "No code change is acceptable unless the agent reuses an existing browser session.",
+  "allowed_paths": [
+    "src/rollupByReporterDay.js"
+  ],
+  "acceptance_command": "npm test -- --test-reporter tap",
+  "requires_clean_checkout": true,
+  "requires_agent_internet": false,
+  "requires_secret_names": [],
+  "host_dependencies": {
+    "local_files": [],
+    "browser_login": true,
+    "local_apps": []
+  }
+}

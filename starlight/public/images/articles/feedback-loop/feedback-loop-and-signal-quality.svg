@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">反馈层：把环境信号变成下一轮最小改动，并决定何时停止或升级</title>
+  <desc id="desc">左侧是反馈回路：行动、观察信号、诊断、候选改动、重跑同一验收，通过则停止，信号连续不变则升级给人。右侧比较两种信号质量：模糊信号只说失败了，导向瞎猜或大改；可操作信号带文件、行号、期望值与实际值，把范围收窄到小写化相关修复。</desc>
+  <rect width="1200" height="760" fill="#fff7ed"/>
+  <text x="600" y="54" text-anchor="middle" font-family="system-ui, sans-serif" font-size="34" font-weight="700" fill="#0f172a">反馈层：把环境信号变成下一轮的最小改动</text>
+  <text x="600" y="90" text-anchor="middle" font-family="system-ui, sans-serif" font-size="19" fill="#475569">左边是闭环和停止条件，右边是信号质量决定改动大小</text>
+
+  <!-- Panel A: feedback loop with stop/escalate -->
+  <g font-family="system-ui, sans-serif">
+    <rect x="36" y="122" width="600" height="596" rx="18" fill="#ffedd5" stroke="#f97316" stroke-width="2"/>
+    <text x="60" y="162" font-size="23" font-weight="700" fill="#9a3412">一轮反馈回路</text>
+
+    <rect x="200" y="180" width="272" height="58" rx="10" fill="#ffffff" stroke="#f97316" stroke-width="2"/>
+    <text x="336" y="215" text-anchor="middle" font-size="18" font-weight="700" fill="#9a3412">① 行动：改一处代码</text>
+
+    <text x="336" y="258" text-anchor="middle" font-size="20" fill="#f97316">▼</text>
+
+    <rect x="200" y="268" width="272" height="58" rx="10" fill="#ffffff" stroke="#f97316" stroke-width="2"/>
+    <text x="336" y="296" text-anchor="middle" font-size="18" font-weight="700" fill="#9a3412">② 观察信号</text>
+    <text x="336" y="316" text-anchor="middle" font-size="13" fill="#64748b">跑最快的那条验收命令</text>
+
+    <text x="336" y="346" text-anchor="middle" font-size="20" fill="#f97316">▼</text>
+
+    <rect x="200" y="356" width="272" height="58" rx="10" fill="#ffffff" stroke="#f97316" stroke-width="2"/>
+    <text x="336" y="384" text-anchor="middle" font-size="18" font-weight="700" fill="#9a3412">③ 诊断：证据 → 位置</text>
+    <text x="336" y="404" text-anchor="middle" font-size="13" fill="#64748b">file:line + expected/actual</text>
+
+    <text x="336" y="434" text-anchor="middle" font-size="20" fill="#f97316">▼</text>
+
+    <rect x="200" y="444" width="272" height="58" rx="10" fill="#ffffff" stroke="#f97316" stroke-width="2"/>
+    <text x="336" y="472" text-anchor="middle" font-size="18" font-weight="700" fill="#9a3412">④ 最小改动</text>
+    <text x="336" y="492" text-anchor="middle" font-size="13" fill="#64748b">只改被证据指到的那处</text>
+
+    <text x="336" y="522" text-anchor="middle" font-size="20" fill="#f97316">▼</text>
+
+    <rect x="200" y="532" width="272" height="58" rx="10" fill="#ffffff" stroke="#f97316" stroke-width="2"/>
+    <text x="336" y="560" text-anchor="middle" font-size="18" font-weight="700" fill="#9a3412">⑤ 重跑同一条验收</text>
+    <text x="336" y="580" text-anchor="middle" font-size="13" fill="#64748b">退出码 1 → 0 才算修好</text>
+
+    <!-- pass -> stop -->
+    <path d="M 472 561 H 556 V 210 H 472" fill="none" stroke="#16a34a" stroke-width="2"/>
+    <text x="564" y="200" font-size="13" fill="#16a34a">通过则回到 ①改下一处</text>
+    <rect x="60" y="616" width="252" height="74" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+    <text x="76" y="646" font-size="16" font-weight="700" fill="#166534">停止条件</text>
+    <text x="76" y="670" font-size="13" fill="#475569">全部验收通过 → 收工</text>
+    <text x="76" y="686" font-size="13" fill="#475569">别在绿灯之后继续改</text>
+
+    <!-- escalate -->
+    <path d="M 200 561 H 150 V 655 H 320" fill="none" stroke="#dc2626" stroke-width="2" stroke-dasharray="5 4"/>
+    <rect x="332" y="616" width="286" height="74" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+    <text x="348" y="646" font-size="16" font-weight="700" fill="#991b1b">升级条件</text>
+    <text x="348" y="670" font-size="13" fill="#475569">信号连续两轮不变 / 撞预算</text>
+    <text x="348" y="686" font-size="13" fill="#475569">→ 停手，换人或换层，别死循环</text>
+  </g>
+
+  <!-- Panel B: signal quality -->
+  <g font-family="system-ui, sans-serif">
+    <rect x="664" y="122" width="500" height="596" rx="18" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <text x="688" y="162" font-size="23" font-weight="700" fill="#92400e">同一次失败，两种信号</text>
+
+    <!-- vague -->
+    <rect x="688" y="184" width="452" height="196" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+    <text x="708" y="216" font-size="19" font-weight="700" fill="#334155">模糊信号</text>
+    <rect x="708" y="232" width="412" height="46" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="724" y="261" font-size="16" font-family="ui-monospace, monospace" fill="#334155">FAIL: 构建未通过（无更多信息）</text>
+    <text x="708" y="304" font-size="14" fill="#64748b">没有文件、没有行号、不知期望与实际</text>
+    <text x="925" y="332" text-anchor="middle" font-size="20" fill="#94a3b8">▼</text>
+    <rect x="708" y="342" width="412" height="30" rx="8" fill="#e2e8f0"/>
+    <text x="724" y="363" font-size="15" fill="#475569">下一步只能瞎猜或整段重写（大改）</text>
+
+    <!-- actionable -->
+    <rect x="688" y="398" width="452" height="238" rx="12" fill="#ffedd5" stroke="#f97316" stroke-width="2"/>
+    <text x="708" y="430" font-size="19" font-weight="700" fill="#9a3412">可操作信号</text>
+    <rect x="708" y="446" width="412" height="94" rx="8" fill="#ffffff" stroke="#fdba74" stroke-width="1.5"/>
+    <text x="724" y="472" font-size="14" font-family="ui-monospace, monospace" fill="#0f172a">test at repo/test/slugify.test.mjs:5</text>
+    <text x="724" y="498" font-size="14" font-family="ui-monospace, monospace" fill="#dc2626">- expected 'hello-world'</text>
+    <text x="724" y="522" font-size="14" font-family="ui-monospace, monospace" fill="#16a34a">+ actual   'Hello-World'</text>
+    <text x="708" y="566" font-size="14" fill="#64748b">文件 + 行号 + 期望 + 实际，只挂大小写一条</text>
+    <text x="925" y="592" text-anchor="middle" font-size="20" fill="#f97316">▼</text>
+    <rect x="708" y="602" width="412" height="30" rx="8" fill="#fed7aa"/>
+    <text x="724" y="623" font-size="15" fill="#9a3412">本文选择：trim 后加 toLowerCase（一行候选修复）</text>
+  </g>
+
+  <text x="600" y="744" text-anchor="middle" font-size="14" fill="#9a3412">数据来自 showcase/feedback-signal/ 的真实运行；两条通道跑同一份测试，差别只在信号颗粒度，不构成模型排名</text>
+</svg>

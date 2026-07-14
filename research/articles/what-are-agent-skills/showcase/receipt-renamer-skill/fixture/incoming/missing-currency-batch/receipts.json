@@ -1,0 +1,11 @@
+{
+  "batch_id": "missing-currency-batch",
+  "receipts": [
+    {
+      "source_file": "vendor-lunch.pdf",
+      "receipt_date": "2026-05-16",
+      "merchant": "Vendor Lunch",
+      "total_amount": 36.1
+    }
+  ]
+}

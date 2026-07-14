@@ -1,0 +1,18 @@
+{
+  "scenario_id": "negative-missing-acceptance",
+  "goal": "Fix the timezone rollup bug and make it look right.",
+  "direction_status": "frozen",
+  "expected_fix": "Update the daily bucket logic if you think it helps.",
+  "allowed_paths": [
+    "src/rollupByReporterDay.js"
+  ],
+  "acceptance_command": "",
+  "requires_clean_checkout": true,
+  "requires_agent_internet": false,
+  "requires_secret_names": [],
+  "host_dependencies": {
+    "local_files": [],
+    "browser_login": false,
+    "local_apps": []
+  }
+}

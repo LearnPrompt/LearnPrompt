@@ -1,0 +1,12 @@
+Read only. Review the staged diff in this Git repository.
+
+Requirements:
+- Inspect the staged diff and the nearest AGENTS.md review guidance.
+- Return only findings caused directly by changed lines on the right-hand side of the diff.
+- Ignore style and nits. Focus on behavior regressions, missing boundary checks, and user-visible correctness bugs.
+- If multiple valid findings exist, return only the single highest-signal finding.
+- Anchor the finding to the changed file and the exact changed line on the right-hand side of the diff.
+- Be explicit about impact. If time math is involved, name future timestamps or negative elapsed values directly when relevant.
+- Give one concrete reproduction scenario with example timestamps.
+
+Do not edit files. Do not propose a patch. Output must satisfy the provided JSON schema.

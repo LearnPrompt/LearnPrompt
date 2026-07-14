@@ -1,0 +1,4 @@
+PASS privacy scan
+root: research/articles/codex-claude-code-dual-track
+files_scanned: 43
+checks: identifier-like values, uuid, absolute temp or home paths, absolute shell paths

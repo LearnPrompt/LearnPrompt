@@ -1,0 +1,16 @@
+{
+  "attempted_at": "2026-07-12",
+  "attempt": "outer-controller retry after writer-side state-db block",
+  "model": "gpt-5.5",
+  "status": "invalid",
+  "command": "codex exec - -m gpt-5.5 -s workspace-write --json --ephemeral --ignore-user-config --ignore-rules -C <temporary-candidate-worktree> -o <temporary-outside-worktree>",
+  "exec_exit_code": 0,
+  "validation": {
+    "code": 85,
+    "reason": "receipt missing link check or exact baseline tree hash"
+  },
+  "baseline_main_unchanged": true,
+  "temporary_repo_only": true,
+  "stderr_excerpt": " at most 128 characters path=<user-path>\n2026-07-12T10:18:29.165882Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=<user-path>\n2026-07-12T10:18:41.079311Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=<user-path>\n2026-07-12T10:18:54.715612Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=<user-path>\n2026-07-12T10:19:00.468912Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=<user-path>\n",
+  "stdout_excerpt": "\\n M notes/research/git-boundaries.md\\n?? receipts/candidate-receipt.md\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_28\",\"type\":\"agent_message\",\"text\":\"已完成。\\n\\n变更文件：\\n- [alpha-plan.md](/private<tmp-path> [git-boundaries.md](/private<tmp-path> [candidate-receipt.md](/private<tmp-path> `git status --short --untracked-files=all` 只显示这三个允许路径。\\n- `git diff --check` 通过。\\n- 链接扫描确认未新增外部链接，现有 Wiki links 保持不变。\\n\\nLessons learned: 候选收据中的 commit hash 记录为当前 candidate HEAD，因为本任务未要求创建新提交。\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":150419,\"cached_input_tokens\":134272,\"output_tokens\":3609,\"reasoning_output_tokens\":646}}\n"
+}

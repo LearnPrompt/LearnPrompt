@@ -1,0 +1,12 @@
+{
+  "findings": [
+    {
+      "severity": "P1",
+      "file": "src/refundPolicy.js",
+      "line": 15,
+      "title": "Future deliveries are now refund-eligible",
+      "summary": "Removing the `elapsedMs >= 0` guard makes any `deliveredAt` timestamp in the future pass the refund window check, because negative elapsed values are always `<= REFUND_WINDOW_MS`. This approves refunds for orders that have not been delivered yet, an invalid customer/order state.",
+      "reproduction": "Call `isRefundEligible({ deliveredAt: \"2026-08-01T00:00:00.000Z\", now: \"2026-07-11T00:00:00.000Z\" })`. The elapsed value is `-1814400000` ms, so the changed line returns `true` even though the delivery timestamp is 21 days in the future."
+    }
+  ]
+}

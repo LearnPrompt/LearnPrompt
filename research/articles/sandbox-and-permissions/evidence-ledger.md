@@ -1,0 +1,23 @@
+# Evidence ledger
+
+| Claim | Evidence | Evidence type | Verification date | Confidence | Limitation |
+| --- | --- | --- | --- | --- | --- |
+| Permission profiles 在 2026-07-11 仍是 Beta 功能 | [Permissions](https://learn.chatgpt.com/docs/permissions) 顶部说明 `Beta. Permission profiles are under active development and may change.` | 官方文档 | 2026-07-11 | 高 | 文档会更新，未来版本可能移除 Beta 标记 |
+| 对普通本地、非 managed 配置，permission profiles 不能与旧 `sandbox_mode` / `sandbox_workspace_write` 混用；若任一已加载 config、选中 profile 或 CLI `--sandbox` 仍设置旧模式，则旧设置优先 | [Permissions](https://learn.chatgpt.com/docs/permissions) 顶部说明“If `sandbox_mode` appears in any loaded config file, you pass `--sandbox`, or the selected config profile sets `sandbox_mode`, Codex uses those older sandbox settings instead of `default_permissions`.” | 官方文档 | 2026-07-11 | 高 | 这里只讨论普通本地实验室，不展开 managed rollout |
+| Managed `allowed_permission_profiles` 是官方例外：它会让 Codex 使用 permission profiles | [Permissions](https://learn.chatgpt.com/docs/permissions) 顶部说明与 [Managed configuration](https://learn.chatgpt.com/docs/enterprise/managed-configuration) 的 Control available permission profiles 段落 | 官方文档 | 2026-07-11 | 高 | 本文只点出例外，不演示企业要求层 |
+| 内置 permission profiles 有 `:read-only`、`:workspace`、`:danger-full-access` | [Permissions](https://learn.chatgpt.com/docs/permissions) built-ins 段落 | 官方文档 | 2026-07-11 | 高 | 命名可能在未来版本变更 |
+| `:workspace` 允许写 active workspace roots 和 system temp directories | [Permissions](https://learn.chatgpt.com/docs/permissions) built-ins 段落 | 官方文档 | 2026-07-11 | 高 | 只描述 profile 语义，不涵盖平台实现差异 |
+| `danger-full-access` 移除本地 sandbox restrictions | [Sandbox](https://learn.chatgpt.com/docs/sandboxing) 与 [Permissions](https://learn.chatgpt.com/docs/permissions) 对 `danger-full-access` 的说明 | 官方文档 | 2026-07-11 | 高 | 不替代组织级或业务级安全措施 |
+| 交互 CLI 0.142.2 本机帮助仍公开 `--sandbox` 与 `--ask-for-approval` | `codex --help`，showcase `environment.txt` 摘录 | 本机帮助 | 2026-07-11 | 高 | 仅证明这台机器上的 0.142.2 CLI 表面 |
+| `codex sandbox` 0.142.2 本机帮助支持 `--permissions-profile` | `codex sandbox --help`，showcase `environment.txt` 摘录 | 本机帮助 | 2026-07-11 | 高 | 仅证明这台机器上的 0.142.2 CLI 表面 |
+| `approval_policy` 可设为 `untrusted` / `on-request` / `never`，职责是控制何时暂停审批 | [Configuration Reference](https://learn.chatgpt.com/docs/config-file/config-reference) 中 `approval_policy` 描述；`codex --help` 列出的 possible values | 官方文档 + 本机帮助 | 2026-07-11 | 高 | 文章不演示 UI/auto-review 分支 |
+| `**/*.env = "deny"` 可在 `:workspace_roots` 下阻止读取 | [Configuration Reference](https://learn.chatgpt.com/docs/config-file/config-reference) 的 filesystem/deny 说明；[Permissions](https://learn.chatgpt.com/docs/permissions) 自定义 profile 示例 | 官方文档 | 2026-07-11 | 高 | 具体 glob 深度在不同平台可能需显式设置 |
+| `run-probes.sh` 会把一次性 lab 固定在用户家目录、把 raw capture 固定在 `os.tmpdir()`，并拒绝把 lab 落在 `/tmp`、`$TMPDIR` 或当前仓库内 | showcase `run-probes.sh` 的路径校验逻辑与本次实际运行 | 代码审阅 + 实际运行 | 2026-07-11 | 高 | 只覆盖脚本当前实现，不替代外层系统策略 |
+| 自定义 `docs-edit` profile TOML 被本机 0.142.2 接受 | showcase `verifier-output.txt` 中 `config_rc=0`；原始 `codex --strict-config help` 日志已在工作树外冻结 | 本机配置验证 | 2026-07-11 | 高 | 只证明语法被接受，不代表策略一定最优 |
+| committed `checksum-manifest.md` 用逻辑路径列出 `initial/probe1/probe2/probe3` 的 `docs/link.md`、`sentinel.txt`、`.env` SHA-256，可独立证明 read-only 未改 link、workspace/docs-edit 的 link 递进、sentinel/env 未改 | showcase `checksum-manifest.md` 与 `verifier-output.txt` | 实际运行 | 2026-07-11 | 高 | 只证明这组 fixture 与这次 profile 配置 |
+| `run-probes.sh` 在同一次调用里连续生成两轮 frozen outputs，四个 committed 文本产物的 SHA-256 全部一致，`replay-stability.txt` 记录 `stable=yes` | showcase `replay-stability.txt` 与第二轮 `verifier-output.txt` | 实际运行 | 2026-07-11 | 高 | 只证明当前脚本、当前日期和当前 CLI 版本下的确定性 |
+| Probe 1：`:read-only` 写 `docs/link.md` 失败，退出码 1，`docs/link.md` 在 `initial == probe1` | showcase `probe-results.md`、`checksum-manifest.md` 与 `verifier-output.txt` | 实际运行 | 2026-07-11 | 高 | 只验证 macOS 本机 Seatbelt 环境 |
+| Probe 2：`:workspace` 写 `docs/link.md` 成功，但写工作区外 `sentinel.txt` 失败，退出码 1；`probe2 != probe1` 且 `sentinel == initial` | showcase `probe-results.md`、`checksum-manifest.md` 与 `verifier-output.txt` | 实际运行 | 2026-07-11 | 高 | 依赖 sentinel 不在 temp 目录内 |
+| Probe 3：`docs-edit` 可写 `docs/link.md`，但读取 `.env` 失败，退出码 1；`probe3 != probe2` 且 `.env == initial` | showcase `probe-results.md`、`checksum-manifest.md` 与 `verifier-output.txt` | 实际运行 | 2026-07-11 | 高 | 只验证 deny-read 路径，不验证更复杂 glob |
+| `.env` 里的运行时确定性测试标记没有进入日志或冻结产物，且最终 verifier 会校验 committed `checksum-manifest.md` 与实时生成版本一致 | showcase `verifier-output.txt` 中 `fixture_marker_in_logs=no` 与 `checksum_manifest_matches_expected=yes` | 实际运行 | 2026-07-11 | 高 | 依赖本次运行时测试标记检索；不等价于对所有未来日志格式做形式证明 |
+| Orange Book 只能作为二手主题地图，不能当当前事实层权威 | 本次旧稿来源与 2026-07 官方文档对照结果 | 编辑综合判断 | 2026-07-11 | 中 | 这是教学判断，不是产品官方表述 |

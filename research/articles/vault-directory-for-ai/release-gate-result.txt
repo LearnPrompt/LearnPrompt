@@ -1,0 +1,91 @@
+vault-directory-for-ai final release gate
+=========================================
+运行日期：2026-07-12
+运行环境：隔离 worktree；Node v24.11.0；writer 初次 run 与外层控制器补充 live run 分层记录。
+说明：以下是当前冻结合同的真实命令、关键输出和退出码；独立只读终审 PASS 后标记 verified。
+
+----------------------------------------------------------------
+1. Deterministic showcase verification
+命令：
+  node research/articles/vault-directory-for-ai/showcase/vault-placement-contract/scripts/verify-showcase.mjs
+关键输出：
+  valid_exit_code: 0
+  orphan_exit_code: 51
+  folder_role_mismatch_exit_code: 52
+  unknown_root_exit_code: 53
+  sensitive_placed_exit_code: 54
+  duplicate_destination_exit_code: 55
+  unicode_paths_present: true
+  manifest_unchanged: true
+  fixture_inventory_unchanged: true
+退出码：0
+
+2. Privacy scan
+命令：
+  node research/articles/vault-directory-for-ai/showcase/vault-placement-contract/scripts/privacy-scan.mjs
+关键输出：
+  PASS privacy scan: no credential, runtime id, or local absolute path leakage found.
+退出码：0
+
+3. Frozen contract live attempt
+命令：
+  CODEX_NESTED_MODEL=gpt-5.5 node research/articles/vault-directory-for-ai/showcase/vault-placement-contract/scripts/run-codex-live.mjs
+关键输出：
+  status: completed
+  nested exec_exit_code: 0
+  reports_written: json=true, markdown=true
+  validation_exit_code: 0
+  fixture_manifest_changed: false
+  fixture_inventory_changed: false
+  changed_paths: reports/placement-plan.json, reports/placement-plan.md
+  plan: 12/12 accounted, 11 placed, 1 rejected
+退出码：
+  wrapper script 0
+  nested codex exec 0
+说明：writer-side 首次尝试曾被只读 state DB 阻断；外层控制器没有覆盖历史，而是对同一 prompt/schema/fixture 成功补跑。
+
+4. Writer-stage validator
+命令：
+  node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs \
+    --article starlight/src/content/docs/obsidian-ai/vault-directory-for-ai.mdx \
+    --research research/articles/vault-directory-for-ai
+关键输出：
+  PASS article: starlight/src/content/docs/obsidian-ai/vault-directory-for-ai.mdx
+  PASS research: research/articles/vault-directory-for-ai
+  PASS status: partial
+退出码：0
+
+5. SVG render check
+命令：
+  node -e 'import sharp from "sharp"; await sharp("../starlight/public/images/articles/vault-directory-for-ai/vault-placement-contract.svg").png().toFile("<tmp-png>")'
+  sips -g pixelWidth -g pixelHeight <tmp-png>
+  visual inspection on rendered PNG
+关键输出：
+  pixelWidth: 1400
+  pixelHeight: 900
+结果：
+  PASS rendered successfully; no overflow or cropped key labels observed
+
+6. Starlight build
+命令：
+  npm --prefix starlight run build
+关键输出：
+  Found 49 HTML files.
+  49 page(s) built in 3.15s
+  Complete!
+退出码：0
+
+7. git diff --check
+命令：
+  git diff --check
+关键输出：
+  (no output)
+退出码：0
+
+----------------------------------------------------------------
+8. Independent read-only review
+结果：PASS 96/100；blocker=0、major=0、minor=0；Visual assessment: PASS。
+隔离：raw final report 保存在仓库外；writer 未参与评分或修改评审结果。
+
+当前状态：verified
+frontmatter：showcase_status=verified；quality_score=96

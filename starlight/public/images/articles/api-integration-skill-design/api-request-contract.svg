@@ -1,0 +1,98 @@
+<svg width="1400" height="900" viewBox="0 0 1400 900" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">API request contract for a read-only release feed skill</title>
+  <desc id="desc">A six-step request contract from environment credentials to report generation, with explicit failure branches for codes 41, 42, 43, and 44.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1400" y2="900" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFF7ED"/>
+      <stop offset="1" stop-color="#F8FAFC"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#0F172A" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0 0L12 6L0 12" fill="#334155"/>
+    </marker>
+    <marker id="failArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0 0L12 6L0 12" fill="#B91C1C"/>
+    </marker>
+  </defs>
+
+  <rect width="1400" height="900" rx="32" fill="url(#bg)"/>
+  <text x="80" y="90" fill="#0F172A" font-family="Helvetica, Arial, sans-serif" font-size="38" font-weight="700">Read-only API Skill: request contract before model judgment</text>
+  <text x="80" y="128" fill="#475569" font-family="Helvetica, Arial, sans-serif" font-size="21">The skill freezes credential source, request shape, pagination, retries, schema, and evidence before it ever writes a release report.</text>
+
+  <rect x="74" y="184" width="230" height="138" rx="24" fill="#FFF1E6" stroke="#F97316" stroke-width="3" filter="url(#shadow)"/>
+  <text x="98" y="226" fill="#9A3412" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">1. Env credential</text>
+  <text x="98" y="259" fill="#7C2D12" font-family="Helvetica, Arial, sans-serif" font-size="17">Base URL: env only</text>
+  <text x="98" y="286" fill="#7C2D12" font-family="Helvetica, Arial, sans-serif" font-size="17">Credential: env only</text>
+  <text x="98" y="313" fill="#7C2D12" font-family="Helvetica, Arial, sans-serif" font-size="17">No repo, no CLI echo</text>
+
+  <rect x="348" y="170" width="292" height="164" rx="24" fill="#FFF7CC" stroke="#EAB308" stroke-width="3" filter="url(#shadow)"/>
+  <text x="374" y="213" fill="#854D0E" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">2. Request envelope</text>
+  <text x="374" y="248" fill="#713F12" font-family="Helvetica, Arial, sans-serif" font-size="16">Freeze method, path, page param, outputs</text>
+  <text x="374" y="275" fill="#713F12" font-family="Helvetica, Arial, sans-serif" font-size="16">Reject mutating methods before network</text>
+  <text x="374" y="302" fill="#713F12" font-family="Helvetica, Arial, sans-serif" font-size="16">Keep transport secrets out of evidence</text>
+
+  <rect x="678" y="170" width="292" height="164" rx="24" fill="#ECFCCB" stroke="#65A30D" stroke-width="3" filter="url(#shadow)"/>
+  <text x="704" y="213" fill="#3F6212" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">3. GET + serial pagination</text>
+  <text x="704" y="248" fill="#365314" font-family="Helvetica, Arial, sans-serif" font-size="17">Use GET for retrieval only</text>
+  <text x="704" y="276" fill="#365314" font-family="Helvetica, Arial, sans-serif" font-size="17">page=1 → page=2 → page=3</text>
+  <text x="704" y="304" fill="#365314" font-family="Helvetica, Arial, sans-serif" font-size="17">No concurrent fan-out</text>
+
+  <rect x="1008" y="170" width="312" height="164" rx="24" fill="#E0F2FE" stroke="#0EA5E9" stroke-width="3" filter="url(#shadow)"/>
+  <text x="1034" y="213" fill="#075985" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">4. Retry policy</text>
+  <text x="1034" y="248" fill="#0C4A6E" font-family="Helvetica, Arial, sans-serif" font-size="17">429 → obey Retry-After</text>
+  <text x="1034" y="276" fill="#0C4A6E" font-family="Helvetica, Arial, sans-serif" font-size="17">5xx → bounded retries only</text>
+  <text x="1034" y="304" fill="#0C4A6E" font-family="Helvetica, Arial, sans-serif" font-size="17">Exhaust budget → fail, do not guess</text>
+
+  <rect x="546" y="440" width="314" height="164" rx="24" fill="#F3E8FF" stroke="#A855F7" stroke-width="3" filter="url(#shadow)"/>
+  <text x="572" y="483" fill="#6B21A8" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">5. Schema validation</text>
+  <text x="572" y="518" fill="#581C87" font-family="Helvetica, Arial, sans-serif" font-size="17">Every release needs all required fields</text>
+  <text x="572" y="546" fill="#581C87" font-family="Helvetica, Arial, sans-serif" font-size="17">Empty payload is not “no new version”</text>
+  <text x="572" y="574" fill="#581C87" font-family="Helvetica, Arial, sans-serif" font-size="17">Contract drift must stop the report</text>
+
+  <rect x="546" y="666" width="314" height="136" rx="24" fill="#DCFCE7" stroke="#16A34A" stroke-width="3" filter="url(#shadow)"/>
+  <text x="572" y="709" fill="#166534" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">6. Report + evidence</text>
+  <text x="572" y="740" fill="#14532D" font-family="Helvetica, Arial, sans-serif" font-size="16">Write reports/releases.json</text>
+  <text x="572" y="766" fill="#14532D" font-family="Helvetica, Arial, sans-serif" font-size="16">and reports/releases.md</text>
+  <text x="572" y="792" fill="#14532D" font-family="Helvetica, Arial, sans-serif" font-size="16">Keep only redacted request order, status, retries</text>
+
+  <line x1="304" y1="253" x2="338" y2="253" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="338,246 352,253 338,260" fill="#334155"/>
+  <line x1="640" y1="253" x2="668" y2="253" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="668,246 682,253 668,260" fill="#334155"/>
+  <line x1="970" y1="253" x2="998" y2="253" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="998,246 1012,253 998,260" fill="#334155"/>
+  <polyline points="1164,334 1164,382 703,382 703,428" fill="none" stroke="#334155" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="696,428 703,442 710,428" fill="#334155"/>
+  <line x1="703" y1="604" x2="703" y2="654" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="696,654 703,668 710,654" fill="#334155"/>
+
+  <rect x="88" y="398" width="168" height="90" rx="18" fill="#FEF2F2" stroke="#DC2626" stroke-width="3"/>
+  <text x="112" y="433" fill="#991B1B" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">41</text>
+  <text x="152" y="433" fill="#991B1B" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">Missing credential</text>
+  <text x="112" y="463" fill="#7F1D1D" font-family="Helvetica, Arial, sans-serif" font-size="16">Stop before request</text>
+  <line x1="188" y1="322" x2="188" y2="386" stroke="#B91C1C" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="181,386 188,400 195,386" fill="#B91C1C"/>
+
+  <rect x="344" y="398" width="168" height="90" rx="18" fill="#FEF2F2" stroke="#DC2626" stroke-width="3"/>
+  <text x="368" y="433" fill="#991B1B" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">44</text>
+  <text x="408" y="433" fill="#991B1B" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">Mutating method</text>
+  <text x="368" y="463" fill="#7F1D1D" font-family="Helvetica, Arial, sans-serif" font-size="16">Reject before network</text>
+  <line x1="494" y1="334" x2="494" y2="386" stroke="#B91C1C" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="487,386 494,400 501,386" fill="#B91C1C"/>
+
+  <rect x="978" y="440" width="180" height="90" rx="18" fill="#FEF2F2" stroke="#DC2626" stroke-width="3"/>
+  <text x="1002" y="475" fill="#991B1B" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">43</text>
+  <text x="1042" y="475" fill="#991B1B" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">5xx exhausted</text>
+  <text x="1002" y="505" fill="#7F1D1D" font-family="Helvetica, Arial, sans-serif" font-size="16">Bounded retries only</text>
+  <line x1="1164" y1="334" x2="1164" y2="428" stroke="#B91C1C" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="1157,428 1164,442 1171,428" fill="#B91C1C"/>
+
+  <rect x="936" y="666" width="204" height="90" rx="18" fill="#FEF2F2" stroke="#DC2626" stroke-width="3"/>
+  <text x="960" y="701" fill="#991B1B" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">42</text>
+  <text x="1000" y="701" fill="#991B1B" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">Schema / empty drift</text>
+  <text x="960" y="731" fill="#7F1D1D" font-family="Helvetica, Arial, sans-serif" font-size="16">Do not write “no update”</text>
+  <line x1="860" y1="522" x2="924" y2="522" stroke="#B91C1C" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="924,515 938,522 924,529" fill="#B91C1C"/>
+</svg>

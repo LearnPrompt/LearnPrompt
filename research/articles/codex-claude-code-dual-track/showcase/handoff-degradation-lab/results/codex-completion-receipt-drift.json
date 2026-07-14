@@ -1,0 +1,15 @@
+{
+  "lane": "codex_implementation",
+  "status": "success",
+  "baseline_sha": "d3f5e409b65fca9e4d7ceaebe9e340756b5065f1",
+  "contract_sha": "drifted-contract-sha",
+  "changed_files": [
+    "src/archiveIncident.js"
+  ],
+  "test": {
+    "command": "npm test",
+    "exit_code": 0,
+    "summary": "2 tests passed; 0 failed."
+  },
+  "summary": "Negative fixture: receipt points to a different contract."
+}

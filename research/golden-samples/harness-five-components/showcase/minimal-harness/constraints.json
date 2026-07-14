@@ -1,0 +1,6 @@
+{
+  "allowed_paths": ["README.md", "memory.md"],
+  "denied_paths": [".env", "**/*.key", "**/credentials.*"],
+  "denied_actions": ["delete", "push", "publish"],
+  "require_verification": true
+}

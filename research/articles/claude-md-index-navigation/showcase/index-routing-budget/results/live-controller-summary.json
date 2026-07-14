@@ -1,0 +1,18 @@
+{
+  "attempted_at": "2026-07-12",
+  "model": "gpt-5.5",
+  "command": "codex exec - -m gpt-5.5 -s workspace-write --json --ephemeral --ignore-user-config --ignore-rules -C <showcase> -o <outside-worktree>",
+  "status": "completed",
+  "exec_exit_code": 0,
+  "fixture_unchanged": true,
+  "reports_written": {
+    "routes.json": true,
+    "routes.md": true,
+    "read-trace.log": true
+  },
+  "validation_exit_code": 0,
+  "forbidden_direct_read": null,
+  "normalized_command_count": 10,
+  "raw_capture": "stored outside the worktree; only sanitized summary and final artifacts are committed",
+  "stderr_excerpt": ""
+}

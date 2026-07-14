@@ -1,0 +1,317 @@
+---
+title: 一个 Loop 的五个动作：发现、交接、验证、持久化、调度
+description: 从一次性 Agent 任务走向可持续循环，并运行一个会保存状态、验证结果和决定下一步的最小 Loop。
+sidebar:
+  order: 1
+difficulty: intermediate
+source_repo: alchaincyf/loop-engineering-orange-book
+source_url: https://github.com/alchaincyf/loop-engineering-orange-book
+updated_from: 2026-07
+author: LearnPrompt 编辑部
+verified_at: "2026-07-10"
+reading_time: 14 分钟
+research_path: research/golden-samples/loop-five-moves
+showcase_path: research/golden-samples/loop-five-moves/showcase
+showcase_status: verified
+quality_score: 89
+legacy_status: current
+---
+
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 14 分钟 | 2026-07-10 | LearnPrompt 编辑部 |
+
+每天早上九点，你让 Agent 搜集新闻、写摘要、生成选题。第二天，它又从头开始：重复昨天的链接，不知道哪条已经处理，也不会因为事实核对失败而暂停。你虽然设置了定时任务，却没有得到一个真正的 Loop。
+
+**定时重跑提示词，不等于 Loop Engineering。**
+
+Loop 的关键不是“永远运行”，而是让系统在多次执行之间仍然知道：工作从哪里来、交给谁、怎样判定成功、哪些状态要留下，以及接下来继续、重试还是停机。
+
+> Harness 让一次执行可靠；Loop 让下一次执行能够从上一次的证据继续。
+
+## 读完你能做什么
+
+你会掌握一个可以直接画在白板上的五动作框架：
+
+```text
+发现 Discover
+  ↓
+交接 Handoff
+  ↓
+验证 Verify
+  ↓
+持久化 Persist
+  ↓
+调度 Schedule ──→ 下一次发现
+```
+
+你还会运行一个完全不调用模型的最小 Loop。它故意使用确定性 mock worker，让我们先验证循环结构本身，再讨论接入 Claude Code、Codex 或其他 Agent。
+
+![Loop Engineering 五动作让一次执行的证据进入下一次发现](/images/articles/five-moves/loop-five-moves.svg)
+*图注：发现、交接、验证、持久化与调度构成跨执行闭环；其中验证结果必须先被持久化，下一轮发现才不会从零开始。*
+
+:::note[Loop Engineering 仍是新兴术语]
+本文的五动作框架来自 Addy Osmani 的 Loop Engineering 论述、长任务 Harness 研究和橙皮书主题地图的综合。它是一套实用的教学模型，不是正式行业标准。
+:::
+
+## Loop 和 Harness 到底差在哪一层
+
+假设你让 coding agent 修一个 bug。
+
+Harness 关心这一次执行：
+
+- Agent 读哪些项目规则；
+- 能用哪些工具、权限和沙箱；
+- 如何运行测试；
+- 失败后怎样把反馈交还给 worker；
+- 谁判断 diff 可以接受。
+
+Loop 关心跨执行的控制：
+
+- bug 从哪个队列被发现；
+- 如何避免第二次重复领取；
+- 一轮结束后保存哪些 artifact；
+- 验证失败是立即重试、延迟重试还是升级给人；
+- 队列空了以后何时再检查。
+
+没有 Harness 的 Loop，会稳定地批量产生不可验证结果；没有 Loop 的 Harness，则每一轮仍要靠人发现任务、搬运状态和重新启动。
+
+## 1. 发现：决定什么值得进入循环
+
+发现层不是“把所有输入都扔给 Agent”。它要把外部世界压缩成有边界的候选队列，并处理：
+
+- 来源：文件夹、issue、RSS、数据库、消息或监控告警；
+- 时间窗：只看上次 watermark 之后的变化；
+- 去重：用消息 ID、URL、内容哈希或业务主键；
+- 排序：风险、紧急度、价值与成本；
+- 过滤：过期项、已完成项和不满足前置条件的项。
+
+最小示例把世界简化成 `tasks/*.json`，从文件名排序后的任务中找到第一个未完成项：
+
+```js
+const task = tasks.find(
+  (candidate) => !state.completed.includes(candidate.id),
+);
+```
+
+看起来很普通，但它已经回答两个关键问题：任务来自哪里，以及如何避免重复处理。
+
+### 失败模式：时间窗太窄
+
+如果日报只查询最近十分钟，而上一次执行失败了半小时，下一次可能永远看不到漏掉的内容。生产 Loop 常用更宽的回看窗口，再在本地根据 ID 去重；同时保存“上次成功处理到哪里”的水位线（watermark）。发现层要优先保证“不漏”，再处理“不重”。
+
+## 2. 交接：传结构化任务，不传模糊对话
+
+发现结果不能只存在某个 Agent 的上下文里。下游 worker 至少需要：
+
+```json
+{
+  "id": "uppercase-title",
+  "input": "learn prompt",
+  "acceptance": {
+    "expected_text": "LEARN PROMPT"
+  }
+}
+```
+
+示例把它写入每次运行目录里的 `handoff.json`。这样即使进程退出、模型更换或 reviewer 独立接手，目标和验收条件仍然可以读取。
+
+真实交接通常还要包含：允许访问的资源、禁止动作、预算、截止时间、上游证据和失败时的升级对象。原则是：**handoff 必须脱离原始聊天也能被正确执行。**
+
+## 3. 验证：闭环里最难，也最不能省的一步
+
+生成了一份输出，不代表任务完成。Loop 必须把 outcome 与 acceptance 分开：
+
+```js
+const verified = outcome.text === task.acceptance.expected_text;
+```
+
+这只是最小的确定性检查。不同任务可以使用不同 grader：
+
+| 任务 | 可机械验证 | 需要额外判断 |
+| --- | --- | --- |
+| 代码修改 | 单测、类型、lint、构建 | 架构质量、用户体验 |
+| 数据整理 | schema、行数、唯一键、范围 | 业务异常是否合理 |
+| 研究文章 | 链接、引用覆盖、日期、结构 | 论证深度、中文质量 |
+| 消息发布 | 格式、目标、去重、预览 | 是否应该真的发送 |
+
+验证尽量由独立 evaluator 完成。它可以是确定性脚本、另一模型或人类，但不应该只问 worker：“你觉得自己完成了吗？”
+
+### 无法验证时怎么办
+
+先不要自动循环。把任务降级为辅助流程：Agent 生成候选，人类审批后才持久化为完成。等你积累了足够的失败案例，再把其中稳定部分机械化。
+
+## 4. 持久化：保存能继续工作的状态
+
+一次执行结束后，Loop 至少留下两层状态。
+
+### 快速状态
+
+`state.json` 供下一次快速决策：
+
+```json
+{
+  "completed": ["uppercase-title"],
+  "runs": 1,
+  "last_task": "uppercase-title",
+  "last_result": "passed"
+}
+```
+
+### 运行工件（artifact）
+
+`runs/uppercase-title/` 保存可追溯证据：
+
+```text
+handoff.json
+outcome.txt
+verification.json
+```
+
+不要把所有东西塞进一个不断增长的日志。状态负责“下一步怎么走”，artifact 负责“当时究竟发生了什么”。当结论有争议时，应该能回到原始输入、输出和 grader 结果。
+
+## 5. 调度：根据结果决定继续、重试或停机
+
+Cron 只能回答“几点唤醒”。Loop 调度还要读取结果：
+
+```text
+验证通过 + 仍有任务 → continue
+验证通过 + 队列为空 → idle
+验证失败             → retry 或升级给人
+超过预算/连续失败      → stop
+```
+
+生产系统还应加入：
+
+- 指数退避与最大重试次数；
+- 单次和每日成本预算；
+- 并发限制与任务锁；
+- 人工审批和可撤销边界；
+- “没有新工作”时的低频检查。
+
+一个成熟 Loop 的重要能力不是不断工作，而是**知道什么时候不工作**。
+
+## Showcase：跑一次完整五动作循环
+
+示例代码在[研究与 Showcase](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/golden-samples/loop-five-moves/showcase)中。它使用 Node.js 内置模块，不需要安装依赖，但运行环境必须允许写入系统临时目录。
+
+从仓库根目录运行：
+
+```bash
+node research/golden-samples/loop-five-moves/showcase/demo-run.mjs
+```
+
+2026-07-10 的实际输出：
+
+```text
+1 DISCOVER uppercase-title
+2 HANDOFF uppercase-title
+3 VERIFY pass
+4 PERSIST uppercase-title:passed
+5 SCHEDULE idle
+Artifacts: /tmp/learnprompt-loop-...
+```
+
+程序在系统临时目录创建任务和运行 artifact，不会污染仓库。再运行测试：
+
+```bash
+node --test \
+  research/golden-samples/loop-five-moves/showcase/test/loop-demo.test.mjs
+```
+
+测试不仅断言第一次运行成功，还会第二次调用同一个 Loop。因为任务 ID 已经持久化，第二次输出 `DISCOVER idle`，不会重复处理。
+
+```text
+tests 1
+pass 1
+fail 0
+```
+
+### 为什么不用真实模型
+
+这个 Showcase 要证明的是控制面：五个动作是否发生、artifact 是否写入、状态能否阻止重复处理。真实模型会增加网络、账号、模型版本和随机性，让结构问题更难定位。
+
+接入 Agent 时，只需替换 `mock-worker.mjs`，但必须保持同样的输入输出合同：worker 接收结构化 task 与 run 目录，返回 outcome；Loop 负责验证和状态，而不是让 worker 自己修改完成记录。
+
+## 从最小示例升级到真实日报
+
+把五动作映射到“AI 新闻选题日报”：
+
+### Discover
+
+从多个来源抓取较宽时间窗，按 URL、消息 ID 和标题指纹去重；只把新候选放入队列。
+
+### Handoff
+
+每条候选包含原始链接、发布日期、来源、抓取时间、需要回答的问题与禁止编造的字段。
+
+### Verify
+
+检查链接可访问、日期存在、摘要没有超出原文；高价值选题交给独立 reviewer 或人工抽样。
+
+### Persist
+
+保存已处理 ID、来源水位线、每日 artifact 和被拒绝原因。不要只保存最终日报，否则无法解释漏选和误选。
+
+### Schedule
+
+队列有内容就继续，来源暂时失败则退避，连续失败报警，日报生成后等待下一时段。发送到外部频道前保留人工发布 gate。
+
+这时，模型只是 worker 的一部分。真正让日报连续可靠的是 Loop 对时间、证据和决策的管理。
+
+## 三种应该保留人工边界的情况
+
+### 不可逆外部动作
+
+发布、转账、删除、群发消息和修改生产配置，应在最后一步等待明确批准。
+
+### 验收标准仍在变化
+
+如果团队还在争论“什么算好选题”，先用 Loop 收集候选和证据，不要自动淘汰或发布。
+
+### 错误会跨轮累积
+
+错误摘要被写入记忆，再被下一轮当事实引用，会形成污染循环。状态写入前需要更严格的验证、版本和撤销路径。
+
+## 常见反模式
+
+- **只设定时器：** 没有去重、状态与结果路由。
+- **只有重试：** 失败后原样重跑，没有新证据或退避。
+- **Worker 改完成状态：** 生成者绕过独立验证。
+- **只存成功结果：** 失败输入和 grader 证据被丢弃，无法改进。
+- **永不空闲：** 队列为空仍调用模型，浪费成本并制造伪工作。
+- **所有步骤都用模型：** 本可用 schema、哈希或测试确定判断的地方增加了随机性。
+
+## 练习：把一个重复任务画成五格
+
+选择你每周至少重复一次的工作，用下面的模板填写：
+
+```yaml
+discover:
+  source: 工作从哪里来
+  dedupe_key: 怎样避免重复
+handoff:
+  required_fields: 下游离开聊天也必须知道什么
+verify:
+  mechanical_checks: 哪些可以确定性检查
+  human_gate: 哪些必须由人判断
+persist:
+  state: 下一轮快速读取什么
+  artifacts: 争议时回看什么
+schedule:
+  continue_when: 什么情况下继续
+  retry_when: 什么情况下重试
+  stop_when: 什么情况下停机或升级
+```
+
+如果 `verify` 和 `stop_when` 仍是空白，先不要把任务接到定时器上。
+
+## 来源与延伸阅读
+
+- [Addy Osmani：Loop Engineering](https://addyosmani.com/blog/loop-engineering/)
+- [Loop Engineering 橙皮书](https://github.com/alchaincyf/loop-engineering-orange-book)
+- [OpenAI：Harness engineering](https://openai.com/index/harness-engineering/)
+- [Anthropic：Effective harnesses for long-running agents](https://www.anthropic.com/engineering/harness-design-long-running-apps)
+- [本篇研究包、代码与测试](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/golden-samples/loop-five-moves)
+
+Loop Engineering 橙皮书采用 MIT License，本文保留来源并将其作为中文主题地图；五动作框架与边界由原始工程资料和 2026-07-10 的本地可运行实验复核。

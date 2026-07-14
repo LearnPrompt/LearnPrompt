@@ -1,0 +1,25 @@
+{
+  "scenario": "no-approval",
+  "stage": "snapshot",
+  "status": "ok",
+  "source_count": 2,
+  "item_count": 6,
+  "sources": [
+    {
+      "fixture": "source-anthropic.snapshot.json",
+      "snapshot_id": "anthropic-docs-2026-07-11",
+      "source_name": "Anthropic Docs Snapshot",
+      "captured_at": "2026-07-11T09:00:00Z",
+      "sha256": "6467052b052f63935e835be311cbffd95e8e82351e681f6481aff788b534b31a",
+      "item_count": 3
+    },
+    {
+      "fixture": "source-openai.snapshot.json",
+      "snapshot_id": "openai-ai-coding-2026-07-11",
+      "source_name": "OpenAI AI Coding Snapshot",
+      "captured_at": "2026-07-11T09:05:00Z",
+      "sha256": "7486b4e5db2f6f3f9da78c4109d9264d7d492c3ed8350bed0c28086e76c789fb",
+      "item_count": 3
+    }
+  ]
+}

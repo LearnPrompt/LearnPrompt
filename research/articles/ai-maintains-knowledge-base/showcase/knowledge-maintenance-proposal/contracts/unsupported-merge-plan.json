@@ -1,0 +1,19 @@
+{
+  "fixture": "knowledge-maintenance-proposal",
+  "generated_by": "negative-unsupported-merge",
+  "source_preservation_rule": "Preserve sources.",
+  "proposals": [
+    {
+      "action": "merge-candidate",
+      "note_paths": ["notes/team-rituals.md", "notes/customer-interview.md"],
+      "evidence_paths": ["notes/team-rituals.md", "notes/customer-interview.md", "maintenance-manifest.json"],
+      "observed_fact": "Both notes mention people.",
+      "proposed_change": "Merge them.",
+      "confidence": "low",
+      "requires_human_approval": true,
+      "source_preservation_rule": "Do not edit.",
+      "reason": "This pair does not share a frozen canonical key."
+    }
+  ]
+}
+

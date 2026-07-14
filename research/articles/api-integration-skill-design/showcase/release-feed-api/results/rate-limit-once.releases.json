@@ -1,0 +1,85 @@
+{
+  "status": "success",
+  "generated_by": "release-feed-api-fixture",
+  "release_count": 3,
+  "releases": [
+    {
+      "id": "release-240",
+      "tag": "v2.4.0",
+      "title": "Release Feed API",
+      "published_at": "2026-07-01",
+      "summary_url": "/notes/v2.4.0",
+      "notes": "Adds explicit request contract guards."
+    },
+    {
+      "id": "release-231",
+      "tag": "v2.3.1",
+      "title": "Rate Limit Retry",
+      "published_at": "2026-06-22",
+      "summary_url": "/notes/v2.3.1",
+      "notes": "Documents Retry-After handling."
+    },
+    {
+      "id": "release-230",
+      "tag": "v2.3.0",
+      "title": "Schema Validation",
+      "published_at": "2026-06-12",
+      "summary_url": "/notes/v2.3.0",
+      "notes": "Rejects empty payloads as contract drift."
+    }
+  ],
+  "request_contract": {
+    "base_url_source": "env:RELEASE_FEED_BASE_URL",
+    "credential_source": "env:RELEASE_FEED_TOKEN",
+    "method": "GET",
+    "pagination": "serial",
+    "retry_policy": {
+      "respect_retry_after_on_429": true,
+      "max_5xx_retries": 2
+    },
+    "response_schema": "release-feed.v1"
+  },
+  "evidence": {
+    "requests": [
+      {
+        "sequence": 1,
+        "method": "GET",
+        "path": "/releases?page=1"
+      },
+      {
+        "sequence": 2,
+        "method": "GET",
+        "path": "/releases?page=1"
+      },
+      {
+        "sequence": 3,
+        "method": "GET",
+        "path": "/releases?page=2"
+      }
+    ],
+    "pages": [
+      {
+        "page": 1,
+        "status": 200,
+        "release_count": 2,
+        "next_page": 2
+      },
+      {
+        "page": 2,
+        "status": 200,
+        "release_count": 1,
+        "next_page": null
+      }
+    ],
+    "retries": [
+      {
+        "kind": "429",
+        "page": 1,
+        "status": 429,
+        "attempt": 1,
+        "retry_after_seconds": 0
+      }
+    ],
+    "credential_material": "redacted"
+  }
+}

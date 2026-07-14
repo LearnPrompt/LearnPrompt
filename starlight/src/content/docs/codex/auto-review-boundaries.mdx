@@ -1,39 +1,410 @@
 ---
-title: Codex Auto-review 的适用边界
-description: 让 Codex 做审查时应该看什么、不看什么。
+title: Codex auto-review 的边界：别把 GitHub PR review 和审批 reviewer 混成一个开关
+description: 用一个 refund-window-review 真实示例，拆清 GitHub `@codex review` / Automatic reviews 与 `approvals_reviewer = "auto_review"` 的职责、输入、输出和不能证明什么。
 sidebar:
   order: 3
 difficulty: intermediate
 source_repo: alchaincyf/codex-orange-book
 source_url: https://github.com/alchaincyf/codex-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-11"
+reading_time: "19 分钟"
+research_path: research/articles/auto-review-boundaries
+showcase_path: research/articles/auto-review-boundaries/showcase
+showcase_status: verified
+quality_score: 100
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 19 分钟 | 2026-07-11 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/codex-orange-book" url="https://github.com/alchaincyf/codex-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+你在 GitHub 里看到同事留言 `@codex review`，另一边在本地 Codex 或桌面端的权限菜单里又看到 “Approve for me for eligible approval requests”。这两个词都带 `review`，很多人于是自然得出一个危险结论：**只要把 auto-review 打开，Codex 就会一边自动帮我过审批，一边像 PR reviewer 一样检查代码。**
 
-## 适合审查
+这正是旧短稿最容易制造的混淆。截止 **2026 年 7 月 11 日**，官方文档里至少存在两种很容易混在一起、但职责完全不同的 current product surface：
 
-- 行为回归。
-- 缺少错误处理。
-- 测试覆盖缺口。
-- 构建、类型和边界条件。
+1. **GitHub Codex code review**：用于 pull request diff 的代码审查。触发方式是 `@codex review` 或 Automatic reviews，输出是托管在 GitHub PR 上的标准 code review，只标 P0/P1，并按 changed file 就近应用 `AGENTS.md` review guidelines。
+2. **`approvals_reviewer = "auto_review"`**：用于本地或 IDE/桌面端的审批 reviewer。它只负责 review eligible approval request，不等于 PR code review，也不会扩大 sandbox，更不会替你自动补上 GitHub review comment。
 
-## 不适合只靠审查
+这篇教程的目标不是比较哪个“更高级”，而是把边界彻底拆清。我们会先用官方一手文档把两条链路放到同一张表里，再用一个叫 `refund-window-review` 的最小 JS PR fixture，真实跑一次本机 `codex-cli 0.142.2`、模型固定 `gpt-5.5` 的 read-only structured review。最后再用 deterministic gate 证明：**本地可以复现的是 `diff + repo guidance + anchored finding` 这条审查合同，而不是 GitHub 托管 review 的整个生命周期。**
 
-- 产品方向是否正确。
-- 文案是否符合品牌。
-- 需要真实用户数据才能判断的体验。
+:::caution[先记住一句最重要的话]
+GitHub `@codex review` / Automatic reviews 解决的是“PR diff 上有没有高优先级风险”；`approvals_reviewer = "auto_review"` 解决的是“到了 approval boundary，谁来替你审 eligible approval request”。两者都叫 review，但根本不是同一层控制面。
+:::
 
-## 操作步骤
+## 读完你能做什么
 
-1. 先提供 diff 或 PR 范围。
-2. 要求按严重程度列问题。
-3. 让审查意见必须带文件和行号。
-4. 对每条意见跑验证或人工判断。
+读完后，你应该能独立完成四件事：
 
-## 常见错误
+1. 看到 `auto review` 这个词时，先问它指的是 GitHub PR review surface，还是本地 approval reviewer surface。
+2. 知道 GitHub code review 的输入、输出、触发方式和限制条件，不再把它误认成单纯的本地权限设置。
+3. 知道 `approvals_reviewer = "auto_review"` 真正控制的是什么，不再把它误认成 PR code review 或 full access 的同义词。
+4. 用一个本地、只读、可机械验证的 structured review Showcase，复现“真实 diff + repo guidance + anchored finding”的最小审查合同，同时明确披露它**不是** GitHub 托管 `@codex review`。
 
-把 review 变成摘要。真正有用的 review 应该指出具体风险，而不是复述改了什么。
+## 先给结论：这两种 auto-review 解决的是不同问题
+
+如果你只记住一张表，就记这张：
+
+| 你眼前的 surface | 它的真实输入 | 它的真实输出 | 它能决定什么 | 它明确不能代替什么 |
+| --- | --- | --- | --- | --- |
+| GitHub Codex code review | pull request diff + 仓库中的 `AGENTS.md` review guidance | GitHub PR 上的标准 code review comment | 是否在 PR diff 里标出高优先级风险；评论聚焦 P0/P1；按 changed file 应用 closest `AGENTS.md` | 不负责本地 sandbox 审批，不等于 `approvals_reviewer`，也不是本地 CLI 权限开关 |
+| `approvals_reviewer = "auto_review"` | `on-request` 或 granular approval policy 下的 eligible approval request | reviewer subagent 对“这次 approval 要不要通过”的裁决 | 谁来处理 eligible approval prompts：`user` 还是 `auto_review` | 不等于 PR code review；不自动生成 GitHub comment；不扩大 sandbox；不改变 sandbox 内本来就允许的动作 |
+
+之所以要先这么机械地拆开，是因为两条链路共享的只有一个词：`review`。但从工程接口看，它们其实分别回答两类完全不同的问题：
+
+- **PR review surface** 问的是：这个 diff 里有没有 serious issue，应该在 GitHub PR 上怎样留下高信号评论？
+- **approval reviewer surface** 问的是：到了权限边界，这次请求该不该被批准，谁来替用户先看一眼？
+
+一旦你把这两类问题混成“auto-review 够不够智能”，就会连续犯两个错误：
+
+1. 以为本地“批准更自动了”，所以 GitHub PR 也会自动多出 review comment。
+2. 以为 reviewer subagent 会帮你把 sandbox 也一起放宽，于是把 `auto_review` 当成隐形的 full access。
+
+这两种推断都和官方文档相反。
+
+## GitHub Codex code review：这是 PR diff 风险发现面，不是本地审批面
+
+官方 GitHub 文档一开头就把这条链路写得很具体：Codex code review 的用途，是在 **GitHub pull request** 上再加一轮高信号审查。它 review 的对象是 **pull request diff**，输出是 GitHub 上标准的 code review，而不是本地命令的批准记录。
+
+这条 surface 有四个不能省略的特征。
+
+### 1. 它天然绑定 GitHub PR 和 Codex cloud
+
+GitHub 页面把前置条件写得很明确：你要先给仓库配好 Codex cloud，再去 Codex settings 里打开 Code review。也就是说，这不是一个“本地随手打开的行为开关”，而是一个跟第三方 GitHub 集成、仓库级配置和云端运行面绑定的能力。
+
+这点已经足够把它和 `approvals_reviewer = "auto_review"` 分开了。后者讨论的是本地审批 reviewer；前者讨论的是 GitHub PR 上的托管 review 能力。两者可以同时存在，但不是同一层功能。
+
+### 2. 触发方式是 `@codex review` 或 Automatic reviews
+
+GitHub page 给了两种典型入口：
+
+- 在 PR comment 里显式写 `@codex review`
+- 在 Codex settings 里打开 Automatic reviews，让每个新 PR 自动收到一轮 review
+
+这说明它的本体是一条 **review workflow**：你在 GitHub PR 上触发，Codex 在 GitHub PR 上回。它不是一个静态配置项，更不是“把本地审查模式调成 auto_review”之后自然就会发生的副产物。
+
+### 3. 评论会刻意收窄到 P0/P1
+
+这条事实非常关键，因为它决定了 GitHub review surface 的定位：它不是 PR 摘要机器人，也不是全量 nit checker。官方页面明确写的是，GitHub 里的 Codex review 只标 **P0 和 P1**，目的是让评论集中在高优先级风险。
+
+这也解释了为什么很多“本地 structured review”不能直接冒充 GitHub surface。你在本地让模型返回一个 JSON finding，哪怕它也写了 `severity: "P1"`，那也只是**模拟了 high-signal finding 的形状**，不是自动继承了 GitHub 托管系统的评论语义。
+
+### 4. 它按 changed file 就近应用 closest `AGENTS.md`
+
+这是 GitHub surface 最容易被低估、但最有工程价值的一点。官方页面不是泛泛地说“Codex 会遵守仓库规则”，而是更具体地说：Codex 会搜索仓库里的 `AGENTS.md`，并把 **closest `AGENTS.md`** 应用到每个 changed file。
+
+这意味着 GitHub review surface 的 repo guidance 不是抽象的“有规则就会看”，而是：
+
+- 规则跟 **changed file** 有强绑定；
+- 可以在子目录放更具体的 `AGENTS.md`；
+- review guidance 的作用域是**文件树就近匹配**。
+
+对于团队来说，这种设计比一句“遵守我们的编码规范”有用得多。因为它天然适合 monorepo：支付模块、前端组件库、基础设施目录，都可以有各自更具体的 review 优先级。
+
+官方页还给了一个很实用的例子：如果你希望 Codex 把文档拼写错误也当高优先级看待，就把类似 “Treat typos in docs as P1.” 的 guidance 写进 `AGENTS.md`。这再次说明 GitHub surface 的重心是 **PR code review 的焦点控制**，不是本地权限批准。
+
+:::note[GitHub review 与后续 cloud task 也要分开看]
+GitHub 页面还提到，当 Codex 已经在 PR 上发出 review 后，你可以继续留言 `@codex fix the P1 issue`，让它再开一个 cloud task 去修。这个后续动作仍然属于 GitHub / cloud workflow，不等于本地 CLI 的 approval reviewer。
+:::
+
+## `approvals_reviewer = "auto_review"`：这是审批 reviewer 面，不是 PR code review 面
+
+再看另一条表面很像的链路。`approvals_reviewer` 出现在两处官方材料里：
+
+- sandboxing 页面，把它放在 sandbox mode 和 approval policy 的配置语境里解释；
+- config reference，把它定义成 `user | auto_review` 的配置项。
+
+这里最需要精读的是 config reference 的定义：`approvals_reviewer` 决定的是 **Who reviews eligible approval prompts**，默认值是 `user`，而 `auto_review` 使用 reviewer subagent。紧接着官方又补了一句非常容易被忽略、但正好能打掉常见误解的话：**这个设置不会改变 sandboxing，也不会改变已经在 sandbox 内允许的 review actions。**
+
+把这句翻成工程语言，就是：
+
+- 它不是 PR code review 的总开关；
+- 它不会把 deny 变成 allow；
+- 它不会因为“现在 reviewer 变自动了”，就让本来允许的动作变得“更有 review”；
+- 它也不会把本来不允许的文件、网络或副作用操作放进来。
+
+### 1. 它只在 approval boundary 上工作
+
+sandboxing 页面给的上下文很完整：常见 sandbox mode 有 `read-only`、`workspace-write`、`danger-full-access`；常见 approval policy 有 `untrusted`、`on-request`、`never`。随后才引出 `approvals_reviewer`：当 approvals 是 interactive 的时候，你可以选 `user` 还是 `auto_review`。
+
+这意味着 `approvals_reviewer` 不是单独存在的神秘模式，而是**审批体系里的一个角色配置**。没有 approval boundary，就没有它的工作面。
+
+### 2. 它看的不是 PR diff，而是 eligible approval request
+
+sandboxing 页面进一步把语义钉死：automatic review 不会改变 sandbox boundary。它只是 approval boundary 上的一种 reviewer 选择，处理的例子包括：
+
+- sandbox escalation
+- blocked network access
+- side-effecting tool calls that still need approval
+
+这些都不是 GitHub PR diff。它们是**权限边界上的请求**。所以如果你问的是“这个 PR 改出来的逻辑有 bug 吗”，`approvals_reviewer = "auto_review"` 根本不是主答案；如果你问的是“这次越界操作谁来替我先审一遍”，那它才是相关配置。
+
+### 3. Full access 也不是由 `auto_review` 推出来的
+
+sandboxing 页面甚至把更容易混淆的组合也明说了：**Full access** 指的是 `sandbox_mode = "danger-full-access"` 加上 `approval_policy = "never"`。而低风险本地自动化预设，则是 `workspace-write` 加上 `on-request`，然后你再决定 `approvals_reviewer` 用 `user` 还是 `auto_review`。
+
+这个组合关系特别值得记住，因为它直接告诉你：
+
+- `auto_review` 不是 `danger-full-access` 的简写；
+- `auto_review` 也不是 `never` 的别名；
+- reviewer 自动化只是“谁来处理 eligible approval request”，不是“边界在哪里”。
+
+如果一个动作已经在当前 sandbox 内允许，官方页面明确说它会**直接跑**，不会因为你设置了 `approvals_reviewer = "auto_review"` 就多出一轮额外 review。反过来，如果一个动作超出了当前 sandbox，这个 reviewer 也只是在 approval boundary 上裁决，而不是偷偷把沙箱拓宽。
+
+## 为什么这两个 surface 特别容易被混
+
+混淆不是因为用户粗心，而是因为产品表层确实会重复使用 `review`、`approval`、`automatic` 这些词。最典型的混法有三种。
+
+### 混法一：把 “Automatic reviews” 和 “Approve for me” 当成一个意思
+
+错因在于两个词都带“自动”。但实际上：
+
+- **Automatic reviews** 说的是 GitHub PR 一创建就自动收到 code review。
+- **Approve for me for eligible approval requests** 说的是本地 approval boundary 上，让 reviewer agent 代你先看 eligible request。
+
+一个针对 PR diff，一个针对权限请求。它们的输入对象根本不是同一种东西。
+
+### 混法二：把 `review` 一词理解成“凡是代码相关都能审”
+
+GitHub page 里的 `review` 是 code review；config reference 里的 reviewer 是 approval reviewer。两者都能“给出判断”，但一个是在说 **代码风险**，一个是在说 **权限边界**。同一个英语单词，在这里对应的是两种系统角色。
+
+### 混法三：把本地 structured review 误当成 GitHub surface 的完整替身
+
+这也是本文 Showcase 最要避免的误导。你当然可以在本地做一轮只读 structured review，让模型读取 staged diff、看一份 repo guidance，然后返回一个 anchored finding。这样做能很好地教学“审查合同”的核心结构。
+
+但你不能因此说：
+
+- “我已经等价复现了 GitHub `@codex review`”
+- “Automatic reviews 的行为已经被本地证实”
+- “我本地开了 `auto_review`，所以这就是 GitHub review”
+
+本地 structured review 最多证明：**在这个 repo、这份 diff、这条 prompt、这版模型下，Codex 能给出一个符合 changed-line contract 的 finding**。这离 GitHub 托管 surface 还差一整个外部系统。
+
+## 用一句问题判断：你到底需要哪一个 surface
+
+最实用的判断方法不是背配置项，而是先把你真实的问题念出来。下面这张表可以直接拿去问团队成员。
+
+| 真实问题 | 应该先看哪条 surface | 原因 |
+| --- | --- | --- |
+| “我想让每个新 PR 自动收到一轮高优先级风险审查。” | GitHub Codex code review | 这是 PR diff review 问题，关键词是 PR、comment、P0/P1、Automatic reviews |
+| “我想在本地 workspace-write + on-request 时，让 eligible approval request 先由 reviewer agent 审。” | `approvals_reviewer = "auto_review"` | 这是 approval boundary 问题，关键词是 eligible approval request、reviewer、sandbox |
+| “我想在本地教学或实验里复现 PR review 的最小合同，但不碰 GitHub 外部状态。” | 本地 read-only structured review | 这不是官方托管 surface，而是教学性复现 `diff + guidance + finding` |
+| “我希望自动 reviewer 顺便放宽本地文件或网络边界。” | 都不是 | 边界应由 sandbox / permission profile 决定；`approvals_reviewer` 不会替你扩大 sandbox |
+
+如果你只能记一个口诀，就记这个：
+
+> 看到 PR diff，就想 GitHub code review；看到 approval boundary，就想 `approvals_reviewer`；看到 staged diff 教学实验，就承认自己在做本地合同复现，而不是托管 GitHub review。
+
+## Showcase：为什么 `refund-window-review` 这个例子能把边界讲透
+
+为了让这件事可验证，本文不直接拿 LearnPrompt 主仓库做模糊演示，而是构建了一个最小 JS PR fixture：`refund-window-review`。它的设计目标非常克制，只做三件事：
+
+1. 给出一个**真实 staged diff**，而不是“请扫一下整个仓库”这种过宽任务。
+2. 给出一份**repo guidance**，由顶层 `AGENTS.md` 明确要求“只报 changed-line regression”“退款边界 bug 算 P1”“必须锚到右侧 changed line”。
+3. 给出一个**真实行为漏洞**，而不是风格问题或抽象建议。
+
+这个函数的基线逻辑本来很简单：
+
+```js
+const elapsedMs = nowMs - deliveredAtMs;
+return elapsedMs >= 0 && elapsedMs <= REFUND_WINDOW_MS;
+```
+
+其中 `elapsedMs >= 0` 的作用，是拒绝未来时间戳。如果 `deliveredAt` 在未来，`nowMs - deliveredAtMs` 就会是负数；没有这个守卫，就会出现一个很典型的时间比较漏洞：**negative elapsed value 仍然满足 `<= REFUND_WINDOW_MS`。**
+
+而 PR fixture 的 staged diff 做的正是这件事：
+
+```diff
+-  return elapsedMs >= 0 && elapsedMs <= REFUND_WINDOW_MS;
++  return elapsedMs <= REFUND_WINDOW_MS;
+```
+
+这个改动的危险之处在于，它看起来像一次“简化条件”的小重构，但实际上把“未来送达时间”也划进了可退款窗口。于是下面这个输入会出现错误行为：
+
+```js
+isRefundEligible({
+  deliveredAt: "2026-08-01T00:00:00.000Z",
+  now: "2026-07-11T00:00:00.000Z"
+});
+```
+
+在我们实际的 deterministic 行为复现里，这个调用返回的是 `true`。也就是说，订单明明还没送达，却已经被判成可退款。
+
+更重要的是，这个 fixture 里原有测试**仍然全过**。因为测试只覆盖了“30 天内 true”“30 天外 false”和“非法日期抛错”，并没有 future timestamp case。换句话说，这正是 code review 特别适合发现的那类问题：行为回归真的存在，但现有测试没有把它钉住。
+
+:::note[为什么这个例子适合教边界]
+它既足够小，能让 changed line 锚点保持稳定；又足够真，属于真实业务规则回归，而不是抽象风格争议。你因此能非常清楚地看到：PR review surface 关心的是“这个 diff 引入了什么行为风险”，而 approval reviewer surface 关心的根本不是这类问题。
+:::
+
+## 真实 read-only structured review：本地能复现的是“合同”，不是 GitHub 托管运行
+
+现在进入最容易误会的一步。我们确实在本机真实跑了一次 `codex exec`，但它是**本地 read-only structured review**，不是 GitHub `@codex review`。
+
+这次真实 run 的约束是：
+
+- CLI：`codex-cli 0.142.2`
+- 模型：`gpt-5.5`
+- sandbox：`read-only`
+- approval：`-a never`
+- 其他关键参数：`--ephemeral`、`--ignore-user-config`、`--ignore-rules`、`--json`、`--output-schema`、`--output-last-message`
+
+这些参数不是装饰品，而是分别对应本文要证明的边界：
+
+- `read-only`：确保 review run 本身不改 repo。
+- `-a never`：让它在当前边界内非交互完成，不在中途弹人工审批。
+- `--ephemeral`：不把 rollout files 持久化到磁盘。
+- `--ignore-user-config` / `--ignore-rules`：避免把本机个人配置与 `.rules` 文件带进来，污染这次最小合同实验。
+- `--json` + `--output-schema` + `--output-last-message`：把最终结果压成结构化 finding，而不是一段松散自然语言。
+
+同时，我们刻意把 **raw JSONL、stderr 和最终 JSON** 先写到工作树外。研究包里只冻结脱敏后的最小 finding。这一点很重要，因为 skill contract 明确要求：不要让 live reviewer 的输出流进同一个工作树里，也不要把本地绝对路径、item id、shell path 之类运行痕迹带进公开工件。
+
+最终冻住的 finding 是：
+
+| 字段 | 值 |
+| --- | --- |
+| severity | `P1` |
+| file | `src/refundPolicy.js` |
+| line | `15` |
+| title | `Future deliveries are now refund-eligible` |
+| 核心问题 | future `deliveredAt` 让 `elapsedMs` 变成负数，但 changed line 仍然把它判成 `<= REFUND_WINDOW_MS`，于是错误返回 `true` |
+
+这次结果之所以有教学价值，不只是因为“模型看出来了”，而是因为它同时满足三点：
+
+1. **有真实 diff**：不是空口扫描仓库。
+2. **有 repo guidance**：fixture 顶层 `AGENTS.md` 要求只报 changed-line regression，并把 refund boundary bug 看作 P1。
+3. **有 anchored finding**：定位到 `src/refundPolicy.js:15`，不是一句泛泛的“这里可能有边界问题”。
+
+![本地 structured review 的边界流转图：从 staged diff 到 candidate finding，再到 mechanical verification 与 human/CI decision](/images/articles/auto-review-boundaries/review-boundary-flow.svg)
+*图注：这条本地链路复现的是 staged diff、repo guidance、candidate finding 与机械 gate 的合同；GitHub PR comment 生命周期、Automatic reviews 触发和 cloud follow-up 并不在这张图里。*
+
+如果你把这一步说成“我已经本地复现了 GitHub `@codex review`”，那就越界了。更准确的说法应该是：
+
+> 我们在本地 read-only `codex exec` 里，复现了 GitHub review surface 最值得教学的最小合同：`diff + repo guidance + anchored finding`。
+
+这句话既没有贬低本地实验的价值，也没有把它包装成没发生过的托管系统。
+
+## deterministic gate：为什么真实 finding 之后还要再过一层机械门
+
+很多团队在这里会停下：模型给了一个不错的 finding，于是就说“review 成功”。这还不够。因为对教程来说，真正重要的不是“这次模型说得像不像”，而是**后面的读者能不能机械验证我们没有挑好听的话往上贴。**
+
+所以 `refund-window-review` 额外加了一道 deterministic gate，专门检查四件事：
+
+1. finding 是否命中 changed file。
+2. finding 的 line 是否命中 **右侧 changed line**。
+3. finding 是否明确说出 **future timestamp / negative elapsed** 这个具体漏洞。
+4. finding 是否有 severity 和 concrete reproduction。
+
+真实 `real-finding.json` 跑这道 gate 的结果是 PASS：
+
+```text
+PASS anchored finding: src/refundPolicy.js:15
+PASS severity: P1
+PASS future timestamp scenario named
+PASS negative elapsed behavior named
+PASS reproduction present
+```
+
+然后我们再喂一条故意伪造的负例：它虽然也写了“future timestamp”“negative elapsed”，但把 line 锚到了 `src/refundPolicy.js:11`，也就是**不在 diff 右侧 changed line 上**。这条 fabricated finding 会稳定以 exit 3 失败：
+
+```text
+FAIL finding is not anchored to a changed right-side line: src/refundPolicy.js:11
+```
+
+这一步的意义很大。它告诉读者：我们不是在做“模型说得挺像”的展示，而是在做**模型输出与 diff 证据之间的机械比对**。只有过了这层门，structured review 才能算一个可审计的 Showcase，而不是营销性的成功截图。
+
+## 这次 Showcase 明确没有证明什么
+
+越是想把边界讲清楚，越要把没证明的东西写在明处。本文 Showcase **没有**证明下面这些事：
+
+- 没有触发真实 GitHub `@codex review`。
+- 没有打开 Automatic reviews。
+- 没有创建 PR，也没有写任何外部状态。
+- 没有证明 GitHub 托管 surface 的 comment threading、UI 行为、cloud task follow-up 全都与本地 structured review 完全等价。
+- 没有证明 `approvals_reviewer = "auto_review"` 会替你做 PR code review。
+- 没有证明 `approvals_reviewer = "auto_review"` 会扩大 sandbox。
+
+之所以必须写这么细，是因为“只差一点点”的过度表述最危险。比如下面这句话就是错的：
+
+> 我本地已经让 Codex 自动审了这个 diff，所以 GitHub 上开 Automatic reviews 也差不多就是这个效果。
+
+真正严谨的说法应该是：
+
+> 我本地复现了 diff、repo guidance 与 anchored finding 这条最小审查合同；GitHub Automatic reviews 则是另一条托管 surface，仍需以官方集成流程和真实 PR 为准。
+
+## 什么时候不要靠这套 auto-review 解决问题
+
+即使边界拆清了，也不代表所有问题都适合丢给这两条 surface。下面几类问题，任何一种 `auto-review` 都不该被你包装成万能答案。
+
+### 1. 产品方向、文案语气、品牌判断
+
+GitHub PR review 擅长的是高信号工程风险，不是判断功能方向正不正确。`approvals_reviewer` 更不是内容 reviewer，它只看 approval request 是否该通过。把产品方向问题塞给它们，最后只会得到不对题的“审查”。
+
+### 2. 需要真实外部状态才能确认的体验问题
+
+例如结算流程是否真的走通、支付回调在生产环境里是不是偶发失败、某个浏览器扩展在用户真实账号下是不是有交互 bug。这类问题没有真实外部状态时，PR diff review 最多只能指出风险，不能替代端到端验证。
+
+### 3. 权限边界本身配置错了
+
+如果你本地真正的问题是 `.env` 不该可读、网络默认不该打开、某类副作用命令必须提示人，那你该回去改的是 sandbox、permission profile、approval policy 和 rules，而不是期待 reviewer subagent“更聪明一点”就能替代边界。
+
+### 4. 想把一次成功 run 外推成模型能力排名
+
+本文 Showcase 特意避免做这件事。它证明的是一个工程合同，而不是“gpt-5.5 在 review 上比谁强”。换模型、换 repo、换 guidance、换 diff，结果都可能变。教程真正该教的是接口和证据，不是排行榜。
+
+## 团队落地时怎么配：先选 surface，再配证据链
+
+如果你准备把这套边界带回团队，最稳的做法不是先开功能，而是先把证据链写清楚。
+
+### 对 GitHub code review surface
+
+你至少要确定：
+
+1. 哪些仓库已经配好 Codex cloud。
+2. 哪些 PR 类型值得开 Automatic reviews。
+3. 你的 `AGENTS.md` review guidelines 是否真按 changed file 组织过，而不是只写一份笼统规则。
+4. 团队是否接受“GitHub 只标 P0/P1”的审查风格。
+
+### 对 approval reviewer surface
+
+你至少要确定：
+
+1. 当前默认 sandbox 是什么：`read-only`、`workspace-write` 还是 `danger-full-access`。
+2. approval policy 是什么：`untrusted`、`on-request` 还是 `never`。
+3. 哪些请求才算 eligible approval request，值得交给 `auto_review` 而不是 user。
+4. 哪些动作即使 reviewer 觉得可以，也不应该通过放宽 sandbox 来解决。
+
+### 对本地教学或集成实验
+
+你至少要确定：
+
+1. raw outputs 一律先写工作树外。
+2. 只把最小脱敏 finding、gate 输出和必要的行为复现留在研究包。
+3. 任何 structured review 都要明确说明：它复现的是合同，不是 GitHub 托管 surface 的全生命周期。
+
+## 练习：把你团队里的“auto-review”歧义画成一张分流表
+
+找一个你们团队最近三个月里真实说过的需求句子，比如：
+
+- “把 auto-review 打开吧。”
+- “让 Codex 自动看一下这个 PR。”
+- “我不想每次都自己点批准。”
+
+然后把它改写成下面这个表：
+
+| 原句 | 真正想要的输入 | 想要的输出 | 对应 surface |
+| --- | --- | --- | --- |
+| 把 auto-review 打开吧 | 新 PR 的 diff | GitHub review comment | GitHub code review |
+| 我不想每次都自己点批准 | eligible approval request | reviewer 先审一遍批准请求 | `approvals_reviewer = "auto_review"` |
+
+验收标准也很简单：每一行都能明确回答“这是 PR review 问题，还是 approval boundary 问题？”如果你还答不出来，说明团队里对 `auto-review` 这个词的使用仍然混着两条 surface。
+
+## 来源与延伸阅读
+
+- [Codex code review in GitHub](https://learn.chatgpt.com/docs/third-party/github)（官方一手文档：`@codex review`、Automatic reviews、P0/P1、closest `AGENTS.md`）
+- [Sandbox](https://learn.chatgpt.com/docs/sandboxing)（官方一手文档：sandbox modes、approval policies、`approvals_reviewer` 与 approval boundary 的关系）
+- [Configuration Reference](https://learn.chatgpt.com/docs/config-file/config-reference)（官方一手文档：`approvals_reviewer = user | auto_review` 的精确定义，以及“不改变 sandboxing”的约束）
+- [Codex Orange Book](https://github.com/alchaincyf/codex-orange-book)（中文二手主题地图，仅作选题与术语导览）
+
+当前产品行为以 **2026-07-11** 核对过的三份官方文档为准。Codex Orange Book 只作为中文二手主题地图保留署名；其仓库页面显示版本为 `v2.0.1 (May 2026)`，README 的 `License` 段落公开声明为 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)。本文结构、论证、Showcase 与教学图均已独立重做，公开页面只保留底部可审计来源区。仓库资产与原创教学图按仓库根目录 `LICENSE` 的 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 使用与共享。

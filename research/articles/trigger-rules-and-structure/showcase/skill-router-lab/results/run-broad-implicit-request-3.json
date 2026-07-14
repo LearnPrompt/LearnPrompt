@@ -1,0 +1,13 @@
+{
+  "suite": "skill-router-lab",
+  "variant": "broad",
+  "mode": "implicit",
+  "case_id": "request-3",
+  "loaded": false,
+  "contains_canary": false,
+  "exit_code": 0,
+  "privacy_ok": true,
+  "model": "gpt-5.5",
+  "final_output_excerpt": "把那条 release note 原文贴过来。我只审校措辞，不生成周报。",
+  "notes": "completed"
+}

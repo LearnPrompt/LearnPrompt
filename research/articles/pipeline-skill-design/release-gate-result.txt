@@ -1,0 +1,93 @@
+pipeline-skill-design writer release gate
+=========================================
+运行日期：2026-07-12
+运行环境：Codex workspace-write sandbox 与外层主控；codex-cli 0.142.2；Node v24.11.0。
+说明：本文先按 writer 阶段保持 `showcase_status: partial`，独立只读 reviewer PASS 98/100 后再提升为 `verified`。以下冻结真实命令、关键输出与退出码。
+
+----------------------------------------------------------------
+1. Showcase offline replay
+命令：
+  node research/articles/pipeline-skill-design/showcase/docs-migration-pipeline/scripts/verify-showcase.mjs
+关键输出：
+  fresh_success_exit_code: 0
+  crash_after_transform_exit_code: 30
+  resume_exit_code: 0
+  stale_resume_exit_code: 32
+  receipt_issue_exit_code: 33
+  rerun_stability_exit_code: 0
+  privacy_exit_code: 0
+  reused_stages: ["inventory","normalize","transform"]
+  rerun candidate_sha stable: true
+退出码：0
+
+2. fixture tests
+命令：
+  npm test
+工作目录：
+  research/articles/pipeline-skill-design/showcase/docs-migration-pipeline/fixture
+关键输出：
+  pass 1
+  fail 0
+退出码：0
+
+3. 真实 Codex 显式 Skill 调用
+命令：
+  CODEX_NESTED_MODEL=gpt-5.5 node research/articles/pipeline-skill-design/showcase/docs-migration-pipeline/scripts/run-codex-live.mjs
+关键输出：
+  status: completed
+  exec_exit_code: 0
+  model: gpt-5.5
+  skill_invocation: explicit $docs-migration-pipeline
+  crash_exit_code: 30
+  resume_exit_code: 0
+  verify_exit_code: 0
+  source_unchanged: true
+  candidate_hash: cdc8bf70d44838e2239ff00052b092cb0ce7d198b77ec5b581e17f799e8dc892
+  changed_files: migration-candidate/, receipts/, reports/, work/
+  model_note: 只改 candidate/receipt/report 为 false；work/ checkpoint 与 intermediate 也被创建
+退出码：0
+说明：writer 隔离层首次尝试被宿主权限阻断并保留证据；外层主控将 schema 的 notes 属性补入 required 后，使用同一冻结任务补跑成功。
+
+4. privacy scan
+命令：
+  node research/articles/pipeline-skill-design/showcase/docs-migration-pipeline/scripts/privacy-scan.mjs
+关键输出：
+  PASS privacy scan: no runtime IDs, absolute temp paths, user home paths, or shell paths were committed.
+退出码：0
+
+5. 单篇 partial validator
+命令：
+  node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs \
+    --article starlight/src/content/docs/agent-skills/pipeline-skill-design.mdx \
+    --research research/articles/pipeline-skill-design
+关键输出：
+  PASS article: starlight/src/content/docs/agent-skills/pipeline-skill-design.mdx
+  PASS research: research/articles/pipeline-skill-design
+  PASS status: partial
+退出码：0
+
+6. Starlight build
+命令：
+  npm --prefix starlight run build
+关键输出：
+  /agent-skills/pipeline-skill-design/index.html
+  Found 49 HTML files.
+  49 page(s) built in 3.67s
+  Complete!
+退出码：0
+
+7. git diff --check
+命令：
+  git diff --check
+关键输出：
+  (no output)
+退出码：0
+
+8. SVG render and visual inspection
+资源：
+  starlight/public/images/articles/pipeline-skill-design/docs-migration-pipeline.svg
+关键结果：
+  PASS；实际渲染后检查无溢出、裁切或重叠。invalidation 文本与 resume 说明已按渲染结果重排。
+
+================================================================
+当前状态：verified。offline replay、真实 Codex 显式 Skill 调用、privacy scan、verified validator、49 页 build、fixture test、视觉检查与 diff-check 均通过；独立只读 reviewer PASS 98/100，blocker 0 / major 0 / minor 0。

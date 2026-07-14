@@ -1,0 +1,19 @@
+{
+  "fixture": "knowledge-maintenance-proposal",
+  "generated_by": "negative-missing-evidence",
+  "source_preservation_rule": "Preserve sources.",
+  "proposals": [
+    {
+      "action": "source-needed",
+      "note_paths": ["notes/vendor-summary.md"],
+      "evidence_paths": [],
+      "observed_fact": "The note has no source.",
+      "proposed_change": "Ask for a source.",
+      "confidence": "medium",
+      "requires_human_approval": true,
+      "source_preservation_rule": "Do not edit.",
+      "reason": "Missing evidence negative."
+    }
+  ]
+}
+

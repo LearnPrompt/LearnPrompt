@@ -1,0 +1,4 @@
+PASS privacy scan
+root: research/articles/codex-cli-workflow
+files_scanned: 32
+checks: identifier-like values, uuid, absolute temp or home paths, absolute shell paths

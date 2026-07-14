@@ -1,0 +1,11 @@
+scenario: normal
+exit_code: 0
+reason: packet accepted
+source_packet_unchanged: yes
+reports_written: handoff.json, handoff.md
+assertions: pass
+current_status: Blocked until the digest fixture is replayed with Asia/Shanghai as the canonical timezone.
+accepted_decision: Keep Asia/Shanghai as the canonical scheduler timezone for this tutorial fixture.
+next_command: node scripts/replay-digest.mjs --timezone Asia/Shanghai
+known_limitation: The fixture does not cover DST regions, so this packet only proves the Asia/Shanghai path.
+cited_paths: MEMORY_INDEX.md, memory/context.md, memory/decision.md, memory/runbook.md, memory/status.md

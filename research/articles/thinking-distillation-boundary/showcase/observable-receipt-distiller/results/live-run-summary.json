@@ -1,0 +1,21 @@
+{
+  "status": "completed",
+  "codex_cli_version": "codex-cli 0.142.2",
+  "model": "gpt-5.5",
+  "prompt_file": "contracts/prompt.md",
+  "schema_file": "contracts/final-report.schema.json",
+  "exec_exit_code": 0,
+  "source_receipts_unchanged": true,
+  "changed_files": [
+    "?? .agents/skills/frontmatter-repair/",
+    "?? reports/"
+  ],
+  "distill_exit_code": 0,
+  "evaluation_exit_code": 0,
+  "holdout_result": "4/4",
+  "tests_command": "npm test",
+  "tests_exit_code": 0,
+  "tests_status": "passed",
+  "candidate_written": true,
+  "redaction_note": "Absolute temp paths, runtime identifiers, raw shell traces, and writable CODEX_HOME paths were redacted before commit."
+}

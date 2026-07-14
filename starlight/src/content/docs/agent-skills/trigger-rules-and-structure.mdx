@@ -1,41 +1,232 @@
 ---
-title: Skill 触发规则与目录结构
-description: 让 Skill 在正确场景被加载，而不是污染所有任务。
+title: Skill 触发规则与目录结构：把误触发和漏触发变成可测问题
+description: 用触发测试矩阵、目录分层和一个 broad vs bounded 实验设计，给 Skill 划出可验证的边界，并理解 metadata、正文与资源何时加载。
 sidebar:
   order: 3
-difficulty: beginner
+difficulty: intermediate
 source_repo: alchaincyf/agent-skills-orange-book
 source_url: https://github.com/alchaincyf/agent-skills-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-12"
+reading_time: 15 分钟
+research_path: research/articles/trigger-rules-and-structure
+showcase_path: research/articles/trigger-rules-and-structure/showcase/skill-router-lab
+showcase_status: verified
+quality_score: 93
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 15 分钟 | 2026-07-12 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/agent-skills-orange-book" url="https://github.com/alchaincyf/agent-skills-orange-book" updatedFrom="2026-05" note="仅参考主题结构，正文重新组织。" />
+你给一个 release-weekly Skill 写了一句“处理更新摘要时使用”。结果它在“帮我润色一条 release note”时抢着上场，却在“整理三个版本更新，输出本周中文 changelog digest”时又没反应。很多人以为这是模型偶发抽风，真正的问题往往更工程化：你没有把触发边界写成可测路由，也没有让目录结构配合渐进披露。
 
-## 触发规则
+这篇文章不重讲 `name`/`description` 的基础字段限制、最小模板和打包步骤，那些已经在《第一个 SKILL.md 怎么写》里讲过了。本文只盯住五件更容易在第二篇 Skill 上出事故的事：误触发、漏触发、近邻冲突、显式与隐式调用的区别，以及 metadata、正文、references、scripts、assets 各自在哪一层加载。
 
-触发规则要描述任务，而不是描述技术偏好。比如“当用户要求生成 ClawHub 榜单日报时使用”，比“需要抓数据时使用”更稳定。
+## 读完你能做什么
 
-## 推荐目录
+你会拿到三件可直接复用的东西：
+
+1. 一套正例 / 近邻反例 / 无关反例的触发测试矩阵，不再靠“我感觉 description 写得还行”。
+2. 一种目录分层方法：`SKILL.md` 只做发现与路由，完整输入合同和边界放 `references/`，确定性步骤放 `scripts/`，模板放 `assets/`。
+3. 一套排错顺序：先分清是路由问题还是正文问题，再决定改 `description`、改目录、还是禁用隐式调用。
+
+![请求先进入 metadata 路由，再决定是否加载 SKILL.md 正文，最后按需读取 references、scripts 与 assets；右侧用 broad 与 bounded 的混淆矩阵对比误触发与漏触发](/images/articles/trigger-rules-and-structure/skill-routing-progressive-disclosure.svg)
+*图注：metadata 决定“是否值得读正文”，正文再决定“要读哪些资源”；如果把所有边界都塞进正文，路由阶段根本看不到。下方是本次真实矩阵：broad 与 bounded 都得到 2 TP / 0 FP / 0 FN / 2 TN，因此这一次并没有验证“broad 必然抬高 FP”。*
+
+## 先拆问题：触发不是“会不会用”，而是一次路由决策
+
+Skill 被调用，本质上不是一个“模型聪不聪明”的抽象问题，而是一个路由问题：
+
+- 这个请求是否应该命中某个 Skill。
+- 如果应该命中，哪个 Skill 更匹配。
+- 命中以后，正文和资源是否真的被加载。
+
+把这个问题拆开，你才看得见不同故障：
+
+| 现象 | 真正故障 | 该改哪里 |
+| --- | --- | --- |
+| 不相关任务被 Skill 抢走 | false positive，边界太宽 | 先收窄 metadata，增加近邻排除 |
+| 明明该触发却没触发 | false negative，边界太窄或 listing 被截短 | 先改 `description` 的前半句和同义表达 |
+| `/skill-name` 能跑，自动触发不行 | 正文没问题，路由失败 | 不要先改 `Workflow`，先查 metadata |
+| 自动触发了，但后续输出缺模板或脚本行为 | 资源索引或正文调用链有问题 | 查 `SKILL.md` 到 `references/` / `scripts/` / `assets/` 的路径 |
+
+这也是为什么“显式调用能成功”与“隐式匹配准确”必须分开测。前者证明正文和资源可用，后者才证明你的发现边界可靠。把两者混成一个指标，会让你在 `/skill-name` 成功时误以为自动路由也没问题。
+
+## 机制：metadata、正文和资源并不在同一时间被看到
+
+Agent Skills 的开放规范只规定了一套最小骨架：目录至少有 `SKILL.md`，可选的 `scripts/`、`references/`、`assets/` 都是按需补充；Agent 会渐进式加载，先读 metadata，再在触发后读正文，最后按需要读资源。也就是说，路由阶段首先看到的是 frontmatter，而不是你藏在正文深处的精妙边界说明。
+
+但到了客户端层，具体实现已经分叉，不能写成“一切 Skill 都这样工作”的伪标准：
+
+| 面向 | 当前实现 | 本文要点 |
+| --- | --- | --- |
+| 开放规范 | `SKILL.md` + 可选 `scripts/`、`references/`、`assets/`；metadata 先载入，正文触发后载入，资源按需载入 | 规范没有要求 `examples/` 成为必需目录 |
+| Codex | 仓库里从当前工作目录一路向上扫描 `.agents/skills`；可显式 `$skill` 或靠 `description` 隐式匹配；初始技能清单最多占上下文 2%，上下文大小未知时上限 8000 字符，description 会先被截短，极端情况下还会省略部分技能 | 你的关键词必须前置，别把关键排除条件埋在长段落尾部 |
+| Claude Code | 项目技能目录是 `.claude/skills`；可用 `/<name>` 显式调用，也会按技能描述自动匹配；名称与描述会先进入 listing，listing 会按预算截短；`disable-model-invocation: true` 可以让技能只保留显式调用 | 自动匹配与手动调用是两条独立路径 |
+
+这里最容易踩的坑，是把“正文写得很全”误当成“路由自然会准”。不会。Codex 的官方文档直接把“任务匹配 `description`”写成隐式触发条件，并提醒把核心用例和触发词前置，因为 description 可能被截短。Claude Code 的官方文档也把技能描述列进每轮上下文，并明确写出：如果描述含混或重叠，Claude 可能加载错 Skill，或者错过本来该用的 Skill。
+
+再往下一层，目录结构就开始服务加载顺序，而不是服务“看起来完整”：
 
 ```text
-my-skill/
+release-weekly/
   SKILL.md
+  references/
+    input-contract.md
+    neighbor-boundaries.md
   scripts/
-  templates/
-  examples/
-  README.md
+    render-weekly-digest.mjs
+  assets/
+    changelog-template.md
 ```
 
-## 操作步骤
+- `SKILL.md` 只放 discovery metadata、核心流程和资源索引，让路由层和正文层都短而清楚。
+- `references/` 放完整输入合同、近邻边界和拒绝条件，因为这些内容只有在 Skill 已经决定加载后才有价值。
+- `scripts/` 放确定性动作，例如结构化渲染、校验、格式整理。
+- `assets/` 放模板和静态产出资源。
 
-1. `SKILL.md` 只放核心流程。
-2. 长脚本放进 `scripts/`。
-3. 可复制文案放进 `templates/`。
-4. 用 `examples/` 保存最小输入输出样例。
+如果你把完整边界合同、几十个例子、模板全文和脚本说明都塞回 `SKILL.md`，你得到的不是“更强的 Skill”，而是一个更容易被截短、也更不利于排错的路由入口。
 
-## 常见错误
+## 触发边界怎么测：先固定正例、近邻反例和无关反例
 
-触发范围太宽。一个“写作 Skill”会干扰太多任务，一个“公众号长文改稿 Skill”更好用。
+触发边界不能靠单个 prompt 证明。要测它，必须先设计一组固定请求，并且在 broad 与 bounded 两个版本之间保持其他条件不变。本文的 Showcase 固定了四个隐式请求，再单独加一个显式调用对照：
+
+| 编号 | 请求 | 应该触发吗 | 这是在测什么 |
+| --- | --- | --- | --- |
+| 1 | 把一组 GitHub release notes 汇总成中文发布周报 | 应触发 | 明确正例 |
+| 2 | 整理三个版本更新，输出本周中文 changelog digest | 应触发 | 同义改写正例 |
+| 3 | 审校一条 release note 的措辞，不生成周报 | 不应触发 | 近邻反例：同域但不是同任务 |
+| 4 | 把会议纪要整理成团队周报 | 不应触发 | 无关反例：词面相似但对象不同 |
+| 5 | 显式调用 `release-weekly` 后再给出正例请求 | 应触发 | 证明“强制调用成功”不等于“隐式匹配准确” |
+
+本文用的判定标准也刻意机械：只有最终输出出现正文里的 canary `SKILL_USED: release-weekly`，才算 Skill 正文真的被加载。只看“输出像周报”不够，因为模型也可能在没读 Skill 的情况下自由发挥。
+
+这时，broad 与 bounded 的差别就必须落成表，而不是落成形容词：
+
+| 版本 | description 设计 | 预期优势 | 预期代价 |
+| --- | --- | --- | --- |
+| broad | 故意把 releases、updates、notes、weekly reporting 都揉成一段含混描述 | 更容易命中正例 | 容易把近邻反例和无关周报也误收进来 |
+| bounded | 前置“多版本 release notes / changelog digest”核心用例，并明确排除“单条措辞审校”和“泛团队周报” | 压低误触发 | 如果用词过窄，也可能漏掉改写正例 |
+
+真正的评估指标不是“哪个写法更聪明”，而是：
+
+- broad 的 TP / FP / FN / TN 分别是多少；
+- bounded 是否在不牺牲 TP 的前提下降低 FP；
+- 如果 bounded 反而引入 FN，问题是关键词太窄，还是 listing 被截短。
+
+## Showcase：九次真实调用完成，但 broad 没有在这次跑出更多误触发
+
+本文的 Showcase 冻结名为 `skill-router-lab`。研究包提交了两套隔离 fixture repo、四个固定请求、共享的 ground truth、结果 schema、privacy scan 和 deterministic evaluator，目录都在 [`research/articles/trigger-rules-and-structure/showcase/skill-router-lab`](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/trigger-rules-and-structure/showcase/skill-router-lab)。
+
+writer sandbox 的 nested preflight 先后遇到只读 state DB、app-server 权限和 DNS 阻塞，因此 writer 没有伪造矩阵。主控随后在外层保持 fixture、请求、ground truth 与 evaluator 不变，固定 `gpt-5.5` 补跑：broad 四个 fresh ephemeral runs、bounded 四个 fresh ephemeral runs，再加一个 bounded 显式控制组，共九次独立调用。
+
+最终结果如下：
+
+| 变体 / 模式 | TP | FP | FN | TN | precision | recall | 结果 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| broad / implicit | 2 | 0 | 0 | 2 | 1.00 | 1.00 | 两个正例有 canary，两个反例没有 |
+| bounded / implicit | 2 | 0 | 0 | 2 | 1.00 | 1.00 | 与 broad 相同 |
+| bounded / explicit | — | — | — | — | — | — | `request-5` loaded=true，exit 0 |
+
+这个结果没有支持“broad 在本轮一定带来更多 FP”的设计假设。严谨结论不是把实验重跑到出现想要的数字，而是承认：在这四个请求、同一 Skill 正文、同一客户端版本和一次 fresh run / case 的范围里，两版表现相同。description 收窄仍有合理机制依据，但它需要更大的近邻语料、多次重复和不同 listing 压力才能估计稳定差异。
+
+显式控制组同时证明了另一件事：`$release-weekly` 能强制加载正文并输出 canary，所以如果未来某个隐式正例漏触发，优先排查 metadata 路由，而不是先怀疑正文和资源链。malformed result 负例也被 evaluator 拒绝，privacy scan 通过。生产流程先保持 `partial`，随后由新的独立只读 reviewer 完成终审；0/0/0 findings、93/100 后才升级为 `verified`。
+
+## 目录分层为什么要服务加载，而不是服务“看起来全”
+
+一旦你接受“路由先看 metadata，正文后看资源”，目录设计就不再是审美问题，而是加载问题。
+
+### `SKILL.md` 该放什么
+
+- `name` / `description`：只负责发现和第一轮匹配。
+- 一段很短的 `Use` / `Workflow`：告诉模型命中以后先做什么。
+- 资源索引：把后续深读指到 `references/`、`scripts/`、`assets/`。
+
+### `references/` 该放什么
+
+- 完整输入合同：什么算“多版本 release notes”，什么不算。
+- 近邻边界：单条措辞审校、泛团队周报、会议纪要等为何不该命中。
+- 如果有多个客户端，差异化约束也放这里，而不是塞进 description。
+
+### `scripts/` 该放什么
+
+- 可以机械跑的格式整理或校验步骤。
+- deterministic evaluator、privacy scan、结果归档器。
+- 任何“执行正确性”比“语言描述”更重要的部分。
+
+### `assets/` 该放什么
+
+- 周报模板、固定段落骨架、表格骨架。
+- 静态数据、schema、样板文件。
+
+`examples/` 则不该被写成通用必需目录。开放规范只把 `scripts/`、`references/`、`assets/` 列为常见可选目录，并允许额外目录；不同客户端还会在 frontmatter 或外部 metadata 文件里扩展自己的字段。把 `examples/` 升格成“所有 Skill 必须有”的标准，只会让教程把客户端约定误写成规范。
+
+## 排错顺序：先判断是路由坏了，还是正文坏了
+
+很多人一上来就改 `Workflow`，这是顺序错了。更稳的排错顺序是：
+
+1. 先跑显式调用。
+如果 `/$skill-name` 或 `$skill-name` 能成功，并且输出出现 canary，说明正文和资源链没坏，问题集中在路由。
+
+2. 再看 metadata 是否真的可见。
+Codex 的官方文档明确说 description 可能被缩短或省略；Claude Code 的官方文档也说明 listing 会截短 description。关键用例和排除条件如果埋在后半段，根本没有进入模型可见列表的保证。
+
+3. 近邻反例一定要单独测。
+“审校一条 release note”这种请求，比完全无关的会议纪要更有价值，因为它更接近真实误触发。
+
+4. 检查 frontmatter 和 listing 形态。
+Claude Code 的文档特别点出一个常见坑：如果 YAML frontmatter 坏了，`/skill-name` 还能跑，但 metadata 为空，Claude 就没有 description 可匹配。此时继续打磨正文没有意义。
+
+5. 最后才改正文和资源目录。
+只有在显式调用也失败，或者 canary 没出现时，才说明正文、路径引用或脚本调用链本身有问题。
+
+:::caution[不要把两个问题混成一个]
+“Skill 能跑但路由不准”和“Skill 本身流程写得差”是两类 bug。前者先改 metadata 和测试矩阵，后者再改正文与资源。
+:::
+
+## 什么时候该禁用隐式调用
+
+隐式调用不是默认更高级，它只是默认更省事。下面这些情况，更适合把 Skill 退回显式调用：
+
+- 高风险动作：发布、删除、对外发送消息、改生产配置。这里要的是确定性，不是“模型通常会判断对”。
+- 近邻冲突特别多：例如“写周报”“润色 release note”“整理会议纪要”都发生在同一团队语境里。
+- 你的核心关键词极短，且容易被其他 Skill 共用：比如 review、summary、report、sync。
+- 团队里装了很多 Skill，listing 预算经常打满，description 已经开始被截短。
+
+当前客户端的禁用方式也不是同一个字段：
+
+- Codex：`agents/openai.yaml` 里可以把 `allow_implicit_invocation` 设为 `false`，保留显式 `$skill`。
+- Claude Code：`disable-model-invocation: true` 会把 Skill 从自动匹配里拿掉，只保留显式 `/<name>`。
+
+这两个都属于客户端扩展，不是开放规范的统一字段。教程里必须标清楚“谁支持什么”，不要把客户端实现写成跨产品标准。
+
+## 练习：把你的下一个 Skill 先做成边界实验
+
+选一个你已经写过但经常误触发的 Skill，不要先改正文，先做下面四步：
+
+1. 写一版 broad description 和一版 bounded description，只改 metadata，不改正文。
+2. 固定 2 个正例、1 个近邻反例、1 个无关反例。
+3. 在正文里放一个 canary，明确什么才算“真的加载了正文”。
+4. 用 confusion matrix 看 broad 与 bounded 的 TP / FP / FN / TN，而不是只看“我觉得第二版更精准”。
+
+可观察的完成标准：
+
+- 你能说清哪个请求是误触发，哪个是漏触发；
+- 你能指出问题在 metadata、正文还是资源索引；
+- 你能解释为什么要禁用或保留隐式调用。
+
+## 来源与延伸阅读
+
+- [Agent Skills Specification](https://agentskills.io/specification)（开放规范；目录结构、frontmatter、progressive disclosure）
+- [Build skills | ChatGPT Learn](https://learn.chatgpt.com/docs/build-skills)（OpenAI 官方；Codex 的 `.agents/skills` 路径、显式 `$` 与隐式 `description` 匹配、skills listing 预算、`openai.yaml` 扩展）
+- [Customization | ChatGPT Learn](https://learn.chatgpt.com/docs/customization/overview)（OpenAI 官方；Codex 里 skills 与 AGENTS.md / memories / MCP / subagents 的分层）
+- [Slash commands / skills | Claude Code Docs](https://code.claude.com/docs/en/slash-commands)（Anthropic 官方；触发排错、frontmatter 损坏时 `/skill-name` 仍可运行、listing 截短与 `disable-model-invocation`）
+- [Features overview | Claude Code Docs](https://code.claude.com/docs/en/features-overview)（Anthropic 官方；`/<name>`、自动匹配、按需加载、`disable-model-invocation: true`）
+- [Agent Skills overview | Claude Platform Docs](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)（Anthropic 官方；`name` / `description` 要同时说明做什么与何时使用）
+- [Agent Skills 橙皮书主题地图](https://github.com/alchaincyf/agent-skills-orange-book)
+- 任务提供的两份工作树外橙皮书中文主题地图（只读，用于 topic mapping，不作为公开可分发素材）
+
+官方资料用于核对当前产品行为与客户端差异。橙皮书只作为中文主题地图和反例素材来源：它关于“关键词匹配优先级”的说法不能当作当前客户端算法事实，而且仓库未提供标准开源许可，因此本文只保留链接与限制说明，不复制其截图、图片或成段文字。

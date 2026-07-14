@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["success", "needs_human"]
+    },
+    "repo_checked": {
+      "type": "boolean"
+    },
+    "worktree_before": {
+      "type": "string"
+    },
+    "task_contract": {
+      "type": "object",
+      "properties": {
+        "goal": { "type": "string" },
+        "allowed_paths": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "forbidden_paths": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "verify_command": { "type": "string" }
+      },
+      "required": ["goal", "allowed_paths", "forbidden_paths", "verify_command"],
+      "additionalProperties": false
+    },
+    "files_changed": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "command": { "type": "string" },
+          "exit_code": { "type": "integer" },
+          "result": { "type": "string" }
+        },
+        "required": ["command", "exit_code", "result"],
+        "additionalProperties": false
+      }
+    },
+    "diff_summary": {
+      "type": "string"
+    },
+    "final_note": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "repo_checked",
+    "worktree_before",
+    "task_contract",
+    "files_changed",
+    "tests",
+    "diff_summary",
+    "final_note"
+  ],
+  "additionalProperties": false
+}

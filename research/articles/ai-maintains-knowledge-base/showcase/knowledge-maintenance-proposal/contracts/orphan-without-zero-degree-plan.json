@@ -1,0 +1,19 @@
+{
+  "fixture": "knowledge-maintenance-proposal",
+  "generated_by": "negative-orphan-no-zero-degree",
+  "source_preservation_rule": "Preserve sources.",
+  "proposals": [
+    {
+      "action": "orphan-review",
+      "note_paths": ["notes/research-index.md"],
+      "evidence_paths": ["notes/research-index.md", "link-graph.json"],
+      "observed_fact": "The note seems isolated.",
+      "proposed_change": "Queue orphan review.",
+      "confidence": "low",
+      "requires_human_approval": true,
+      "source_preservation_rule": "Do not edit.",
+      "reason": "The graph actually contains links."
+    }
+  ]
+}
+

@@ -1,0 +1,23 @@
+PASS main manifest keeps minimal permissions: activeTab, scripting, storage
+PASS main manifest has no host_permissions: none
+PASS main manifest does not request tabs permission: tabs absent
+PASS main manifest does not request unlimitedStorage: unlimitedStorage absent
+PASS manifest registers an MV3 service worker: background.js
+PASS manifest wires the popup entrypoint: popup.html
+PASS overreach manifest is rejected by permission audit: contains tabs + unlimitedStorage + <all_urls>
+PASS extension code has no remote hosted script references: no http(s) references inside popup assets
+PASS popup keeps JavaScript in packaged files: script tag only uses src
+PASS extension service worker loaded in Chrome: bcaeidhdhndcfpekhgmkanababbilpof
+PASS fixture page prepared for selection capture: http://127.0.0.1:<PORT>/page.html
+PASS capture command triggered on fixture page: Command/Ctrl+Shift+Y
+PASS popup page opened for audit: bcaeidhdhndcfpekhgmkanababbilpof
+PASS browser capture on fixture page keeps the real page title: Fixture Article: Chrome Prototype Notes
+PASS browser capture on fixture page keeps the real page URL: http://127.0.0.1:<PORT>/page.html
+PASS browser capture on fixture page keeps the selected text: selected text matches fixture paragraph
+PASS popup displays the latest successful run status: 已保存最近一次阅读卡。
+PASS frozen reading card: {"title":"Fixture Article: Chrome Prototype Notes","url":"http://127.0.0.1:<PORT>/page.html","selectedText":"Acceptance criteria are safer than vibes. 先写清楚要抓什么、保存到哪里、哪些权限不该申请，再让 Claude Code 生成最小原型，通常比“先把功能都做出来”更快到达可验收状态。","capturedAt":"<ISO_TIMESTAMP>"}
+PASS capture command triggered on restricted page: chrome://extensions/
+PASS restricted page failure is surfaced: 抓取失败：Cannot access a chrome:// URL
+PASS popup displays the restricted-page failure message: 抓取失败：Cannot access a chrome:// URL
+PASS restricted page failure does not overwrite last successful card: Fixture Article: Chrome Prototype Notes
+SUMMARY PASS 22 checks

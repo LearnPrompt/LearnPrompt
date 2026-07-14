@@ -1,0 +1,34 @@
+{
+  "contract_version": 1,
+  "allowed_report_paths": [
+    "reports/deployment-recommendation.json",
+    "reports/deployment-recommendation.md"
+  ],
+  "allowed_status": ["accept"],
+  "required_commands": [
+    "openclaw gateway status --require-rpc",
+    "openclaw channels status --probe",
+    "openclaw health --json",
+    "openclaw doctor"
+  ],
+  "exit_codes": {
+    "111": "missing availability or persistence assumptions",
+    "112": "unsafe public exposure, auth, DM, or group policy",
+    "113": "missing or incorrect variable cost inputs, fixture integrity, or invoice boundary",
+    "114": "secret/account leakage or config-only channel health claim",
+    "115": "missing cap, rate/concurrency limit, fallback, or kill switch"
+  },
+  "formula": {
+    "monthly_requests": "requests_per_day * days_per_month",
+    "model_input": "monthly_requests * input_tokens_per_request / 1000000 * input_per_million",
+    "model_output": "monthly_requests * output_tokens_per_request / 1000000 * output_per_million",
+    "tool": "monthly_requests * tool_calls_per_request * tool_per_call",
+    "media": "media_calls_per_day * days_per_month * media_per_call",
+    "monthly_total": "fixed_infra + model_input + model_output + tool + media + channel_plugin + egress_observability"
+  },
+  "privacy": {
+    "forbid_real_credentials": true,
+    "forbid_account_identifiers": true,
+    "forbid_local_absolute_paths": true
+  }
+}

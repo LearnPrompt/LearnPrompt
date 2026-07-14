@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">OpenClaw 部署成本控制面</title>
+  <desc id="desc">工作负载经过拓扑、暴露与渠道策略、成本台账、预算护栏后进入接受或拒绝，并由 111 到 115 五类失败码拦截不完整方案。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#25303b"/>
+    </marker>
+    <style>
+      .title{font-family:Arial,sans-serif;font-size:34px;font-weight:700;fill:#17212b}
+      .subtitle{font-family:Arial,sans-serif;font-size:17px;font-weight:500;fill:#52606d}
+      .step{font-family:Arial,sans-serif;font-size:20px;font-weight:700;fill:#17212b}
+      .body{font-family:Arial,sans-serif;font-size:15px;font-weight:500;fill:#344250}
+      .small{font-family:Arial,sans-serif;font-size:14px;font-weight:600;fill:#52606d}
+      .code{font-family:Menlo,monospace;font-size:14px;font-weight:700;fill:#26313c}
+      .rail-title{font-family:Arial,sans-serif;font-size:18px;font-weight:700;fill:#7d2828}
+      .rail{font-family:Arial,sans-serif;font-size:14px;font-weight:650;fill:#622323}
+      .box{stroke:#25303b;stroke-width:2;rx:18}
+      .arrow{stroke:#25303b;stroke-width:2.5;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1400" height="900" fill="#f7f5ef"/>
+  <rect x="32" y="28" width="1336" height="844" rx="28" fill="#fffdf8" stroke="#d8d3c7" stroke-width="2"/>
+
+  <text class="title" x="70" y="82">OpenClaw 部署成本控制面</text>
+  <text class="subtitle" x="70" y="114">先过硬约束，再在合格候选里比较可重算总成本；最低主机费不等于可上线。</text>
+
+  <rect class="box" x="70" y="155" width="220" height="190" fill="#e8f1fb"/>
+  <text class="step" x="92" y="193">1  工作负载</text>
+  <text class="body" x="92" y="229">• 是否必须 24/7</text>
+  <text class="body" x="92" y="257">• 状态是否持久化</text>
+  <text class="body" x="92" y="285">• 本地设备能力</text>
+  <text class="body" x="92" y="313">• 请求量 / 峰值并发</text>
+
+  <rect class="box" x="330" y="155" width="220" height="190" fill="#e9f5ed"/>
+  <text class="step" x="352" y="193">2  拓扑候选</text>
+  <text class="body" x="352" y="229">本地：operator-hours</text>
+  <text class="body" x="352" y="257">VPS：always-on</text>
+  <text class="body" x="352" y="285">托管：volume + health</text>
+  <text class="small" x="352" y="319">先淘汰不满足硬需求者</text>
+
+  <rect class="box" x="590" y="155" width="220" height="190" fill="#fff0d9"/>
+  <text class="step" x="612" y="193">3  信任边界</text>
+  <text class="body" x="612" y="229">Gateway auth + origin</text>
+  <text class="body" x="612" y="257">DM pairing / allowlist</text>
+  <text class="body" x="612" y="285">Group allowlist</text>
+  <text class="body" x="612" y="313">SecretRef + rotation</text>
+
+  <rect class="box" x="850" y="155" width="220" height="190" fill="#efe9fb"/>
+  <text class="step" x="872" y="193">4  成本台账</text>
+  <text class="body" x="872" y="229">fixed infra</text>
+  <text class="body" x="872" y="257">input / output tokens</text>
+  <text class="body" x="872" y="285">tool / media / channel</text>
+  <text class="body" x="872" y="313">egress / observability</text>
+
+  <rect class="box" x="1110" y="155" width="220" height="190" fill="#e7f5f3"/>
+  <text class="step" x="1132" y="193">5  预算动作</text>
+  <text class="body" x="1132" y="229">monthly + per-run cap</text>
+  <text class="body" x="1132" y="257">rate + concurrency</text>
+  <text class="body" x="1132" y="285">fallback</text>
+  <text class="body" x="1132" y="313">kill switch</text>
+
+  <path class="arrow" d="M290 250 H322"/>
+  <path class="arrow" d="M550 250 H582"/>
+  <path class="arrow" d="M810 250 H842"/>
+  <path class="arrow" d="M1070 250 H1102"/>
+
+  <rect x="70" y="400" width="1260" height="230" rx="20" fill="#f2f0ea" stroke="#a9a397" stroke-width="2"/>
+  <text class="step" x="96" y="439">可重放决策：合成 workload，不接云账号、不读真实凭据</text>
+  <line x1="96" y1="458" x2="1304" y2="458" stroke="#c8c1b5" stroke-width="2"/>
+
+  <text class="small" x="98" y="490">合成输入</text>
+  <text class="code" x="98" y="520">120 req/day · 4500 in · 1200 out</text>
+  <text class="code" x="98" y="546">2 tools/req · 8 media/day · peak 3</text>
+  <text class="code" x="98" y="572">24/7 · persistent · public + auth</text>
+
+  <path class="arrow" d="M418 536 H478"/>
+
+  <text class="small" x="500" y="490">公式</text>
+  <text class="code" x="500" y="520">variable = 12.96 + 17.28</text>
+  <text class="code" x="500" y="546">         + 14.40 + 3.60 = 48.24</text>
+  <text class="code" x="500" y="572">total = fixed + 48.24 + 14.00</text>
+
+  <path class="arrow" d="M806 536 H866"/>
+
+  <text class="small" x="888" y="490">合格候选中的结果</text>
+  <text class="body" x="888" y="520">本地 62.24 → 拒绝：不满足 24/7</text>
+  <text class="body" x="888" y="548">VPS 80.24 → 接受：约束通过且较低</text>
+  <text class="body" x="888" y="576">托管 92.24 → 合格，但示例总额更高</text>
+  <rect x="1116" y="596" width="188" height="28" rx="14" fill="#246b55"/>
+  <text x="1210" y="615" text-anchor="middle" style="font-family:Arial,sans-serif;font-size:14px;font-weight:700;fill:white">CAP 100 · HEADROOM 19.76</text>
+
+  <rect x="70" y="678" width="1260" height="145" rx="20" fill="#fff0ef" stroke="#b45353" stroke-width="2"/>
+  <text class="rail-title" x="96" y="712">拒绝轨：任何一项命中，都不能进入上线队列</text>
+
+  <rect x="96" y="735" width="224" height="62" rx="12" fill="#ffffff" stroke="#cf7777"/>
+  <text class="rail" x="112" y="760">111  可用性 / 持久化缺失</text>
+  <text class="small" x="112" y="783">没有需求就无法证明拓扑合格</text>
+
+  <rect x="340" y="735" width="224" height="62" rx="12" fill="#ffffff" stroke="#cf7777"/>
+  <text class="rail" x="356" y="760">112  暴露 / 渠道策略失控</text>
+  <text class="small" x="356" y="783">公网无 auth，或 DM / group open</text>
+
+  <rect x="584" y="735" width="224" height="62" rx="12" fill="#ffffff" stroke="#cf7777"/>
+  <text class="rail" x="600" y="760">113  变量成本或公式缺项</text>
+  <text class="small" x="600" y="783">估算冒充 provider invoice</text>
+
+  <rect x="828" y="735" width="224" height="62" rx="12" fill="#ffffff" stroke="#cf7777"/>
+  <text class="rail" x="844" y="760">114  凭据泄漏 / 假健康</text>
+  <text class="small" x="844" y="783">config-only 不能替代 live probe</text>
+
+  <rect x="1072" y="735" width="232" height="62" rx="12" fill="#ffffff" stroke="#cf7777"/>
+  <text class="rail" x="1088" y="760">115  无预算熔断动作</text>
+  <text class="small" x="1088" y="783">缺 cap / limit / fallback / kill</text>
+
+  <text class="small" x="70" y="852">示例价格只是可替换输入 · 健康必须由 RPC + channel live probe + health/doctor/logs 分层证明</text>
+</svg>

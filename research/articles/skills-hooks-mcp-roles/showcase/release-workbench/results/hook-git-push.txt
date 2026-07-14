@@ -1,0 +1,2 @@
+{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"release-workbench 策略：git push 属于对外发布动作，必须人工执行，hook 直接拒绝。"}}
+exit=0

@@ -1,0 +1,24 @@
+确定性验收门 verify-first-loop.mjs 的真实输出
+==============================================
+
+--- 好状态（真实运行后的工作树）---
+$ node verify-first-loop.mjs
+PASS no-code-edit: code/config match baseline
+PASS readme-run-section: local-run instructions added vs baseline
+PASS check-passes: npm test exit 0
+SUMMARY: 3/3 acceptance checks passed
+退出码：0
+
+--- 失败路径（故意往 wordcount.js 追加一行代码，违反冻结）---
+$ printf '\n// stray edit\nfunction sneaky(){return 42}\n' >> wordcount.js
+$ node verify-first-loop.mjs
+FAIL no-code-edit: frozen files differ from baseline: wordcount.js
+PASS readme-run-section: local-run instructions added vs baseline
+PASS check-passes: npm test exit 0
+SUMMARY: 2/3 passed — task NOT accepted, return to PLAN/EDIT
+退出码：1
+
+--- 恢复（撤销违规改动后重跑）---
+$ git checkout -- wordcount.js
+$ node verify-first-loop.mjs
+（3/3 acceptance checks passed，退出码 0）

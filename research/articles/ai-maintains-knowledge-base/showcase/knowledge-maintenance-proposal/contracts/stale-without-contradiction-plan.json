@@ -1,0 +1,19 @@
+{
+  "fixture": "knowledge-maintenance-proposal",
+  "generated_by": "negative-stale-no-contradiction",
+  "source_preservation_rule": "Preserve sources.",
+  "proposals": [
+    {
+      "action": "stale-flag",
+      "note_paths": ["notes/team-rituals.md"],
+      "evidence_paths": ["notes/team-rituals.md", "current-sources.json"],
+      "observed_fact": "The note is old.",
+      "proposed_change": "Flag stale.",
+      "confidence": "low",
+      "requires_human_approval": true,
+      "source_preservation_rule": "Do not edit.",
+      "reason": "No current-source contradiction exists."
+    }
+  ]
+}
+

@@ -1,39 +1,411 @@
 ---
-title: Codex Cloud 适合什么任务
-description: 判断哪些任务适合交给云端异步 Agent。
+title: Codex Cloud 适合什么任务：用 timezone-rollup 预演判断能不能安全上云
+description: 用一个具体的 timezone-rollup bug，学会在提交前用 repo-contained、deterministic、clean-checkout 和 acceptance-command 四条门槛判断任务是否适合交给 Codex Cloud。
 sidebar:
   order: 4
 difficulty: intermediate
 source_repo: alchaincyf/codex-orange-book
 source_url: https://github.com/alchaincyf/codex-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-11"
+reading_time: "22 分钟"
+research_path: research/articles/codex-cloud-task-fit
+showcase_path: research/articles/codex-cloud-task-fit/showcase
+showcase_status: verified
+quality_score: 100
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 22 分钟 | 2026-07-11 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/codex-orange-book" url="https://github.com/alchaincyf/codex-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+你手上有一个具体 bug：日报统计函数把夜里 23:55 的使用量归到了第二天。修法其实不难，把 UTC 自然日分桶改成 reporter 所在时区的本地自然日就行。真正难的是另一个问题：**这类任务应该留在本机交互处理，还是已经适合直接交给 Codex Cloud？**
 
-## 适合云端
+大多数人会先从“任务难不难”来想。这个判断方向不对。Cloud 适不适合，核心不在于模型有没有能力写出修复，而在于任务是不是已经能在一个隔离 container 里被完整描述、独立执行并机械验收。换句话说，你要先判断的是 **任务是否适配 Cloud 的运行假设**，而不是先想“云端 Agent 能不能聪明地帮我搞定”。
 
-- 明确 issue。
-- 可通过测试或构建验收。
-- 不依赖本机私有文件。
-- 可以通过 PR review 合并。
+这篇文章就用一个最小但真实的 `timezone-rollup` bug 做预演：我们不会创建真实 Cloud task，也不会伪造不存在的 task ID；相反，我们会把 **task contract、environment contract、cloud-fit-gate、good patch、负面场景退出码和 clean-room replay** 全部冻结到仓库里。最后回答的不是“Cloud 已经帮你修过这次 bug”，而是更有教学价值的一个问题：**这次 handoff 是否已经准备好了。**
 
-## 不适合云端
+:::note[先说边界]
+本文的 Showcase 是本地 handoff 预演，不是真实 Codex Cloud 运行。它证明的是：这个任务已经满足 Cloud 需要的边界，补丁也能在干净临时 HOME、无 agent 网络、无 secret、无本机文件依赖的环境里重放成功。真实 Cloud task 的提交、diff 审查、开 PR 和 follow-up 仍要在产品里完成。
+:::
 
-- 需要本机 App、iCloud 或登录态。
-- 需要用户实时判断方向。
-- 依赖未上传的私密资料。
+## 读完你能做什么
 
-## 操作步骤
+读完后，你应该能独立完成四件事：
 
-1. 把任务写成独立 issue。
-2. 写清仓库、分支、文件范围和验收命令。
-3. 不把密钥写进任务描述。
-4. 让云端 Agent 开 PR，而不是直接改主分支。
+1. 讲清 Codex Cloud task 的真实生命周期：container checkout、setup / maintenance、agent phase、diff / PR / follow-up、缓存和网络边界分别发生在哪一步。
+2. 不再用“看起来像个小修复，所以适合上云”这种直觉判断，而是先用本文这条保守的 offline-first lane 做 preflight：`repo-contained`、`deterministic`、`clean-checkout`、`acceptance-command`。
+3. 重跑 `cloud-handoff-lab`：在本地先过 gate，再在 clean-room 环境里应用唯一 patch 并跑测试，同时看到四种稳定拒绝的退出码。
+4. 正确处理 env var、secret、浏览器登录态、本机文件和 `AGENTS.md` 的边界，不把本地隐式状态误写成 Cloud 天然可得。
 
-## 实战案例
+## 先把 Codex Cloud 真正怎么跑说清楚
 
-文档站的内容页、组件和构建修复适合云端；Obsidian iCloud 同步、Mac 本机权限和浏览器登录态问题更适合本地 Agent。
+截至 2026-07-11，官方 Cloud environment 文档把 Cloud task 的流程写得非常明确。可以直接压缩成五步：
+
+1. Codex 创建一个 container，并 checkout 你选定的分支或 commit。
+2. Codex 运行 setup script；如果恢复的是 cached container，还会补跑 maintenance script。
+3. Codex 应用网络策略：setup 可以联网装依赖，但 agent phase 默认无网络。
+4. Agent 进入循环：读仓库、改文件、跑检查、尝试验证结果。
+5. 完成后展示 answer 和 diff；你可以继续 follow-up，或者决定是否开 PR。
+
+这个顺序非常重要，因为它立刻排除了三种常见误解。
+
+第一，Cloud 不是“把你当前终端完整搬上去”。它只会拿到 **仓库 checkout + 你配置好的环境**，拿不到你本机已经打开的浏览器、桌面 App、Keychain、下载目录和 shell 历史。
+
+第二，setup script 和 agent phase 不是同一个连续 shell。官方文档明确提醒：setup script 运行在独立 Bash session，像 `export FOO=bar` 这种临时环境变量不会自动传进 agent phase。想要在 agent 阶段也看到变量，你得把它放进环境设置或写入 `~/.bashrc`。这也是为什么“setup 里临时 export 过了，所以 Cloud Agent 也看得见”属于错误假设。
+
+第三，Cloud 结束时给你的不是一句“我修好了”，而是 **answer + diff + 后续协作入口**。真正的产出面是 diff、follow-up 和可选 PR，而不是模糊的自然语言承诺。也正因为如此，一个任务适不适合上云，本质上取决于它能不能在这些工件层面被审查，而不是取决于你是否愿意先相信 Agent。
+
+本机 `codex-cli 0.142.2` 的命令面也能补一层证据。`codex cloud --help` 明确列出了 `exec`、`status`、`list`、`apply`、`diff`；`codex cloud exec --help` 还要求你显式传 `--env <ENV_ID>`，并支持 `--attempts` 与 `--branch`。这说明 Cloud 入口本身是独立存在的，但也再次提醒一件事：**命令面存在，不等于当前 workspace 已经有可用 environment，更不等于任务天然适合上云。**
+
+## 先判断是否适合无人值守 handoff，不看“任务大小”
+
+如果你的目标是把任务交出去后让它在隔离环境里无人值守推进，并期待回来直接审 diff，我建议先问四个问题。它们不是 Codex Cloud 的能力上限，而是本文为 **offline-first、可预测 handoff** 设定的保守 lane；探索型 Cloud task 和需要有限网络的任务仍然存在，只是需要更多 follow-up、环境配置与人工判断。
+
+| 门槛 | 你真正要问的问题 | 通过意味着什么 | 失败通常意味着什么 |
+| --- | --- | --- | --- |
+| `repo-contained` | 成功所需的输入是否都在 repo、环境 contract 或明确声明的外部接口里？ | Agent 不需要本机隐式状态 | 依赖 Keychain、浏览器登录态、Finder 文件、本地 App |
+| `deterministic` | 目标、允许路径和预期修复是否已经冻结？ | Agent 是执行，不是边探索边定方向 | “你先看看哪里不对” |
+| `clean-checkout` | 能不能从 fresh checkout 和干净 HOME 重新开始？ | 正确性不依赖 warm cache 和个人历史状态 | 只有在本机脏目录、旧依赖或旧缓存下才通过 |
+| `acceptance-command` | 有无明确命令和稳定退出码来验收？ | diff 和结果能被机械复核 | 只能靠肉眼觉得“看起来好了” |
+
+这四条里面，`acceptance-command` 最容易被想到，另外三条最容易被忽略。也正是这三条，决定了你是把 Cloud 当工程系统用，还是把它当“远程碰碰运气的聊天框”用。
+
+### 为什么 `repo-contained` 要放第一条
+
+只要任务依赖本机独有资源，它就已经偏离了 Cloud 的运行假设。典型例子包括：
+
+- 必须读取 `~/Library/Keychains/login.keychain-db`
+- 必须沿用你当前浏览器里已经登录好的管理后台
+- 必须访问下载目录里没入库的私有 CSV
+- 必须依赖某个本地桌面 App 当前打开的状态
+
+这类任务未必不能让 Agent 做，但更合理的路由往往是本地 CLI、IDE 或桌面 App，而不是 Cloud。Cloud 的价值在于隔离、异步和可审查，而不是替你偷偷复用个人机器的私有状态。
+
+### 为什么 `deterministic` 不能被“有测试”替代
+
+很多任务虽然有测试，但方向仍然是模糊的。比如：
+
+- 好任务：把 UTC 分桶改成 reporter day，只准改 `src/rollupByReporterDay.js`，最后跑 `npm test -- --test-reporter tap`。
+- 坏任务：你先看看日报统计哪里怪，再顺手修一下。
+
+两者都可能有测试，但后者还不是本文这条“交出去后等结果”的无人值守 handoff。这里不是说 Cloud 不能做 discovery：Agent 可以探索仓库、运行命令，也可以通过 follow-up 继续收敛。区别在于，探索任务需要你预期迭代和方向判断；如果想要一轮可预测的异步执行，官方 Prompting 文档建议写清目标行为、相关代码或复现步骤、重要 constraints 和验证方式。换成本文的工程建议，就是 **先冻结 contract，再进入保守执行 lane**。
+
+### 为什么 `clean-checkout` 能拦住很多伪通过
+
+官方文档允许 container cache 最长保留 12 小时，恢复缓存时还会 checkout 当前任务分支，并可选执行 maintenance script。缓存是很实用的速度优化，但它不应该成为你判断“任务适不适合 Cloud”的依据。
+
+更可靠的问题应该是：**如果完全从冷启动开始，这个任务还能成立吗？**
+
+如果答案是否定的，那么缓存只是把问题暂时盖住了。比如：
+
+- 只有某个旧依赖已经躺在缓存里时，测试才会过。
+- 只有你本机 HOME 里残留某个配置时，脚本才能跑通。
+- 只有恢复到某个 warm branch state，Agent 才能看到你以为“仓库里本来就有”的东西。
+
+这时你真正需要做的，不是祈祷 Cloud 缓存一直命中，而是把任务改造成 clean-checkout 也成立。
+
+### 为什么 `acceptance-command` 必须是命令，不是感觉
+
+验收命令至少要满足三件事：
+
+1. 从仓库根就能跑。
+2. 有稳定退出码。
+3. 覆盖的是目标行为，而不是顺手跑一整套 unrelated pipeline。
+
+对本文的 `timezone-rollup` fixture 来说，`npm test -- --test-reporter tap` 就是一个够好的 acceptance command。它的好不在于“看起来很正式”，而在于：
+
+- 输出能稳定归一化成 `tests / pass / fail`
+- 直接覆盖我们关心的时区分桶行为
+- 不依赖任何额外包、secret、网络或本机文件
+
+## 一张图看懂 Cloud handoff 的决策链
+
+![用四道门槛判断 timezone-rollup bug 是否适合交给 Codex Cloud，并在通过后进入 clean-room replay 的决策链](/images/articles/codex-cloud-task-fit/cloud-task-fit-decision-chain.svg)
+*图注：这张图拆的是本文的 offline-first 无人值守 lane，而不是 Cloud 的全部能力。任务不依赖本机隐式状态、方向已冻结、支持 clean checkout 且有 acceptance command 时，才进入本地 clean-room replay；需要探索或 agent 网络的任务应转入单独配置、可 follow-up 的 lane，而不是被误判成 Cloud 永远不能做。*
+
+这张图有两个容易忽略的点。
+
+第一，正向路径不是“直接上云”，而是“先通过 gate，再证明 clean-room replay 成立”。这正是本文一开始强调的边界：我们在验证 handoff readiness，而不是伪造一条真实 Cloud 执行记录。
+
+第二，负向路径不是模糊地说“不太适合”，而是给出稳定退出码。对读者最有价值的不是一个抽象结论，而是你能在仓库根看到一个确定的、可复现的拒绝结果。
+
+## Showcase：用 cloud-handoff-lab 预演一个具体 timezone-rollup bug
+
+本文的 Showcase 固定为 `cloud-handoff-lab`。它是一个最小 Node 仓库，只有四个文件：
+
+```text
+AGENTS.md
+package.json
+src/rollupByReporterDay.js
+test/rollupByReporterDay.test.js
+```
+
+其中 `src/rollupByReporterDay.js` 故意保留一个 bug：函数目前用 `Date.toISOString().slice(0, 10)` 做分桶，所以 `2026-02-04T07:55:00Z` 这种落在洛杉矶前一天深夜的事件，会被错误归进 `2026-02-04`，而不是 reporter 视角的 `2026-02-03`。
+
+### 先冻结 task contract，不让 Agent 边猜边修
+
+正向任务卡在 `research/articles/codex-cloud-task-fit/showcase/cloud-handoff-lab/contracts/positive-timezone-rollup.json`。关键信息只有几项，但每一项都在缩小执行自由度：
+
+```json
+{
+  "goal": "Fix the timezone rollup bug so usage is grouped by the reporter local day instead of the UTC day.",
+  "direction_status": "frozen",
+  "expected_fix": "Replace UTC date bucketing with a reporter-time-zone day key in src/rollupByReporterDay.js.",
+  "allowed_paths": ["src/rollupByReporterDay.js"],
+  "acceptance_command": "npm test -- --test-reporter tap"
+}
+```
+
+这几行的教学价值很高。它们说明一个适合 Cloud 的任务，通常不是“请修一下这个问题”这么模糊，而是已经明确到：
+
+- 改哪个行为
+- 允许改哪个路径
+- 验收命令是什么
+- 任务方向是不是还需要 discovery
+
+如果你还写不出这些字段，那说明你现在要做的往往不是提交 Cloud task，而是先在本地或 `/plan` 阶段收敛任务。
+
+### 再冻结 environment contract，明确 Cloud 假设
+
+同目录下的 `environment-contract.json` 做了另一件事：把本文要遵守的 Cloud 假设写死。它不是产品真实环境配置文件，而是对官方机制的一个教学化投影：
+
+```json
+{
+  "checkout_mode": "selected-branch-or-commit",
+  "setup_phase": { "internet_access": "on" },
+  "maintenance_phase": { "command": "none" },
+  "agent_phase": {
+    "internet_access": "off",
+    "env_vars": { "TZ": "UTC" },
+    "env_var_lifecycle": "full-task",
+    "secrets_available": false,
+    "secret_lifecycle": "setup-only",
+    "home": "clean-temp-home",
+    "local_files": "repo-only",
+    "browser_login": false
+  }
+}
+```
+
+这个 contract 把三件容易说混的事拆开了：
+
+- **setup 能联网**，因为官方允许 setup 安装依赖。
+- **本文正例让 agent phase 保持无网络**，所以修复逻辑不能偷偷依赖在线查资料或临时请求外部 API；这是保守实验设定，不是 Cloud 的能力上限。
+- **env vars 与 secrets 生命周期不同**。本文特地把它单列出来，是因为很多人会误以为“反正 Cloud 有 secret，Agent 跑测试时也能直接拿”。官方并不是这么定义的。
+
+### `AGENTS.md` 在这里做什么，不做什么
+
+这个 fixture 自带一个局部 `AGENTS.md`，它只干四件事：
+
+1. 点名当前任务目标文件是 `src/rollupByReporterDay.js`
+2. 约束 allowed edit path
+3. 指定验收命令就是 `npm test -- --test-reporter tap`
+4. 重申不允许依赖浏览器状态、Keychain 或仓库外资源
+
+这正好对应官方文档的描述：如果仓库里有 `AGENTS.md`，agent 会用它寻找项目特定的 lint / test commands。注意它只是帮助 Agent 在 **已知边界内执行**，并不会替你创造清晰目标，也不会把本机依赖 magically 变成 Cloud 可得资源。
+
+### 正向场景怎么证明“适合上云”
+
+正向场景不是直接去 call `codex cloud exec`，而是跑：
+
+```bash
+node research/articles/codex-cloud-task-fit/showcase/cloud-handoff-lab/scripts/verify-showcase.mjs
+```
+
+这条命令会顺序做四件事：
+
+1. 先用 `cloud-fit-gate.mjs` 审核 task contract 与 environment contract。
+2. 在系统临时目录下创建一个一次性的 `HOME` 和一次性的 Git repo。
+3. 从 `fixture/` 初始化 clean checkout，应用唯一的 `good.patch`。
+4. 在没有本机 secret、没有浏览器登录态、没有 agent 网络的前提下执行 `npm test -- --test-reporter tap`。
+
+冻结后的正向摘要是：
+
+```text
+positive-clean-room: gate=0 apply=0 test=0 changed=src/rollupByReporterDay.js
+```
+
+其中最关键的不是 `test=0`，而是另外两个信号：
+
+- `gate=0`：说明任务在提交给 Cloud 之前就满足了 handoff 边界。
+- `changed=src/rollupByReporterDay.js`：说明补丁范围和冻结 contract 一致。
+
+测试输出也没有直接保留原始临时路径，而是只冻结了可比较的摘要：
+
+```text
+tests=3
+pass=3
+fail=0
+```
+
+这就是一个合格的 handoff 预演该有的样子：**原始运行发生在仓库外的临时目录，进仓库的只剩下最小、可审查、可复跑的工件。**
+
+### 这次 fix 到底改了什么
+
+`good.patch` 并不花哨，只做了一件事：把 UTC day key 换成基于 `Intl.DateTimeFormat(..., { timeZone })` 的 reporter day key。冻结下来的核心 diff 是：
+
+```diff
+-function utcDayKey(instant) {
+-  return instant.toISOString().slice(0, 10);
++function reporterDayKey(instant, timeZone) {
++  const formatter = new Intl.DateTimeFormat("en-CA", {
++    timeZone,
++    year: "numeric",
++    month: "2-digit",
++    day: "2-digit",
++  });
++  const parts = formatter.formatToParts(instant);
++  const year = parts.find(({ type }) => type === "year")?.value;
++  const month = parts.find(({ type }) => type === "month")?.value;
++  const day = parts.find(({ type }) => type === "day")?.value;
++  return `${year}-${month}-${day}`;
+ }
+```
+
+补丁本身不重要，重要的是它满足了本文要证明的四件事：
+
+- 输入全在 repo 里
+- 目标行为已冻结
+- clean replay 可通过
+- 验收命令明确
+
+这也正是为什么本文选择一个 timezone rollup bug，而不是随便挑一个字符串替换案例。因为时区 bug 同时具备“逻辑清晰”“测试可写”“很容易在本机状态里掺杂额外变量”这三个特征，特别适合做 Cloud task fit 的预演样本。
+
+## 负面场景：为什么有些任务应该在提交前就被 gate 拒绝
+
+只展示正例会带来一个坏结果：读者容易误以为“只要测试能写，任务基本都能上云”。所以 `cloud-handoff-lab` 还归档了四类负向任务卡，并为它们给出稳定退出码。
+
+### `21`：依赖 `~/Library/Keychains`
+
+第一个负例要求修完时区 bug 后，再去读取 `~/Library/Keychains/login.keychain-db` 里的值验证结果。问题不在于这个操作危险，而在于它根本不属于 Cloud 的 repo-contained 假设。
+
+在真实 Cloud container 里，没有你的 macOS Keychain。把这种依赖塞进任务卡，只会让 Cloud run 在执行时才意外失败。更成熟的做法是：**提交前就拒绝**。
+
+### `22`：依赖浏览器登录态
+
+第二个负例要求修完 bug 后，再用已经登录好的 analytics dashboard 做人工对照。这个要求乍看合理，但对 Cloud 来说同样不是稳定输入。Cloud 任务不该默认继承你个人浏览器里已经打开、已经登录、已经导航到正确页面的状态。
+
+如果确实需要浏览器验证，有几种更好的做法：
+
+- 把截图或导出的 JSON 固化进 repo
+- 把可公开访问的预览页作为输入
+- 明确转回本地验证，而不是把浏览器会话依赖塞进 Cloud
+
+### `23`：缺 acceptance command
+
+第三个负例最像很多真实团队的现状：目标看起来很明确，但验收只写了一句“修到看起来对”。这种任务不一定要被彻底放弃，但它至少不应该被直接包装成可审查的 Cloud handoff。
+
+原因很简单：Cloud 最后给你的是 diff。如果没有 acceptance command，你就没有稳定办法判断 diff 是不是完成了目标，只能靠主观印象。
+
+### `24`：任务方向不明确
+
+最后一个负例故意保留“你先看看哪里不对，再修你觉得有问题的地方”这种措辞。它并不一定比正例更复杂，但它明显仍在 discovery 阶段，因此会被**本文的无人值守执行 gate**拒绝；这类任务仍可进入允许 follow-up 的 Cloud 探索任务或先在本地收敛，不能由这个退出码外推成“Cloud 不支持探索”。
+
+这类任务更适合先在本地交互会话里收敛，或者先让 Codex 做 `/plan` 提案。等你能把问题写成冻结 contract，再考虑 Cloud，执行成本和结果可审查性都会高很多。
+
+冻结后的负向结果摘要是：
+
+```text
+negative-keychain-dependency: gate=21
+negative-browser-login: gate=22
+negative-missing-acceptance: gate=23
+negative-unclear-direction: gate=24
+```
+
+这些退出码不是官方保留码，而是本教程自己的教学 gate 设计。但它们非常有用，因为它们把“这任务不适合上云”的原因从抽象判断变成了可复现结果。
+
+## env var、secret、setup、maintenance、cache：最容易混淆的几条边界
+
+很多关于 Cloud 的误用，其实都来自把几个不同层次的问题混成了一团。这里把最容易混的五条边界一次拆开。
+
+### 1. env var 和 secret 不是同义词
+
+官方 Cloud environment 文档里，env vars 与 secrets 的生命周期不同：
+
+- env vars：setup script 和 agent phase 全程可见
+- secrets：只在 setup scripts 解密可用，agent phase 开始前就移除
+
+这意味着，如果你的验收命令本身需要一个值，它更可能应该是环境变量，而不是只存在于 setup 阶段的 secret。反过来，如果 secret 只是为了 setup 安装私有依赖，它就没必要暴露给 agent phase。
+
+### 2. setup script 能联网，不代表 agent 默认能联网
+
+官方 Agent internet access 文档明确写到：agent phase 默认无网络。setup scripts 仍然可以联网装依赖，但这不应被理解成“修复逻辑过程中想查什么都行”。因此本文的保守 preflight 先假设 **agent phase 没网络**。
+
+这不是说“需要网络就不适合 Cloud”。官方环境允许你按环境开启 agent internet，并用 domain allowlist 与 HTTP methods 收窄访问；确实需要查受信 API 或仓库资料的任务仍可能适合 Cloud。代价是你必须单独审计 prompt injection、代码或 secret 外泄、恶意依赖与许可风险，并优先只开放必要域名和 `GET` / `HEAD` / `OPTIONS`。本文的 `requires_agent_internet: false` 只是选择了最容易复现、风险最低的一条教学 lane。
+
+### 3. maintenance script 是恢复缓存后的补偿，不是冷启动遗漏的借口
+
+当 cached container 被恢复时，官方文档允许你跑 maintenance script。它的合理用途是：setup 在旧 commit 上跑过，现在依赖需要补更新；或者环境变量和脚本没改，但 branch 代码前进了，需要做轻量维护。
+
+不合理的用途是：靠 maintenance script 偷偷补上冷启动本该做、但 setup 没做的关键步骤。因为那样一来，task 的正确性就建立在“必须先命中过一次 cache”的隐含前提上了。
+
+### 4. cache 可以提速，但不能代替 clean replay
+
+官方文档说 cache 最多保留 12 小时，并在 setup / maintenance / env vars / secrets 变化时自动失效。对写教程的人来说，更重要的不是把这些参数背下来，而是明白一句话：**cache 只能解释为什么第二次更快，不能解释为什么第一次也应该正确。**
+
+所以本文的 control 面才会坚持先做 clean-room replay。只要冷启动能通过，cache 才只是优化；只要冷启动通不过，cache 就只是把缺陷暂时藏起来。
+
+### 5. `AGENTS.md` 帮你找命令，但不帮你补 contract
+
+很多人会在任务模糊时寄希望于 `AGENTS.md`：“反正仓库里写了测试命令，Cloud Agent 自己会懂。”这仍然是过度乐观。`AGENTS.md` 很适合告诉 Agent 跑什么、别碰什么、项目命令习惯是什么；但它替代不了任务卡里最关键的三样东西：
+
+- 要改什么行为
+- 允许改哪些路径
+- 什么结果才算完成
+
+## 什么时候先别进入无人值守 lane，哪怕任务看起来不大
+
+以下情况里，我更建议先在本地收敛，或明确把 Cloud 任务当作需要 follow-up 的探索任务，而不是直接期待一轮无人值守执行就交付最终 diff：
+
+- 你还说不清 allowed paths。
+- 你没有 acceptance command，只能靠人工印象验收。
+- 任务需要本机登录态、本地 App、浏览器会话或私有文件。
+- 你已经知道必须边看边改目标，而不是按冻结 contract 执行。
+- 你真正想得到的是一个方案讨论，而不是一个可审查 diff。
+
+一个实用判断是：如果你无法在十行以内写出 task contract，先别把它塞进本文这条保守 lane。不是因为 Cloud 不够强，而是因为任务还需要探索、环境配置或人工判断。
+
+## 一张可复制的 Cloud handoff 卡片
+
+把下面这张卡片复制到你的下一个候选任务上。如果有三项以上写不出来，先不要急着上云。
+
+```yaml
+goal: 要修什么行为
+allowed_paths:
+acceptance_command:
+direction_status: frozen / ambiguous
+requires_clean_checkout: true / false
+host_dependencies:
+  local_files:
+  browser_login: false
+  local_apps:
+requires_agent_internet: false
+requires_secret_names:
+follow_up_plan: diff only / ask follow-up / open PR after review
+```
+
+这个模板真正有用的地方，不是它长得像规范，而是它会逼你暴露那些原本想当然的隐式前提。比如你一旦把 `host_dependencies.local_files` 写出来，就很难再骗自己说“其实读一下 Keychain 也没什么”。一旦你发现 `acceptance_command` 写不出来，就会意识到现在缺的不是 Cloud 能力，而是验收设计。
+
+## 练习：把一个真实任务跑一遍 fit preflight
+
+找一个你本周确实可能交给 Agent 的任务，别超过一个目标文件或一个小模块。然后做这三步：
+
+1. 写一张 task contract，只保留目标、allowed paths、acceptance command 和 host dependencies。
+2. 用本文的四条门槛逐条问自己：repo-contained、deterministic、clean-checkout、acceptance-command 是否都成立。
+3. 如果有任何一条答不上来，先把任务拉回本地收敛，再决定是否上 Cloud。
+
+验收标准也要写清楚：如果你最后仍然要靠“我看 diff 觉得差不多”才能决定是否完成，那说明这次练习还没过关。真正通过的标志是：**你能在提交前就解释清楚为什么这个任务适合上云，或者为什么它应该被 gate 拒绝。**
+
+## 来源与延伸阅读
+
+- 官方资料：[Cloud environments](https://learn.chatgpt.com/docs/environments/cloud-environment)
+- 官方资料：[Agent internet access](https://learn.chatgpt.com/docs/cloud/internet-access)
+- 官方资料：[Prompting](https://learn.chatgpt.com/docs/prompting)
+- 官方资料支撑当前 Cloud 机制的任务生命周期、网络边界、env var 与 secret 生命周期、prompting 方法；文中相关事实均按 2026-07-11 核验。
+- 本机命令面证据：`research/articles/codex-cloud-task-fit/showcase/cloud-handoff-lab/results/local-cloud-help.txt`，对应 `codex-cli 0.142.2` 的 `codex cloud --help` / `codex cloud exec --help` 摘录。
+- 中文二手主题地图：[Codex Orange Book](https://github.com/alchaincyf/codex-orange-book)
+
+官方资料用于支撑当前产品行为。Codex Orange Book 仅作为中文二手主题地图保留署名与许可说明：该仓库 README 标注 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)。本文结构、论证、Showcase 和教学图片均已按 2026-07-11 的一手资料与本地预演重新组织和复核。

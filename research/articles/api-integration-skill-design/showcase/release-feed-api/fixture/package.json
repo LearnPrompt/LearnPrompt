@@ -1,0 +1,9 @@
+{
+  "name": "release-feed-api-fixture",
+  "private": true,
+  "type": "module",
+  "version": "0.0.0",
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  }
+}

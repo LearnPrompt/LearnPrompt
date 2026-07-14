@@ -1,0 +1,27 @@
+{
+  "environment_id": "cloud-handoff-lab-clean-room",
+  "verified_at": "2026-07-11",
+  "checkout_mode": "selected-branch-or-commit",
+  "setup_phase": {
+    "internet_access": "on",
+    "command": "none (fixture uses Node.js standard library only)"
+  },
+  "maintenance_phase": {
+    "command": "none",
+    "used_when_cache_resumes": true
+  },
+  "agent_phase": {
+    "internet_access": "off",
+    "env_vars": {
+      "TZ": "UTC"
+    },
+    "env_var_lifecycle": "full-task",
+    "secrets_available": false,
+    "secret_lifecycle": "setup-only",
+    "home": "clean-temp-home",
+    "local_files": "repo-only",
+    "browser_login": false,
+    "local_apps": []
+  },
+  "cache_boundary": "Cache may speed setup, but correctness must still hold on a cold clean replay."
+}

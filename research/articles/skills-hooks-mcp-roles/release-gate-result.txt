@@ -1,0 +1,92 @@
+skills-hooks-mcp-roles 发布前机械门禁（冻结脱敏摘录）
+================================================================
+运行日期：2026-07-11
+运行环境：Claude Code 2.1.206；Node v24.11.0；LearnPrompt 仓库根目录。
+说明：原始终端输出先在工作树外的系统临时目录检查；以下为进程退出后冻结的关键行，
+      不含本机绝对路径或运行标识。当前 showcase_status=partial，尚未独立终审，不代表 PASS。
+
+----------------------------------------------------------------
+1. Showcase 总验证器 release-workbench（重复流程/危险时点/外部数据/反例）
+命令：
+  node research/articles/skills-hooks-mcp-roles/showcase/release-workbench/scripts/release-gate.mjs
+关键输出：
+  PASS [A] Skill 契约检查 (exit 0)
+  PASS [B1] Hook 对 git push 返回 deny (exit 0)
+  PASS [B2] Hook 对 npm test 不作决定/静默放行 (exit 0)
+  PASS [C] MCP 子进程取回外部 issue LP-42 (exit 0)
+  PASS [D1] 机制闸门放行 Skill 声明 (exit 0)
+  PASS [D2] 机制闸门拒绝“本地固定流程包装成 MCP” (exit 3)
+  SUMMARY 6/6 项符合预期
+  PASS release-workbench: 重复流程->Skill、危险时点->Hook、外部数据->MCP、错误包装->被拒 全部符合预期
+退出码：0
+
+2. Hook 正例：git push -> deny（真实子进程 stdin 输入 JSON）
+命令：
+  node .../release-workbench/hooks/pre-tool-use.mjs < .../fixtures/hook-events/git-push.json
+关键输出：
+  {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny",...}}
+退出码：0
+
+3. Hook 负例（安全命令）：npm test -> 静默不作决定
+命令：
+  node .../release-workbench/hooks/pre-tool-use.mjs < .../fixtures/hook-events/npm-test.json
+关键输出：
+  <stdout 为空，0 字节>  （交回正常权限流程；静默 != 预先批准）
+退出码：0
+
+4. MCP 子进程取回 LP-42（最小 JSON-RPC 边界）
+命令：
+  node .../release-workbench/mcp/client-harness.mjs
+关键输出：
+  PASS mcp: initialize 握手成功 (release-workbench-issue-server)
+  PASS mcp: tools/call get_issue 取回 LP-42 — slugify 在连续分隔符下产生双连字符
+  PASS mcp: resources/read 取回 issue://LP-42
+退出码：0
+边界：仅验证本文最小 JSON-RPC 边界，不宣称完整 MCP conformance 或 Claude Code 在线集成。
+
+5. 反例：纯本地固定流程包装成 MCP -> 机制闸门拒绝
+命令：
+  node .../release-workbench/scripts/mechanism-gate.mjs \
+    .../fixtures/mechanism-specs/local-flow-as-mcp.json
+关键输出：
+  REJECT [从 issue + diff 生成发布摘要（同一个纯本地固定流程，却想包装成 MCP）]
+    原因: 声明为 MCP，但该任务不访问任何外部系统或数据。
+    正解: 这是纯本地固定流程，应固化为 Skill。
+退出码：3（预期拒绝）
+
+6. 正文字数下限
+命令：node -e "统计 body / 去代码中文 / H2"
+关键输出：
+  body chars: 8316 | CN explanatory: 3342 | H2: 10
+退出码：0（均高于 5000 / 1800 / 6 下限）
+
+7. 单篇 partial validator
+命令：
+  node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs \
+    --article starlight/src/content/docs/claude-code/skills-hooks-mcp-roles.mdx \
+    --research research/articles/skills-hooks-mcp-roles
+关键输出：
+  PASS article: starlight/src/content/docs/claude-code/skills-hooks-mcp-roles.mdx
+  PASS research: research/articles/skills-hooks-mcp-roles
+  PASS status: partial
+退出码：0
+
+8. Starlight 完整构建
+命令：npm --prefix starlight run build
+关键输出：
+  Found 49 HTML files.
+  49 page(s) built
+  Complete!
+退出码：0
+
+9. diff 格式检查（含新增文件 intent-to-add）
+命令：git diff --check
+关键输出：（无输出）
+退出码：0
+
+10. 隐私脱敏扫描
+命令：grep 扫描 research/articles/skills-hooks-mcp-roles/ 的本机绝对路径
+结果：clean（无用户主目录 / 系统临时目录 / worktree 临时路径）
+
+================================================================
+当前状态：partial。writer 阶段门禁全部通过；quality_score 与终审 PASS 留待独立只读复审。

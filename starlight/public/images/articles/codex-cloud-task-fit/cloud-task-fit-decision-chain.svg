@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">Codex Cloud 任务适配决策链</title>
+  <desc id="desc">用四个门槛判断一次 timezone rollup bug 修复是否适合交给 Codex Cloud：repo-contained、deterministic、clean checkout、acceptance command；若通过，再进入 clean-room replay。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f7efe2" />
+      <stop offset="100%" stop-color="#f0f5ea" />
+    </linearGradient>
+    <linearGradient id="card" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fffdfa" />
+      <stop offset="100%" stop-color="#fff3dd" />
+    </linearGradient>
+    <linearGradient id="accept" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#d8f4e5" />
+      <stop offset="100%" stop-color="#b9ead2" />
+    </linearGradient>
+    <linearGradient id="reject" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#ffe2d7" />
+      <stop offset="100%" stop-color="#ffc6b4" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#b89f74" flood-opacity="0.18" />
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#516056" />
+    </marker>
+  </defs>
+
+  <rect width="1400" height="900" fill="url(#bg)" />
+  <circle cx="1280" cy="120" r="120" fill="#f9d9a2" opacity="0.35" />
+  <circle cx="180" cy="760" r="160" fill="#cdddc3" opacity="0.35" />
+
+  <text x="90" y="100" font-family="'Noto Sans SC', 'PingFang SC', sans-serif" font-size="46" font-weight="700" fill="#2d382f">Codex Cloud 任务适配决策链</text>
+  <text x="90" y="148" font-family="'Noto Sans SC', 'PingFang SC', sans-serif" font-size="24" fill="#5f6a61">cloud-handoff-lab 把“能否上云”拆成四个硬门槛，再用 clean-room replay 证明补丁在无本机状态下仍然成立。</text>
+
+  <rect x="90" y="210" width="1220" height="120" rx="28" fill="url(#card)" stroke="#d9c39a" stroke-width="2" filter="url(#shadow)" />
+  <text x="130" y="258" font-family="'JetBrains Mono', monospace" font-size="24" font-weight="700" fill="#7b4e16">输入</text>
+  <text x="130" y="300" font-family="'Noto Sans SC', 'PingFang SC', sans-serif" font-size="26" fill="#2f3b31">timezone-rollup bug + 冻结 task contract + environment contract + AGENTS.md</text>
+  <text x="130" y="334" font-family="'Noto Sans SC', 'PingFang SC', sans-serif" font-size="20" fill="#56615a">目标只修 `src/rollupByReporterDay.js`，验收命令是 `npm test -- --test-reporter tap`，agent phase 默认无网络、无 secret、无本机文件。</text>
+
+  <line x1="700" y1="330" x2="700" y2="390" stroke="#516056" stroke-width="6" marker-end="url(#arrow)" />
+
+  <g filter="url(#shadow)">
+    <rect x="110" y="400" width="250" height="170" rx="24" fill="#fff6e8" stroke="#d9c39a" stroke-width="2" />
+    <text x="140" y="448" font-family="'JetBrains Mono', monospace" font-size="24" font-weight="700" fill="#7b4e16">1. repo-contained</text>
+    <text x="140" y="490" font-family="'Noto Sans SC', 'PingFang SC', sans-serif" font-size="22" fill="#2f3b31">不能依赖</text>
+    <text x="140" y="524" font-family="'Noto Sans SC', 'PingFang SC', sans-serif" font-size="20" fill="#56615a">~/Library/Keychains</text>
+    <text x="140" y="554" font-family="'Noto Sans SC', 'PingFang SC', sans-serif" font-size="20" fill="#56615a">浏览器登录态</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="400" y="400" width="250" height="170" rx="24" fill="#fff6e8" stroke="#d9c39a" stroke-width="2" />
+    <text x="430" y="448" font-family="'JetBrains Mono', monospace" font-size="24" font-weight="700" fill="#7b4e16">2. deterministic</text>
+    <text x="430" y="490" font-family="'Noto Sans SC', 'PingFang SC', sans-serif" font-size="22" fill="#2f3b31">任务方向已冻结</text>
+    <text x="430" y="524" font-family="'Noto Sans SC', 'PingFang SC', sans-serif" font-size="20" fill="#56615a">不是“你先看看哪里不对”</text>
+    <text x="430" y="554" font-family="'Noto Sans SC', 'PingFang SC', sans-serif" font-size="20" fill="#56615a">而是“把 UTC 分桶改成 reporter day”</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="690" y="400" width="250" height="170" rx="24" fill="#fff6e8" stroke="#d9c39a" stroke-width="2" />
+    <text x="720" y="448" font-family="'JetBrains Mono', monospace" font-size="24" font-weight="700" fill="#7b4e16">3. clean checkout</text>
+    <text x="720" y="490" font-family="'Noto Sans SC', 'PingFang SC', sans-serif" font-size="22" fill="#2f3b31">干净临时 HOME</text>
+    <text x="720" y="524" font-family="'Noto Sans SC', 'PingFang SC', sans-serif" font-size="20" fill="#56615a">fresh repo + clean git status</text>
+    <text x="720" y="554" font-family="'Noto Sans SC', 'PingFang SC', sans-serif" font-size="20" fill="#56615a">不能吃本机历史状态</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="980" y="400" width="250" height="170" rx="24" fill="#fff6e8" stroke="#d9c39a" stroke-width="2" />
+    <text x="1010" y="448" font-family="'JetBrains Mono', monospace" font-size="24" font-weight="700" fill="#7b4e16">4. acceptance command</text>
+    <text x="1010" y="490" font-family="'Noto Sans SC', 'PingFang SC', sans-serif" font-size="22" fill="#2f3b31">必须可机械验收</text>
+    <text x="1010" y="524" font-family="'Noto Sans SC', 'PingFang SC', sans-serif" font-size="20" fill="#56615a">有命令、有退出码</text>
+    <text x="1010" y="554" font-family="'Noto Sans SC', 'PingFang SC', sans-serif" font-size="20" fill="#56615a">不是“看起来像好了”</text>
+  </g>
+
+  <line x1="235" y1="570" x2="235" y2="635" stroke="#516056" stroke-width="6" marker-end="url(#arrow)" />
+  <line x1="525" y1="570" x2="525" y2="635" stroke="#516056" stroke-width="6" marker-end="url(#arrow)" />
+  <line x1="815" y1="570" x2="815" y2="635" stroke="#516056" stroke-width="6" marker-end="url(#arrow)" />
+  <line x1="1105" y1="570" x2="1105" y2="635" stroke="#516056" stroke-width="6" marker-end="url(#arrow)" />
+
+  <rect x="150" y="660" width="520" height="150" rx="28" fill="url(#accept)" stroke="#72b88f" stroke-width="2" filter="url(#shadow)" />
+  <text x="190" y="710" font-family="'JetBrains Mono', monospace" font-size="26" font-weight="700" fill="#20563c">通过 gate -> clean-room replay</text>
+  <text x="190" y="748" font-family="'Noto Sans SC', 'PingFang SC', sans-serif" font-size="22" fill="#2f3b31">应用 good patch，测试通过，changed files 仅有</text>
+  <text x="190" y="780" font-family="'JetBrains Mono', monospace" font-size="22" fill="#20563c">src/rollupByReporterDay.js</text>
+
+  <rect x="740" y="660" width="520" height="150" rx="28" fill="url(#reject)" stroke="#dc8468" stroke-width="2" filter="url(#shadow)" />
+  <text x="780" y="710" font-family="'JetBrains Mono', monospace" font-size="26" font-weight="700" fill="#8a2e18">未通过 gate -> 稳定拒绝</text>
+  <text x="780" y="748" font-family="'Noto Sans SC', 'PingFang SC', sans-serif" font-size="22" fill="#4f3428">21: Keychain 依赖 | 22: 浏览器登录态</text>
+  <text x="780" y="780" font-family="'Noto Sans SC', 'PingFang SC', sans-serif" font-size="22" fill="#4f3428">23: 缺验收命令 | 24: 任务方向不明确</text>
+</svg>

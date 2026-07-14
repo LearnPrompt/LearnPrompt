@@ -1,34 +1,283 @@
 ---
-title: 什么是 Harness
-description: 理解模型之外的工程系统。
+title: Harness 的五个组件：让 Agent 不只“会做”，还要可靠地做完
+description: 用指令、能力、约束、状态和编排检查 Agent 系统，并运行一个五项可验证的最小 Harness。
 sidebar:
   order: 1
 difficulty: intermediate
 source_repo: alchaincyf/harness-engineering-orange-book
 source_url: https://github.com/alchaincyf/harness-engineering-orange-book
-updated_from: 2026-05
+updated_from: 2026-07
+author: LearnPrompt 编辑部
+verified_at: "2026-07-10"
+reading_time: 13 分钟
+research_path: research/golden-samples/harness-five-components
+showcase_path: research/golden-samples/harness-five-components/showcase/minimal-harness
+showcase_status: verified
+quality_score: 92
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 13 分钟 | 2026-07-10 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/harness-engineering-orange-book" url="https://github.com/alchaincyf/harness-engineering-orange-book" updatedFrom="2026-05" />
+同一个模型，为什么在聊天框里只能给建议，进入一个成熟仓库后却能定位文件、修改代码、运行测试、根据失败继续修正？
 
-## 核心概念
+差别不只在提示词。模型之外，还有一整套系统决定它能看到什么、能做什么、什么绝对不能做、怎样记住上一轮，以及谁来判断任务真的完成。这个系统就是 **Harness**。
 
-Harness 是把模型能力接进真实任务的工程系统。它包含指令、工具、权限、记忆、评估、反馈和部署边界。
+> 模型负责提出下一步；Harness 决定这一步能否安全执行、留下证据并进入下一步。
 
-## 为什么重要
+## 读完你能做什么
 
-同一个模型在不同 Harness 下表现差异巨大。好 Harness 会减少歧义、暴露失败、保留证据，让 Agent 能持续改进。
+你会学会用五个问题审计任何 Agent 系统：
 
-## 组成
+1. 它应该怎样工作？
+2. 它实际上能调用什么？
+3. 哪些边界不能跨越？
+4. 哪些状态与证据需要保留？
+5. 谁负责推进、验收和停止？
 
-- 指令层：告诉 Agent 如何工作。
-- 工具层：让 Agent 能访问环境。
-- 约束层：控制风险。
-- 反馈层：把失败转成下一轮改进。
+最后，你会运行一个只有几个文件的最小 Harness，并看到五项确定性检查全部通过。
 
-## 实战案例
+![Harness 五组件把规则、工具、边界、状态和控制连接成可验证的执行系统](/images/articles/what-is-harness/harness-five-components.svg)
+*图注：五个组件不是并列功能清单，而是一条从规则约束到执行验收的闭环；缺少任一环，Agent 都可能“做了事却无法证明做对”。*
 
-一个只会调用模型的“聊天框”不是完整 Harness。一个能读仓库、跑测试、生成 diff、提交 PR、记录失败的系统，才接近工程化 Harness。
+:::note[这是一套操作模型]
+行业里没有唯一的“Harness 五组件”标准。不同资料会突出 instructions、tools、permissions、feedback、memory、evaluation 或 orchestration。本文把它们整理成一套便于检查和教学的五组件模型，并明确说明综合过程。
+:::
+
+## 先看一个失败：提示词写得很好，任务还是会坏
+
+假设你只对 Agent 说：
+
+```text
+请修复登录页面的问题，保持代码质量，完成后测试。
+```
+
+句子听起来合理，但它没有回答：
+
+- 登录页和相关规则在哪里？
+- Agent 能否运行浏览器、数据库或网络命令？
+- `.env`、生产账号和发布动作是否可触碰？
+- 如果测试失败，下一轮从哪里继续？
+- “完成后测试”由谁判断，测试失败能否仍然宣布完成？
+
+再加十段形容词也补不齐这些工程缺口。你需要把自然语言意图连接到真实环境。
+
+## 五个组件，一张审计表
+
+| 组件 | 它回答的问题 | 最小载体 | 缺失时的典型失败 |
+| --- | --- | --- | --- |
+| 指令 Instructions | 应怎样工作？ | `AGENTS.md`、任务 brief | 不读规则就改；范围不断漂移 |
+| 能力 Capabilities | 实际能做什么？ | 工具清单、命令白名单、接口 | 口头允许但无法执行，或开放过多工具 |
+| 约束 Constraints | 什么不能做？ | 沙箱、权限、deny rules、审批 | 提示里说“小心”，系统却照样放行 |
+| 状态 State | 下一步要记住什么？ | state、artifact、日志、反馈 | 每轮重新猜；失败证据丢失 |
+| 编排 Orchestration | 谁推进、验收、停止？ | 状态机、worker/evaluator、stop condition | 自己写、自己评、无限重试 |
+
+这五项不是五个孤立文件。生产 Harness 的质量，取决于它们是否真正接入执行路径。
+
+## 1. 指令：给地图，不给百科全书
+
+指令层不只是“你是一个资深工程师”。它应该告诉 Agent：
+
+- 项目目标和当前任务；
+- 开始前必须阅读的入口；
+- 允许修改的范围；
+- 最快验收命令；
+- 结果怎样回报。
+
+OpenAI 的 Harness 工程实践强调，仓库入口应该像一张地图，而不是一份上千页说明书。长文档的问题不是模型读不下，而是规则容易重复、冲突、过时。入口文件负责导航，具体知识留在靠近代码的文档与测试里。
+
+一个有效的最小指令可能只有四行：
+
+```md
+- 先读 README、能力清单和约束。
+- 只做任务要求的最小改动。
+- 修改后运行指定验证脚本。
+- 回报文件、结果和未解决的不确定项。
+```
+
+短不等于含糊。每一行都必须能对应到环境里的真实资源。
+
+## 2. 能力：工具越多不一定越强
+
+能力层定义 Agent 能读取哪些信息、修改哪些资源、运行哪些命令，以及能否访问网络或外部系统。
+
+如果一个文档 Agent 只需要读 Markdown、写草稿、运行链接检查，就没有理由同时开放云删除、消息发送和任意 shell。能力集应该从任务反推：
+
+```json
+{
+  "read": ["README.md", "docs/**/*.md"],
+  "write": ["docs/**/*.md"],
+  "commands": ["npm run check:docs"],
+  "network": false
+}
+```
+
+少给一个必要工具，Agent 会卡住；多给一个高风险工具，失败半径会扩大。能力设计的目标不是最大化，而是**刚好足够完成并验证任务**。
+
+## 3. 约束：把“不要”变成系统行为
+
+提示词里的“不要碰密钥”只是一条软提醒。真正的约束要落到：
+
+- 路径 allow/deny；
+- 只读或 workspace-write 沙箱；
+- 命令审批；
+- 网络、发布与外部消息的人工 gate；
+- lint、类型与架构测试。
+
+例如：
+
+```json
+{
+  "denied_paths": [".env", "**/*.key", "**/credentials.*"],
+  "denied_actions": ["delete", "push", "publish"],
+  "require_verification": true
+}
+```
+
+这段 JSON 只是声明；只有执行器真的读取并强制它时，才成为安全边界。**文档解释意图，系统执行拒绝。**
+
+## 4. 状态：保存下一轮需要的事实，不是囤积所有对话
+
+长任务经常跨多个回合、进程甚至不同 Agent。状态层至少要留下：
+
+- 当前目标与完成条件；
+- 已完成和未完成的步骤；
+- 上一次验证结果与失败证据；
+- 重要的人类决定；
+- 可继续读取的 artifact 路径。
+
+状态不等于把全部聊天记录塞回上下文。好的状态是压缩后的事实索引，详细证据放在独立日志、diff 或测试报告里。这样下一轮既能快速恢复，又能追溯原始依据。
+
+## 5. 编排：把“做事”与“判断做对”分开
+
+编排负责步骤顺序、角色分工、失败回路和停止条件。最小流程可以是：
+
+```text
+inspect → plan → implement → verify → report
+```
+
+Anthropic 对长任务 Agent 的研究把 planner、generator 与 evaluator 分开，并强调结构化 artifact。原因很朴素：生成者容易把“我已经写完”误当成“结果已经合格”。Evaluator 可以是另一模型，也可以是单元测试、schema 校验、静态检查或人类 reviewer。
+
+停止条件也必须明确：全部检查通过才结束；失败时记录证据并回到计划；连续失败或超过预算则升级给人，而不是无限循环。
+
+## Showcase：一个五项可检查的最小 Harness
+
+示例目录位于：
+
+```text
+research/golden-samples/harness-five-components/showcase/minimal-harness/
+├── AGENTS.md
+├── capabilities.json
+├── constraints.json
+├── memory.md
+├── orchestration.json
+└── scripts/verify-harness.mjs
+```
+
+进入目录后运行：
+
+```bash
+node scripts/verify-harness.mjs
+```
+
+2026-07-10 的实际输出：
+
+```text
+PASS instructions: AGENTS.md
+PASS capabilities: capabilities.json
+PASS constraints: constraints.json
+PASS memory: memory.md
+PASS orchestration: orchestration.json
+PASS summary: 5/5 harness components verified
+```
+
+验证脚本没有“询问模型觉得配置是否完整”，而是读取文件、解析 JSON、检查必要字段，并在缺失时以非零状态退出。完整代码和同目录的原始结果保存在[研究与 Showcase](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/golden-samples/harness-five-components/showcase/minimal-harness)。
+
+### 这个示例证明了什么
+
+- 五个组件可以落到可观察、可检查的 artifact。
+- 验收可以独立于执行者。
+- 缺失组件能尽早暴露，而不是等任务失败才猜原因。
+
+### 它没有证明什么
+
+- JSON 中写了 deny，不代表操作系统真的会阻止命令。
+- 五项存在，不代表内容设计得正确。
+- 一次验证通过，不代表真实任务长期可靠。
+- 没有连接网络，不等于生产环境自动安全。
+
+把示例升级为生产 Harness，需要把能力和约束接到实际工具、沙箱、CI、审计日志与人工审批。
+
+## 一个真实任务如何套用五组件
+
+以“让 Agent 更新教程并提交可审查 diff”为例：
+
+### 指令
+
+写清读者、文章目标、可改文件、风格规则和交付格式。要求先研究后写，不允许把旧资料当现行事实。
+
+### 能力
+
+允许读取仓库、官方文档和指定资料；允许修改目标 MDX 与研究包；允许运行 showcase 和站点构建。
+
+### 约束
+
+禁止发布、推送、改账号配置或读取密钥；引用必须指向一手来源；工作树中的无关改动不得覆盖。
+
+### 状态
+
+保存 brief、横向研究、纵向研究、证据台账、原始实验和审稿结论。下一位编辑不需要从聊天记录猜发生过什么。
+
+### 编排
+
+研究 → 实验 → 写作 → 独立事实审查 → 修订 → showcase 测试 → 站点构建。任何阻断项未关闭，文章不得标记为 verified。
+
+你正在阅读的这篇黄金样稿，就是按这条链路产生的。
+
+## 常见反模式
+
+### 把所有失败都写回提示词
+
+如果问题是工具缺失、路径不可写或测试不存在，补一句“请认真检查”不会改变环境。先判断失败属于哪个组件。
+
+### 规则很多，但没有机械检查
+
+“必须保持架构整洁”无法执行。把它拆成依赖方向、目录边界、lint 或结构测试，才能形成反馈。
+
+### 保存所有记忆，不做状态压缩
+
+上下文越长不等于连续性越好。应保存决定、结果、证据路径和未完成项，而不是重复聊天。
+
+### Worker 自己宣布完成
+
+生成者的摘要可以作为线索，不应替代测试、diff 审查或独立 evaluator。
+
+### 一开始就造复杂多 Agent 系统
+
+Anthropic 的工程经验也提醒要保持 Harness 简单。先让一个 worker 在清楚边界里可靠完成一个小任务，再增加并行、路由和长期记忆。
+
+## 练习：给你的 Agent 做一次五分钟审计
+
+找一个最近失败过的任务，填写下面这张表：
+
+```yaml
+instructions: 入口规则在哪里，是否互相矛盾
+capabilities: 必要工具是否可用，多余高风险工具有哪些
+constraints: 哪些边界由系统强制，哪些只是提醒
+state: 上次失败留下了什么证据，下一轮从哪里恢复
+orchestration: 谁验证，失败后去哪一步，何时停止
+```
+
+然后只修最薄弱的一项，再重跑同一任务。不要同时换模型、换提示词、换工具和换测试，否则你无法知道什么真正起作用。
+
+## 来源与延伸阅读
+
+- [OpenAI：Harness engineering](https://openai.com/index/harness-engineering/)
+- [Anthropic：Effective harnesses for long-running agents](https://www.anthropic.com/engineering/harness-design-long-running-apps)
+- [Anthropic：Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)
+- [Harness Engineering 橙皮书](https://github.com/alchaincyf/harness-engineering-orange-book)
+- [本篇研究包与可运行样例](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/golden-samples/harness-five-components)
+
+橙皮书提供中文主题地图，其仓库要求引用时注明作者；本文在此保留来源与署名。五组件分类是 LearnPrompt 对多份一手资料的操作性综合，不是行业统一标准。

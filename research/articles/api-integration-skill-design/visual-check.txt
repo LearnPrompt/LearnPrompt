@@ -1,0 +1,17 @@
+SVG visual check
+
+date:
+  2026-07-12
+
+source:
+  starlight/public/images/articles/api-integration-skill-design/api-request-contract.svg
+
+render command:
+  magick -font /System/Library/Fonts/Helvetica.ttc \
+    starlight/public/images/articles/api-integration-skill-design/api-request-contract.svg \
+    $TMPDIR/api-request-contract.png
+
+result:
+  exit=0
+  rendered_png=$TMPDIR/api-request-contract.png
+  manual_check=no overflow / no crop / no overlap

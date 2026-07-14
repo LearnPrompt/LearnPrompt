@@ -1,0 +1,11 @@
+Showcase run summary — release-workbench
+
+- [A] 重复流程 -> Skill 契约检查：PASS（exit 0），冻结于 release-gate.txt。
+- [B1] 危险时点 -> Hook 对 git push 返回 deny：PASS（exit 0），冻结于 hook-git-push.txt。
+- [B2] 安全命令 npm test -> Hook 静默不作决定：PASS（exit 0，stdout 为空），冻结于 hook-npm-test.txt。
+- [C] 外部 issue -> MCP 子进程取回 LP-42：PASS（exit 0），冻结于 mcp-harness.txt。
+- [D] 反例：本地固定流程包装成 MCP -> 机制闸门 REJECT：PASS（exit 3，预期拒绝），冻结于 mechanism-gate.txt。
+
+总验证器 release-gate.mjs：6/6 项符合预期，MASTER exit=0。
+
+本文件供确定性 validator 检测归档结果工件；关键行与退出码见同目录其它 txt。

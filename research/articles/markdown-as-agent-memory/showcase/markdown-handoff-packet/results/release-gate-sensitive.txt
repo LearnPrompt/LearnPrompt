@@ -1,0 +1,6 @@
+scenario: sensitive
+exit_code: 43
+reason: structured sensitive marker found in memory/context.md
+source_packet_unchanged: yes
+reports_written: none
+assertions: not-run

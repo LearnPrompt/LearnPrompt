@@ -1,0 +1,16 @@
+{
+  "scenario": "holdout-fail",
+  "exit_code": 54,
+  "distill_exit_code": 0,
+  "evaluation_exit_code": 54,
+  "tests_exit_code": null,
+  "source_receipts_unchanged": true,
+  "holdout_result": "1/4",
+  "candidate_written": true,
+  "changed_files": [
+    "?? .agents/skills/frontmatter-repair/",
+    "?? reports/"
+  ],
+  "distill_summary_path": "reports/distillation-summary.json",
+  "evaluation_summary_path": "reports/evaluation-summary.json"
+}

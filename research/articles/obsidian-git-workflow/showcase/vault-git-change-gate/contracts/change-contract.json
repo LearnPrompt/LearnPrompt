@@ -1,0 +1,17 @@
+{
+  "default_branch": "main",
+  "candidate_branch": "candidate/agent-note-update",
+  "allowed_paths": [
+    "notes/projects/alpha-plan.md",
+    "notes/research/git-boundaries.md",
+    "receipts/candidate-receipt.md"
+  ],
+  "required_receipt": "receipts/candidate-receipt.md",
+  "max_diff_lines": 120,
+  "max_binary_bytes": 262144,
+  "required_note_count": 8,
+  "live_allowed_notes": [
+    "notes/projects/alpha-plan.md",
+    "notes/research/git-boundaries.md"
+  ]
+}

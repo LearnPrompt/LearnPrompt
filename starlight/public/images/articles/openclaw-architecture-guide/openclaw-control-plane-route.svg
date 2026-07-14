@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">OpenClaw Gateway 控制平面的消息路径与拒绝轨</title>
+  <desc id="desc">Channel 与 operator 都连接 Gateway WebSocket，Gateway 拥有渠道、会话、配对、节点注册和控制平面；需要外部能力时调用已配对并获批的 Node，再由 Gateway 回复 Channel。下方列出 101 到 105 五类错误架构。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#08111f"/>
+      <stop offset="1" stop-color="#132238"/>
+    </linearGradient>
+    <linearGradient id="gateway" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1d4ed8"/>
+      <stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#020617" flood-opacity="0.35"/>
+    </filter>
+    <marker id="arrow-cyan" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 z" fill="#22d3ee"/>
+    </marker>
+    <marker id="arrow-amber" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 z" fill="#fbbf24"/>
+    </marker>
+  </defs>
+
+  <rect width="1400" height="900" rx="28" fill="url(#bg)"/>
+  <text x="70" y="70" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="34" font-weight="700">一条消息如何穿过 OpenClaw 控制平面</text>
+  <text x="70" y="108" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="18">当前边界：v2026.6.11 release · 官方文档核验于 2026-07-12 · 图中数据完全合成</text>
+
+  <g filter="url(#shadow)">
+    <rect x="70" y="180" width="250" height="170" rx="22" fill="#172033" stroke="#64748b" stroke-width="2"/>
+    <text x="100" y="222" fill="#67e8f9" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="700">CHANNEL ADAPTER</text>
+    <text x="100" y="260" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="24" font-weight="700">合成消息入口</text>
+    <text x="100" y="296" fill="#cbd5e1" font-family="Inter, system-ui, sans-serif" font-size="17">DM：pairing（默认）</text>
+    <text x="100" y="326" fill="#cbd5e1" font-family="Inter, system-ui, sans-serif" font-size="17">Group：allowlist policy</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="420" y="150" width="520" height="360" rx="28" fill="url(#gateway)" stroke="#5eead4" stroke-width="3"/>
+    <text x="455" y="202" fill="#ccfbf1" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="700">GATEWAY · SINGLE CONTROL PLANE</text>
+    <text x="455" y="244" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="29" font-weight="700">Gateway WebSocket</text>
+    <text x="455" y="278" fill="#dbeafe" font-family="Inter, system-ui, sans-serif" font-size="17">默认 ws://127.0.0.1:18789 · non-loopback 必须有 auth</text>
+
+    <rect x="455" y="312" width="215" height="82" rx="16" fill="#082f49" fill-opacity="0.72" stroke="#38bdf8"/>
+    <text x="478" y="344" fill="#bae6fd" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="700">① CHANNEL ROUTE</text>
+    <text x="478" y="374" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="17">入站策略与回复出口</text>
+
+    <rect x="690" y="312" width="215" height="82" rx="16" fill="#052e2b" fill-opacity="0.72" stroke="#2dd4bf"/>
+    <text x="713" y="344" fill="#99f6e4" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="700">② SESSION / AGENT</text>
+    <text x="713" y="374" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="17">会话状态与 Agent 运行</text>
+
+    <text x="455" y="432" fill="#dbeafe" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="700">Gateway 权威拥有</text>
+    <text x="455" y="463" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="17">channels · sessions · pairing · node registry · control plane</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="1060" y="180" width="270" height="170" rx="22" fill="#172033" stroke="#a78bfa" stroke-width="2"/>
+    <text x="1092" y="222" fill="#c4b5fd" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="700">PAIRED NODE</text>
+    <text x="1092" y="260" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="24" font-weight="700">Capability host</text>
+    <text x="1092" y="296" fill="#cbd5e1" font-family="Inter, system-ui, sans-serif" font-size="17">role: node · owns: [ ]</text>
+    <text x="1092" y="326" fill="#cbd5e1" font-family="Inter, system-ui, sans-serif" font-size="17">approved: camera.capture</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="70" y="420" width="250" height="115" rx="20" fill="#172033" stroke="#fbbf24" stroke-width="2"/>
+    <text x="100" y="458" fill="#fde68a" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="700">OPERATOR CLIENT</text>
+    <text x="100" y="490" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="18">role: operator</text>
+    <text x="100" y="518" fill="#cbd5e1" font-family="Inter, system-ui, sans-serif" font-size="16">read / write / admin scopes</text>
+  </g>
+
+  <path d="M320 245 C360 245 375 245 420 245" fill="none" stroke="#22d3ee" stroke-width="5" marker-end="url(#arrow-cyan)"/>
+  <text x="332" y="224" fill="#a5f3fc" font-family="Inter, system-ui, sans-serif" font-size="15">inbound</text>
+  <path d="M420 286 C375 286 360 286 320 286" fill="none" stroke="#22d3ee" stroke-width="4" stroke-dasharray="8 7" marker-end="url(#arrow-cyan)"/>
+  <text x="334" y="315" fill="#a5f3fc" font-family="Inter, system-ui, sans-serif" font-size="15">reply</text>
+
+  <path d="M940 250 C985 250 1010 250 1060 250" fill="none" stroke="#22d3ee" stroke-width="5" marker-end="url(#arrow-cyan)"/>
+  <text x="964" y="226" fill="#a5f3fc" font-family="Inter, system-ui, sans-serif" font-size="15">node.invoke</text>
+  <path d="M1060 295 C1012 295 988 295 940 295" fill="none" stroke="#22d3ee" stroke-width="4" stroke-dasharray="8 7" marker-end="url(#arrow-cyan)"/>
+  <text x="976" y="323" fill="#a5f3fc" font-family="Inter, system-ui, sans-serif" font-size="15">result</text>
+
+  <path d="M320 477 C360 477 378 455 420 430" fill="none" stroke="#fbbf24" stroke-width="4" marker-end="url(#arrow-amber)"/>
+  <text x="332" y="463" fill="#fde68a" font-family="Inter, system-ui, sans-serif" font-size="15">WS role + scope</text>
+
+  <rect x="70" y="580" width="1260" height="250" rx="24" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+  <text x="100" y="625" fill="#fca5a5" font-family="Inter, system-ui, sans-serif" font-size="20" font-weight="700">REJECTION RAIL · 机械闸门必须拒绝</text>
+
+  <g font-family="Inter, system-ui, sans-serif">
+    <rect x="100" y="655" width="220" height="130" rx="16" fill="#2a1820" stroke="#fb7185"/>
+    <text x="122" y="690" fill="#fda4af" font-size="22" font-weight="800">101</text>
+    <text x="122" y="722" fill="#f8fafc" font-size="17" font-weight="700">Channel → Node</text>
+    <text x="122" y="752" fill="#cbd5e1" font-size="15">绕过 Gateway</text>
+
+    <rect x="340" y="655" width="220" height="130" rx="16" fill="#2a1820" stroke="#fb7185"/>
+    <text x="362" y="690" fill="#fda4af" font-size="22" font-weight="800">102</text>
+    <text x="362" y="722" fill="#f8fafc" font-size="17" font-weight="700">Node = Gateway</text>
+    <text x="362" y="752" fill="#cbd5e1" font-size="15">冒充或拥有状态</text>
+
+    <rect x="580" y="655" width="220" height="130" rx="16" fill="#2a1820" stroke="#fb7185"/>
+    <text x="602" y="690" fill="#fda4af" font-size="22" font-weight="800">103</text>
+    <text x="602" y="722" fill="#f8fafc" font-size="17" font-weight="700">授权层越界</text>
+    <text x="602" y="752" fill="#cbd5e1" font-size="15">role/scope/pair/cap</text>
+
+    <rect x="820" y="655" width="220" height="130" rx="16" fill="#2a1820" stroke="#fb7185"/>
+    <text x="842" y="690" fill="#fda4af" font-size="22" font-weight="800">104</text>
+    <text x="842" y="722" fill="#f8fafc" font-size="17" font-weight="700">不安全远程暴露</text>
+    <text x="842" y="752" fill="#cbd5e1" font-size="15">non-loopback 无 auth</text>
+
+    <rect x="1060" y="655" width="240" height="130" rx="16" fill="#2a1820" stroke="#fb7185"/>
+    <text x="1082" y="690" fill="#fda4af" font-size="22" font-weight="800">105</text>
+    <text x="1082" y="722" fill="#f8fafc" font-size="17" font-weight="700">Legacy bridge 复活</text>
+    <text x="1082" y="752" fill="#cbd5e1" font-size="15">缺当前 Gateway WS</text>
+  </g>
+
+  <text x="70" y="870" fill="#64748b" font-family="Inter, system-ui, sans-serif" font-size="15">LearnPrompt 编辑部原创 · CC BY-NC-SA 4.0 · 不含 OpenClaw 或橙皮书截图、logo 与真实数据</text>
+</svg>

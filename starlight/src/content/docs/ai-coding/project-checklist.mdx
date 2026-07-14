@@ -1,41 +1,191 @@
 ---
-title: AI 编程项目的任务和验收清单
-description: 开始项目之前先写好的最小工程清单。
+title: AI 编程项目的开工与验收清单：把散文变成一道确定性闸门
+description: 用六格开工清单，把仓库、运行、禁区、密钥、验收、回滚写清楚，并用一段脚本校验成退出码。
 sidebar:
   order: 5
 difficulty: beginner
 source_repo: alchaincyf/harness-engineering-orange-book
 source_url: https://github.com/alchaincyf/harness-engineering-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-11"
+reading_time: 12 分钟
+research_path: research/articles/project-checklist
+showcase_path: research/articles/project-checklist/showcase
+showcase_status: verified
+quality_score: 94
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 入门 | 12 分钟 | 2026-07-11 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/harness-engineering-orange-book" url="https://github.com/alchaincyf/harness-engineering-orange-book" updatedFrom="2026-05" />
+你把一个已有仓库交给编码 Agent，只说了一句：帮我把这个页面改一下。十分钟后它在主分支上改了一堆文件，跑了几条你没预期的命令，最后告诉你完成了，可你既不知道它碰过什么，也不知道怎么退回去。
 
-## 最小清单
+换个开法：动手前先花五分钟写清楚在哪工作、怎么验证、哪些绝不能碰、密钥从哪来、凭什么算完成、失败了怎么回滚。同一个模型，结果往往完全不同。
 
-- 仓库地址和当前分支。
-- 运行方式和最快检查命令。
-- 主要目录和不能碰的目录。
-- 密钥提供方式。
-- 用户验收路径。
-- 回滚方式。
+> 多数失败不是模型不够聪明，而是开工时没把上下文写清楚。开工清单就是把你脑子里的隐性知识，变成模型每次都能读到的显性上下文。
 
-## 操作步骤
+## 读完你能做什么
 
-1. 在项目根目录写 `AGENTS.md` 或等价说明。
-2. 把“偏好”和“硬约束”分开。
-3. 给每个大任务建立分支。
-4. 每轮改动后记录命令输出和失败原因。
+1. 用六个必答问题，写出一份可复用的开工清单，落成 `AGENTS.md` 或 `CLAUDE.md`。
+2. 说清每一格对应哪种失败，以及它映射到 Harness 的哪个组件。
+3. 用一段脚本把清单校验成退出码，接进开工前检查。
 
-## 常见错误
+![开工清单六格字段分别防止哪种失败，并映射到 Harness 组件](/images/articles/project-checklist/checklist-contract.svg)
+*图注：注意每一行的对应关系——缺哪一格，就会触发右边那种可预测的失败；清单一次写好，之后每个任务复用。*
 
-- 只有口头偏好，没有写进项目。
-- 让 Agent 猜运行命令。
-- 没有指定“不要改”的文件。
+:::note[清单是上下文，不是强制配置]
+Claude Code 官方文档说得很直接：`CLAUDE.md` 这类指令是 context，不是 enforced configuration。也就是说，清单负责表达意图并影响模型判断，真正的硬边界要靠工具的 deny 规则、审批或沙箱来强制。本文两层都会讲。
+:::
 
-## 实战案例
+## 先看一个失败：为什么“帮我改一下”会坏
 
-本迁移任务把新站放在 `starlight/`，旧 Docusaurus 文件只读盘点，不在第一阶段删除。这就是“不能碰的目录”和“验收范围”同时写清楚。
+一句模糊的指令没有回答几个关键问题：
+
+- 在哪个仓库、哪个分支工作，改坏了怎么隔离？
+- 用什么命令跑起来、先用哪条检查确认没坏？
+- 哪些目录能改、哪些绝对不能碰？
+- 密钥从哪来、会不会被写进仓库或日志？
+- 凭什么判断真的做完，而不是模型嘴上说完成？
+- 失败之后，怎么安全退回到上一个好状态？
+
+模型只能读你给的上下文来推断下一步。你少写一格，它就只能猜那一格，猜错就变成开头那种事故。再补一句“请认真、注意质量”也补不上这些工程缺口——形容词不能被执行。
+
+## 六格开工清单
+
+把上面六个问题固化成六格。这就是一份最小但完整的开工清单，人读一份说明、机器读一份项目卡。
+
+| 必答问题 | 这一格要写什么 | 缺失时的典型失败 | 对应 Harness 组件 |
+| --- | --- | --- | --- |
+| 仓库与当前分支 | 在哪工作、从哪个分支起步 | 直接在主分支乱改，无法隔离回退 | 指令 |
+| 运行方式与最快检查 | 怎么跑起来、先用哪条命令验证 | 让 Agent 猜命令，反复试错 | 能力 |
+| 允许与禁改目录 | 能碰什么、绝不能碰什么 | 改到不该改的文件，范围漂移 | 约束 |
+| 密钥提供方式 | 凭据从哪注入、不该留在哪 | 密钥入库或日志泄露 | 约束 |
+| 用户验收路径 | 用哪条命令或人工检查判断完成 | 只问是否完成，没有客观信号 | 编排 |
+| 回滚方式 | 未提交和已提交分别怎么退回 | 改坏了无法恢复，只能硬扛 | 状态 |
+
+这六格不是模板崇拜，它对应三条被一手资料反复强调的机制。
+
+### 机制一：具体、可执行的指令比形容词可靠
+
+`AGENTS.md` 标准把这份文件定位成给 Agent 的 README，建议写清构建与测试命令、代码风格和安全注意事项，并强调 Agent 应当去执行程序化检查、在完成前修复失败。Claude Code 文档给的例子更直白：写 `Run npm test before committing`，而不是 Test your changes。原因很朴素，命令能被真正运行并产生退出码，形容词不能。所以清单里最值钱的一格是那条能跑的验收命令。
+
+### 机制二：真正的边界靠工具强制，不靠措辞
+
+清单里写不要碰 `.env` 只是一条软提醒。要把它变成硬边界，得落成工具能强制的规则。Claude Code 的权限系统明确：规则由 Claude Code 强制，而不是由模型强制，且 deny 优先于 allow。于是禁改目录和密钥这两格有两种写法：
+
+```json
+{
+  "permissions": {
+    "deny": ["Read(.env)", "Edit(starlight/src/content/config.ts)", "Bash(git push *)"]
+  }
+}
+```
+
+`Read` 和 `Edit` 的 deny 规则遵循 gitignore 语义，`Read(.env)` 等价于 `Read(**/.env)`，会拦住任意深度的 `.env`。清单负责表达意图，deny 规则负责真正拒绝。
+
+### 机制三：入口像地图，不像百科全书
+
+清单不是越长越好。Claude Code 文档建议单个 `CLAUDE.md` 控制在约 200 行内，太长会挤占上下文、还容易自相矛盾。折中办法是入口只放导航式的六格，细节留给靠近代码的文档和测试。
+
+## 可复制的项目卡
+
+把六格写成一份扁平 YAML，人能读，机器也能校验。下面这份对应本文档站：
+
+```yaml
+repo_and_branch: LearnPrompt 文档站，内容改稿分支，不直接提交主分支
+run_and_check: 站点在 starlight/ 目录，最快检查 cd starlight && npm run build
+boundaries:
+  allow: [目标 MDX, research/ 研究包, starlight/public/images]
+  forbid: [content/config.ts, 其它文章, package.json, 部署配置]
+secrets: 构建不需要密钥；外部凭据走环境变量注入，不写入仓库
+acceptance: cd starlight && npm run build
+rollback: 未提交用 git restore 丢弃；已提交用 git revert 生成反向提交
+```
+
+其中回滚这一格值得单独说。git 文档区分得很清楚：`git revert` 通过新建一个反向提交来撤销已提交的改动，保留历史，适合已经提交甚至已推送的情况；而 `git reset --hard` 丢弃未提交改动、会改写历史，更危险。清单里把两种情况分开写，失败时才不会慌乱。
+
+## Showcase：把清单校验成退出码
+
+清单写全没写全，不该靠人眼判断。我们写了一段无依赖的 Node 脚本 `verify-checklist.mjs`，读取项目卡，逐格检查是否存在、是否非空、禁改目录是否同时写了 allow 和 forbid、验收是否是一条能跑的命令。完整脚本和样例在[本文研究包的 Showcase 目录](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/project-checklist/showcase)。
+
+环境：Node.js v24.11.0，命令在 `showcase/` 目录内执行，核验日期 2026-07-11。
+
+完整项目卡，退出码 0：
+
+```text
+$ node verify-checklist.mjs checklist/project-card.yaml
+PASS repo_and_branch: 已填写
+PASS run_and_check: 已填写
+PASS boundaries: 已填写
+PASS secrets: 已填写
+PASS acceptance: cd starlight && npm run build
+PASS rollback: 已填写
+PASS summary: 6/6 项开工清单字段齐全
+exit=0
+```
+
+再故意做一份不完整的卡：删掉回滚、禁改目录只写了 allow、验收写成手动看一下。脚本立刻拦下并指名缺哪一项，退出码 1：
+
+```text
+$ node verify-checklist.mjs checklist/project-card-incomplete.yaml
+PASS repo_and_branch: 已填写
+PASS run_and_check: 已填写
+PASS secrets: 已填写
+FAIL 字段 boundaries 缺少子项 forbid
+FAIL 字段 acceptance 不是可执行命令：手动打开页面看一下有没有问题
+FAIL 缺失字段 rollback（回滚方式）
+FAIL summary: 3 项未通过，项目卡不完整
+exit=1
+```
+
+### 这个结果证明了什么
+
+- 一份写全的开工清单可以被脚本逐格校验成退出码，能接进开工前检查或 CI。
+- 验收是不是可执行命令，可以机械判断；散文式的手动看一下会被拦下。
+
+### 它没有证明什么
+
+- 脚本只检查字段齐不齐、验收像不像命令，不保证内容本身正确。
+- 验收命令能被识别，不等于它在目标仓库真的会通过；那需要另跑一次真实构建（本文用 `cd starlight && npm run build` 单独验证）。
+- 禁改目录写进 YAML 只是给人的提醒，真正的强制边界仍要靠工具的 deny 规则或沙箱。
+
+## 什么时候不要为它花时间
+
+- 一次性、零风险的小改动，写六格的成本可能高于收益，先做再说。
+- 你还说不清任务成功是什么样，那要先补的是任务定义，不是清单格式。
+- 高风险动作（发布、删云数据、发消息、动账号配置）光靠清单里的提醒不够，必须叠加工具强制和人工审批。
+- 别把清单校验通过当成任务完成。它只保证写全了，不保证写对了，也不替代真实验收和人工复核。
+
+## 一个常见反模式：把边界只写进提示词
+
+最常见的错误，是把不要碰密钥、不要动配置这类话写在提示词或 `CLAUDE.md` 里就以为安全了。这些是上下文，不是强制。模型多数时候会遵守，但一次误判、一次 prompt 注入就可能越界。正确做法是双层：提示层写清意图，工具层用 deny 规则、沙箱或 hook 真正拦截。文档解释意图，系统执行拒绝。
+
+## 练习：给你的下一个任务写一张卡
+
+挑一个真实任务，用不超过十行填完六格，然后用本文的脚本跑一遍：
+
+```yaml
+repo_and_branch: 在哪个仓库、哪个分支
+run_and_check: 怎么跑起来、最快哪条检查
+boundaries:
+  allow: [能改哪些]
+  forbid: [绝不能碰哪些]
+secrets: 凭据怎么注入、不该留在哪
+acceptance: 哪条命令退出码 0 算完成
+rollback: 未提交怎么退、已提交怎么退
+```
+
+可观察的完成标准：脚本对完整卡输出退出码 0，对故意删一格的卡输出退出码 1 并指名缺项。如果其中三格你还填不出来，你面对的首先是任务定义问题，不是工具问题。
+
+## 来源与延伸阅读
+
+- [AGENTS.md 标准](https://agents.md)：给 Agent 的项目说明规范，本文关于清单内容与可执行验收的一手依据。
+- [Claude Code 记忆（CLAUDE.md）](https://code.claude.com/docs/en/memory)：官方文档，说明指令是上下文而非强制配置、要具体可验证、单文件控制在约 200 行。
+- [Claude Code 权限](https://code.claude.com/docs/en/permissions)：官方文档，deny 规则由工具强制、按 deny→ask→allow 求值。
+- [git revert 文档](https://git-scm.com/docs/git-revert)：原始官方文档，回滚一格的依据。
+- [Harness Engineering 橙皮书](https://github.com/alchaincyf/harness-engineering-orange-book)：中文二手主题地图。
+
+官方文档与 git 文档是支撑本文当前工程事实的一手资料，均在 2026-07-11 重新核对。橙皮书仅作中文主题地图使用：其仓库声明教育性分享需署名、未发布标准开放许可，本文因此只保留链接与署名，未复制或改编其任何图片，正文所有产品与工程事实均回到上面的官方一手资料。文中的六组件映射是 LearnPrompt 对多份一手资料的操作性综合，不是行业统一标准。

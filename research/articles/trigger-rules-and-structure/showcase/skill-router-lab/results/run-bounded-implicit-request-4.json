@@ -1,0 +1,13 @@
+{
+  "suite": "skill-router-lab",
+  "variant": "bounded",
+  "mode": "implicit",
+  "case_id": "request-4",
+  "loaded": false,
+  "contains_canary": false,
+  "exit_code": 0,
+  "privacy_ok": true,
+  "model": "gpt-5.5",
+  "final_output_excerpt": "请把会议纪要正文贴过来，或给我文件路径。\n\n我会整理成团队周报，默认结构：\n1. 本周重点进展\n2. 关键决策\n3. 风险与阻塞\n4. 下周计划\n5. 责任人与待办项\n\n当前工作区没有可整理的会议纪要文件。",
+  "notes": "completed"
+}

@@ -1,0 +1,22 @@
+thinking-distillation-boundary final gate
+verified_at: 2026-07-12
+
+command: node research/articles/thinking-distillation-boundary/showcase/observable-receipt-distiller/scripts/verify-showcase.mjs
+exit_code: 0
+summary: normal 0; evidence-poor 51; sensitive-marker 52; transcript-marker 53; holdout-fail 54; privacy 0
+
+command: CODEX_NESTED_MODEL=gpt-5.5 node research/articles/thinking-distillation-boundary/showcase/observable-receipt-distiller/scripts/run-codex-live.mjs
+exit_code: 0
+summary: completed; candidate written; source receipts unchanged; holdout 4/4; npm test passed; changed only candidate and reports
+
+command: node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs --article starlight/src/content/docs/agent-skills/thinking-distillation-boundary.mdx --research research/articles/thinking-distillation-boundary
+exit_code: 0
+summary: PASS article; PASS research; PASS status verified (99/100)
+
+command: npm --prefix starlight run build
+exit_code: 0
+summary: astro build completed; route /agent-skills/thinking-distillation-boundary/index.html generated
+
+command: git diff --check
+exit_code: 0
+summary: no whitespace or conflict-marker errors

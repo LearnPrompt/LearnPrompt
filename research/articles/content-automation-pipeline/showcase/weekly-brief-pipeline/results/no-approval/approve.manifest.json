@@ -1,0 +1,9 @@
+{
+  "scenario": "no-approval",
+  "stage": "approve",
+  "status": "awaiting_human_approval",
+  "approval_present": false,
+  "candidate_created": false,
+  "reason": "no approval artifact supplied",
+  "note": "草稿已经生成，但没有人工批准工件，因此不会进入 publish-candidate。"
+}

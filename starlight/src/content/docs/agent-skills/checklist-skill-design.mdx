@@ -1,36 +1,234 @@
 ---
-title: 检查清单型 Skill 设计
-description: 把经验变成稳定可执行的审查步骤。
+title: 检查清单型 Skill 设计：把“列问题”升级成可执行的 release gate
+description: 用一个小型 npm CLI release candidate，把 checklist row 冻结成 evidence、pass rule、severity 和 N/A policy，避免 Agent 只给“看起来没问题”的结论。
 sidebar:
   order: 4
 difficulty: intermediate
 source_repo: alchaincyf/agent-skills-orange-book
 source_url: https://github.com/alchaincyf/agent-skills-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-12"
+reading_time: 15 分钟
+research_path: research/articles/checklist-skill-design
+showcase_path: research/articles/checklist-skill-design/showcase/release-readiness-checklist
+showcase_status: verified
+quality_score: 97
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 15 分钟 | 2026-07-12 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/agent-skills-orange-book" url="https://github.com/alchaincyf/agent-skills-orange-book" updatedFrom="2026-05" note="仅参考主题结构，正文重新组织。" />
+你让 Agent “检查一下这次 npm CLI release candidate 能不能发”。它回一段很像审稿意见的话：
+changelog 似乎还行、版本看起来一致、安装命令应该没问题。问题是，这类结论根本不能当 release gate。
+它没有告诉你看了哪个文件、跑了什么命令、缺什么会卡住发布、哪些只是提醒，更不会给一个稳定退出码让外层流程决定“现在到底能不能发”。
 
-## 适用场景
+检查清单型 Skill 真正难的地方，不是“再补几条问题”，而是把问题写成**结构化 contract**。本文只聚焦这件事：如何把 checklist row 从 vague checkbox 升级为 evidence row，让 Agent 交付的是 dry-run go / no-go 结果，而不是“像是做了检查”的自然语言。
 
-代码审查、发布前检查、README 验收、文章去 AI 味，都适合检查清单型 Skill。
+> 这篇文章不重复《第一个 SKILL.md 怎么写》的字段限制和最小模板，也不重复《Skill 触发规则与目录结构》的路由矩阵。这里默认你已经会写 Skill，本篇只讨论 checklist 如何变成可执行 gate。
 
-## 写法
+## 读完你能做什么
 
-1. 列出检查项。
-2. 每项说明通过标准。
-3. 要求发现问题时给证据。
-4. 明确“没有问题”也要输出残余风险。
+读完后，你应该能直接复用三样东西：
 
-## 常见错误
+1. 一个 row contract：每一行都必须有 `id`、`question`、`evidence`、`pass_rule`、`severity`、`not_applicable_policy`、`result`。
+2. 一套 release gate 退出码：`ready=0`、`missing changelog=21`、`version mismatch=22`、`unverifiable install command=23`、`N/A without evidence=24`。
+3. 一个真实 showcase：对小型 npm CLI `clip-clean v1.4.0` 做 dry-run release readiness 检查，保存 Markdown / JSON 报告、fixture tests、offline replay，以及 gpt-5.5 的真实 Codex 显式 Skill 调用结果。
 
-- 检查项太多，Agent 无法优先级排序。
-- 每项都很抽象，例如“专业”“好看”“完整”。
-- 没有要求输出证据。
+## 为什么多数 checklist Skill 最后会失真
 
-## 实战案例
+很多 checklist Skill 的正文长这样：
 
-README 验收 Skill 可以检查：目标用户是否清楚、安装命令是否可复制、示例是否能跑、FAQ 是否覆盖失败场景。
+1. 检查 changelog。
+2. 检查版本号。
+3. 检查安装命令。
+4. 没问题就汇报风险。
+
+这类写法的共同问题，不是“检查项不够多”，而是**没有 contract**。Agent 必须自己猜：
+
+- 哪个文件算 changelog。
+- 怎样才算“版本一致”。
+- “安装命令可以验证”到底是跑 `npm pack --dry-run`，还是去 registry 上试 `npx`。
+- 缺少某项时是 blocker、major 还是 minor。
+- `N/A` 是真不适用，还是为了绕过最难验证的那一行。
+
+一旦这些判断留给模型临场发挥，你得到的就不是 gate，而是一段“像结论的文字”。这也是 checklist Skill 经常失效的原因：它看起来像流程，实际上没有把拒绝条件固定下来。
+
+## 机制：把每一行写成 evidence row，而不是主观评论
+
+本文的核心做法很简单：不要让 Agent 只回答“有没有问题”，而要让它**产出行级结构化报告**。对应的 LearnPrompt row contract 是：
+
+![从 vague checkbox 到 evidence row，再到 severity 和 release decision 的教学图](/images/articles/checklist-skill-design/release-readiness-gate.svg)
+*图注：只有当 checklist row 同时包含 evidence、pass rule、severity 和 N/A policy，它才能从“像在检查”升级成真正可 replay 的 release gate。图中的 `0 / 21 / 22 / 23 / 24` 是本文 Showcase 使用的 LearnPrompt 固定退出码，不是 npm 官方术语。*
+
+| 字段 | 作用 | 为什么不能省 |
+| --- | --- | --- |
+| `id` | 让文章、报告、退出码和外层 gate 对齐 | 没有稳定 ID，很难把“这行为什么失败”写进自动化流程 |
+| `question` | 说明到底在检查什么 | 否则 reviewer 连这行的对象都看不清 |
+| `evidence` | 指向文件、命令和实际输出 | 没证据就无法 replay，也无法区分“没看”和“看了但失败” |
+| `pass_rule` | 把“通过”写成可判断句 | 避免“完整”“合理”“没问题”这种空泛词 |
+| `severity` | 标记这是 blocker、major 还是 minor | 没严重级别，外层流程无法决定是否继续 |
+| `not_applicable_policy` | 限制 `N/A` 何时可以用 | 否则模型最容易把最难的一行标成 N/A 逃过去 |
+| `result` | 最终结论：`pass / fail / not_applicable` | 没结果就只有观察，没有 gate |
+
+这套字段不是 Agent Skills、OpenAI 或 npm 官方规定，而是 LearnPrompt 的操作化设计。官方文档能证明的是：
+
+- Skill 目录可以带 `scripts/`、`references/`、`assets/`，适合把 deterministic gate 下沉成脚本；
+- Codex 会从 `.agents/skills` 发现 repo skill，可显式 `$skill` 调用；
+- npm 的 `pack --dry-run` 可以用于 pre-publish dry-run；
+- `package.json` 的 `bin` 字段决定 CLI 入口。
+
+真正把这些拼成“release checklist row contract”的，是本文自己的设计，不应该冒充成行业标准。
+
+## Severity、N/A 政策和固定退出码，才是 release gate 的骨架
+
+如果 row contract 只停留在字段层，还是不够。release gate 最关键的是：**失败之后怎么机械落地**。
+
+本文把四类失败冻结成固定退出码：
+
+| 退出码 | 含义 | 对应 row |
+| --- | ---: | --- |
+| `0` | ready | 所有冻结行都通过 |
+| `21` | missing changelog | `CHANGELOG-21` |
+| `22` | version mismatch | `VERSION-22` |
+| `23` | unverifiable install command | `INSTALL-23` |
+| `24` | `N/A` without evidence | validator 拒绝报告本身 |
+
+这五个数字也不是 npm 官方标准，而是为了让本地 replay、review 和记事化控制面都能稳定消费：
+
+- 外层流程只看退出码，就知道是“内容缺失”“版本漂移”还是“安装路径不可验证”。
+- 报告和退出码共享同一个 row id，后续审稿不用重新翻译。
+- `N/A` 被单独提成 `24`，是因为它比 `fail` 更危险。`fail` 至少留下阻断证据；随手写 `N/A` 则会让整个 checklist 失去审计性。
+
+`N/A` 的政策要写得很死。本文的规则是：只有 repo 证明**这个 surface 根本不存在**，才允许 `not_applicable`。比如一个 package 根本没有 CLI 入口，你才能把“安装命令 smoke”标成 N/A，并且在 evidence 里明确指出看了哪一个 `bin` 字段、为什么判定它不存在。明明是 npm CLI release candidate，却把 changelog 或 install row 标成 N/A，就属于直接绕 gate。
+
+## Showcase：release-readiness-checklist 检查一个小型 npm CLI release candidate
+
+本文的 Showcase 名称固定为 `release-readiness-checklist`，目标对象是一个自造公开 fixture：`clip-clean v1.4.0`。它是个很小的 npm CLI，只有一个 `bin/clip-clean.mjs`，功能是把 Markdown 片段里重复的空行压成单空行，适合拿来演示 release gate，而不用真的发布到 registry。
+
+完整目录在 `research/articles/checklist-skill-design/showcase/release-readiness-checklist/`。其中最重要的三层是：
+
+- `fixture/`：临时 Git repo 模板，内含 `.agents/skills/release-readiness-checklist/`
+- `scripts/`：`create-temp-repo.mjs`、`release-gate.mjs`、`verify-showcase.mjs`、`run-codex-live.mjs`、`validate-report.mjs`、`privacy-scan.mjs`
+- `contracts/`：显式 `$release-readiness-checklist` prompt 和最终 JSON schema
+
+### 这个 Skill 真正做了什么
+
+fixture repo 里的 `release-readiness-checklist` Skill 没有“帮你发布”，它只做 dry-run 检查：
+
+1. 读 `references/checklist-contract.md`，冻结 row shape 和退出码。
+2. 运行 `collect-evidence.mjs`，生成：
+   - `reports/release-readiness.json`
+   - `reports/release-readiness.md`
+3. 再跑 `npm test`。
+4. 把最终结果压回调用者给的 JSON schema。
+
+这里有两个关键边界：
+
+- 不准 `npm publish`。
+- 就算某一行失败，也必须保留结构化报告，而不是在第一处异常直接崩掉。
+
+这也是 checklist Skill 和普通“审一下”的最大区别：它的产物不是一段评论，而是**带退出码的报告**。
+
+### 为什么 install row 必须是单独 gate
+
+很多人会把 install 相关的检查偷懒写成“跑一下 `npm pack --dry-run`”。这不够。
+
+npm 官方文档说明 `npm pack --dry-run` 表示“不做修改，只报告它本来会做什么”。这很适合当 pre-publish evidence，但它**只能证明打包层面**，不能证明 README 里写的安装 / smoke 路径真的闭环。
+
+对于一个还没 publish 的 release candidate，下面这类命令看似合理，其实在 pre-publish 阶段不可验证：
+
+```bash
+npx clip-clean@1.4.0 --help
+```
+
+问题不在语法，而在依赖条件：这要求 registry 上已经存在 `clip-clean@1.4.0`。在正式发布前，你根本无法仅凭本地仓库确认它能成功。因此，本文把 `INSTALL-23` 的通过条件写成：
+
+- 安装命令必须是本地可重放的；
+- 它必须在**不 publish** 的前提下完成 tarball 打包、临时安装和 `clip-clean --help` smoke；
+- 如果命令依赖 registry publish，就直接返回 `23`。
+
+在 ready 场景里，fixture 使用的是本地 smoke command `npm run release:smoke`。它先 `npm pack --json`，拿到 tarball，再把 tarball 装进系统临时目录，最后运行已安装的 CLI help。这样一来，检查的对象就从“我感觉这个 install command 应该可以”变成“我已经用本地 tarball 验证过这条路径”。
+
+### 2026-07-12 的实际结果
+
+offline deterministic replay 已经覆盖五个冻结场景：
+
+| 场景 | 退出码 | 说明 |
+| --- | ---: | --- |
+| `ready` | `0` | pack、changelog、version、install smoke 都通过 |
+| `missing-changelog` | `21` | 删除 `CHANGELOG.md` 后，`CHANGELOG-21` 失败 |
+| `version-mismatch` | `22` | 把 `package.json.version` 改成 `1.4.1` 后，`VERSION-22` 失败 |
+| `unverifiable-install` | `23` | 把 install command 改成 `npx clip-clean@1.4.0 --help` 后被拒 |
+| `na-without-evidence` | `24` | 报告里强行写 `not_applicable` 且不给 inspected evidence，会被 validator 拒绝 |
+
+privacy scan 也是 `0`：提交物里没有 runtime ID、绝对临时路径、用户目录路径或 shell 绝对路径。
+
+### 真实 Codex 调用：从宿主阻断到外层补跑成功
+
+writer 在隔离临时 Git repo 里的首次尝试，被宿主的 in-process app-server 权限拦住。我们保留了这次失败证据，没有把它改写成成功：
+
+```text
+exec_exit_code: 1
+blocker_reason: Reading additional input from stdin... |
+Error: failed to initialize in-process app-server client: Operation not permitted (os error 1)
+tests_exit_code: 0
+reports_written: json=false, markdown=false
+```
+
+随后，外层主控使用同一冻结 fixture、prompt、schema 和 gpt-5.5 补跑，不修改任务口径。第二次真实调用完成，结果为：
+
+```text
+skill_invocation: $release-readiness-checklist
+exec_exit_code: 0
+release_exit_code: 0
+tests: passed 2/2
+reports_written: json=true, markdown=true
+changed_files: ?? reports/
+```
+
+Codex 没有执行发布动作，也没有修改版本、changelog 或安装命令；它只生成了 `reports/release-readiness.json` 和 `reports/release-readiness.md`。因此，这次成功不能抹掉首次宿主阻断，但它补齐了本文要验证的关键闭环：显式 Skill 调用确实能按 row contract 产出报告，并由 fixture tests 复核。
+
+独立只读 reviewer 随后逐项核对正文、冻结工件和实际渲染图，给出 PASS 97/100，blocker / major / minor 均为 0，因此本文已提升为 `showcase_status: verified`。
+
+## 什么时候不该把 checklist Skill 做成 release gate
+
+不是所有 checklist 都值得写成这种结构。下面几种情况，更适合停留在人工审稿或普通提示词：
+
+- 结论高度依赖人工品味，没有稳定 pass rule。比如“文案风格够不够好”。
+- 你还不知道哪几行是真正阻断项。此时应该先做几轮人工审查，再冻结 severity。
+- 需要的证据本身拿不到。比如必须依赖生产凭据、外部私有服务或未开放的审计系统。
+- 你的团队还没想清楚 `fail` 与 `N/A` 的差别。此时强行上 gate，只会把 `N/A` 变成逃生口。
+
+换句话说，checklist Skill 适合的是**重复出现、可取证、可拒绝**的问题；不适合拿来包装所有含糊判断。
+
+## 练习：把你自己的 release checklist 改成 row contract
+
+挑一个你最近经常复用的 pre-release 检查清单，不要先增加条目，先做下面四步：
+
+1. 选出 3 到 5 行真正会阻断发布的项。
+2. 给每行补上 `evidence`、`pass_rule`、`severity` 和 `not_applicable_policy`。
+3. 至少为其中两行分配固定退出码。
+4. 设计一个负例，证明你的 validator 会拒绝“没有证据的 N/A”。
+
+可观察的完成标准：
+
+- 你的报告不再只有自然语言结论；
+- 任何失败都能回到某个具体 row；
+- 外层脚本只看退出码，就知道是继续发版、补 changelog，还是停下来重验 install path。
+
+## 来源与延伸阅读
+
+- [Agent Skills Specification](https://agentskills.io/specification)（一手规范；`SKILL.md` 结构、可选目录、progressive disclosure）
+- [Build skills | ChatGPT Learn](https://learn.chatgpt.com/docs/build-skills)（OpenAI 官方；Codex 的 `.agents/skills` 发现路径、显式 `$skill` 与隐式 `description` 匹配）
+- [Customization | ChatGPT Learn](https://learn.chatgpt.com/docs/customization/overview)（OpenAI 官方；repo skill 适合 repeatable workflow，metadata / `SKILL.md` / references / scripts 的渐进加载）
+- [Extend Claude with skills | Claude Code Docs](https://code.claude.com/docs/en/slash-commands)（Anthropic 官方；显式调用、`disable-model-invocation: true` 与高风险动作边界）
+- [Agent Skills overview | Claude Platform Docs](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)（Anthropic 官方；metadata / instructions / resources 的分层加载）
+- [npm pack](https://docs.npmjs.com/cli/v11/commands/npm-pack/)（npm 官方；`pack --dry-run` 的 dry-run 语义）
+- [package.json](https://docs.npmjs.com/cli/v11/configuring-npm/package-json/)（npm 官方；`bin` 字段与 CLI 入口）
+- [Agent Skills 橙皮书](https://github.com/alchaincyf/agent-skills-orange-book)（中文主题地图 / 二手来源）
+- 任务提供的本地只读橙皮书镜像与中文转写文本（只读参考，不作为公开可分发素材）
+
+本文关于 Skill 目录、显式调用、progressive disclosure、`npm pack --dry-run` 和 `bin` 的事实，只以官方文档与 2026-07-12 的本地可重跑 Showcase 为准。橙皮书只作为中文主题地图：其 README 没有标准开源许可，因此本文只保留作者、链接、用途和限制说明，不复制 PDF 原文、截图、图片或成段文字。本文里的 checklist row contract、severity policy 和 `0 / 21 / 22 / 23 / 24` 退出码是 LearnPrompt 的操作化设计，不冒充官方术语。

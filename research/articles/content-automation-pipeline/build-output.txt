@@ -1,0 +1,8 @@
+content-automation-pipeline build excerpt (sanitized)
+
+> learnprompt-starlight@0.1.0 build
+> ASTRO_TELEMETRY_DISABLED=1 astro build
+21:23:39   ├─ /claude-code/content-automation-pipeline/index.html (+5ms)
+21:23:39 [starlight:pagefind] Found 49 HTML files.
+21:23:39 [build] 49 page(s) built in 2.35s
+21:23:39 [build] Complete!

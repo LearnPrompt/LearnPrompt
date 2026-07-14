@@ -1,0 +1,14 @@
+{
+  "scenario": "no-approval",
+  "stage": "normalize",
+  "status": "ok",
+  "normalized_count": 6,
+  "required_fields": [
+    "id",
+    "title",
+    "source_url",
+    "published_at",
+    "summary",
+    "tags"
+  ]
+}

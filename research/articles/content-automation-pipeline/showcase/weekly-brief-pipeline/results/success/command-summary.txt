@@ -1,0 +1,9 @@
+RUN scenario=success
+PASS snapshot sources=2 items=6
+PASS normalize normalized=6
+PASS dedupe unique=5 removed=1
+PASS score selected=4
+PASS draft file=drafts/2026-07-11-dual-source-ai-weekly.md
+PASS verify fields=source_url+selection_reason
+PASS approve candidate=publish-candidate/2026-07-11-dual-source-ai-weekly.md
+RESULT candidate_ready exit=0

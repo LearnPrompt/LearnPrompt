@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 780" role="img" aria-labelledby="title desc">
+  <title id="title">编排层：一台状态机决定顺序、路由、重试预算、停止与升级，以及三个角色的分工</title>
+  <desc id="desc">左侧是编排状态机：INSPECT 到 IMPLEMENT 到 VERIFY，验收通过则 STOP_DONE，失败且还有重试预算则回到 IMPLEMENT，预算用尽则 ESCALATE 升级给人。右侧是角色分工：worker 只执行产出候选，evaluator 只独立判定 pass 或 fail，orchestrator 只读判定后决定去哪一步，做事的和判分的不是同一个角色。</desc>
+  <rect width="1200" height="780" fill="#fff7ed"/>
+  <text x="600" y="52" text-anchor="middle" font-family="system-ui, sans-serif" font-size="33" font-weight="700" fill="#0f172a">编排层：把一次任务变成一台明确的状态机</text>
+  <text x="600" y="88" text-anchor="middle" font-family="system-ui, sans-serif" font-size="19" fill="#475569">左边是状态机与两条出口，右边是做事与判分必须分开的三个角色</text>
+
+  <!-- Panel A: state machine -->
+  <g font-family="system-ui, sans-serif">
+    <rect x="36" y="118" width="640" height="620" rx="18" fill="#ffedd5" stroke="#f97316" stroke-width="2"/>
+    <text x="60" y="156" font-size="23" font-weight="700" fill="#9a3412">状态机：顺序 · 路由 · 重试预算</text>
+
+    <rect x="220" y="176" width="272" height="52" rx="10" fill="#ffffff" stroke="#f97316" stroke-width="2"/>
+    <text x="356" y="208" text-anchor="middle" font-size="18" font-weight="700" fill="#9a3412">INSPECT　看清边界与验收</text>
+
+    <text x="356" y="248" text-anchor="middle" font-size="20" fill="#f97316">▼</text>
+
+    <rect x="220" y="258" width="272" height="52" rx="10" fill="#ffffff" stroke="#f97316" stroke-width="2"/>
+    <text x="356" y="290" text-anchor="middle" font-size="18" font-weight="700" fill="#9a3412">IMPLEMENT　worker 产出候选</text>
+
+    <text x="356" y="330" text-anchor="middle" font-size="20" fill="#f97316">▼</text>
+
+    <rect x="220" y="340" width="272" height="52" rx="10" fill="#ffffff" stroke="#f97316" stroke-width="2"/>
+    <text x="356" y="372" text-anchor="middle" font-size="18" font-weight="700" fill="#9a3412">VERIFY　evaluator 跑验收</text>
+
+    <!-- route diamond -->
+    <text x="356" y="412" text-anchor="middle" font-size="20" fill="#f97316">▼</text>
+    <path d="M 356 424 L 436 470 L 356 516 L 276 470 Z" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <text x="356" y="466" text-anchor="middle" font-size="16" font-weight="700" fill="#92400e">ROUTE</text>
+    <text x="356" y="486" text-anchor="middle" font-size="12" fill="#92400e">读判定去哪一步</text>
+
+    <!-- PASS -> STOP_DONE (right) -->
+    <path d="M 436 470 H 556 V 202 H 492" fill="none" stroke="#16a34a" stroke-width="2"/>
+    <text x="470" y="446" font-size="13" font-weight="700" fill="#16a34a">PASS</text>
+    <rect x="512" y="176" width="150" height="52" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+    <text x="587" y="200" text-anchor="middle" font-size="15" font-weight="700" fill="#166534">STOP_DONE</text>
+    <text x="587" y="218" text-anchor="middle" font-size="12" fill="#166534">全部验收通过</text>
+
+    <!-- FAIL + budget left -> back to IMPLEMENT (left) -->
+    <path d="M 276 470 H 150 V 284 H 220" fill="none" stroke="#f97316" stroke-width="2" stroke-dasharray="6 4"/>
+    <text x="86" y="392" font-size="13" font-weight="700" fill="#9a3412">FAIL 且</text>
+    <text x="86" y="410" font-size="13" fill="#9a3412">预算未尽</text>
+    <text x="86" y="428" font-size="12" fill="#64748b">→ 带反馈重试</text>
+
+    <!-- FAIL + budget exhausted -> ESCALATE (down) -->
+    <path d="M 356 516 V 556" fill="none" stroke="#dc2626" stroke-width="2"/>
+    <text x="410" y="540" font-size="13" font-weight="700" fill="#dc2626">FAIL 且预算用尽</text>
+    <rect x="220" y="556" width="272" height="52" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+    <text x="356" y="580" text-anchor="middle" font-size="16" font-weight="700" fill="#991b1b">ESCALATE　handoff=human</text>
+    <text x="356" y="598" text-anchor="middle" font-size="12" fill="#991b1b">不死循环，交人接手</text>
+
+    <!-- budget + stop/escalate notes -->
+    <rect x="60" y="632" width="290" height="86" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+    <text x="76" y="660" font-size="15" font-weight="700" fill="#166534">停止条件</text>
+    <text x="76" y="682" font-size="12.5" fill="#475569">全部验收通过 → 收工</text>
+    <text x="76" y="702" font-size="12.5" fill="#475569">done 事先约定（sprint contract）</text>
+
+    <rect x="362" y="632" width="300" height="86" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+    <text x="378" y="660" font-size="15" font-weight="700" fill="#991b1b">升级 / 预算条件</text>
+    <text x="378" y="682" font-size="12.5" fill="#475569">retry_budget 是整数硬上限</text>
+    <text x="378" y="702" font-size="12.5" fill="#475569">连续失败 / 撞预算 → 升级</text>
+  </g>
+
+  <!-- Panel B: role split -->
+  <g font-family="system-ui, sans-serif">
+    <rect x="704" y="118" width="460" height="620" rx="18" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <text x="728" y="156" font-size="23" font-weight="700" fill="#92400e">角色分工：做事的 ≠ 判分的</text>
+
+    <rect x="728" y="180" width="412" height="130" rx="12" fill="#ffedd5" stroke="#f97316" stroke-width="2"/>
+    <text x="748" y="210" font-size="18" font-weight="700" fill="#9a3412">worker　执行</text>
+    <text x="748" y="236" font-size="14" fill="#475569">只产出候选实现</text>
+    <text x="748" y="260" font-size="14" fill="#475569">说不出“我通过了”</text>
+    <text x="748" y="290" font-size="13" fill="#64748b">对应 Explore→Plan→Implement 的实现步</text>
+
+    <text x="934" y="332" text-anchor="middle" font-size="20" fill="#d97706">▼ 交出产物</text>
+
+    <rect x="728" y="344" width="412" height="130" rx="12" fill="#ffffff" stroke="#d97706" stroke-width="2"/>
+    <text x="748" y="374" font-size="18" font-weight="700" fill="#92400e">evaluator　判定</text>
+    <text x="748" y="400" font-size="14" fill="#475569">与 worker 角色分离，只给 pass/fail + 定位</text>
+    <text x="748" y="424" font-size="14" fill="#475569">只读产物与验收标准，不参与生成</text>
+    <text x="748" y="454" font-size="13" fill="#64748b">全新上下文是更强实现；评产物不评路径</text>
+
+    <text x="934" y="496" text-anchor="middle" font-size="20" fill="#d97706">▼ 交出判定</text>
+
+    <rect x="728" y="508" width="412" height="130" rx="12" fill="#fff7ed" stroke="#9a3412" stroke-width="2"/>
+    <text x="748" y="538" font-size="18" font-weight="700" fill="#9a3412">orchestrator　控制流</text>
+    <text x="748" y="564" font-size="14" fill="#475569">既不写码也不判分</text>
+    <text x="748" y="588" font-size="14" fill="#475569">只读判定后决定：路由 / 重试 / 停止 / 升级</text>
+    <text x="748" y="618" font-size="13" fill="#64748b">分离执行与判分是强杠杆，避免自评放行</text>
+
+    <rect x="728" y="656" width="412" height="62" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+    <text x="748" y="682" font-size="14.5" font-weight="700" fill="#075985">先简单，后复杂</text>
+    <text x="748" y="704" font-size="12.5" fill="#475569">单 worker + 独立 evaluator + 明确状态机起步，多 Agent 只是可选拓扑</text>
+  </g>
+
+  <text x="600" y="764" text-anchor="middle" font-size="14" fill="#9a3412">状态转换来自 showcase/state-machine/ 的真实运行；worker 为确定性桩、非在线模型，不构成模型排名</text>
+</svg>

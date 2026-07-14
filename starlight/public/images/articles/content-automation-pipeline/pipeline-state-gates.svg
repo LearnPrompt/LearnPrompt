@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="860" viewBox="0 0 1280 860" role="img" aria-labelledby="title desc">
+  <title id="title">双来源 AI 周报的七阶段状态、证据链与人工门禁</title>
+  <desc id="desc">图中从左到右展示 snapshot、normalize、dedupe、score、draft、verify、approve 七个阶段，并标出 source_url 缺失、draft contract 破坏、缺少人工批准三条失败分支，以及各阶段生成的 manifest、draft、publish-candidate、run-result 与 command-summary 工件；后两者来自 os.tmpdir 隔离 raw capture 读回后的脱敏冻结。</desc>
+  <defs>
+    <style>
+      .bg { fill: #f7f1e6; }
+      .ink { fill: #1f1b16; }
+      .muted { fill: #5f574d; }
+      .panel { fill: #fffdf8; stroke: #1f1b16; stroke-width: 2.2; rx: 22; }
+      .stage-a { fill: #fff4dc; stroke: #1f1b16; stroke-width: 2.1; rx: 18; }
+      .stage-b { fill: #eef5e6; stroke: #1f1b16; stroke-width: 2.1; rx: 18; }
+      .stage-c { fill: #e7f0f7; stroke: #1f1b16; stroke-width: 2.1; rx: 18; }
+      .artifact { fill: #ffffff; stroke: #766d63; stroke-width: 1.6; rx: 14; }
+      .fail { fill: #fbe7e0; stroke: #9f3d31; stroke-width: 2.1; rx: 18; }
+      .line { stroke: #1f1b16; stroke-width: 2.8; fill: none; marker-end: url(#arrow); }
+      .fail-line { stroke: #9f3d31; stroke-width: 2.8; fill: none; marker-end: url(#arrow-red); }
+      .title { font: 38px sans-serif; font-weight: 700; }
+      .label { font: 24px sans-serif; font-weight: 700; }
+      .body { font: 22px sans-serif; }
+      .small { font: 18px sans-serif; }
+      .tiny { font: 17px sans-serif; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f1b16"/>
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#9f3d31"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1280" height="860"/>
+
+  <text class="title ink" x="56" y="74">双来源 AI 周报：七阶段只把状态推进到该到的地方</text>
+  <text class="body muted" x="56" y="112">成功路径逐段落盘；失败路径分别停在 normalize、verify、approve，不把数据坏了、草稿坏了、未审批混成一件事。</text>
+
+  <rect class="panel" x="54" y="146" width="1172" height="356"/>
+  <text class="label ink" x="82" y="188">成功路径：七阶段都要留工件</text>
+
+  <rect class="stage-a" x="76" y="226" width="140" height="112"/>
+  <text class="label ink" x="100" y="257">snapshot</text>
+  <text class="small muted" x="92" y="286">冻结两份快照</text>
+  <text class="small muted" x="88" y="310">只承认离线输入</text>
+
+  <rect class="stage-a" x="234" y="226" width="140" height="112"/>
+  <text class="label ink" x="256" y="257">normalize</text>
+  <text class="small muted" x="248" y="286">统一字段 contract</text>
+  <text class="small muted" x="268" y="310">缺字段即停</text>
+
+  <rect class="stage-b" x="392" y="226" width="140" height="112"/>
+  <text class="label ink" x="430" y="257">dedupe</text>
+  <text class="small muted" x="412" y="286">按 source_url</text>
+  <text class="small muted" x="432" y="310">去重留证据</text>
+
+  <rect class="stage-b" x="550" y="226" width="140" height="112"/>
+  <text class="label ink" x="592" y="257">score</text>
+  <text class="small muted" x="575" y="286">确定性筛选</text>
+  <text class="small muted" x="570" y="310">记录入选理由</text>
+
+  <rect class="stage-c" x="708" y="226" width="140" height="112"/>
+  <text class="label ink" x="748" y="257">draft</text>
+  <text class="small muted" x="730" y="286">输出 Markdown</text>
+  <text class="small muted" x="716" y="310">保留 source_url</text>
+
+  <rect class="stage-c" x="866" y="226" width="140" height="112"/>
+  <text class="label ink" x="905" y="257">verify</text>
+  <text class="small muted" x="895" y="286">检查草稿</text>
+  <text class="small muted" x="878" y="310">contract 仍一致</text>
+
+  <rect class="stage-c" x="1024" y="226" width="140" height="112"/>
+  <text class="label ink" x="1060" y="257">approve</text>
+  <text class="small muted" x="1044" y="286">有批准工件</text>
+  <text class="small muted" x="1034" y="310">才进候选池</text>
+
+  <path class="line" d="M216 282 H234"/>
+  <path class="line" d="M374 282 H392"/>
+  <path class="line" d="M532 282 H550"/>
+  <path class="line" d="M690 282 H708"/>
+  <path class="line" d="M848 282 H866"/>
+  <path class="line" d="M1006 282 H1024"/>
+
+  <rect class="artifact" x="76" y="374" width="140" height="64"/>
+  <text class="tiny ink" x="92" y="401">snapshot.manifest</text>
+  <text class="tiny muted" x="105" y="423">source hashes</text>
+
+  <rect class="artifact" x="234" y="374" width="140" height="64"/>
+  <text class="tiny ink" x="248" y="401">normalize.manifest</text>
+  <text class="tiny muted" x="266" y="423">required fields</text>
+
+  <rect class="artifact" x="392" y="374" width="140" height="64"/>
+  <text class="tiny ink" x="412" y="401">dedupe.manifest</text>
+  <text class="tiny muted" x="426" y="423">duplicates log</text>
+
+  <rect class="artifact" x="550" y="374" width="140" height="64"/>
+  <text class="tiny ink" x="575" y="401">score.manifest</text>
+  <text class="tiny muted" x="567" y="423">selection reasons</text>
+
+  <rect class="artifact" x="708" y="374" width="140" height="64"/>
+  <text class="tiny ink" x="742" y="401">drafts/*.md</text>
+  <text class="tiny muted" x="723" y="423">candidate still local</text>
+
+  <rect class="artifact" x="866" y="374" width="140" height="64"/>
+  <text class="tiny ink" x="889" y="401">verify.manifest</text>
+  <text class="tiny muted" x="892" y="423">contract checks</text>
+
+  <rect class="artifact" x="1024" y="374" width="140" height="64"/>
+  <text class="tiny ink" x="1044" y="401">approve.manifest</text>
+  <text class="tiny muted" x="1039" y="423">publish-candidate</text>
+
+  <text class="small muted" x="82" y="470">根层 `run-result.txt` 汇总四个退出码；`command-summary.txt` 由 os.tmpdir 隔离 raw stdout/stderr 读回后脱敏冻结。</text>
+
+  <rect class="panel" x="54" y="530" width="1172" height="274"/>
+  <text class="label ink" x="82" y="572">失败分支：三种错误各停各段</text>
+
+  <rect class="fail" x="82" y="612" width="346" height="142"/>
+  <text class="label" x="108" y="646" fill="#9f3d31">A. missing-source-field</text>
+  <text class="small muted" x="108" y="675">停在 normalize，exit 21</text>
+  <text class="small muted" x="108" y="702">entry=openai-codex-cloud 缺 `source_url`</text>
+  <text class="small muted" x="108" y="729">关键证据：no_content=false</text>
+
+  <rect class="fail" x="466" y="612" width="346" height="142"/>
+  <text class="label" x="492" y="646" fill="#9f3d31">B. verify-failed</text>
+  <text class="small muted" x="492" y="675">停在 verify，exit 23</text>
+  <text class="small muted" x="492" y="702">draft 后篡改 `openai-codex-cli` 的</text>
+  <text class="small muted" x="492" y="725">source_url，verify.manifest 记 1 个错</text>
+
+  <rect class="fail" x="850" y="612" width="346" height="142"/>
+  <text class="label" x="876" y="646" fill="#9f3d31">C. no-approval</text>
+  <text class="small muted" x="876" y="675">停在 approve，exit 31</text>
+  <text class="small muted" x="876" y="702">draft 与 verify 已完成，但无批准工件</text>
+  <text class="small muted" x="876" y="729">关键证据：candidate_created=false</text>
+
+  <path class="fail-line" d="M304 338 V590"/>
+  <path class="fail-line" d="M936 338 V590"/>
+  <path class="fail-line" d="M1094 338 V590"/>
+
+  <text class="small muted" x="82" y="790">教学核心：快照哈希、阶段 manifest、草稿、批准工件，以及由隔离 raw capture 读回冻结的 command-summary / run-result 一起构成证据链。</text>
+</svg>

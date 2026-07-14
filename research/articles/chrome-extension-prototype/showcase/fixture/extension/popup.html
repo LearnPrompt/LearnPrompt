@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Current Page Reading Card</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <p class="eyebrow">Manifest V3 prototype</p>
+        <h1>当前页阅读卡</h1>
+        <p class="summary">
+          先用快捷键抓取当前页标题、URL 与可选选中文本，再在 popup 里查看最近一次成功结果与最近一次运行状态。
+        </p>
+      </header>
+
+      <section class="status-panel">
+        <div class="status-head">
+          <h2>抓取入口</h2>
+          <span class="badge">快捷键</span>
+        </div>
+        <p class="hint"><kbd>Command</kbd><span>/</span><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Y</kbd></p>
+        <p id="status" class="status" role="status">尚未抓取，下面显示最近一次成功保存的结果。</p>
+      </section>
+
+      <section class="card" aria-labelledby="latestCardHeading">
+        <div class="card-head">
+          <h2 id="latestCardHeading">最近一次保存</h2>
+          <span class="badge">local</span>
+        </div>
+
+        <dl class="fields">
+          <div>
+            <dt>标题</dt>
+            <dd data-field="title">暂无</dd>
+          </div>
+          <div>
+            <dt>URL</dt>
+            <dd data-field="url">暂无</dd>
+          </div>
+          <div>
+            <dt>选中文本</dt>
+            <dd data-field="selectedText">未选中文本时会显示为空。</dd>
+          </div>
+          <div>
+            <dt>抓取时间</dt>
+            <dd data-field="capturedAt">暂无</dd>
+          </div>
+        </dl>
+      </section>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

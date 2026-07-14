@@ -1,0 +1,13 @@
+已完成。
+
+变更文件：
+- [alpha-plan.md](/private<tmp-path>
+- [git-boundaries.md](/private<tmp-path>
+- [candidate-receipt.md](/private<tmp-path>
+
+检查：
+- `git status --short --untracked-files=all` 只显示这三个允许路径。
+- `git diff --check` 通过。
+- 链接扫描确认未新增外部链接，现有 Wiki links 保持不变。
+
+Lessons learned: 候选收据中的 commit hash 记录为当前 candidate HEAD，因为本任务未要求创建新提交。

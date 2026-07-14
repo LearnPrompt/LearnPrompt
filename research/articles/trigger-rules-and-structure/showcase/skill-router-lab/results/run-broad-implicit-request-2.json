@@ -1,0 +1,13 @@
+{
+  "suite": "skill-router-lab",
+  "variant": "broad",
+  "mode": "implicit",
+  "case_id": "request-2",
+  "loaded": true,
+  "contains_canary": true,
+  "exit_code": 0,
+  "privacy_ok": true,
+  "model": "gpt-5.5",
+  "final_output_excerpt": "SKILL_USED: release-weekly\n\n阻塞：当前消息和工作区里都没有三条版本更新原文或结构化 release notes，按技能约束不能臆造 changelog digest。\n\n请直接贴这类输入即可：\n\n```text\n版本 A：\n- ...\n\n版本 B：\n- ...\n\n版本 C：\n- ...\n```\n\n我检查到当前目录不是 git 仓库，除 `.agents/skills/release-weekly/` 外没有可用的 changelog / release / version 文件。",
+  "notes": "completed"
+}

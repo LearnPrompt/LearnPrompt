@@ -1,0 +1,15 @@
+{
+  "status": "verified",
+  "quality_score": 86,
+  "deterministic": "passed",
+  "live_nested": "attempted",
+  "valid_exit": 0,
+  "expected_exits": [
+    81,
+    82,
+    83,
+    84,
+    85
+  ],
+  "main_unchanged": true
+}

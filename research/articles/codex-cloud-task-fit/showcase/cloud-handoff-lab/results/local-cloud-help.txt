@@ -1,0 +1,17 @@
+$ codex cloud --help
+Usage: codex cloud [OPTIONS] [COMMAND]
+
+Commands:
+  exec    Submit a new Codex Cloud task without launching the TUI
+  status  Show the status of a Codex Cloud task
+  list    List Codex Cloud tasks
+  apply   Apply the diff for a Codex Cloud task locally
+  diff    Show the unified diff for a Codex Cloud task
+
+$ codex cloud exec --help
+Usage: codex cloud exec [OPTIONS] --env <ENV_ID> [QUERY]
+
+Options:
+  --env <ENV_ID>
+  --attempts <ATTEMPTS>
+  --branch <BRANCH>

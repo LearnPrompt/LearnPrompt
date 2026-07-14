@@ -1,0 +1,25 @@
+{
+  "task": "Fix the receipt number normalization bug so the frozen tests pass.",
+  "goal": "Normalize receipt references to RCPT-#### while keeping the last four digits of the numeric sequence.",
+  "allowed_paths": [
+    "src/normalizeReceipt.js"
+  ],
+  "forbidden_paths": [
+    "README.md",
+    "task-contract.json",
+    "package.json",
+    "test/"
+  ],
+  "required_checks": [
+    "git status --short",
+    "npm test",
+    "git diff --stat",
+    "git diff -- src/normalizeReceipt.js"
+  ],
+  "deliverables": [
+    "single-file patch",
+    "test result",
+    "diff summary",
+    "structured final report"
+  ]
+}

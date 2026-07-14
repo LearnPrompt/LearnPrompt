@@ -1,36 +1,220 @@
 ---
-title: 约束层：权限、沙箱和风险分级
-description: 把 Agent 的能力限制在任务需要的范围内。
+title: 约束层：把「不要做什么」从软提醒变成可执行边界
+description: 用执行前判定和执行时拦截两类机制，把一条「不要碰密钥、不要 push」从 CLAUDE.md 里的软提醒变成系统会强制执行、且能验证的硬边界。
 sidebar:
   order: 3
 difficulty: intermediate
-source_repo: alchaincyf/harness-engineering-orange-book
-source_url: https://github.com/alchaincyf/harness-engineering-orange-book
-updated_from: 2026-05
+updated_from: "2026-05"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-11"
+reading_time: 13 分钟
+research_path: research/articles/constraint-layer
+showcase_path: research/articles/constraint-layer/showcase/constraint-gate
+showcase_status: verified
+quality_score: 95
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 13 分钟 | 2026-07-11 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/harness-engineering-orange-book" url="https://github.com/alchaincyf/harness-engineering-orange-book" updatedFrom="2026-05" />
+你在 CLAUDE.md 或 AGENTS.md 里写清楚了「不要碰 config、不要 push、不要删生产库」，Agent 还是在某一轮把配置文件改了。你翻回去看，那句话明明在那里。
 
-## 核心概念
+多数人的下一步是把语气加重，再补一句「务必小心」。但这句话从一开始就没有拦截能力。写进文档里的「不要」只是一条软提醒：模型可能无视它；即使这一轮听话了，你也没法在下一次动作发生前把它拦住，事后才发现文件被改。约束层真正要做的，是把这条「不要」落到执行路径上的一个判定点，让系统在动作执行前判定、或在执行时拦截，而不是指望模型自觉。
 
-约束层决定 Agent 能做什么、什么时候需要确认、失败后如何回滚。它比“信任模型”更可靠。
+## 读完你能做什么
 
-## 风险分级
+你会学会把任意一条「不要做什么」落到可强制、可验证的边界上：
 
-1. 观察：读文件、搜索、截图、请求公开网页。
-2. 修改：写代码、生成文件、格式化。
-3. 发布：部署、发消息、交易、修改账号设置。
+1. 分清一条约束现在是软提醒还是硬边界。
+2. 用执行前判定拦住禁止动作，同时放行合法动作。
+3. 用操作系统沙箱在执行时兜底，不依赖模型判断。
+4. 说清 Claude Code 的权限与钩子、Codex 的沙箱与审批分别是什么，不把它们混成一套术语。
 
-## 操作步骤
+最后你会看到同一组允许与禁止动作，在软提醒、确定性闸门、操作系统沙箱三种约束下的真实不同结局。
 
-1. 给每类工具标注风险。
-2. 高风险操作写入人工确认点。
-3. 所有写操作都要可追踪。
-4. 生产操作必须有回滚方案。
+![上路的禁止动作只有 AGENTS.md 文字提醒时被放行，下路的同一动作经过路径命令权限、执行前钩子、操作系统沙箱三层硬边界被拒绝，合法动作在同一套边界下通过](/images/articles/constraint-layer/soft-reminder-vs-hard-boundary.svg)
+*图注：同一个禁止动作，只有文字提醒时被执行且无法验证，接到 deny 规则、执行前钩子、沙箱任一层就会被拦下；而合法动作在同一套硬边界下照常通过。*
 
-## 常见错误
+:::note[这是一套操作模型]
+「执行前判定」和「执行时拦截」两分法，以及约束层与其他四层的分工，是 LearnPrompt 对官方机制的操作化归纳，方便审计和教学，并非某家产品的官方术语。涉及产品行为的部分都回到官方一手文档并用本地 CLI 核验，日期见文末。
+:::
 
-把“本地运行”误认为没有风险。本地 Agent 同样可能删除文件、泄露日志或误改配置。
+## 先看一个失败：软约束拦不住禁止动作
+
+假设你的项目里有一份 AGENTS.md，明明白白写着：
+
+```text
+- 不要修改 config/ 下的任何配置文件。
+- 不要执行 git push、rm -rf、npm publish。
+- 只在 docs/ 下写文档。
+```
+
+现在有一个动作要改 `config/app.env`。在没有任何强制机制的情况下，一条普通命令就能把它改掉：
+
+```text
+$ sh -c 'echo TAMPERED >> config/app.env'
+exit=0
+# 执行后 config/app.env 尾部多了一行 TAMPERED
+```
+
+退出码 0，文件被改，AGENTS.md 那三行一个字都没拦住。这暴露了软约束的两个本质问题：它可被无视，因为没有任何判定点读取并强制它；它无法验证，因为你只能在事后翻看文件才知道边界被跨过了。Claude Code 官方也把 CLAUDE.md 与记忆定位成上下文而非强制配置——文档负责表达意图，强制要交给别的机制。
+
+再加十句「务必小心」也改变不了这一点。你需要的是一个在动作执行前或执行时真正说「不」的地方。
+
+## 约束层做的是强制，不是提醒
+
+约束层回答的问题只有一个：什么绝对不能做。它和指令层的分界很清楚——指令层解释「应该怎样工作」，约束层强制「哪些边界不能跨」。一条约束要生效，它的产物必须接到执行路径上的判定点，而不是停留在自然语言里。
+
+判定点有两类，分属不同产品的不同机制。把它们分清，是写对约束配置的前提。
+
+- 一类是执行前判定：在工具调用真正发生之前，由一段确定性逻辑决定放不放行。
+- 一类是执行时拦截：让操作系统在系统调用层面直接拒绝越界操作。
+
+下面这张表是审计一条约束的最小清单：先问它落到了哪一类判定点，再看合法动作是否还能通过。
+
+| 约束落点 | 谁来拦 | 什么时候拦 | 典型机制 |
+| --- | --- | --- | --- |
+| 软提醒（无判定点） | 没人 | 从不 | CLAUDE.md / AGENTS.md 文字 |
+| 执行前判定 | 工具层规则或钩子 | 动作执行前 | Claude Code 权限、PreToolUse 钩子 |
+| 执行时拦截 | 操作系统 | 系统调用时 | Codex 沙箱（seatbelt 等） |
+
+## 两类硬边界：执行前判定与执行时拦截
+
+### 执行前判定：在动作发生前说「不」
+
+Claude Code 的权限系统就是一个执行前判定层。它有三类规则：`deny`、`ask`、`allow`，优先级是 `deny > ask > allow`，也就是 `deny` 命中即拦，压过任何 `allow`。规则写成 `Tool(specifier)` 的形状：
+
+```json
+{
+  "permissions": {
+    "deny": ["Read(./.env)", "Read(./.env.*)", "Bash(rm -rf *)"],
+    "ask": ["Bash(curl *)"],
+    "allow": ["Bash(npm run test:*)", "Read(./config.json)"]
+  }
+}
+```
+
+比规则更灵活的执行前判定是 `PreToolUse` 钩子。它在每次工具调用执行前触发，可以整体拦下这次调用：返回 `hookSpecificOutput.permissionDecision: "deny"`（配一句 `permissionDecisionReason`），或者更直接地用退出码 2 阻断，stderr 会作为原因反馈给模型。逻辑由你写，判定是确定性的——同样的输入永远得到同样的 allow/deny。
+
+这两者的共同点是：判定发生在动作执行之前，被拒的动作根本不会跑起来。
+
+### 执行时拦截：让操作系统兜底
+
+Codex 走的是另一条路——操作系统级沙箱。它的 `sandbox_mode` 有三档：
+
+- `read-only`：只读，禁止一切写入和网络。
+- `workspace-write`：可写工作区，另外默认把 `/tmp` 和 `$TMPDIR` 设为可写根，网络默认关闭。
+- `danger-full-access`：不受限。
+
+再配一个 `approval_policy` 决定哪些批准提示可以出现。当前配置既支持 `untrusted` / `on-request` / `never` 三种字符串，也支持 `{ granular = { ... } }` 对象，按 `sandbox_approval`、`rules`、`mcp_elicitations`、`request_permissions`、`skill_approval` 等提示类别分别允许或自动拒绝；`on-failure` 已废弃。审批策略与沙箱是两条轴：真正的文件系统拦截不靠模型判断，而是让内核（在 macOS 上是 seatbelt）在系统调用层面拒绝越界写入。
+
+一个反直觉的细节值得记住：`workspace-write` 默认把 `$TMPDIR` 也设为可写根。所以「写到临时目录就算越界、一定会被拦」是错的。边界的实际范围要以配置和实测为准，不能凭直觉推断——这也是下面 Showcase 特意保留的一处验证。
+
+## 别把不同产品的机制混成一套
+
+约束层最容易踩的坑，是把不同产品的术语当成同一件事。它们解决的都是「拦住禁止动作」，但机制、层次、可写范围完全不同：
+
+- Claude Code 的 `deny` 是工具层的执行前决策，判定的是这次工具调用放不放行，不是操作系统层面的隔离。
+- Codex 的 `read-only` 是操作系统沙箱，拦的是系统调用，与模型是否愿意配合无关。
+- 把 Claude Code 的 `deny` 当成 Codex 的 `read-only`，或反过来，会写出既不生效又给人安全错觉的配置。
+
+实践里两类机制是互补的：执行前判定负责精确匹配路径与命令、放行合法动作；执行时沙箱负责在判定被绕过或没覆盖到时兜底。一层是决策，一层是隔离，叠起来才是纵深防线。文末的一手文档链接分别对应这两套机制，配置时请按各自的文档写，不要交叉套用。
+
+## 约束层和其他四层的分工
+
+约束层很关键，但它只回答「什么绝对不能做」。分不清这条边界，就会把本该别处解决的问题硬塞进 deny 规则里：
+
+- 指令层回答「应该怎样工作」。把「不要碰密钥」写进指令只是软提醒，真正拦住要靠 deny 规则、钩子或沙箱。
+- 能力层回答「实际能做什么」。少给一个高风险工具，是从源头缩小失败半径；约束是在已给的能力上再画边界。
+- 状态层回答「下一轮记住什么」。被拒的动作和拒绝原因应当留成证据，供审计和恢复，而不是拒完就忘。
+- 编排层回答「谁验收、失败回哪步、何时停」。审批（approval）升级到人，就是约束与编排的交界。
+
+一个简单的判断法：如果补一条精确的路径或命令规则就能拦住某个禁止动作，那是约束层的活；如果问题是工具缺失、状态丢失或流程失控，那要换层解决。
+
+## Showcase：同一组动作，三种约束
+
+为了让「软提醒 vs 硬边界」不停留在口号，本文附了一个无网络依赖的最小仓库，对同一组允许与禁止动作，保留了三种约束下的真实结局。全程不触碰真实密钥、不 push、不部署，禁止命令只被判定、从不执行。完整目录、命令与脱敏输出见 [研究与 Showcase](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/constraint-layer/showcase/constraint-gate)。
+
+同一组五个候选动作里，允许与禁止混在一起：合法的是写 `docs/notes.md`、读 `tracked.txt`；禁止的是改 `config/app.env`（占位配置，非真实密钥）、`git push origin main`、`rm -rf build`。
+
+第一段，软提醒。前面已经看到，无判定点时一条普通命令就把禁止文件改了，退出码 0。文字拦不住，也留不下证据。
+
+第二段，确定性闸门。它把执行前判定的形状做成一个最小模型：读策略（deny 路径、deny 命令、allow 白名单），对五个动作逐个判定。2026-07-11 在 macOS、Node v24.11.0 下的真实结果：
+
+```text
+$ node ../scripts/policy-gate.mjs policy.json actions.json
+ALLOW 写发布说明 docs/notes.md — 写入路径在 allow 白名单内：docs/notes.md
+ALLOW 读追踪文件 tracked.txt — 读取未受限：tracked.txt
+DENY  改配置密钥 config/app.env — 写入路径命中 deny 规则：config/app.env
+DENY  推送到远端 git push origin main — 命令命中 deny 规则：git push origin main
+DENY  删除目录 rm -rf build — 命令命中 deny 规则：rm -rf build
+summary: 2/5 allowed, 3 denied
+exit=2
+```
+
+合法写和读被 ALLOW，禁止写与两条禁止命令被 DENY，退出码 2——正好对应 PreToolUse 钩子用 exit 2 阻断一次工具调用。关键是判定发生在任何动作执行之前，被拒的三个动作根本没跑。
+
+第三段，操作系统沙箱。用 `codex sandbox`（默认 read-only，macOS seatbelt）对同一类动作兜底：
+
+```text
+$ codex sandbox -c sandbox_mode='"read-only"' -- sh -c 'echo hi > sandbox-blocked.txt'
+sh: sandbox-blocked.txt: Operation not permitted
+exit=1
+$ codex sandbox -c sandbox_mode='"read-only"' -- cat tracked.txt
+这是一份被追踪的只读示例文件。
+exit=0
+# sandbox-blocked.txt 从未被创建
+```
+
+read-only 沙箱把写入直接拒绝，读取放行；被拒的文件从未落地。这一层不问模型愿不愿意，靠的是内核。
+
+### 这个 Showcase 证明了什么
+
+- 同一句「不要碰配置、不要 push」，写在 AGENTS.md 里拦不住，落到 deny 判定或沙箱里才拦得住。
+- 约束可以做成执行前判定（闸门退出码 2）或执行时拦截（沙箱拒写），两者都不依赖模型自觉。
+- 合法动作在硬边界下照常通过，说明边界收紧的是禁止动作，而不是把 Agent 一并锁死。
+
+### 它没有证明什么
+
+- `policy-gate.mjs` 是把 Claude Code 的 deny 规则与 PreToolUse 执行前拒绝的形状做成的最小可复现模型，不是这些产品本身；真实产品的匹配语义、作用域合并与优先级以官方文档为准。
+- 第三段的 seatbelt 是 macOS 特有实现，Linux 与容器下沙箱后端不同；这里演示的是 Codex `sandbox_mode` 的行为，不是所有平台细节一致。
+- 一次判定或拦截通过，不等于策略设计正确：白名单写宽了、deny 漏了一类路径，闸门照样放行。约束要和能力、状态、编排一起审计。
+
+## 什么时候不该用约束层解决
+
+约束层不是万能钥匙。遇到下面这些情况，先别急着加 deny 规则：
+
+- 失败来自工具缺失或路径不可写。这属于能力层，deny 再多也变不出一个不存在的命令。
+- 你需要的是记住上次被拒了什么。这属于状态层，约束负责拦，不负责记忆。
+- 你需要的是失败后升级给人。这属于编排层的停止与审批设计，约束只提供触发点。
+- 需求本身合法且必要。这时不该用 deny 一刀切，而应把边界收窄到精确的路径或命令白名单，放行合法动作——收紧的是禁止面，不是把人一起挡在外面。
+
+还要记住：声明不等于强制。JSON 或 TOML 里写了 deny，只有执行器真的读取并强制它才成立；`policy-gate.mjs` 如果没被调用，禁止动作照样执行。边界的力量来自它被接进执行路径，而不是它被写了下来。
+
+## 练习：给一条「不要」找一个判定点
+
+找一条你正在用的约束（比如「不要碰生产配置」），以及一个它最近没管住的动作，填这张表：
+
+```yaml
+约束原文:   现在写在哪里（CLAUDE.md / AGENTS.md / 无）
+是否有判定点: 有没有一个地方在动作执行前或执行时读取并强制它
+落点类型:   软提醒 / 执行前判定 / 执行时拦截
+合法动作:   收紧后，哪些正当动作仍然要放行
+验证方式:   怎么用一条命令或一次运行证明它真的拦住了
+```
+
+任何一行答不上「落到了某个真实判定点」，就是这条约束还停留在软提醒的信号。只把最薄弱的一条接到 deny 规则、PreToolUse 钩子或沙箱上，再用同一个动作重跑一次，观察结果是否从「事后才发现被改」变成「执行前就被拒、退出码非零」。
+
+完成标准：这条约束能指向一个具体的判定点；禁止动作重跑时被拦且退出码非零；至少一个合法动作仍然通过。如果仍然只能靠「我提醒过它了」来解释，就还没有完成这次收紧。
+
+## 来源与延伸阅读
+
+- [Claude Code 官方文档：Settings 与权限（deny/ask/allow、权限模式）](https://code.claude.com/docs/en/settings)
+- [Claude Code 官方文档：Hooks（PreToolUse、permissionDecision、exit 2）](https://code.claude.com/docs/en/hooks)
+- [OpenAI Codex 官方配置参考（sandbox_mode、approval_policy）](https://learn.chatgpt.com/docs/config-file/config-reference)
+- [Harness Engineering 橙皮书](https://github.com/alchaincyf/harness-engineering-orange-book)
+- [本篇研究包与可运行 Showcase](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/constraint-layer)
+
+前三条为官方一手资料，支撑本文所有当前产品行为，并用本地 Claude Code 2.1.206、codex-cli 0.142.2 核验，日期 2026-07-11。橙皮书作为中文主题地图（二手来源）帮助确认分层叙事的组织方式，其仓库为教育性分享并要求署名，本文在此保留链接与署名，未复制其任何图片或成段文字。执行前判定与执行时拦截的两分法，以及约束层与其他四层的分工，是 LearnPrompt 对官方机制的操作化综合，不是行业统一标准；文中 Showcase 已重新组织并复核。

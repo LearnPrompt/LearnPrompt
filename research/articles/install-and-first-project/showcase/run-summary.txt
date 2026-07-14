@@ -1,0 +1,26 @@
+真实 Claude Code 非交互会话——脱敏摘录
+========================================
+
+命令：
+  claude -p "<冻结任务：补齐 README 本地运行说明，不改代码、不加依赖、只编辑 README.md>" \
+    --permission-mode acceptEdits \
+    --allowedTools "Read Edit Bash(npm test) Bash(git diff)" \
+    --model claude-haiku-4-5-20251001
+
+claude 进程退出码：0
+
+模型最终自述（原文保留，仅去掉一行 connectors 提示，该提示不含密钥）：
+
+  改了文件： README.md
+  跑的命令： npm test
+  结果： all tests passed
+
+  在 README.md 补齐了“本地运行”章节，包含三部分：无依赖安装方式、
+  CLI 两种运行方式（直接运行和全局 link）、以及测试命令。保持原有中文
+  文风，完全符合硬约束。
+
+脱敏说明：
+- 原始日志写在 $TMPDIR，进程退出后才提取本摘录。
+- 已去除的类别：本机 connectors 状态提示（无密钥、无账号标识）。
+- 未出现（-p text 输出本身不含）：会话类运行标识、绝对家目录路径。
+- 客观事实（退出码、只改 README、npm test 通过）另由确定性门 gate-output.txt 独立佐证。

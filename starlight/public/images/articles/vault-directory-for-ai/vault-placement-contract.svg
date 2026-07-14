@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">Vault placement contract for Obsidian AI</title>
+  <desc id="desc">A teaching diagram showing synthetic inbox items entering a role decision stage, then flowing into canonical project, knowledge, output, resource, or system paths, or into a reject rail. Five audit gates are shown: orphan, role mismatch, unknown root, sensitive placed, and duplicate canonical destination.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f6f1e8; }
+      .panel { fill: #fffaf2; stroke: #2c2824; stroke-width: 2; rx: 24; }
+      .panel-soft { fill: #fdf6ea; stroke: #2c2824; stroke-width: 2; rx: 20; }
+      .project { fill: #dcefd8; }
+      .knowledge { fill: #d8ecf4; }
+      .output { fill: #f6dfcb; }
+      .resource { fill: #efe3c7; }
+      .system { fill: #e6e0f4; }
+      .reject { fill: #f7d8d5; }
+      .gate { fill: #fff; stroke: #b4493d; stroke-width: 2; rx: 16; }
+      .title { font: 700 34px "Noto Sans SC", "PingFang SC", sans-serif; fill: #1f1a16; }
+      .subtitle { font: 500 17px "Noto Sans SC", "PingFang SC", sans-serif; fill: #5c5145; }
+      .label { font: 700 20px "Noto Sans SC", "PingFang SC", sans-serif; fill: #1f1a16; }
+      .body { font: 500 16px "Noto Sans SC", "PingFang SC", sans-serif; fill: #2e2925; }
+      .small { font: 500 14px "Noto Sans SC", "PingFang SC", sans-serif; fill: #5d5349; }
+      .mono { font: 600 15px "SFMono-Regular", "Menlo", monospace; fill: #1f1a16; }
+      .gate-text { font: 700 15px "SFMono-Regular", "Menlo", monospace; fill: #9b3d34; }
+      .line { stroke: #2c2824; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .dash { stroke-dasharray: 8 8; }
+      .accent { fill: #d9763a; }
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#2c2824"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#b4493d"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1400" height="900"/>
+
+  <text class="title" x="80" y="80">把目录树写成 placement contract</text>
+  <text class="subtitle" x="80" y="112">LearnPrompt 示例：先定 role，再落 canonical path；不满足合同的材料直接 reject，而不是“先找个地方放”。</text>
+
+  <rect class="panel" x="70" y="160" width="280" height="600"/>
+  <text class="label" x="98" y="208">00_收件箱</text>
+  <text class="small" x="98" y="236">12 个 synthetic inbox items，只是 intake，不是 destination。</text>
+
+  <rect class="panel-soft" x="96" y="266" width="228" height="56"/>
+  <text class="mono" x="114" y="300">项目A-发布决策.md</text>
+  <rect class="panel-soft" x="96" y="336" width="228" height="56"/>
+  <text class="mono" x="114" y="370">Obsidian-Agent-访谈综合.md</text>
+  <rect class="panel-soft" x="96" y="406" width="228" height="56"/>
+  <text class="mono" x="114" y="440">博客草稿-放置contract.mdx</text>
+  <rect class="panel-soft" x="96" y="476" width="228" height="56"/>
+  <text class="mono" x="114" y="510">OpenAI-AGENTS-页面快照.md</text>
+  <rect class="panel-soft" x="96" y="546" width="228" height="56"/>
+  <text class="mono" x="114" y="580">vault-audit-runbook.md</text>
+  <rect class="panel-soft reject" x="96" y="616" width="228" height="72"/>
+  <text class="mono" x="114" y="652">SENSITIVE-marker-credential.txt</text>
+  <text class="small" x="114" y="676">合成敏感标记，用于验证 reject gate</text>
+
+  <rect class="panel" x="420" y="160" width="410" height="600"/>
+  <text class="label" x="448" y="208">Role decision</text>
+  <text class="small" x="448" y="236">Agent 先回答“它是什么”，再回答“它该去哪”。</text>
+
+  <rect class="panel-soft" x="448" y="272" width="354" height="70"/>
+  <circle cx="482" cy="307" r="18" class="project"/>
+  <text class="body" x="514" y="298">还在驱动当前项目吗？</text>
+  <text class="small" x="514" y="322">decision-note / task-list → project</text>
+
+  <rect class="panel-soft" x="448" y="360" width="354" height="70"/>
+  <circle cx="482" cy="395" r="18" class="knowledge"/>
+  <text class="body" x="514" y="386">它已经是可复用 synthesis 吗？</text>
+  <text class="small" x="514" y="410">synthesis-note → knowledge</text>
+
+  <rect class="panel-soft" x="448" y="448" width="354" height="70"/>
+  <circle cx="482" cy="483" r="18" class="output"/>
+  <text class="body" x="514" y="474">它是待发布 deliverable 吗？</text>
+  <text class="small" x="514" y="498">draft-deliverable → output</text>
+
+  <rect class="panel-soft" x="448" y="536" width="354" height="70"/>
+  <circle cx="482" cy="571" r="18" class="resource"/>
+  <text class="body" x="514" y="562">它仍是外部 source snapshot 吗？</text>
+  <text class="small" x="514" y="586">source-snapshot → resource</text>
+
+  <rect class="panel-soft" x="448" y="624" width="354" height="70"/>
+  <circle cx="482" cy="659" r="18" class="system"/>
+  <text class="body" x="514" y="650">它是 runbook / template 吗？</text>
+  <text class="small" x="514" y="674">runbook / template → system</text>
+
+  <path class="line" marker-end="url(#arrow)" d="M350 460 C390 460, 392 460, 420 460"/>
+
+  <rect class="panel project" x="900" y="170" width="420" height="86"/>
+  <text class="label" x="928" y="206">10_项目</text>
+  <text class="body" x="928" y="232">Active project decisions and tasks</text>
+  <text class="mono" x="928" y="252">10_项目/&lt;scope&gt;/决策|任务/&lt;slug&gt;.md</text>
+
+  <rect class="panel knowledge" x="900" y="276" width="420" height="86"/>
+  <text class="label" x="928" y="312">20_知识库</text>
+  <text class="body" x="928" y="338">Reusable synthesized knowledge</text>
+  <text class="mono" x="928" y="358">20_知识库/&lt;scope&gt;/&lt;slug&gt;.md</text>
+
+  <rect class="panel output" x="900" y="382" width="420" height="86"/>
+  <text class="label" x="928" y="418">30_输出</text>
+  <text class="body" x="928" y="444">Publishable deliverables</text>
+  <text class="mono" x="928" y="464">30_输出/&lt;channel&gt;/&lt;slug&gt;.mdx|md</text>
+
+  <rect class="panel resource" x="900" y="488" width="420" height="86"/>
+  <text class="label" x="928" y="524">50_资源</text>
+  <text class="body" x="928" y="550">External snapshots and links</text>
+  <text class="mono" x="928" y="570">50_资源/&lt;source&gt;/&lt;slug&gt;.md</text>
+
+  <rect class="panel system" x="900" y="594" width="420" height="86"/>
+  <text class="label" x="928" y="630">99_系统</text>
+  <text class="body" x="928" y="656">Runbooks, templates, and scripts</text>
+  <text class="mono" x="928" y="676">99_系统/runbooks|templates/&lt;slug&gt;.md</text>
+
+  <rect class="panel reject" x="900" y="700" width="420" height="90"/>
+  <text class="label" x="928" y="742">Reject rail</text>
+  <text class="body" x="928" y="764">敏感或不应共享的材料直接拒收，不进入共享 vault</text>
+  <text class="mono" x="928" y="782">action=reject / destination=null</text>
+
+  <path class="line" marker-end="url(#arrow)" d="M830 214 C860 214, 870 214, 900 214"/>
+  <path class="line" marker-end="url(#arrow)" d="M830 318 C860 318, 870 318, 900 318"/>
+  <path class="line" marker-end="url(#arrow)" d="M830 424 C860 424, 870 424, 900 424"/>
+  <path class="line" marker-end="url(#arrow)" d="M830 530 C860 530, 870 530, 900 530"/>
+  <path class="line" marker-end="url(#arrow)" d="M830 636 C860 636, 870 636, 900 636"/>
+  <path class="line dash" marker-end="url(#arrowRed)" d="M736 694 C820 728, 840 744, 900 744"/>
+
+  <rect class="gate" x="118" y="726" width="196" height="56"/>
+  <text class="gate-text" x="140" y="760">54 sensitive placed</text>
+
+  <rect class="gate" x="438" y="706" width="164" height="54"/>
+  <text class="gate-text" x="462" y="739">51 orphan</text>
+
+  <rect class="gate" x="620" y="706" width="188" height="54"/>
+  <text class="gate-text" x="644" y="739">52 role mismatch</text>
+
+  <rect class="gate" x="920" y="84" width="184" height="54"/>
+  <text class="gate-text" x="944" y="117">53 unknown root</text>
+
+  <rect class="gate" x="1112" y="84" width="206" height="54"/>
+  <text class="gate-text" x="1136" y="117">55 duplicate path</text>
+
+  <path class="line dash" marker-end="url(#arrowRed)" d="M1012 138 C1012 150, 1012 158, 1012 170"/>
+  <path class="line dash" marker-end="url(#arrowRed)" d="M1228 138 C1228 150, 1228 158, 1228 170"/>
+
+  <circle cx="1094" cy="834" r="16" class="accent"/>
+  <text class="body" x="1122" y="840">Audit after each run</text>
+  <text class="small" x="930" y="864">LearnPrompt editorial synthesis, not an Obsidian official standard.</text>
+</svg>

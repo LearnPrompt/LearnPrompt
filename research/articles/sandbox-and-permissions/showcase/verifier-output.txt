@@ -1,0 +1,11 @@
+config_rc=0
+probe1_rc=1
+probe2_rc=1
+probe3_rc=1
+link_probe1_matches_initial=yes
+link_probe2_differs_from_probe1=yes
+link_probe3_differs_from_probe2=yes
+sentinel_unchanged=yes
+env_unchanged=yes
+fixture_marker_in_logs=no
+checksum_manifest_matches_expected=yes

@@ -1,0 +1,86 @@
+sandbox-and-permissions 发布前机械门禁（冻结脱敏摘录）
+========================================================
+运行日期：2026-07-11
+运行位置：LearnPrompt 仓库根目录
+说明：原始终端输出先采集在工作树外目录；以下为进程退出后冻结的关键行，不含本机绝对路径、运行时测试标记的 key/value 或运行 ID。独立只读终审已关闭全部 finding。
+
+1. Showcase 一键 runner
+命令：
+  bash research/articles/sandbox-and-permissions/showcase/run-probes.sh
+  bash research/articles/sandbox-and-permissions/showcase/run-probes.sh
+关键输出：
+  frozen_showcase_outputs=environment.txt,checksum-manifest.md,probe-results.md,verifier-output.txt,replay-stability.txt
+  config_rc=0
+  probe1_rc=1
+  probe2_rc=1
+  probe3_rc=1
+  link_probe1_matches_initial=yes
+  link_probe2_differs_from_probe1=yes
+  link_probe3_differs_from_probe2=yes
+  sentinel_unchanged=yes
+  env_unchanged=yes
+  fixture_marker_in_logs=no
+  checksum_manifest_matches_expected=yes
+  stable=yes
+第二次运行前后 frozen outputs SHA-256：
+  environment.txt 3c11c5f29a8e8347da3e34ed14825bb809ea84e9801cdf5c6a86f8a1b745b21c
+  checksum-manifest.md a7164c9c69242f32e7849daab8f4dbcd71f48b11734a0793817fd8632c5ed7e1
+  probe-results.md 04ee01c3d22dba0921b1c1a1f0b22c515e963cf4eb9abdb4304ed3f0e4cacea5
+  verifier-output.txt 0da739bd20d56a2f363fc9c29077bf9e3625ee5c47c7bd2c3c3b8d3b9f0123ad
+  replay-stability.txt 370f56740687a3995f883954b8ea050306074981da089dbfc9b795b8fde9830e
+退出码：两次均为 0
+说明：runner 在同一次调用里连续生成两轮 raw -> freeze 结果，仅当 verifier compare 与 replay compare 同时通过时才冻结 committed outputs；本轮又额外连续外部运行两次，第二次前后 5 个 frozen outputs 哈希一致。
+
+2. 单篇 verified validator
+命令：
+  node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs \
+    --article starlight/src/content/docs/codex/sandbox-and-permissions.mdx \
+    --research research/articles/sandbox-and-permissions
+关键输出：
+  PASS article: starlight/src/content/docs/codex/sandbox-and-permissions.mdx
+  PASS research: research/articles/sandbox-and-permissions
+  PASS status: verified (98/100)
+退出码：0
+
+3. Starlight 完整构建
+命令：
+  npm --prefix starlight run build
+关键输出：
+  [starlight:pagefind] Found 49 HTML files.
+  [build] 49 page(s) built in 2.47s
+  [build] Complete!
+退出码：0
+
+4. Staged diff check
+前置状态：
+  git diff --cached --name-only
+  （无输出）
+命令：
+  git add starlight/src/content/docs/codex/sandbox-and-permissions.mdx \
+    research/articles/sandbox-and-permissions \
+    starlight/public/images/articles/sandbox-and-permissions
+  git diff --cached --check -- \
+    starlight/src/content/docs/codex/sandbox-and-permissions.mdx \
+    research/articles/sandbox-and-permissions \
+    starlight/public/images/articles/sandbox-and-permissions
+  git reset HEAD -- \
+    starlight/src/content/docs/codex/sandbox-and-permissions.mdx \
+    research/articles/sandbox-and-permissions \
+    starlight/public/images/articles/sandbox-and-permissions
+关键输出：
+  git diff --cached --check：无输出
+  git reset HEAD -- ...：
+    Unstaged changes after reset:
+    M  starlight/src/content/docs/codex/sandbox-and-permissions.mdx
+退出码：0
+
+5. Allowed-path boundary
+命令：
+  git status --short
+关键输出：
+  M starlight/src/content/docs/codex/sandbox-and-permissions.mdx
+  ?? research/articles/sandbox-and-permissions/
+  ?? starlight/public/images/articles/sandbox-and-permissions/
+结论：仅出现允许范围内的改动。
+
+最终状态：verified 98/100。双轮 sandbox replay、marker hygiene、checksum compare、validator、build、diff-check 与独立只读 review 均通过。

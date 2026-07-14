@@ -1,0 +1,26 @@
+order-report-pipeline 正例：不重叠 write set → 合并 → 端到端 PASS
+================================================================
+运行日期：2026-07-11
+说明：以下为脱敏冻结输出，不含本机绝对路径或运行标识。
+
+命令 1（合并前门禁）：
+  node merge-gate.mjs tasks/task-a-parser.json tasks/task-b-renderer.json
+输出：
+  协调器合并门禁：order-report-pipeline
+  参与任务：task-a-parser, task-b-renderer
+  ----
+  write set 两两不重叠
+  无任务触碰冻结 contract
+  contract 校验和与磁盘一致
+  所有接口已冻结，依赖已满足
+  ----
+  判定：APPROVE PARALLEL
+退出码：0
+
+命令 2（合并后端到端验收）：
+  node e2e-test.mjs
+输出：
+  端到端测试：CSV → parser → renderer → Markdown
+  ----
+  PASS  管线输出与冻结 golden 一致
+退出码：0

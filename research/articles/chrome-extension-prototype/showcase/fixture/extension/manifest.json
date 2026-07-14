@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Current Page Reading Card",
+  "description": "Capture the current page title, URL, and selected text into a local reading card.",
+  "version": "0.1.0",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "capture-reading-card": {
+      "description": "Capture the current page into a reading card",
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      }
+    }
+  },
+  "action": {
+    "default_title": "Current Page Reading Card",
+    "default_popup": "popup.html"
+  }
+}

@@ -1,0 +1,3 @@
+PASS article: starlight/src/content/docs/claude-code/chrome-extension-prototype.mdx
+PASS research: research/articles/chrome-extension-prototype
+PASS status: verified (96/100)

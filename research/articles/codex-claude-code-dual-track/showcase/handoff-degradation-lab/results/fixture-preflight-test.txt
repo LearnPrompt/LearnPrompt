@@ -1,0 +1,7 @@
+fixture baseline test
+command: npm test
+exit_code: 1
+summary: the Los Angeles incident still archives under the UTC day, while the Tokyo case already matches the expected local day
+tests: 2
+pass: 1
+fail: 1

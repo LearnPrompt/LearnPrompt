@@ -1,141 +1,303 @@
 ---
-title: "CLAUDE.md 最小可用模板"
-description: 用少量规则让 Claude Code 理解项目边界。
+title: "第一份 CLAUDE.md：从重复失败里提炼最小可用规则"
+description: 从一次已完成的小任务出发，把重复犯错压成一份短、具体、可验证的 CLAUDE.md。
 sidebar:
   order: 2
 difficulty: beginner
 source_repo: alchaincyf/claude-code-orange-book
 source_url: https://github.com/alchaincyf/claude-code-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-11"
+reading_time: 11 分钟
+research_path: research/articles/minimum-claude-md
+showcase_path: research/articles/minimum-claude-md/showcase
+showcase_status: verified
+quality_score: 93
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 入门 | 11 分钟 | 2026-07-11 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/claude-code-orange-book" url="https://github.com/alchaincyf/claude-code-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+你已经让 Claude Code 完成过一次小改动：它读了几份文件，改了一个点，跑了检查，也给出了 `git diff`。可一到下一轮新会话，熟悉的问题又回来了一遍。
 
-## 模板结构
+- 它又猜了一个不存在的命令。
+- 它又碰了你本来不想让它碰的路径。
+- 它又在结尾只说“已经完成”，没有交代改了哪些文件、跑了什么验证。
 
-一个可用的 `CLAUDE.md` 不需要很长。它至少包含：运行命令、代码风格、测试要求、安全边界和输出格式。
+这时继续加长对话，通常没有用。真正缺的不是“更会说”的提示词，而是一份每轮都会读到、又足够短的项目规则文件。
 
-它的目标不是“写给人看的项目愿景”，而是“让 Claude Code 在每一轮执行时少犯同类错误”。
+> `CLAUDE.md` 的价值，不是记录愿景，而是把散落的项目事实压成下一轮也能直接执行的上下文。
 
-## 什么时候需要 CLAUDE.md
+## 读完你能做什么
 
-如果你只是在空目录里做一次小实验，可以不用写。但出现下面任一情况，就应该补一个：
+你会拿走三样可以立刻用的东西：
 
-- 项目有固定构建、测试或启动命令。
-- 有些目录不能随便改。
-- 你经常要求 AI 先计划、后执行。
-- 项目里有私密配置、iCloud 同步目录、本地脚本或部署限制。
-- 你已经发现同一个错误被 AI 重复犯了两次。
+1. 一套判断你第一份 `CLAUDE.md` 该写什么、不该写什么的五类信息。
+2. 一个 20 多行、可直接改成自己项目版本的最小模板。
+3. 一张区分表，避免把 `CLAUDE.md`、`CLAUDE.local.md`、`.claude/rules`、auto memory、`AGENTS.md` 混成一层。
 
-## 最小原则
+![CLAUDE.md 的四个加载作用域，以及把项目事实蒸馏成五类可验收规则的过程图](/images/articles/minimum-claude-md/claude-md-scope-and-distillation.svg)
+*图注：上半部分说明四个加载作用域都会作为 context 进入会话，而不会互相覆盖；下半部分说明真正值得写进第一份 `CLAUDE.md` 的，是能把“项目事实”压成五类可机械检查规则的信息。*
 
-一份好的 `CLAUDE.md` 有三个特点：
+:::note[先记住一条边界]
+官方文档把话说得很明确：`CLAUDE.md` 是 context，不是 enforced configuration。它能提高“更可能做对”的概率，不能替代真正的权限拦截。要硬性禁止某个动作，应使用 hook 或客户端权限设置。
+:::
 
-1. 短：先控制在 30 行以内。
-2. 具体：告诉它做什么、不能做什么、怎么验收。
-3. 可更新：每次失败只补一条能改变行为的规则。
+## 先别写长文档，先定位“重复失败”发生在哪
 
-不要把它写成公司文化手册，也不要塞满抽象价值观。AI 更需要可执行边界。
+一份最小 `CLAUDE.md` 不是从空白模板长出来的，而是从你已经见过两次的失败里提炼出来的。
 
-## 建议内容
+如果你已经完成过一次 Claude Code 小任务，最常见的重复失败通常只落在下面五类：
+
+| 失败现象 | 真正缺的不是 | 真正缺的是 |
+| --- | --- | --- |
+| 猜错构建或测试命令 | “请认真一点” | 项目的真实命令 |
+| 顺手改了无关文件 | “保持聚焦” | 允许修改范围 |
+| 碰了 `.env`、生成目录、部署配置 | “谨慎操作” | 禁区路径 |
+| 改完不知道怎么证明完成 | “保证质量” | 最快验收命令 |
+| 收尾只给一句“已完成” | “说明清楚” | 输出收尾格式 |
+
+这五类不是官方定义的行业标准，而是本文根据官方 best practices、memory 文档和一次真实小项目闭环做的编辑综合。它的好处只有一个：每一类都可以被机械检查是否写齐、是否足够具体。
+
+如果你的项目还没有固定命令、没有边界、只是一次性实验，那现在甚至可以先不写。`CLAUDE.md` 最适合的时机，是你已经看见某种错误重复出现了第二次。
+
+## 第一份 CLAUDE.md 只要写五类必要信息
+
+下面这五类，已经足够支撑“下一轮先别再犯同样的错”。
+
+### 1. 真实命令
+
+不要写“运行测试”“检查一下构建”。要写项目里真的存在的命令。
+
+坏写法：
 
 ```md
-# Project Rules
-
-- Read README and package files before editing.
-- Prefer small, reviewable diffs.
-- Run the fastest relevant check after behavior changes.
-- Never commit secrets or .env values.
-- Summarize changed files and verification commands.
+- 改完后运行测试
 ```
 
-## 更完整的模板
+好写法：
 
 ```md
-# Project Rules
+## Commands
+- Install: `npm install`
+- Build: `npm run build`
+- Test: `npm run check`
+```
 
+命令必须来自项目事实，例如 `package.json`、`Makefile`、脚本目录或 README。你不确定时，应该让 Agent 先读这些文件，而不是在规则里编一个“看起来合理”的命令。
+
+### 2. 允许修改范围
+
+很多无关改动不是因为模型“太主动”，而是它根本不知道哪里是任务边界。
+
+最小写法不是画一整套架构图，而是直接规定：
+
+```md
 ## Before Editing
-- Read README, package files, and relevant config before editing.
-- State the files you plan to change.
-- Prefer small, reviewable diffs.
-
-## Commands
-- Use the fastest relevant check first.
-- If a command fails, stop and explain the error before changing more files.
-
-## Safety
-- Never print, edit, or commit secrets, tokens, private keys, or .env values.
-- Do not run destructive git commands unless explicitly asked.
-- Do not change deployment settings unless the task is about deployment.
-
-## Output
-- Summarize changed files.
-- List verification commands and results.
-- Mention any remaining risk.
+- 先说明计划改哪些文件。
+- 只改计划中列出的文件。
+- 保持小而可审查的 diff。
 ```
 
-这份模板可以直接复制，然后替换成项目自己的命令和禁区。
+这条规则解决的是“范围漂移”，不是代码风格治理。长期的风格规范、目录约定和复杂架构边界，放到更细的 `.claude/rules` 或相邻的风格文章里更合适，不要把第一份文件写成工程百科。
 
-## 使用方法
+### 3. 禁区
 
-1. 把模板放在项目根目录。
-2. 每次发现重复错误，就把规则写得更具体。
-3. 删除空泛规则，保留能改变行为的规则。
-
-## 怎么写运行命令
-
-不要只写“运行测试”。要写成项目真实命令：
-
-```md
-## Commands
-- Install: npm install
-- Dev server: npm run dev
-- Build: npm run build
-- Lint: npm run lint
-```
-
-如果你不确定命令是否存在，就先让 AI 读 `package.json`，不要凭空编。
-
-## 怎么写禁区
-
-禁区越具体越有用：
+禁区必须点名真实路径，否则它只是气氛提醒。
 
 ```md
 ## Do Not Edit
-- Do not edit files under `secrets/`.
-- Do not modify `.env` or `.env.local`.
-- Do not change GitHub Actions unless asked.
-- Do not touch generated files in `dist/`.
+- 不要修改或提交 `.env`、`.env.local`。
+- 不要改 `dist/` 里的生成文件。
+- 不要动 `.github/workflows/` 下的部署配置，除非任务就是改部署。
 ```
 
-如果你的项目在 iCloud 或 Obsidian 里，还可以写：
+这里最关键的是路径和动作都具体。`不要碰敏感文件` 不够，`不要改 .env` 才有执行意义。
+
+### 4. 最快验收
+
+Agent 最容易“看起来差不多就交差”的地方，不在改动本身，而在它不知道什么叫完成。
+
+所以要写：
 
 ```md
-- Treat the Obsidian vault as user data. Do not bulk rename or delete notes.
-- For automation scripts, prefer dry-run mode first.
+## Verify
+- 改完行为后先跑最快的检查：`npm run check`。
+- 如果命令失败，先停下来解释错误，不要继续改更多文件。
 ```
 
-## 维护方式
+这条规则非常重要，因为它把“完成”从主观感觉变成了可观察的 pass/fail。官方 best practices 也明确强调，尽量给 Claude 一个能产生通过或失败结果的检查，让循环自己闭合。
 
-`CLAUDE.md` 不是一次写完的。更好的方式是每次复盘只补一条。
+### 5. 输出收尾
 
-| 失败现象 | 应该补的规则 |
-| --- | --- |
-| AI 没读 README 就改文件 | Before editing, read README first. |
-| AI 改了无关样式 | Only edit files listed in the plan. |
-| AI 跑了不存在的命令 | Inspect package scripts before proposing commands. |
-| AI 输出太散 | End with changed files and verification results. |
+如果没有收尾格式，你每轮都得自己问：
 
-## 常见错误
+- 改了哪些文件？
+- 跑了什么命令？
+- 结果怎样？
+- 还剩什么风险？
 
-- 写成价值观口号，而不是可执行规则。
-- 把所有个人偏好都塞进去，导致模型抓不住重点。
-- 不随着项目变化更新。
-- 把失败经历写成抱怨，而不是写成下一次能执行的规则。
+所以把它直接写成默认交付：
 
-## 完成标准
+```md
+## Output
+- 结尾汇报改了哪些文件、跑了哪些验证命令、结果如何。
+- 指出还剩什么风险或未解决的不确定项。
+```
 
-读完这篇以后，你应该能给自己的项目写出一份 20-40 行的 `CLAUDE.md`，并且知道每条规则解决哪一种具体失败。
+这样做不是为了“礼貌”，而是为了让你更快审查、继续下一轮，或者决定是否回滚。
+
+## 一个 26 行的最小模板，已经够用
+
+下面这份模板来自本文 Showcase 里的最小 fixture。它不是通用真理，但已经满足五类必要信息，而且能被静态检查器判定为 `5/5 PASS`。
+
+```md
+# Project Rules
+
+一个把 Markdown 转成 HTML 的小工具。以下规则让每一轮改动少踩同类坑。
+
+## Before Editing
+- 先读 `README.md` 和 `package.json` 再动手。
+- 先说明计划改哪些文件，只改计划中列出的文件，保持小而可审查的 diff。
+
+## Commands
+- Install: `npm install`
+- Build: `npm run build`
+- Test: `npm run check`
+
+## Do Not Edit
+- 不要修改或提交 `.env`、`.env.local` 里的任何值。
+- 不要改 `dist/` 里的生成文件。
+- 不要动 `.github/workflows/` 下的部署配置，除非任务就是改部署。
+
+## Verify
+- 改完行为后先跑最快的检查：`npm run check`。
+- 如果命令失败，先停下来解释错误，不要继续改更多文件。
+
+## Output
+- 结尾汇报改了哪些文件、跑了哪些验证命令、结果如何。
+- 指出还剩什么风险或未解决的不确定项。
+```
+
+这里故意没有写长期代码风格、hooks、skills、MCP，也没有写“我们重视质量、合作与优雅”。不是因为这些永远不重要，而是它们不是你第一份文件最先要解决的重复失败。
+
+## 不要再混淆这五种东西
+
+很多人觉得“我明明写了规则，为什么没生效”，根因不是工具坏了，而是把不同层混成了一层。
+
+| 名称 | 作用 | 适合放什么 | 不适合误解成什么 |
+| --- | --- | --- | --- |
+| `CLAUDE.md` | 团队共享的项目规则 | 真实命令、允许范围、禁区、验收、输出 | 硬权限开关 |
+| `CLAUDE.local.md` | 项目私有、本地个人偏好 | 你自己不想提交进仓库的附加约束 | 团队共享规则 |
+| `.claude/rules` | 按路径拆分的大项目规则 | 只在特定目录/文件匹配时才该加载的规则 | 第一份最小文件的替代品 |
+| auto memory | Claude 自己写的项目学习笔记 | 它从互动里提炼的经验 | 你手写的长期规则 |
+| `AGENTS.md` | 其他 Agent 工作流常见入口 | 可被 `@AGENTS.md` 导入复用的内容 | Claude Code 默认自动读取的规则文件 |
+
+这里有两条最容易出错的事实需要单独拎出来：
+
+1. Claude Code 默认读的是 `CLAUDE.md`，不是 `AGENTS.md`。如果仓库已经有 `AGENTS.md`，应通过 `@AGENTS.md` 或符号链接复用，而不是假设它会自动生效。
+2. 官方 memory 文档当前写的是 import 递归“maximum depth of four hops”。这次写作任务卡曾给出“五跳”说法，但 2026-07-11 现场核对官方原文仍是四跳，因此正文和研究包都保留了这处出入及证据。
+
+## 为什么说它是 context，不是 enforcement
+
+这是理解 `CLAUDE.md` 最关键的一层。
+
+官方文档明确写道：Claude 会把这些文件当作 context，而不是 enforced configuration。也就是说：
+
+- 你写了“不要 push”，并不等于客户端绝不允许 push。
+- 你写了“不要读密钥”，并不等于工具层已经把路径锁死。
+- 你写了“先跑测试”，并不等于它每次都百分之百照做。
+
+它的真实作用是：把下一轮最容易遗漏的项目事实，在会话一开始就放进上下文里，让模型更可能沿着这些事实工作。
+
+如果你需要的是“绝对不发生”，那就不是文档职责，而是执行层职责。比如：
+
+- 在 hook 里做 PreToolUse 拦截。
+- 在客户端设置里 deny 某些工具或路径。
+- 在 CI、lint、schema 或测试里做确定性拒绝。
+
+把这条边界讲清楚，比再多写 30 条软规则更重要。因为一旦把 context 当 enforcement，你就会对它产生错误期待，然后在高风险动作上把安全托付给一份 Markdown。
+
+## Showcase：同一个检查器里，空泛说明 5 FAIL，最小文件 5 PASS
+
+本文的 Showcase 不做模型排名，也不把静态检查冒充成“模型遵循度实验”。它只做两件事。
+
+第一件事，是把下面两份文件放进同一个字段完整度检查器：
+
+- `vague-notes/CLAUDE.md`：只有抽象口号，没有五类必要信息。
+- `minimal/CLAUDE.md`：包含真实命令、允许范围、禁区、最快验收和输出收尾。
+
+实际运行命令：
+
+```bash
+cd research/articles/minimum-claude-md/showcase/claude-md-fields
+node check-claude-md.mjs vague-notes/CLAUDE.md
+node check-claude-md.mjs minimal/CLAUDE.md
+```
+
+2026-07-11 归档结果如下：
+
+```text
+RUN 1: vague-notes/CLAUDE.md
+FAIL  真实命令
+FAIL  允许修改范围
+FAIL  禁区
+FAIL  最快验收
+FAIL  输出收尾
+exit=1
+
+RUN 2: minimal/CLAUDE.md
+PASS  真实命令
+PASS  允许修改范围
+PASS  禁区
+PASS  最快验收
+PASS  输出收尾
+exit=0
+```
+
+这说明的不是“模型会不会遵守”，而是“你有没有把最小必要信息写进文件，而且写得足够具体”。
+
+第二件事，是补一轮受控真实只读会话，确认 `CLAUDE.md` 确实会被加载进上下文。该控制核验在只读条件下让模型回答测试命令和禁区路径，并要求它原样输出一个只存在于 `CLAUDE.md` 里的金丝雀令牌。在这个受控 fixture 中，三类信息都只存在于该文件，归档输出同时命中三者，因此构成该次会话读取文件的强证据；研究包同时保留了精确命令、退出码捕获和 fixture 结构。它仍只是单次在线运行，不能外推成长期遵循率，更不能做模型排行。
+
+## 什么时候不要继续往这份文件里加东西
+
+一份最小 `CLAUDE.md` 最容易坏，不是因为太短，而是因为不断往里塞“不该放在这里的东西”。
+
+常见反模式有五种：
+
+1. 把价值观口号写成规则，例如“保持优雅”“重视工程文化”。
+2. 把一次性任务写成长期规则，例如“这周把首页 CTA 改成蓝色”。
+3. 把长期代码风格和所有架构细节都塞进同一个文件。
+4. 误以为写进去就等于硬性禁止某动作。
+5. 把它当 auto memory，期待工具自动把所有新经验都写回去。
+
+更稳的维护方式是：每次真实失败后，只补一条能改变下一轮行为的规则；如果一条规则删掉也不会明显增加失误，那它大概率就不该继续占上下文。
+
+## 动手练习
+
+拿你最近一次已经完成的小任务，按下面步骤在 15 分钟内写出第一版：
+
+1. 打开那次任务真正读过的 `README`、`package.json`、脚本或构建文件。
+2. 只记录五类信息：真实命令、允许范围、禁区、最快验收、输出收尾。
+3. 把总长度先压到 20-40 行，不要主动扩展到风格治理和长期规范。
+4. 用一句话回答每条规则解决的是哪次真实失败。
+5. 再检查一遍：有没有任何一句还是抽象口号，或者其实属于 hook、权限、`.claude/rules`、auto memory。
+
+可观察的完成标准：
+
+- 文件里能看到至少一个真实命令和至少一个真实路径。
+- 你能指出“这条规则防的是哪次失败”。
+- 你能说清哪些动作仍然不能靠这份文件硬拦截。
+
+## 来源与延伸阅读
+
+- 官方一手资料：[Anthropic Claude Code Memory](https://code.claude.com/docs/en/memory)
+- 官方一手资料：[Anthropic Claude Code Best practices](https://code.claude.com/docs/en/best-practices)
+- 官方一手资料：[Anthropic Claude Code Features overview](https://code.claude.com/docs/en/features-overview)
+- 原始实证材料：[本文 research 与 Showcase 目录](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/minimum-claude-md)
+- 二手主题地图（仅用于选题与中文术语，不作为现行产品行为依据）：[claude-code-orange-book](https://github.com/alchaincyf/claude-code-orange-book)
+
+官方文档支撑本文关于加载作用域、文件区分、四跳 import 深度、200 行建议和 context 边界的现行事实。橙皮书只作为中文主题地图保留署名与 CC BY-NC-SA 4.0 许可说明，本文论证、示例和 Showcase 已重新组织并以官方资料复核。

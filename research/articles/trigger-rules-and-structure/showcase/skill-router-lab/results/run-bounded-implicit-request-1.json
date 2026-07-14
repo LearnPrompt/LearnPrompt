@@ -1,0 +1,13 @@
+{
+  "suite": "skill-router-lab",
+  "variant": "bounded",
+  "mode": "implicit",
+  "case_id": "request-1",
+  "loaded": true,
+  "contains_canary": true,
+  "exit_code": 0,
+  "privacy_ok": true,
+  "model": "gpt-5.5",
+  "final_output_excerpt": "SKILL_USED: release-weekly\n\n缺少输入，当前目录只看到 `.agents/`，没有 GitHub release notes 文件可汇总。请贴上至少 2 条 release notes，或给出文件路径/URL；我会按中文发布周报格式输出：\n\n- 版本速览\n- 值得注意的变化\n- 一句话总结\n\n经验：没有 release-note 输入时不猜测内容，先阻塞要材料。",
+  "notes": "completed"
+}

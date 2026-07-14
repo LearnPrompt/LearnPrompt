@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fixture Article: Chrome Prototype Notes</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: "Georgia", "Times New Roman", serif;
+        background: #f4efe6;
+        color: #1f2937;
+      }
+
+      main {
+        max-width: 760px;
+        margin: 48px auto;
+        padding: 36px;
+        border-radius: 24px;
+        background: #fffaf2;
+        box-shadow: 0 18px 60px rgba(15, 23, 42, 0.12);
+      }
+
+      h1 {
+        margin-top: 0;
+        font-size: 2.2rem;
+      }
+
+      p {
+        font-size: 1.05rem;
+        line-height: 1.75;
+      }
+
+      mark {
+        background: #fde68a;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Acceptance Criteria Before Code</h1>
+      <p>
+        这个 fixture 页面只承担一件事：为扩展提供一个稳定、可选中的正文环境，方便自动化验证标题、URL
+        与选区抓取链路。
+      </p>
+      <p id="selection-source">
+        <mark>Acceptance criteria are safer than vibes.</mark> 先写清楚要抓什么、保存到哪里、哪些权限不该申请，再让
+        Claude Code 生成最小原型，通常比“先把功能都做出来”更快到达可验收状态。
+      </p>
+    </main>
+  </body>
+</html>

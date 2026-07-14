@@ -1,0 +1,129 @@
+{
+  "scenario": "success",
+  "report_date": "2026-07-11",
+  "summary_boundary": "frozen-fixture-summary",
+  "status": "candidate_ready",
+  "stages": [
+    {
+      "stage": "snapshot",
+      "status": "ok",
+      "scenario": "success",
+      "source_count": 2,
+      "item_count": 6,
+      "sources": [
+        {
+          "fixture": "source-anthropic.snapshot.json",
+          "snapshot_id": "anthropic-docs-2026-07-11",
+          "source_name": "Anthropic Docs Snapshot",
+          "captured_at": "2026-07-11T09:00:00Z",
+          "sha256": "6467052b052f63935e835be311cbffd95e8e82351e681f6481aff788b534b31a",
+          "item_count": 3
+        },
+        {
+          "fixture": "source-openai.snapshot.json",
+          "snapshot_id": "openai-ai-coding-2026-07-11",
+          "source_name": "OpenAI AI Coding Snapshot",
+          "captured_at": "2026-07-11T09:05:00Z",
+          "sha256": "7486b4e5db2f6f3f9da78c4109d9264d7d492c3ed8350bed0c28086e76c789fb",
+          "item_count": 3
+        }
+      ]
+    },
+    {
+      "stage": "normalize",
+      "status": "ok",
+      "scenario": "success",
+      "normalized_count": 6,
+      "required_fields": [
+        "id",
+        "title",
+        "source_url",
+        "published_at",
+        "summary",
+        "tags"
+      ]
+    },
+    {
+      "stage": "dedupe",
+      "status": "ok",
+      "scenario": "success",
+      "input_count": 6,
+      "unique_count": 5,
+      "duplicate_count": 1,
+      "duplicates": [
+        {
+          "kept_record": "anthropic-hooks-guide",
+          "dropped_record": "anthropic-hooks-guide-duplicate",
+          "source_url": "https://code.claude.com/docs/en/hooks-guide"
+        }
+      ]
+    },
+    {
+      "stage": "score",
+      "status": "ok",
+      "scenario": "success",
+      "scored_count": 5,
+      "selected_count": 4,
+      "threshold": 65,
+      "selected_items": [
+        {
+          "id": "anthropic-hooks-guide",
+          "title": "Claude Code hooks guide explains deterministic lifecycle automation",
+          "source_url": "https://code.claude.com/docs/en/hooks-guide",
+          "score": 100,
+          "selection_reason": "命中核心 AI coding 工具主题；直接解释工作流、门禁或验证机制；来源是官方文档快照，适合做本周基线；人工重要度=3"
+        },
+        {
+          "id": "anthropic-permissions",
+          "title": "Claude Code permissions page clarifies deny ask allow precedence",
+          "source_url": "https://code.claude.com/docs/en/permissions",
+          "score": 100,
+          "selection_reason": "命中核心 AI coding 工具主题；直接解释工作流、门禁或验证机制；来源是官方文档快照，适合做本周基线；人工重要度=3"
+        },
+        {
+          "id": "openai-codex-cli",
+          "title": "OpenAI documents Codex CLI local agent workflows",
+          "source_url": "https://developers.openai.com/codex/cli",
+          "score": 100,
+          "selection_reason": "命中核心 AI coding 工具主题；直接解释工作流、门禁或验证机制；来源是官方文档快照，适合做本周基线；人工重要度=3"
+        },
+        {
+          "id": "anthropic-common-workflows",
+          "title": "Common workflows page highlights worktrees plan mode and piping into scripts",
+          "source_url": "https://code.claude.com/docs/en/common-workflows",
+          "score": 90,
+          "selection_reason": "命中核心 AI coding 工具主题；直接解释工作流、门禁或验证机制；来源是官方文档快照，适合做本周基线；人工重要度=2"
+        }
+      ]
+    },
+    {
+      "stage": "draft",
+      "status": "ok",
+      "scenario": "success",
+      "draft_file": "drafts/2026-07-11-dual-source-ai-weekly.md",
+      "selected_count": 4,
+      "summary_boundary": "frozen-fixture-summary"
+    },
+    {
+      "stage": "verify",
+      "status": "ok",
+      "scenario": "success",
+      "checks": [
+        "every selected item keeps source_url",
+        "every selected item keeps selection_reason",
+        "dedupe removed duplicate source_url before drafting"
+      ]
+    },
+    {
+      "stage": "approve",
+      "status": "candidate_ready",
+      "scenario": "success",
+      "approval_present": true,
+      "approval_id": "weekly-approval-2026-07-11",
+      "candidate_created": true,
+      "candidate_file": "publish-candidate/2026-07-11-dual-source-ai-weekly.md",
+      "external_publish_triggered": false
+    }
+  ],
+  "exit_code": 0
+}

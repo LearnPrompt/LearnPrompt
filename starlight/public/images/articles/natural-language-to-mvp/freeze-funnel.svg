@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560" font-family="'Helvetica Neue', Arial, 'PingFang SC', sans-serif">
+  <rect width="900" height="560" fill="#ffffff"/>
+  <rect x="0.5" y="0.5" width="899" height="559" fill="none" stroke="#111111" stroke-width="1"/>
+
+  <!-- title -->
+  <text x="32" y="46" font-size="22" font-weight="700" fill="#111111">从模糊需求到可运行切片：把四件事写死</text>
+  <text x="32" y="72" font-size="14" fill="#555555">需求只有冻结成可验收切片，coding agent 才能一次做完；其余想法进 backlog</text>
+
+  <!-- stage 1: vague sentence -->
+  <rect x="32" y="110" width="210" height="120" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+  <text x="44" y="136" font-size="13" font-weight="700" fill="#111111">① 一句模糊想法</text>
+  <text x="44" y="164" font-size="13" fill="#333333">我想做一个 AI 新闻</text>
+  <text x="44" y="184" font-size="13" fill="#333333">雷达，别让我错过</text>
+  <text x="44" y="204" font-size="13" fill="#333333">重要动态。</text>
+  <text x="44" y="224" font-size="11" fill="#B45309">不能直接执行</text>
+
+  <!-- arrow 1 -->
+  <line x1="242" y1="170" x2="300" y2="170" stroke="#111111" stroke-width="1"/>
+  <polygon points="300,170 290,165 290,175" fill="#111111"/>
+
+  <!-- stage 2: four-dimension freeze -->
+  <rect x="300" y="96" width="270" height="330" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+  <text x="312" y="122" font-size="13" font-weight="700" fill="#111111">② 四维冻结（削减范围）</text>
+
+  <rect x="312" y="138" width="246" height="60" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+  <text x="324" y="160" font-size="13" font-weight="700" fill="#111111">输入</text>
+  <text x="324" y="182" font-size="12" fill="#333333">本地 feed.json：title/source/tags</text>
+
+  <rect x="312" y="206" width="246" height="60" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+  <text x="324" y="228" font-size="13" font-weight="700" fill="#111111">输出</text>
+  <text x="324" y="250" font-size="12" fill="#333333">Top N Markdown 摘要打到 stdout</text>
+
+  <rect x="312" y="274" width="246" height="60" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+  <text x="324" y="296" font-size="13" font-weight="700" fill="#111111">失败态</text>
+  <text x="324" y="318" font-size="12" fill="#333333">缺文件 / 非法 / 零命中 → 非零退出</text>
+
+  <rect x="312" y="342" width="246" height="60" fill="#B45309" stroke="#111111" stroke-width="1"/>
+  <text x="324" y="364" font-size="13" font-weight="700" fill="#ffffff">验收动作</text>
+  <text x="324" y="386" font-size="12" fill="#ffffff">node verify.mjs 全绿、退出码 0</text>
+
+  <!-- arrow 2 -->
+  <line x1="570" y1="200" x2="628" y2="200" stroke="#111111" stroke-width="1"/>
+  <polygon points="628,200 618,195 618,205" fill="#111111"/>
+
+  <!-- stage 3: frozen slice -->
+  <rect x="628" y="140" width="240" height="120" fill="#ffffff" stroke="#B45309" stroke-width="2"/>
+  <text x="640" y="166" font-size="13" font-weight="700" fill="#B45309">③ 最小可运行切片</text>
+  <text x="640" y="192" font-size="12" fill="#333333">单文件脚本 + 验收脚本</text>
+  <text x="640" y="212" font-size="12" fill="#333333">当天跑通、可客观验收</text>
+  <text x="640" y="238" font-size="12" fill="#333333">= 能交给 Agent 的任务卡</text>
+
+  <!-- arrow to backlog -->
+  <line x1="570" y1="340" x2="628" y2="360" stroke="#999999" stroke-width="1" stroke-dasharray="4 3"/>
+  <polygon points="628,360 617,357 620,367" fill="#999999"/>
+
+  <!-- stage 4: backlog -->
+  <rect x="628" y="300" width="240" height="120" fill="#ffffff" stroke="#999999" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="640" y="326" font-size="13" font-weight="700" fill="#666666">④ backlog（明确不做）</text>
+  <text x="640" y="352" font-size="12" fill="#666666">真实抓取、多平台合并</text>
+  <text x="640" y="372" font-size="12" fill="#666666">Web UI、登录、定时推送</text>
+  <text x="640" y="398" font-size="11" fill="#B45309">显式记录，防止回流首版</text>
+
+  <!-- footer -->
+  <text x="32" y="470" font-size="12" fill="#555555">机制：四件事任一含糊，需求就还没冻结，提示词写再长也无法一次执行。</text>
+  <text x="32" y="492" font-size="12" fill="#555555">四件事全部写死那一刻，开放式创作才变成 coding agent 能验收的确定任务。</text>
+  <text x="32" y="528" font-size="11" fill="#999999">LearnPrompt 原创示意图 · 依据本文纵向研究与 news-radar-mvp Showcase 绘制 · 2026-07-11</text>
+</svg>

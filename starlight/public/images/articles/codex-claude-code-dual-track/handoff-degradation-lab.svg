@@ -1,0 +1,125 @@
+<svg width="1400" height="900" viewBox="0 0 1400 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="80" y1="40" x2="1320" y2="860" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8F2E7"/>
+      <stop offset="1" stop-color="#E8E1D5"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#D7F0D2"/>
+      <stop offset="1" stop-color="#A9DDA7"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#DCEBFA"/>
+      <stop offset="1" stop-color="#B4D1EF"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#FBE3B7"/>
+      <stop offset="1" stop-color="#F0C67F"/>
+    </linearGradient>
+    <linearGradient id="red" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#F8D2D0"/>
+      <stop offset="1" stop-color="#EFA3A0"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#4B3C31"/>
+    </marker>
+    <style>
+      .title { font: 700 40px Arial, "PingFang SC", sans-serif; fill: #201A16; }
+      .subtitle { font: 18px Arial, "PingFang SC", sans-serif; fill: #5A4C41; }
+      .lane { font: 700 26px Arial, "PingFang SC", sans-serif; fill: #201A16; }
+      .step { font: 700 19px Arial, "PingFang SC", sans-serif; fill: #201A16; }
+      .body { font: 16px "SFMono-Regular", Menlo, monospace; fill: #302821; }
+      .small { font: 14px "SFMono-Regular", Menlo, monospace; fill: #40372F; }
+      .status { font: 700 16px "SFMono-Regular", Menlo, monospace; fill: #4B2A16; }
+      .negative { font: 700 18px Arial, "PingFang SC", sans-serif; fill: #651F1F; }
+      .panel { fill: #FFFDF8; stroke: #4B3C31; stroke-width: 2; }
+      .box { stroke: #4B3C31; stroke-width: 2; }
+      .flow { stroke: #4B3C31; stroke-width: 3; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1400" height="900" fill="url(#bg)"/>
+  <text x="70" y="68" class="title">Claude Code + Codex：双线交接与故障降级</text>
+  <text x="70" y="104" class="subtitle">健康路径：health receipt + diagnosis receipt + completion receipt → dual_track_complete</text>
+  <text x="70" y="132" class="subtitle">本次真实路径：Claude 无模型结果 → Codex 外层 worktree 实现 → degraded_single_lane</text>
+
+  <rect x="60" y="165" width="1280" height="260" rx="26" class="panel"/>
+  <text x="90" y="205" class="lane">Healthy dual-track</text>
+
+  <rect x="105" y="240" width="210" height="135" rx="20" fill="url(#green)" class="box"/>
+  <text x="125" y="275" class="step">1  Health check</text>
+  <text x="125" y="309" class="body">model result: yes</text>
+  <text x="125" y="338" class="body">health receipt</text>
+
+  <rect x="350" y="240" width="220" height="135" rx="20" fill="url(#green)" class="box"/>
+  <text x="370" y="275" class="step">2  Diagnosis</text>
+  <text x="370" y="309" class="body">read-only finding</text>
+  <text x="370" y="338" class="body">source unchanged</text>
+
+  <rect x="605" y="240" width="220" height="135" rx="20" fill="#F3E6CC" class="box"/>
+  <text x="625" y="275" class="step">3  Frozen contract</text>
+  <text x="625" y="309" class="body">baseline + contract</text>
+  <text x="625" y="338" class="body">paths + verify</text>
+
+  <rect x="860" y="240" width="220" height="135" rx="20" fill="url(#blue)" class="box"/>
+  <text x="880" y="275" class="step">4  Codex worktree</text>
+  <text x="880" y="309" class="body">one file changed</text>
+  <text x="880" y="338" class="body">tests: 2 / 2</text>
+
+  <rect x="1115" y="240" width="190" height="135" rx="20" fill="url(#green)" class="box"/>
+  <text x="1135" y="275" class="step">5  Gate PASS</text>
+  <text x="1135" y="311" class="small">dual_track_</text>
+  <text x="1135" y="335" class="small">complete</text>
+
+  <path d="M315 307H350" class="flow"/>
+  <path d="M570 307H605" class="flow"/>
+  <path d="M825 307H860" class="flow"/>
+  <path d="M1080 307H1115" class="flow"/>
+
+  <rect x="60" y="460" width="1280" height="245" rx="26" class="panel"/>
+  <text x="90" y="500" class="lane">Degraded single lane — 本次实跑</text>
+
+  <rect x="105" y="535" width="210" height="125" rx="20" fill="url(#amber)" class="box"/>
+  <text x="125" y="570" class="step">1  Claude health</text>
+  <text x="125" y="604" class="body">503 / no result</text>
+  <text x="125" y="633" class="body">summary only</text>
+
+  <rect x="350" y="535" width="220" height="125" rx="20" fill="url(#red)" class="box"/>
+  <text x="370" y="570" class="step">2  No diagnosis</text>
+  <text x="370" y="604" class="body">receipt absent</text>
+  <text x="370" y="633" class="body">do not invent</text>
+
+  <rect x="605" y="535" width="220" height="125" rx="20" fill="url(#blue)" class="box"/>
+  <text x="625" y="570" class="step">3  Codex worktree</text>
+  <text x="625" y="604" class="body">real outer run</text>
+  <text x="625" y="633" class="body">tests: 2 / 2</text>
+
+  <rect x="860" y="535" width="220" height="125" rx="20" fill="url(#amber)" class="box"/>
+  <text x="880" y="570" class="step">4  Gate PASS</text>
+  <text x="880" y="604" class="small">degraded_single_</text>
+  <text x="880" y="628" class="small">lane</text>
+
+  <rect x="1115" y="535" width="190" height="125" rx="20" fill="#F3E6CC" class="box"/>
+  <text x="1135" y="570" class="step">5  Claim limit</text>
+  <text x="1135" y="604" class="body">not healthy</text>
+  <text x="1135" y="633" class="body">dual-track</text>
+
+  <path d="M315 597H350" class="flow"/>
+  <path d="M570 597H605" class="flow"/>
+  <path d="M825 597H860" class="flow"/>
+  <path d="M1080 597H1115" class="flow"/>
+
+  <text x="90" y="755" class="lane">三条机械负例</text>
+
+  <rect x="100" y="780" width="360" height="90" rx="18" fill="url(#red)" class="box"/>
+  <text x="122" y="813" class="negative">缺 diagnosis 却声明双线完成</text>
+  <text x="122" y="845" class="status">gate → exit 30</text>
+
+  <rect x="520" y="780" width="360" height="90" rx="18" fill="url(#red)" class="box"/>
+  <text x="542" y="813" class="negative">patch 越界修改 README.md</text>
+  <text x="542" y="845" class="status">gate → exit 31</text>
+
+  <rect x="940" y="780" width="360" height="90" rx="18" fill="url(#red)" class="box"/>
+  <text x="962" y="813" class="negative">completion receipt 的 contract SHA 漂移</text>
+  <text x="962" y="845" class="status">gate → exit 32</text>
+</svg>

@@ -1,0 +1,11 @@
+PASS index-routing-budget deterministic verifier
+inventory: 26 inspectable text files
+valid routed trace: 10 reads
+naive inventory: 26 files
+valid route exit 0
+missing-route exit 61
+ambiguous-duplicate-route exit 62
+read-budget-recursive-scan exit 63
+stale-or-nonexistent-target exit 64
+private-sensitive-target exit 65
+source unchanged: yes

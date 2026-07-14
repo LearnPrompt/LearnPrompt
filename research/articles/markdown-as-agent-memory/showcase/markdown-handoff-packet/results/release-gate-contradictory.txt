@@ -1,0 +1,6 @@
+scenario: contradictory
+exit_code: 42
+reason: status timezone UTC contradicts decision timezone Asia/Shanghai
+source_packet_unchanged: yes
+reports_written: none
+assertions: not-run

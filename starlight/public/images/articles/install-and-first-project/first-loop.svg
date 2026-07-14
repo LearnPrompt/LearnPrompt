@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Claude Code 第一次闭环：从安装认证到 INSPECT→PLAN→EDIT→VERIFY→DIFF 控制环</title>
+  <desc id="desc">上半部分是一次性准备：native 安装、浏览器认证、进入一个可丢弃的 git 仓库；下半部分是可重复的五步控制环 INSPECT 盘点、PLAN 冻结计划、EDIT 最小改动、VERIFY 真实验收、DIFF 检查改动，验收失败时回到 PLAN 或 EDIT，通过后才结束。</desc>
+  <rect width="1200" height="760" fill="#fff7ed"/>
+  <text x="600" y="66" text-anchor="middle" font-family="system-ui, sans-serif" font-size="38" font-weight="700" fill="#0f172a">第一次闭环：工具能打开，不等于任务做完</text>
+  <text x="600" y="104" text-anchor="middle" font-family="system-ui, sans-serif" font-size="21" fill="#475569">上排是一次性准备；下排的五步环才是每次改动都要跑通的部分</text>
+
+  <!-- Setup band -->
+  <text x="70" y="168" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#9a3412">准备（一次）</text>
+  <g font-family="system-ui, sans-serif">
+    <g transform="translate(70 188)">
+      <rect width="320" height="96" fill="#ffedd5" stroke="#f97316" stroke-width="1.5"/>
+      <text x="24" y="42" font-size="24" font-weight="700" fill="#9a3412">1 · 安装</text>
+      <text x="24" y="74" font-size="17" fill="#475569">native 安装脚本，claude --version 核验</text>
+    </g>
+    <g transform="translate(440 188)">
+      <rect width="320" height="96" fill="#ffedd5" stroke="#f97316" stroke-width="1.5"/>
+      <text x="24" y="42" font-size="24" font-weight="700" fill="#9a3412">2 · 认证</text>
+      <text x="24" y="74" font-size="17" fill="#475569">运行 claude，浏览器登录订阅账号</text>
+    </g>
+    <g transform="translate(810 188)">
+      <rect width="320" height="96" fill="#ffedd5" stroke="#f97316" stroke-width="1.5"/>
+      <text x="24" y="42" font-size="24" font-weight="700" fill="#9a3412">3 · 进入仓库</text>
+      <text x="24" y="74" font-size="17" fill="#475569">cd 一个可丢弃的 git 项目再启动</text>
+    </g>
+    <path d="M394 236 h42" stroke="#c2410c" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M764 236 h42" stroke="#c2410c" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- divider -->
+  <path d="M70 330 H1130" stroke="#fdba74" stroke-width="1.5" stroke-dasharray="6 6"/>
+  <text x="70" y="380" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#9a3412">每次改动（重复）</text>
+
+  <!-- Control loop: five boxes -->
+  <g font-family="system-ui, sans-serif">
+    <g transform="translate(70 404)">
+      <rect width="196" height="150" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="98" y="46" text-anchor="middle" font-size="22" font-weight="700" fill="#92400e">INSPECT</text>
+      <text x="98" y="80" text-anchor="middle" font-size="19" fill="#0f172a">盘点</text>
+      <text x="98" y="112" text-anchor="middle" font-size="15" fill="#475569">先只读 README</text>
+      <text x="98" y="134" text-anchor="middle" font-size="15" fill="#475569">与命令，不改文件</text>
+    </g>
+    <g transform="translate(306 404)">
+      <rect width="196" height="150" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="98" y="46" text-anchor="middle" font-size="22" font-weight="700" fill="#92400e">PLAN</text>
+      <text x="98" y="80" text-anchor="middle" font-size="19" fill="#0f172a">冻结计划</text>
+      <text x="98" y="112" text-anchor="middle" font-size="15" fill="#475569">一句话钉死范围</text>
+      <text x="98" y="134" text-anchor="middle" font-size="15" fill="#475569">与硬约束</text>
+    </g>
+    <g transform="translate(542 404)">
+      <rect width="196" height="150" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="98" y="46" text-anchor="middle" font-size="22" font-weight="700" fill="#92400e">EDIT</text>
+      <text x="98" y="80" text-anchor="middle" font-size="19" fill="#0f172a">最小改动</text>
+      <text x="98" y="112" text-anchor="middle" font-size="15" fill="#475569">只动计划内文件</text>
+      <text x="98" y="134" text-anchor="middle" font-size="15" fill="#475569">留可审查小 diff</text>
+    </g>
+    <g transform="translate(778 404)">
+      <rect width="196" height="150" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="98" y="46" text-anchor="middle" font-size="22" font-weight="700" fill="#92400e">VERIFY</text>
+      <text x="98" y="80" text-anchor="middle" font-size="19" fill="#0f172a">真实验收</text>
+      <text x="98" y="112" text-anchor="middle" font-size="15" fill="#475569">跑检查看退出码</text>
+      <text x="98" y="134" text-anchor="middle" font-size="15" fill="#475569">不听模型自述</text>
+    </g>
+    <g transform="translate(1014 404)">
+      <rect width="116" height="150" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+      <text x="58" y="46" text-anchor="middle" font-size="22" font-weight="700" fill="#166534">DIFF</text>
+      <text x="58" y="80" text-anchor="middle" font-size="19" fill="#0f172a">检查</text>
+      <text x="58" y="112" text-anchor="middle" font-size="15" fill="#475569">确认没</text>
+      <text x="58" y="134" text-anchor="middle" font-size="15" fill="#475569">改错文件</text>
+    </g>
+
+    <!-- forward arrows -->
+    <path d="M266 479 h40" stroke="#c2410c" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M502 479 h40" stroke="#c2410c" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M738 479 h40" stroke="#c2410c" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+    <path d="M974 479 h40" stroke="#16a34a" stroke-width="2.5" fill="none" marker-end="url(#arrowg)"/>
+
+    <!-- failure return: VERIFY -> back to PLAN/EDIT -->
+    <path d="M840 554 v60 H460 v-60" stroke="#dc2626" stroke-width="2.5" fill="none" stroke-dasharray="7 5" marker-end="url(#arrowr)"/>
+    <text x="650" y="640" text-anchor="middle" font-size="17" font-weight="700" fill="#b91c1c">验收失败 → 回到 PLAN / EDIT，不要“继续硬修”</text>
+
+    <!-- done -->
+    <path d="M1072 554 v70" stroke="#16a34a" stroke-width="2.5" fill="none" marker-end="url(#arrowg)"/>
+    <text x="1072" y="648" text-anchor="middle" font-size="16" font-weight="700" fill="#166534">通过才算完成</text>
+  </g>
+
+  <text x="600" y="712" text-anchor="middle" font-family="system-ui, sans-serif" font-size="17" fill="#64748b">交付物：一个小改动 · 一次真实验收命令与退出码 · 一份 git diff · 一条写回项目规则的经验</text>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#c2410c"/>
+    </marker>
+    <marker id="arrowg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#16a34a"/>
+    </marker>
+    <marker id="arrowr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+</svg>

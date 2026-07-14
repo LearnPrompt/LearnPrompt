@@ -1,35 +1,272 @@
 ---
-title: "CLAUDE.md + index.md 知识库导航法"
-description: 用一个入口文件降低 Agent 读取 vault 的成本。
+title: "CLAUDE.md + index.md 如何限制 Agent 读取范围：用路由预算代替全库递归"
+description: "学会把 Claude Code 的指令加载机制和项目自写 index.md 组合成可审计的路由预算，让 Agent 只读必要入口而不是递归扫完整个 vault。"
 sidebar:
   order: 3
 difficulty: intermediate
 source_repo: alchaincyf/obsidian-ai-orange-book
 source_url: https://github.com/alchaincyf/obsidian-ai-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-12"
+reading_time: 16 分钟
+research_path: research/articles/claude-md-index-navigation
+showcase_path: research/articles/claude-md-index-navigation/showcase/index-routing-budget
+showcase_status: verified
+quality_score: 100
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 16 分钟 | 2026-07-12 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/obsidian-ai-orange-book" url="https://github.com/alchaincyf/obsidian-ai-orange-book" updatedFrom="2026-05" note="参考主题结构，正文重新组织。" />
+你把 Obsidian vault 接给 Agent 后，最容易写出的指令是：“先理解整个知识库，再回答我的问题。”这句话对人类很自然，对 Agent 却很贵。它会把一个具体任务变成开放式发现：根目录有哪些文件？哪些是项目？哪些是资料？哪个才是最新入口？如果没有显式路线，Agent 只能用搜索、目录遍历和猜测补齐这些背景。
 
-## 分工
+`CLAUDE.md + index.md` 的价值不在于某个神秘文件名，而在于把“理解整个 vault”改成一组有限导航问题：先读哪条规则、根索引把任务分到哪个 area、area index 暴露哪个 canonical target、读完以后怎样引用和验收。这样你限制的是**读取范围**，不是限制模型能力。
 
-- `CLAUDE.md`：告诉 Agent 工作规则、禁止事项和常用命令。
-- `index.md`：告诉 Agent 重要目录、项目入口和资料索引。
+先把边界说清：Claude Code 官方支持的是 `CLAUDE.md` 这类 instruction surface。普通 `index.md` 不是 Claude Code 功能，也不会自动进入上下文。它只有在 `CLAUDE.md`、任务 prompt 或你的工作流明确要求读取时，才会参与这次路由。
 
-## 操作步骤
+## 读完你能做什么
 
-1. 在 vault 根目录写一个轻量 `index.md`。
-2. 每个长期项目维护自己的项目索引。
-3. 把脚本和自动化入口写成可复制命令。
-4. 过期项目标记归档，不删除历史。
+读完后，你应该能做四件事：
 
-## 常见错误
+1. 解释 `CLAUDE.md`、`@path` import、子目录指令和普通 `index.md` 的产品边界。
+2. 给 vault 写一份“先读根索引，再读一个 area index，再读 canonical target”的路由规则。
+3. 设计不会变成 prose dump 的 `index.md` 行字段：route key、scope/purpose、canonical entrypoint、owner、verified date、fallback。
+4. 用 deterministic gate 检查 missing route、duplicate route、recursive scan、stale target 和 private target，而不是相信模型自己的成功消息。
 
-让 Agent 递归读取整个 vault。1000 个文件并不大，但没有索引仍会浪费上下文。
+![任务先经过 CLAUDE.md 路由规则，再经过根 index、area index 到 canonical target；有效路径只读 10 个合成文件，并用 61-65 拒绝缺路由、重复路由、递归扫描、过期目标和私密目标。](/images/articles/claude-md-index-navigation/index-routing-budget.svg)
+*图注：这张机制图把 `CLAUDE.md` 和 `index.md` 的职责拆开：前者定义读取行为，后者只是项目自写的入口表。读者要注意的是 10/26 只来自本文 synthetic fixture，不是通用节省比例。*
 
-## 实战案例
+## 官方边界：CLAUDE.md 会加载，index.md 不会自动加载
 
-AI 新闻雷达项目应有项目索引，记录源类型、部署地址、GitHub 仓库、日报生成脚本和未完成任务。
+Claude Code 官方 memory 文档给了这个方法的地基，也给了它的上限。
+
+`CLAUDE.md` 是你写给 Claude Code 的持久项目指令。官方文档说明，Claude Code 会在会话开始时把相关 `CLAUDE.md` 作为上下文读取；这些内容会影响行为，但不是强制配置。如果你要硬性阻止动作，需要权限、hook 或管理设置，而不是只靠一句“不要递归扫描”。
+
+加载层级也很关键。工作目录上方的 `CLAUDE.md` 和 `CLAUDE.local.md` 会在 launch 时加载；当前工作目录下面的子目录 `CLAUDE.md` 不会一开始全量注入，而是在 Claude 读取那些子目录里的文件时按需进入上下文。这个机制能让大项目把规则靠近文件放置，但它仍然是 `CLAUDE.md` 的行为，不是任意 Markdown 的行为。
+
+`@path` import 经常被误解。你可以在 `CLAUDE.md` 里写 `@docs/workflow.md`，Claude Code 会把被 import 的内容展开并在 launch context 中加载。这样做适合组织长规则，但不等于 progressive disclosure。如果你在根 `CLAUDE.md` 里 import 每个 area 的 `index.md`，那只是把索引提前塞进上下文，并没有证明“只在需要时读取一个 index”。
+
+所以本文的核心边界是：
+
+| 文件或机制 | 官方行为 | 本文怎样使用 | 不要误说成 |
+| --- | --- | --- | --- |
+| `CLAUDE.md` | Claude Code 会读取的项目指令上下文 | 写路由规则、禁止递归扫库、要求引用 canonical target | 强制安全策略 |
+| 子目录 `CLAUDE.md` | 读到子目录文件时可按需加载 | 适合给局部工作区补规则 | 普通 index 的自动发现机制 |
+| `@path` import | import 内容在 launch context 展开 | 只用于组织少量长期规则 | 按需加载、节省上下文 |
+| `index.md` | 普通 Markdown 文件 | 项目自写路线表，只有被指令/工作流点名时才读 | Claude Code 内置导航功能 |
+
+Codex 也有类似边界。OpenAI 的 Codex `AGENTS.md` 文档说明，Codex 会在做事前读取 `AGENTS.md` 指令链：全局、项目根目录到当前目录，按顺序合并，并有默认的合并大小限制。这说明 Codex 也有 instruction surface；但同样不能推出“Codex 会自动加载任意 `index.md`”。要让 Codex 使用索引，你也要在 `AGENTS.md` 或任务里明确写出读取流程。
+
+## 什么时候 index 才真的减少读取范围
+
+一个 `index.md` 能减少 breadth，必须满足三个条件。
+
+第一，它被明确纳入 workflow。根 `CLAUDE.md` 可以写：
+
+```md
+For vault navigation:
+- Read root `index.md` before searching.
+- Choose exactly one area index for the task.
+- Read only that area index and the canonical target unless the route is missing.
+- If a route is missing, ask for clarification instead of recursively scanning the vault.
+```
+
+这段规则的重点不是“写了 index”，而是把 Agent 的默认动作从“搜索全部”改成“先走路线”。
+
+第二，根 index 只负责分流，不负责解释全部内容。根 index 应该像路标，而不是知识库百科：
+
+```md
+| Area | Scope / purpose | Index |
+| --- | --- | --- |
+| projects | Active project execution artifacts | projects/index.md |
+| research | Evidence and citation policy | research/index.md |
+| publishing | Public output runbooks | publishing/index.md |
+| systems | Vault maintenance runbooks | systems/index.md |
+```
+
+第三，area index 只暴露 canonical entrypoints。它应该让 Agent 能在几行内判断“这次任务去哪一个目标”，而不是把每个项目背景都写成散文。
+
+```md
+| Route key | Scope / purpose | Canonical entrypoint | Owner | Verified date | Fallback |
+| --- | --- | --- | --- | --- | --- |
+| citation-policy | Citation rules for evidence notes | research/citation-policy.md | Research lead | 2026-07-12 | Ask owner before broad scan |
+```
+
+这就是“路由预算”的含义：你不是让模型先读完整个 vault 再表现得很聪明，而是提前定义一次任务最多应该读哪些入口。如果任务不匹配任何 route，正确动作不是扫库补猜，而是触发 fallback。
+
+## index 行要像路由表，不要像散文目录
+
+很多失败的 `index.md` 长这样：开头写一段“这里是我的研究资料”，中间贴几个链接，最后再补一堆历史背景。人类浏览时还凑合，Agent 执行时会遇到三个问题：route key 不稳定、目标文件不唯一、过期内容没有责任人。
+
+本文建议的最小字段是六个：
+
+| 字段 | 作用 | 写法要求 |
+| --- | --- | --- |
+| `Route key` | 让任务和路线匹配 | 短、稳定、可被脚本比较，例如 `newsletter-runbook` |
+| `Scope / purpose` | 说明这条路线解决什么问题 | 一句话，不写长背景 |
+| `Canonical entrypoint` | 唯一目标文件 | vault-relative path，必须存在 |
+| `Owner` | 谁负责更新 | 人、角色或团队，不要留空 |
+| `Verified date` | 什么时候确认仍有效 | ISO 日期，过期要触发复查 |
+| `Fallback` | 路线失效时怎么做 | ask owner、create issue、stop，不要写“随便搜一下” |
+
+这六个字段不是产品标准，而是 LearnPrompt 的编辑合同。它的目的很窄：让 Agent 在读到 area index 后能稳定回答“这次任务应该读哪个 canonical file”，并让 validator 能判断路线是否缺失、过期或危险。
+
+一个实用规则是：**index 只写入口，不写内容。** 内容放到 target note 里；index 只保留足够的路线信息。否则你会把 `index.md` 变成另一个大上下文文件，最后又回到“先读一大坨再猜”的旧问题。
+
+## Frozen Showcase：10 次读取对比 26 文件 inventory
+
+本文的 Showcase 是完全合成、可复现的 `index-routing-budget`，没有使用真实个人 vault。
+
+目录位置：
+
+```text
+research/articles/claude-md-index-navigation/showcase/index-routing-budget/
+```
+
+合成 vault 恰好有 26 个可检查文本文件：
+
+- 根 `CLAUDE.md`
+- 根 `index.md`
+- 四个 area index：`projects`、`research`、`publishing`、`systems`
+- 二十个 target notes：每个 area 五个
+
+四个 synthetic tasks 分属四个 area，且每个只有一个正确 target：
+
+| Task | Area | Correct target |
+| --- | --- | --- |
+| release checklist | `projects` | `projects/release-checklist.md` |
+| citation policy | `research` | `research/citation-policy.md` |
+| newsletter runbook | `publishing` | `publishing/newsletter-runbook.md` |
+| vault audit runbook | `systems` | `systems/vault-audit-runbook.md` |
+
+读文件必须经过 `scripts/read-doc.mjs`。这个 wrapper 会把每次 fixture read 追加到规范化 trace，所以“模型说自己没扫库”不算证据；trace 才算证据。
+
+有效 trace 必须正好是 10 行：
+
+```text
+CLAUDE.md
+index.md
+projects/index.md
+projects/release-checklist.md
+research/index.md
+research/citation-policy.md
+publishing/index.md
+publishing/newsletter-runbook.md
+systems/index.md
+systems/vault-audit-runbook.md
+```
+
+对照组是 deterministic naive inventory：26 个 fixture 文件。这个对比只证明本文 synthetic fixture 的路由合同能把读取从 26 个文件压到 10 次读取；它不证明任意 vault 都会节省同样比例，也不证明哪个模型更强。
+
+你可以复现 deterministic gate：
+
+```bash
+node research/articles/claude-md-index-navigation/showcase/index-routing-budget/scripts/verify-showcase.mjs
+```
+
+当前结果：
+
+```text
+PASS index-routing-budget deterministic verifier
+inventory: 26 inspectable text files
+valid routed trace: 10 reads
+naive inventory: 26 files
+valid route exit 0
+missing-route exit 61
+ambiguous-duplicate-route exit 62
+read-budget-recursive-scan exit 63
+stale-or-nonexistent-target exit 64
+private-sensitive-target exit 65
+source unchanged: yes
+```
+
+writer session 按要求只尝试了一次 nested live run：
+
+```bash
+CODEX_NESTED_MODEL=gpt-5.5 node research/articles/claude-md-index-navigation/showcase/index-routing-budget/scripts/run-codex-live.mjs
+```
+
+这次 writer-side run 在模型启动前被旧 CLI 参数 `--ask-for-approval` 阻断，退出 `2`；历史记录保存在 `results/live-blocked-summary.md` 和 `results/live-attempt-summary.json`，没有被改写成成功。外层控制器随后只修正调用形状，仍使用同一冻结 prompt、fixture、10/26 合同和 fresh `gpt-5.5` 重新执行。最终结果是：
+
+- `exec_exit_code: 0`
+- fixture 26 个文件 byte-identical
+- `routes.json`、`routes.md`、`read-trace.log` 全部写出
+- trace 恰好 10 行且顺序完全匹配
+- 未发现绕过 wrapper 的直接读取命令
+- deterministic validator exit `0`
+
+成功摘要与三份 live 归档位于 `results/live-controller-summary.json`、`results/live-routes.*` 和 `results/live-read-trace.log`。独立只读 reviewer 随后复核正文、研究包、机械结果与最终渲染，以 100/100、0 个未关闭问题和视觉 PASS 将文章升级为 `verified`。
+
+## 为什么要拒绝 61-65，而不是“让模型补救”
+
+路由预算真正有用，是因为它有失败出口。
+
+`61 missing route` 表示任务没有匹配路线。比如用户问“找预算审批 SOP”，但任何 area index 都没有 `budget-approval`。这时正确动作是停下来问 owner 或补 route，而不是让 Agent 自己在 vault 里搜“budget”。
+
+`62 ambiguous duplicate route` 表示两个 route 声称能回答同一任务，或者同一 task 被重复写入结果。重复路线比缺路线更危险，因为模型可能随机选一个看起来更近的文件。修复方式是保留唯一 canonical target，把另一个改成 fallback 或历史记录。
+
+`63 read-budget / recursive-scan violation` 表示 trace 超过预算或顺序不对。本文的 valid trace 是 root instruction、root index、每个任务一个 area index 和一个 target。只要 trace 变成 26 个文件 inventory，就说明 Agent 又退回了“先看全库”。
+
+`64 stale or nonexistent target` 表示 route 的 `Verified date` 不符合当前合同，或 canonical entrypoint 不存在、引用不等于 target。这个 gate 防止 index 看起来很干净，实际指向旧文件或移动后的空路径。
+
+`65 private/sensitive target route` 表示 index 把任务导向了 private、secret、credential 这类不该进入共享上下文的目标。这里不要指望模型“看见 secret 以后自觉不读”。路线表不应该暴露这种目标。
+
+这些拒绝码的共同点是：它们都在检查**导航合同**，不是检查模型文风。模型自己的 “I found the right note” 不是 proof；可复现的 read trace、JSON report、target citation 和 source hash 才是 proof。
+
+## 调试：路由预算坏了先查哪四处
+
+如果你的 Agent 仍然在扫库，先查 `CLAUDE.md`。很多团队写的是“参考 index”，而不是“必须先读 root index，并且每个任务只选一个 area index”。前者是建议，后者才是可验收行为。
+
+如果 Agent 读了太多 index，查 `@path` import。把所有 `index.md` import 到 `CLAUDE.md` 会让它们在 launch 时一起进上下文。你可能觉得结构更整齐，但这不是按需读取。要做 progressive routing，就让根指令只说明规则，具体 area index 到任务时再读。
+
+如果 Agent 找到了错文件，查 route key 和 canonical target。route key 应该稳定、短、单义；target 应该是唯一入口。不要让 `index.md` 同时写“可以看 A，也可以看 B，或者再搜 C”。这会把导航问题重新推给模型。
+
+如果 validator 经常报 stale，查 owner 和 verified date。没有 owner 的 index 会很快变成孤儿目录；没有日期的 index 会让旧路线永久看起来有效。过期不一定代表文件错了，但它应该触发复核。
+
+## 什么时候不要用这套方法
+
+如果你的 vault 只有几十个文件，而且你自己就是唯一读者，先别急着维护四层 index。直接搜索和人工判断可能更便宜。
+
+如果你的问题是“新材料该放到哪个目录”，去看目录 placement contract，而不是用本文方法替代放置规则。本文只回答“已经有材料时，Agent 应该怎样导航到 canonical target”。
+
+如果你的问题是跨会话交接，去写 handoff packet。`CLAUDE.md` 和 `index.md` 不应该保存某次事故的状态、下一条命令和临时限制。
+
+如果你的问题是批量改笔记后怎么回滚，补 Git 工作流。路由预算能减少读取范围，不能提供版本历史、diff review 或回滚点。
+
+如果你的 index 维护成本已经超过它节省的读取成本，就停。路线表适合稳定入口：runbook、policy、project canonical docs、public output workflow。临时碎片、日记、短期草稿不一定值得写 route。
+
+## 练习：给一个小 vault 写路由预算
+
+用一个不含隐私的小样本做练习，最好先合成 20 到 40 个 Markdown 文件。
+
+1. 写根 `CLAUDE.md`：明确“先读根 index、每个任务只选一个 area index、读 canonical target、缺 route 就停”。
+2. 写根 `index.md`：只列 3 到 5 个 area 和各自 index path。
+3. 给每个 area 写 route table：每行包含 route key、scope/purpose、canonical entrypoint、owner、verified date、fallback。
+4. 写一个最小 read trace：要求所有 fixture read 都通过 wrapper，最后产出 trace。
+5. 写 validator：至少拒绝缺路线、重复路线、超预算扫描、过期或不存在 target、private/sensitive target。
+
+完成标准：
+
+- 你能说清普通 `index.md` 为什么不是 Claude Code 功能。
+- 你的根 `CLAUDE.md` 没有 import 所有 area index。
+- 一次任务最多读 root instruction、root index、一个 area index 和一个 target。
+- 输出引用的是 canonical target path，而不是“我在某个笔记里看到”。
+- validator 能在坏路线出现时稳定失败，而不是靠人工读模型回答。
+
+## 来源与延伸阅读
+
+- Claude Code 官方文档：[How Claude remembers your project](https://code.claude.com/docs/en/memory)
+- Claude Code 官方文档：[Claude Code settings](https://code.claude.com/docs/en/settings)
+- OpenAI / ChatGPT Learn 官方文档：[Custom instructions with AGENTS.md](https://developers.openai.com/codex/guides/agents-md)
+- Obsidian 官方文档：[How Obsidian stores data](https://obsidian.md/help/Files%2Band%2Bfolders/How%2BObsidian%2Bstores%2Bdata)
+- Obsidian 官方文档：[Search](https://obsidian.md/help/Plugins/Search)
+- Obsidian 官方文档：[Properties](https://obsidian.md/help/properties)
+- 中文主题地图：[Obsidian AI Orange Book](https://github.com/alchaincyf/obsidian-ai-orange-book)
+- 本文研究包与 Showcase：`research/articles/claude-md-index-navigation/`
+
+官方 Claude Code 文档支撑本文关于 `CLAUDE.md`、子目录指令、`@path` import、`AGENTS.md` 边界和“context 而非强制配置”的现行事实。Codex 文档只用于说明 `AGENTS.md` 是类似的 instruction surface，不用于推断 Claude Code 行为，也不用于声称 Codex 会自动加载普通 `index.md`。Obsidian 文档只支撑 vault 是本地 Markdown 文件夹、搜索/属性的基础边界，不证明本文的路由合同是 Obsidian 标准。
+
+`Obsidian AI Orange Book` 是中文主题地图，作者为花叔 / `alchaincyf`。其 README 说明作品可用于学习交流分享、转载和引用需注明出处，但没有发布标准 CC/OSI 许可证。本文没有复制其 PDF 正文、截图、图表或图片；正文、Showcase 和机制图均重新组织，教学图为 LearnPrompt 原创并按 CC BY-NC-SA 4.0 记录在 `asset-ledger.md`。

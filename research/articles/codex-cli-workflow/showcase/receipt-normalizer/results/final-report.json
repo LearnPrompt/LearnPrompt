@@ -1,0 +1,51 @@
+{
+  "status": "success",
+  "repo_checked": true,
+  "worktree_before": "Clean: git status --short produced no output before edits; git rev-parse --is-inside-work-tree returned true.",
+  "task_contract": {
+    "goal": "Normalize receipt references to RCPT-#### while keeping the last four digits of the numeric sequence.",
+    "allowed_paths": ["src/normalizeReceipt.js"],
+    "forbidden_paths": ["README.md", "task-contract.json", "package.json", "test/"],
+    "verify_command": "npm test"
+  },
+  "files_changed": ["src/normalizeReceipt.js"],
+  "tests": [
+    {
+      "command": "pwd",
+      "exit_code": 0,
+      "result": "<temp-repo>"
+    },
+    {
+      "command": "git status --short",
+      "exit_code": 0,
+      "result": "No output before edits; worktree clean."
+    },
+    {
+      "command": "git rev-parse --is-inside-work-tree",
+      "exit_code": 0,
+      "result": "true"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "result": "4 tests passed; 0 failed."
+    },
+    {
+      "command": "git diff --stat",
+      "exit_code": 0,
+      "result": "src/normalizeReceipt.js | 2 +-; 1 file changed, 1 insertion, 1 deletion."
+    },
+    {
+      "command": "git diff -- src/normalizeReceipt.js",
+      "exit_code": 0,
+      "result": "Changed digits.slice(0, 4) to digits.slice(-4)."
+    },
+    {
+      "command": "git status --short",
+      "exit_code": 0,
+      "result": "M src/normalizeReceipt.js"
+    }
+  ],
+  "diff_summary": "Updated src/normalizeReceipt.js so receipt normalization keeps the last four digits of the extracted numeric sequence and pads to RCPT-####.",
+  "final_note": "No remaining limitation."
+}

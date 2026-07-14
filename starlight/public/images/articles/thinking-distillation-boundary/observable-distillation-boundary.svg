@@ -1,0 +1,155 @@
+<svg width="1400" height="900" viewBox="0 0 1400 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>text { font-family: "PingFang SC", Arial, sans-serif !important; }</style>
+    <linearGradient id="bg" x1="0" y1="0" x2="1400" y2="900" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFF8E8"/>
+      <stop offset="1" stop-color="#FFF1D6"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#FFF8EF"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#D9B588" flood-opacity="0.18"/>
+    </filter>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="8" refY="7" orient="auto">
+      <path d="M0 0L14 7L0 14V0Z" fill="#A65E15"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="14" markerHeight="14" refX="8" refY="7" orient="auto">
+      <path d="M0 0L14 7L0 14V0Z" fill="#B42318"/>
+    </marker>
+  </defs>
+
+  <rect width="1400" height="900" rx="36" fill="#FFF8E8"/>
+  <circle cx="130" cy="120" r="86" fill="#FFE7BE" opacity="0.55"/>
+  <circle cx="1230" cy="760" r="120" fill="#FFD8A8" opacity="0.4"/>
+
+  <text x="88" y="102" fill="#7A4312" font-family="Verdana" font-size="34" font-weight="700">Observable Distillation Boundary</text>
+  <text x="88" y="142" fill="#8E5B2E" font-family="Verdana" font-size="20">
+    只从可观察 receipts 提炼规则，先过边界过滤，再生成 candidate Skill 并跑 holdout。
+  </text>
+
+  <g filter="url(#shadow)">
+    <rect x="74" y="194" width="346" height="468" rx="28" fill="url(#panel)" stroke="#F0D3AC"/>
+    <text x="108" y="244" fill="#7A4312" font-family="Verdana" font-size="30" font-weight="700">Observable Receipts</text>
+    <text x="108" y="278" fill="#8E5B2E" font-family="Verdana" font-size="18">训练输入只允许外显、可审计的证据层。</text>
+
+    <g>
+      <rect x="104" y="312" width="286" height="60" rx="18" fill="#FFF5E5" stroke="#F1CB8E"/>
+      <text x="126" y="342" fill="#6B3E12" font-family="Verdana" font-size="20" font-weight="600">Input snapshot</text>
+      <text x="126" y="365" fill="#8E5B2E" font-family="Verdana" font-size="16">文件起点与上下文</text>
+    </g>
+    <g>
+      <rect x="104" y="390" width="286" height="60" rx="18" fill="#FFF5E5" stroke="#F1CB8E"/>
+      <text x="126" y="420" fill="#6B3E12" font-family="Verdana" font-size="20" font-weight="600">Accepted diff</text>
+      <text x="126" y="443" fill="#8E5B2E" font-family="Verdana" font-size="16">真正被接受的修复</text>
+    </g>
+    <g>
+      <rect x="104" y="468" width="286" height="60" rx="18" fill="#FFF5E5" stroke="#F1CB8E"/>
+      <text x="126" y="498" fill="#6B3E12" font-family="Verdana" font-size="20" font-weight="600">User correction</text>
+      <text x="126" y="521" fill="#8E5B2E" font-family="Verdana" font-size="16">错因与修正规则</text>
+    </g>
+    <g>
+      <rect x="104" y="546" width="286" height="60" rx="18" fill="#FFF5E5" stroke="#F1CB8E"/>
+      <text x="126" y="576" fill="#6B3E12" font-family="Verdana" font-size="20" font-weight="600">Validator</text>
+      <text x="126" y="599" fill="#8E5B2E" font-family="Verdana" font-size="16">命令、结果与通过条件</text>
+    </g>
+    <g>
+      <rect x="104" y="624" width="286" height="60" rx="18" fill="#FFF5E5" stroke="#F1CB8E"/>
+      <text x="126" y="654" fill="#6B3E12" font-family="Verdana" font-size="20" font-weight="600">Known limitation</text>
+      <text x="126" y="677" fill="#8E5B2E" font-family="Verdana" font-size="16">别把偶然路径升格成通用法</text>
+    </g>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="498" y="216" width="402" height="388" rx="32" fill="#FFF0D8" stroke="#E5B15D" stroke-width="2"/>
+    <text x="536" y="266" fill="#8C4D10" font-family="Verdana" font-size="32" font-weight="700">Boundary Filter</text>
+    <text x="536" y="304" fill="#8E5B2E" font-family="Verdana" font-size="17">
+      先做输入筛选，再决定能否生成 candidate。
+    </text>
+
+    <rect x="536" y="334" width="326" height="122" rx="22" fill="#FFFFFF" stroke="#EFC98D"/>
+    <text x="562" y="374" fill="#6B3E12" font-family="Verdana" font-size="20" font-weight="600">Allowed</text>
+    <text x="562" y="392" fill="#8E5B2E" font-family="Verdana" font-size="15">• 重复规则</text>
+    <text x="562" y="414" fill="#8E5B2E" font-family="Verdana" font-size="15">• patch + correction</text>
+    <text x="562" y="436" fill="#8E5B2E" font-family="Verdana" font-size="15">• validator proof</text>
+    <text x="562" y="458" fill="#8E5B2E" font-family="Verdana" font-size="15">• candidate only</text>
+
+    <rect x="536" y="474" width="326" height="102" rx="22" fill="#FFFFFF" stroke="#EFC98D"/>
+    <text x="562" y="512" fill="#6B3E12" font-family="Verdana" font-size="20" font-weight="600">Outcome</text>
+    <text x="562" y="536" fill="#8E5B2E" font-family="Verdana" font-size="15">candidate Skill</text>
+    <text x="562" y="558" fill="#8E5B2E" font-family="Verdana" font-size="15">holdout eval</text>
+    <text x="562" y="574" fill="#8E5B2E" font-family="Verdana" font-size="15">human approval</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="964" y="194" width="356" height="224" rx="28" fill="url(#panel)" stroke="#F0D3AC"/>
+    <text x="998" y="244" fill="#7A4312" font-family="Verdana" font-size="30" font-weight="700">Candidate Skill</text>
+    <text x="998" y="280" fill="#8E5B2E" font-family="Verdana" font-size="15">
+      <tspan x="998" dy="0">.agents/skills/</tspan>
+      <tspan x="998" dy="22">frontmatter-repair/</tspan>
+    </text>
+    <rect x="998" y="304" width="288" height="90" rx="18" fill="#FFF5E5" stroke="#F1CB8E"/>
+    <text x="1022" y="338" fill="#6B3E12" font-family="Verdana" font-size="19" font-weight="600">生成内容</text>
+    <text x="1022" y="354" fill="#8E5B2E" font-family="Verdana" font-size="15">SKILL.md</text>
+    <text x="1022" y="374" fill="#8E5B2E" font-family="Verdana" font-size="15">contract ref</text>
+    <text x="1022" y="394" fill="#8E5B2E" font-family="Verdana" font-size="15">repair helper</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="944" y="460" width="376" height="224" rx="28" fill="#FFFFFF" stroke="#DDB27A"/>
+    <text x="978" y="510" fill="#7A4312" font-family="Verdana" font-size="30" font-weight="700">Holdout Evaluation</text>
+    <text x="978" y="544" fill="#8E5B2E" font-family="Verdana" font-size="14">
+      <tspan x="978" dy="0">4 synthetic holdouts</tspan>
+      <tspan x="978" dy="18">title / desc / order / no-op</tspan>
+    </text>
+
+    <rect x="978" y="578" width="148" height="72" rx="20" fill="#E9F8EE" stroke="#78C493"/>
+    <text x="1008" y="619" fill="#0E7A33" font-family="Verdana" font-size="28" font-weight="700">4 / 4</text>
+    <text x="1010" y="641" fill="#247A44" font-family="Verdana" font-size="17">holdout passed</text>
+
+    <rect x="1150" y="578" width="136" height="72" rx="20" fill="#FFF1E6" stroke="#E59B58"/>
+    <text x="1190" y="619" fill="#B05B17" font-family="Verdana" font-size="28" font-weight="700">0</text>
+    <text x="1172" y="641" fill="#9B5A20" font-family="Verdana" font-size="17">failures</text>
+
+    <text x="978" y="666" fill="#8E5B2E" font-family="Verdana" font-size="14">
+      holdout fail -> 54
+    </text>
+  </g>
+
+  <path d="M420 430H466" stroke="#A65E15" stroke-width="7" stroke-linecap="round"/>
+  <polygon points="478,430 458,418 458,442" fill="#A65E15"/>
+  <path d="M900 350H932" stroke="#A65E15" stroke-width="7" stroke-linecap="round"/>
+  <polygon points="944,350 924,338 924,362" fill="#A65E15"/>
+  <path d="M1128 418V436" stroke="#A65E15" stroke-width="7" stroke-linecap="round"/>
+  <polygon points="1128,450 1116,430 1140,430" fill="#A65E15"/>
+
+  <g filter="url(#shadow)">
+    <rect x="106" y="736" width="312" height="98" rx="24" fill="#FFF2F0" stroke="#E9A39C"/>
+    <text x="136" y="778" fill="#A41C1C" font-family="Verdana" font-size="22" font-weight="700">Sensitive marker</text>
+    <text x="136" y="810" fill="#8D3B3B" font-family="Verdana" font-size="16">
+      marker only -> reject
+    </text>
+    <text x="344" y="816" fill="#B42318" font-family="Verdana" font-size="28" font-weight="700">52</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="482" y="736" width="372" height="98" rx="24" fill="#FFF2F0" stroke="#E9A39C"/>
+    <text x="514" y="778" fill="#A41C1C" font-family="Verdana" font-size="22" font-weight="700">Raw private transcript</text>
+    <text x="514" y="810" fill="#8D3B3B" font-family="Verdana" font-size="16">拒绝私有 transcript</text>
+    <text x="790" y="816" fill="#B42318" font-family="Verdana" font-size="28" font-weight="700">53</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="902" y="736" width="392" height="98" rx="24" fill="#FFF2F0" stroke="#E9A39C"/>
+    <text x="934" y="778" fill="#A41C1C" font-family="Verdana" font-size="22" font-weight="700">Hidden-CoT request</text>
+    <text x="934" y="810" fill="#8D3B3B" font-family="Verdana" font-size="15">拒绝隐藏推理请求</text>
+    <text x="1230" y="816" fill="#B42318" font-family="Verdana" font-size="28" font-weight="700">53</text>
+  </g>
+
+  <text x="716" y="640" fill="#B42318" font-family="Verdana" font-size="16" font-weight="600">拒绝路径</text>
+  <path d="M698 604V704M262 704H1098M262 704V724M668 704V724M1098 704V724" stroke="#B42318" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="262,736 250,716 274,716" fill="#B42318"/>
+  <polygon points="668,736 656,716 680,716" fill="#B42318"/>
+  <polygon points="1098,736 1086,716 1110,716" fill="#B42318"/>
+</svg>

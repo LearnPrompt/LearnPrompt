@@ -1,0 +1,12 @@
+{
+  "findings": [
+    {
+      "severity": "P1",
+      "file": "src/refundPolicy.js",
+      "line": 11,
+      "title": "未来时间戳会被当成可退款订单",
+      "summary": "如果 deliveredAt 落在未来，elapsedMs 会变成负数，当前实现仍会把它判成退款窗口内；这会让无效订单状态被错误地放行。",
+      "reproduction": "把 now 固定为 2026-07-11T12:00:00Z，再传入 deliveredAt=2026-07-12T12:00:00Z。elapsedMs 为负，但函数仍返回 true。"
+    }
+  ]
+}

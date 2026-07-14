@@ -1,43 +1,267 @@
 ---
-title: Obsidian Vault 的 AI 友好目录设计
-description: 让人和 Agent 都能快速找到项目、资料和任务。
+title: "Obsidian Vault 目录怎样才对 Agent 有用：把分类树写成放置 contract"
+description: "用一个冻结的 synthetic vault 定义 folder roles、canonical paths、reject 边界和审计办法，让 Claude Code 或 Codex 不再跨整个个人 vault 猜文件该放哪。"
 sidebar:
   order: 2
-difficulty: beginner
+difficulty: intermediate
 source_repo: alchaincyf/obsidian-ai-orange-book
 source_url: https://github.com/alchaincyf/obsidian-ai-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-12"
+reading_time: 15 分钟
+research_path: research/articles/vault-directory-for-ai
+showcase_path: research/articles/vault-directory-for-ai/showcase/vault-placement-contract
+showcase_status: verified
+quality_score: 96
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后核对 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 15 分钟 | 2026-07-12 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/obsidian-ai-orange-book" url="https://github.com/alchaincyf/obsidian-ai-orange-book" updatedFrom="2026-05" note="参考主题结构，正文重新组织。" />
+你的 vault 也许已经“看起来很整齐”了：`00_收件箱`、`10_项目`、`20_知识库`、`30_输出`、`50_资源`、`99_系统` 一字排开，人工浏览时也大致顺手。但一旦你开始让 Claude Code、Codex 或别的 agent 帮你整理公共材料，真正的问题才会冒出来。
 
-## 推荐结构
+Agent 会碰到的不是“这棵树好不好看”，而是更具体的判断题：
+
+- 这份新材料是当前项目上下文，还是可复用知识？
+- 这是待发布输出，还是外部资料快照？
+- 这份模板该进系统层，还是继续留在 inbox 等人确认？
+- 如果文件里有敏感标记，是不是应该先 reject，而不是“先塞进去再说”？
+
+如果这些问题没有写成显式规则，目录树再漂亮，也只是人类心里的 taxonomy。Agent 仍然要跨整个 vault 猜。最糟的是，Obsidian 会自动刷新外部文件改动，所以一次错误移动不是“草稿想法”，而是立即生效的文件系统操作。
+
+这篇文章只回答一个中心问题：**怎样把 vault 目录树写成稳定的 placement contract，让人和 Agent 对“该放哪、不能放哪、怎么审计”有同一套解释。**
+
+## 读完你能做什么
+
+1. 分清 Obsidian 官方真正保证了什么，哪些只是 LearnPrompt 的编辑综合。
+2. 给自己的 vault 明确 folder roles、canonical path 模板和 reject 边界。
+3. 用一张判定表让 Agent 先判断“角色”，再决定“路径”，而不是在个人 vault 里递归搜索。
+4. 给这套目录合同补上最小 audit plan，检查 orphan、role mismatch、unknown root、sensitive placement 和 duplicate canonical destination。
+
+## 先把官方保证和编辑合同分开
+
+先把这条边界钉死：**Obsidian 官方没有定义本文的 `00/10/20/30/50/99` 目录语义。**
+
+官方文档能证明的是下面这些底层事实：
+
+| Obsidian 官方保证 | 这不等于什么 |
+| --- | --- |
+| vault 是本地文件系统上的 folder，包含 subfolders | 不等于官方已经替你定义“项目 / 知识 / 输出 / 资源 / 系统” |
+| notes 是 Markdown-formatted plain text files | 不等于 Markdown 自带 placement contract |
+| 你可以用外部 editor 和 file manager 改文件，Obsidian 会 refresh | 不等于 Agent 可安全随意移动文件 |
+| `.obsidian` 在 vault root，保存 vault-specific settings | 不等于你的 `99_系统` 就等于 `.obsidian` |
+| 官方不建议 nested vaults | 不等于只要不 nested，目录结构就自动稳定 |
+| properties 以 YAML 存在文件顶部，适合小而原子的值 | 不等于 folder tree 可以不定义角色 |
+
+:::caution[先分清“官方保证”和“本文合同”]
+本文关于 `00_收件箱 / 10_项目 / 20_知识库 / 30_输出 / 50_资源 / 99_系统` 的角色划分、canonical path、reject gate 和审计步骤，都是 LearnPrompt 的编辑综合，**不是 Obsidian 官方标准**，也不是唯一可行结构。
+:::
+
+这一步非常重要。因为一旦你把“我团队约定的目录角色”误说成“Obsidian 官方推荐”，后面所有自动化都会建立在错误前提上。读者照着做时，也无法判断哪些东西可以替换，哪些不能。
+
+## 为什么 decorative taxonomy 会让 Agent 猜错
+
+对人类来说，目录树常常带着大量未写出来的背景知识。你看见 `20_知识库`，心里会默认它装的是“已经整理过、以后还能复用的东西”；看见 `50_资源`，会默认那里放原始快照和链接；看见 `00_收件箱`，也知道那只是临时入口，不该长期堆积。
+
+Agent 没有这些默认理解。它看到的只有：
+
+- 文件名和路径；
+- 你是否写了 `AGENTS.md` / `CLAUDE.md` / `index.md` 一类文本说明；
+- 目录之间是否存在稳定、单义的关系；
+- 它有没有被允许读取整个 vault。
+
+如果目录名只是在“帮助人类回忆”，而没有配套的放置规则，Agent 最容易做出三类错误：
+
+1. 把外部快照直接塞进知识库，因为它“看起来也像一条知识”。
+2. 把项目决策放进长期知识区，导致以后找 active task 时反而失联。
+3. 遇到敏感或不应共享的材料时，选一个“最隐蔽”的目录放进去，而不是明确 reject。
+
+再加上 Obsidian 会刷新外部文件改动，这些错误一旦发生，就是活的文件系统状态，不是聊天里的假设。
+
+Johnny.Decimal 这类编号系统的教学价值，恰好说明了问题的一半：**浅层、可预测结构能减少“该放哪”的犹豫。** 但它没有替你回答另一半：什么该 reject，什么该 canonical，什么只是外部快照，什么已是内部知识。换句话说，编号能减歧义，但**编号本身不构成合同**。
+
+## 把目录树写成 placement contract
+
+实用的目录合同，至少要写清五件事：
+
+1. **Role roots**：每个根目录只承担一种稳定角色。
+2. **Placement decision**：新材料先判断角色，再决定路径。
+3. **Canonical path**：每类材料都有唯一模板，不靠“差不多放这里”。
+4. **Reject / quarantine boundary**：不该进入共享 vault 的材料明确拒收。
+5. **Audit plan**：定期检查 orphan、role mismatch、unknown root、sensitive placement、duplicate canonical destination。
+
+本文用的 LearnPrompt 示例 contract 是：
 
 ```text
-00_收件箱/
-10_项目/
-20_知识库/
-30_输出/
-50_资源/
-99_系统/
+00_收件箱   transient intake only
+10_项目     active project decisions and tasks
+20_知识库   reusable synthesized knowledge
+30_输出     publishable deliverables
+50_资源     external source snapshots and links
+99_系统     scripts, config templates, and runbooks
 ```
 
-## 设计原则
+这六个根目录里，真正决定自动化是否稳定的，不是编号本身，而是它们背后的**单一职责**。例如：
 
-- 收件箱用于临时输入。
-- 项目目录保存可执行上下文。
-- 资源目录保存外部资料和快照。
-- 系统目录保存脚本、配置和自动化。
+- `10_项目` 只收“还在驱动执行”的决策和任务。
+- `20_知识库` 只收“已经从具体项目抽象出来”的可复用结论。
+- `50_资源` 明确保留“外部来源”的边界，避免把快照伪装成内部知识。
+- `99_系统` 存 runbook、脚本说明、模板，但不等于 `.obsidian`。
 
-## 常见错误
+![从 inbox item 到 role decision，再到 canonical path 或 reject rail 的 vault placement contract 机制图；旁边标出 51 orphan、52 role mismatch、53 unknown root、54 sensitive placed、55 duplicate canonical destination 五个审计 gates。](/images/articles/vault-directory-for-ai/vault-placement-contract.svg)
+*图注：目录树真正提供给 Agent 的不是“美观分类”，而是一次有限判断题：先定角色，再落 canonical path；任何落不到合同里的材料，不是瞎放，而是 reject。图右侧的五个 gate 说明这份合同如何被机械审计。*
 
-- 所有内容都放在收件箱。
-- 项目资料和个人日记混在一起。
-- 目录名经常变化，Agent 找不到稳定路径。
+还有一个常被忽略的边界：**目录回答“属于哪个稳定区域”，properties 回答“这份文件在区域里的状态”。**
 
-## 实战案例
+官方 properties 文档明确说，properties 适合小而原子的 human- and machine-readable values。于是比较稳的做法是：
 
-ClawHub 快照可放在 `50_资源/产品发布/ClawHub快照/`，日报放在 `00_收件箱/`，脚本放在 `99_系统/工具配置/`。
+- 用 folder role 决定“放到哪一类区域”；
+- 用 note properties 标记 `status`、`owner`、`source_url`、`reviewed_at` 这类文件内状态。
+
+如果你把状态也编码进目录层级，路径会越来越深；如果你只写 properties，不写 role roots，Agent 又会先在错误区域里搜索。两者都要，但不是一回事。
+
+## 一张可执行的判定表：先看角色，再看模板
+
+下面这张表就是 contract 的核心。它不是“推荐目录树”，而是一张**placement decision table**：
+
+| 新材料信号 | 进入哪个角色 | canonical path 模板 | 为什么不是别的角色 |
+| --- | --- | --- | --- |
+| 当前项目仍在执行的决策 | `project` | `10_项目/<scope>/决策/<slug>.md` | 因为它还直接驱动任务，不是长期知识 |
+| 当前项目的任务清单 | `project` | `10_项目/<scope>/任务/<slug>.md` | 任务是活上下文，不该先抽象成知识 |
+| 多来源整理后的复用结论 | `knowledge` | `20_知识库/<scope>/<slug>.md` | 它已经脱离单一项目，可跨任务复用 |
+| 准备对外发布的草稿/提纲 | `output` | `30_输出/<channel>/<slug>.md(x)` | 面向发布或分享，不是原始资源 |
+| 官方页面摘录、网页快照、原链接 | `resource` | `50_资源/<source>/<slug>.md` | 仍是外部来源，应保留出处边界 |
+| runbook、模板、脚本说明 | `system` | `99_系统/<bucket>/<slug>.md` | 这是流程资产，不是内容资产 |
+| 含敏感标记或不应共享材料 | `reject` | `null` | 合同要求拒收，而不是“挑个隐蔽目录” |
+
+一旦判定表写清楚，Agent 的工作就会从“理解你的第二大脑哲学”缩成一组有限问题：
+
+1. 这条材料属于哪种 signal？
+2. 该 signal 对应哪个 role？
+3. 该 role 的 canonical path 模板是什么？
+4. 有没有任何 reject 条件比 place 优先？
+
+这就是为什么 placement contract 比 decorative taxonomy 更有用。它不是让 Agent 更“聪明”，而是让它少做开放式猜测。
+
+## Frozen Showcase：12 个 synthetic inbox items、6 个 exits、1 份真实 live plan
+
+为了把这件事讲清楚，我没有去看真实 vault，而是冻结了一个完全 synthetic 的 showcase：
+
+- 12 个 inbox items，全在 `00_收件箱`
+- 冻结 `inbox-manifest.json`
+- 冻结 `vault-policy.json`
+- 一个 deterministic validator，专门检查 `0/51/52/53/54/55`
+- 一次 fresh `gpt-5.5` Codex live attempt，只允许写 placement plan 报告
+
+你可以直接跑这两条命令：
+
+```bash
+node research/articles/vault-directory-for-ai/showcase/vault-placement-contract/scripts/verify-showcase.mjs
+CODEX_NESTED_MODEL=gpt-5.5 node research/articles/vault-directory-for-ai/showcase/vault-placement-contract/scripts/run-codex-live.mjs
+```
+
+deterministic replay 当前已经证明：
+
+- valid plan = `0`
+- orphan/unaccounted item = `51`
+- folder-role mismatch = `52`
+- unstable/unknown root = `53`
+- sensitive item placed instead of rejected = `54`
+- duplicate canonical destination = `55`
+- Unicode 源路径与目的路径存在并可通过校验
+- manifest unchanged、synthetic vault inventory unchanged
+
+reference valid plan 的结果也被冻住了：12/12 accounted，11 placed，1 个 `SENSITIVE-marker` item rejected，且 `destination` 必须是 `null`。例如其中一行是：
+
+```json
+{
+  "source_item": {
+    "id": "inbox-08",
+    "path": "00_收件箱/Obsidian-help-目录摘录.md",
+    "title": "Obsidian help 目录摘录"
+  },
+  "action": "place",
+  "destination": "50_资源/Obsidian/vault-help-目录摘录.md",
+  "role": "resource",
+  "canonical": true,
+  "sensitivity_decision": "retain-source-boundary"
+}
+```
+
+首次 writer-side nested run 在受限环境里没有启动成功；这条历史失败没有被改写成成功。随后，外层控制器按同一冻结 prompt、schema 和 fixture 重新执行，fresh `gpt-5.5` 成功写出 `reports/placement-plan.json` 与 `reports/placement-plan.md`，并通过 validator。结果是 12/12 accounted、11 placed、1 rejected；同时：
+
+- fixture manifest hash 未改变；
+- synthetic vault inventory 未改变；
+- 没有源文件被移动；
+- 唯一新增路径就是两份 `reports/placement-plan.*`；
+- 原始运行流保存在 worktree 外，仓库内只留下脱敏摘要和最终报告。
+
+这让 live run 和 deterministic gate 形成两层证据：模型负责按合同生成计划，validator 负责判断结果是否越过 `51/52/53/54/55` 边界。独立只读终审随后以 `96/100`、`0 blocker / 0 major / 0 minor` 和视觉 PASS 确认这条证据链，本文才被标记为 `verified`。
+
+## 失败模式与最小 audit plan
+
+写了合同，不等于你以后永远不会漂移。真正管用的是把失败模式写成 audit gate。
+
+| Gate | 症状 | 说明 | 最小修复动作 |
+| --- | --- | --- | --- |
+| `51` | orphan / unaccounted item | manifest 里有材料，计划里却没有唯一去向 | 先补齐每条材料的 action，再谈自动移动 |
+| `52` | folder-role mismatch | 路径存在，但角色错了 | 先改 role decision，再改 path |
+| `53` | unknown root | 出现合同外 root，或把 `00_收件箱` 当目的地 | 立即回到已声明 roots |
+| `54` | sensitive placed | reject 材料被塞进共享 vault | 删除错误放置，改回 reject/null |
+| `55` | duplicate canonical destination | 两条材料争同一个目标路径 | 保留唯一 canonical，另一条改 path 或改 role |
+
+我建议最小 audit plan 只做四件事：
+
+1. **每次分流前**：先清点 inbox item 数量，避免漏项。
+2. **每次分流后**：跑一遍 validator，确保没有 `51/52/53/54/55`。
+3. **每周一次**：检查 `00_收件箱` 是否长期滞留，别把 inbox 变成灰尘堆。
+4. **每次公开共享前**：复查 `50_资源` 与 `20_知识库` 是否被混写，敏感项是否真的停留在 reject rail。
+
+你会发现，这套 audit plan 的价值不在于“更自动化”，而在于它能把目录维护从主观感觉变成固定 gate。
+
+## 什么时候不要用这种方法
+
+这套 placement contract 很有用，但不是所有 vault 都值得上。
+
+- 如果你的 vault 主要是私人日记、临时碎片、生活记录，而不是共享或自动化材料，就别急着把一切写成 agent contract。
+- 如果你还没搞清“项目、知识、输出、资源、系统”之间的边界，先用少量样本手工整理，不要立刻批量自动化。
+- 如果你依赖 nested vaults，官方已经提醒 internal links 可能不会正确更新；这种前提下，路径合同本身就不稳定。
+- 如果你把所有状态都塞进目录树，而不用 properties 表示文件内状态，后面只会得到更深、更脆弱的层级。
+- 如果你真正需要的是 repo diff、回滚、审批链，那应该去补 Git 工作流，而不是靠目录合同代替版本控制。
+
+一句话：**当你的问题是“新材料该放哪、哪些该拒收、之后怎么审计”时，用 placement contract；不是这个问题，就别强套。**
+
+## 练习：给你自己的 vault 写第一版 placement contract
+
+不要从“我要设计一套完美目录树”开始，而是从 10 到 20 条真实样本开始。
+
+1. 先挑一个不会泄露隐私的小范围样本，只包含你愿意让 Agent 处理的公共或合成材料。
+2. 写出 4 到 6 个 role roots，并且给每个 root 一句单一职责描述。
+3. 给每类材料写 canonical path 模板，明确 `00_收件箱` 是否只是 intake。
+4. 单独写 reject 条件：哪些东西根本不应该进入共享 vault。
+5. 最后再补一个最小 validator 或检查表，至少覆盖 orphan、wrong role、unknown root、sensitive placement。
+
+完成标准也不要太抽象。你应该能明确回答：
+
+- 任意一条新材料先看哪几个信号？
+- 它进哪个 role？
+- canonical path 长什么样？
+- 哪些情况一律 reject？
+- 这次放置后，怎么证明没有漏项、没有错放、没有重复 canonical path？
+
+如果你能把这五个答案写清楚，你的目录树就已经从 taxonomy 变成 contract 了。
+
+## 来源与延伸阅读
+
+- Obsidian 官方文档：[How Obsidian stores data](https://obsidian.md/help/Files%2Band%2Bfolders/How%2BObsidian%2Bstores%2Bdata)
+- Obsidian 官方文档：[Manage vaults](https://obsidian.md/help/Files%2Band%2Bfolders/Manage%2Bvaults)
+- Obsidian 官方文档：[Properties](https://obsidian.md/help/properties)
+- OpenAI 官方文档：[Introducing Codex](https://openai.com/index/introducing-codex/)
+- Claude Code 官方文档：[How Claude remembers your project](https://code.claude.com/docs/en/memory)
+- 教学参考：[Johnny.Decimal](https://johnnydecimal.com/)
+- 中文主题地图：[Obsidian AI Orange Book](https://github.com/alchaincyf/obsidian-ai-orange-book)
+
+官方资料支撑本文关于 vault/folder/Markdown/plain text/external refresh/`.obsidian`/nested vault warning/properties 的现行事实。Johnny.Decimal 只用来帮助解释“浅层、可预测结构”为什么有教学价值，不证明本文的编号角色。`Obsidian AI Orange Book` 的作者是花叔 / `alchaincyf`；本文只把它当中文主题地图，按其仓库 README 的学习/交流署名边界保留链接与作者说明，**没有复制其 PDF 正文、截图或图片**。

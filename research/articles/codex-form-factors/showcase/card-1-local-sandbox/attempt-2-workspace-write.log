@@ -1,0 +1,26 @@
+# Sanitized execution excerpt
+date: 2026-07-11
+cli: codex-cli 0.142.2
+sandbox: workspace-write
+approval_policy: never
+process_exit_code: 0
+task_result: completed
+
+prompt:
+在 research/articles/codex-form-factors/showcase/card-1-local-sandbox/probe.txt
+写入一行文本 sandbox probe。只做这一件事。
+
+selected_output:
+已写入 probe.txt：sandbox probe。
+
+diff_summary:
+new file: research/articles/codex-form-factors/showcase/card-1-local-sandbox/probe.txt
+added_lines: 1
+content: sandbox probe
+
+verification:
+probe.txt exists and contains exactly one line: sandbox probe
+
+redactions:
+完整原始日志未提交。已移除本机绝对路径、插件扫描噪声以及
+session、thread、turn、item、request 等运行标识。

@@ -1,0 +1,8 @@
+原始 stderr 先写在工作树外的系统临时目录。本文件只保留对自动化边界有意义的最小结论：
+
+- stderr 并不是最终任务结果；本次结构化结果来自 stdout JSONL 与 `final-report.json`。
+- 本次 stderr 主要是本机环境噪声，而不是 `receipt-normalizer` 仓库本身的错误：
+  - skills scan truncated after 2000 directories
+  - failed to load unrelated local `SKILL.md` files missing frontmatter
+  - plugin manifest warnings about default prompt length / icon path
+- 这些噪声提醒：自动化不要直接把 stderr 当“任务失败”或“任务结论”，应与结构化 stdout 分层消费。

@@ -1,16 +1,56 @@
 ---
 title: LearnPrompt AI 实战 Wiki
-description: 中文 AI 编程、Agent、Skills 与知识工作台学习地图。
+description: 从一个真实任务出发，学习 AI 编程、Claude Code、Codex、Agent、Skills、知识工作台与持续循环。
+sidebar:
+  order: 0
+difficulty: beginner
+legacy_status: current
 ---
 
-LearnPrompt 是一套面向真实项目的中文 AI 实战 Wiki。
+LearnPrompt 不是工具名词表，也不是从第一页背到最后一页的课本。它是一套面向真实项目的中文 AI 实战教程：先选择一个正在发生的任务，再沿着最短路径做出可检查的结果。
 
-如果你是第一次访问，建议从下面几篇开始：
+## 第一次来，从你的任务开始
 
-- [AI 实践地图](/start-here/ai-practice-map/)
-- [Claude Code 与 Codex 怎么选](/ai-coding/choose-claude-code-or-codex/)
-- [Agentic Coding 的最小工作流](/ai-coding/minimum-agentic-coding-workflow/)
-- [第一个 SKILL.md 怎么写](/agent-skills/first-skill-md/)
-- [Obsidian Vault 的 AI 友好目录设计](/obsidian-ai/vault-directory-for-ai/)
+| 你现在要解决的问题 | 从这里开始 | 第一份产物 |
+| --- | --- | --- |
+| 还没让 AI 真正改过项目 | [Agentic Coding 的最小工作流](/ai-coding/minimum-agentic-coding-workflow/) | 一次包含计划、diff、检查和复盘的小改动 |
+| 已经在用 Claude Code 或 Codex，但不知道怎样选 | [Claude Code 与 Codex 怎么选](/ai-coding/choose-claude-code-or-codex/) | 一张按环境、反馈、风险和异步需求做出的选择表 |
+| AI 经常漏上下文、越界或做完无法验收 | [Harness 的五个组件](/agent-engineering/what-is-harness/) | 一份指令、能力、约束、状态和编排检查 |
+| 一个流程反复做，想让 Agent 稳定复用 | [Agent Skill 到底是什么](/agent-skills/what-are-agent-skills/) | “继续用 prompt”或“升级成 Skill”的明确判断 |
+| 想让项目经验跨会话、跨 Agent 接得上 | [Markdown 何时才算 Agent 可交接记忆](/obsidian-ai/markdown-as-agent-memory/) | 一份 fresh Agent 能继续执行的 handoff packet |
+| 正在搭 Hermes 或 OpenClaw | [Hermes 的学习循环](/agent-frameworks/hermes-learning-loop/) 或 [OpenClaw 架构导读](/agent-frameworks/openclaw-architecture-guide/) | 一张可观察的写入审批或消息路由图 |
 
-这里的重点不是把工具名背下来，而是把一次 AI 实战拆成清楚的目标、边界、验收和复盘。
+还不确定入口时，先看 [AI 实战学习地图](/start-here/ai-practice-map/)。它会把“我想学 AI”改写成一条可执行的学习路径。
+
+## 每篇教程怎样证明自己有用
+
+深度教程不会只给概念和截图。你会看到四类证据：
+
+1. **明确的读者任务**：读完以后要能做什么，而不是“了解某功能”。
+2. **可重放的 Showcase**：有效场景之外还包含会被拒绝的反例。
+3. **可执行验收**：命令、退出码、diff、receipt 或人工检查点。
+4. **真实来源与边界**：一手资料、二手主题地图和现场实验分开标注。
+
+`verified` 只表示文章已经通过项目内的研究、Showcase、独立评审、图片和构建门禁；它不代表工具能力永远不会变化。遇到版本、价格、权限或安全问题，仍应沿文章底部链接回到官方资料核对。
+
+## 最短的使用方法
+
+```text
+选一个真实任务
+  → 只读当前阻塞所需的 1–3 篇
+  → 复制模板并改成自己的输入
+  → 跑命令或人工验收
+  → 把失败写回项目规则、记忆或 Skill
+```
+
+如果你只有 15 分钟，完成一篇教程里的练习；如果你有一周，按 [7 天实践路线](/start-here/ai-practice-map/#7-天实践路线) 跑完一次闭环。不要把“收藏过”当作“已经会用”。
+
+## 使用前先守住边界
+
+第一次让 Agent 写文件、运行命令或访问外部系统前，先读 [AI 工具配置的安全底线](/start-here/setup-safety-basics/)。涉及密钥、删除、发布、付费调用或真实用户数据时，教程不能替你做授权决定。
+
+## 来源与维护
+
+- [如何使用这个 Wiki](/start-here/how-to-use-this-wiki/)：阅读状态、证据层级和学习 receipt。
+- [任务、上下文与验收](/start-here/context-task-verification/)：把模糊需求冻结成 Agent 可执行合同。
+- [来源索引](/sources/source-index/)：各栏目的一手资料、二手主题地图与许可边界。

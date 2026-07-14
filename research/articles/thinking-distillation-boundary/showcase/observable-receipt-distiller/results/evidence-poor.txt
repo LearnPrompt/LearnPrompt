@@ -1,0 +1,13 @@
+scenario: evidence-poor
+exit_code: 51
+distill_exit_code: 51
+evaluation_exit_code: not-run
+tests_exit_code: not-run
+source_receipts_unchanged: true
+holdout_result: not-run
+candidate_written: false
+changed_files:
+  ?? reports/
+
+distill_stdout:
+(none)

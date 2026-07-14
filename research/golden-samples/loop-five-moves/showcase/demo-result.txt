@@ -1,0 +1,12 @@
+Date: 2026-07-10
+Node: v24.11.0
+Command: node research/golden-samples/loop-five-moves/showcase/demo-run.mjs
+Working directory: repository root
+Exit code: 0
+
+1 DISCOVER uppercase-title
+2 HANDOFF uppercase-title
+3 VERIFY pass
+4 PERSIST uppercase-title:passed
+5 SCHEDULE idle
+Artifacts: $TMPDIR/learnprompt-loop-<redacted>

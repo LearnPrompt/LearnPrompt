@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "lane",
+    "status",
+    "baseline_sha",
+    "contract_sha",
+    "changed_files",
+    "test",
+    "summary"
+  ],
+  "properties": {
+    "lane": {
+      "type": "string",
+      "const": "codex_implementation"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "blocked",
+        "failed"
+      ]
+    },
+    "baseline_sha": {
+      "type": "string"
+    },
+    "contract_sha": {
+      "type": "string"
+    },
+    "changed_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "test": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command",
+        "exit_code",
+        "summary"
+      ],
+      "properties": {
+        "command": {
+          "type": "string"
+        },
+        "exit_code": {
+          "type": "integer"
+        },
+        "summary": {
+          "type": "string"
+        }
+      }
+    },
+    "summary": {
+      "type": "string"
+    }
+  }
+}

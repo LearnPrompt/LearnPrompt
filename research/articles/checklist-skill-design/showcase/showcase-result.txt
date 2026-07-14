@@ -1,0 +1,9 @@
+release-readiness-checklist archived result index
+
+- Offline replay summary: `release-readiness-checklist/results/verify-showcase.txt`
+- Ready report JSON: `release-readiness-checklist/results/ready-report.json`
+- Ready report Markdown: `release-readiness-checklist/results/ready-report.md`
+- Live nested Codex attempt summary: `release-readiness-checklist/results/live-run-summary.json`
+- Live nested Codex stderr summary: `release-readiness-checklist/results/codex-stderr-summary.txt`
+
+Final live note: the writer-side attempt was blocked by host permissions and remains archived. The outer controller then reran the same frozen fixture / prompt / schema with gpt-5.5; the call completed, wrote both reports, passed tests 2/2, and changed only reports/.

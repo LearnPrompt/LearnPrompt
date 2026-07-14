@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="620" viewBox="0 0 860 620" font-family="-apple-system, 'Helvetica Neue', 'PingFang SC', sans-serif">
+  <rect width="860" height="620" fill="#ffffff"/>
+  <!-- 标题 -->
+  <text x="40" y="52" font-size="24" font-weight="700" fill="#111111">开工清单：人与 Agent 之间的六格契约</text>
+  <text x="40" y="80" font-size="14" fill="#555555">每一格回答一个必答问题；缺哪一格，就对应一种可预测的失败。</text>
+
+  <!-- 顶部链路：人 → 清单 → Agent -->
+  <g>
+    <rect x="40" y="104" width="150" height="52" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <text x="115" y="136" font-size="15" fill="#111111" text-anchor="middle">编辑者（人）</text>
+
+    <rect x="355" y="104" width="150" height="52" fill="#c1440e" stroke="#111111" stroke-width="1"/>
+    <text x="430" y="136" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">开工清单</text>
+
+    <rect x="670" y="104" width="150" height="52" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <text x="745" y="136" font-size="15" fill="#111111" text-anchor="middle">编码 Agent</text>
+
+    <line x1="190" y1="130" x2="353" y2="130" stroke="#111111" stroke-width="1"/>
+    <polygon points="353,130 343,125 343,135" fill="#111111"/>
+    <line x1="505" y1="130" x2="668" y2="130" stroke="#111111" stroke-width="1"/>
+    <polygon points="668,130 658,125 658,135" fill="#111111"/>
+    <text x="272" y="122" font-size="12" fill="#555555" text-anchor="middle">写一次</text>
+    <text x="587" y="122" font-size="12" fill="#555555" text-anchor="middle">每个任务复用</text>
+  </g>
+
+  <!-- 表头 -->
+  <g>
+    <rect x="40" y="188" width="240" height="40" fill="#f2f2f2" stroke="#111111" stroke-width="1"/>
+    <rect x="280" y="188" width="290" height="40" fill="#f2f2f2" stroke="#111111" stroke-width="1"/>
+    <rect x="570" y="188" width="250" height="40" fill="#f2f2f2" stroke="#111111" stroke-width="1"/>
+    <text x="52" y="213" font-size="14" font-weight="700" fill="#111111">必答问题</text>
+    <text x="292" y="213" font-size="14" font-weight="700" fill="#111111">缺失时的典型失败</text>
+    <text x="582" y="213" font-size="14" font-weight="700" fill="#111111">对应 Harness 组件</text>
+  </g>
+
+  <!-- 六行 -->
+  <g font-size="13.5" fill="#111111">
+    <!-- 行1 -->
+    <rect x="40" y="228" width="240" height="58" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <rect x="280" y="228" width="290" height="58" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <rect x="570" y="228" width="250" height="58" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <text x="52" y="253" font-weight="700">仓库与当前分支</text>
+    <text x="52" y="273" font-size="12" fill="#555555">在哪工作、从哪个分支起步</text>
+    <text x="292" y="262" fill="#c1440e">直接在主分支乱改，无法隔离</text>
+    <text x="582" y="262">指令 Instructions</text>
+
+    <!-- 行2 -->
+    <rect x="40" y="286" width="240" height="58" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <rect x="280" y="286" width="290" height="58" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <rect x="570" y="286" width="250" height="58" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <text x="52" y="311" font-weight="700">运行方式与最快检查</text>
+    <text x="52" y="331" font-size="12" fill="#555555">怎么跑、用什么先验证</text>
+    <text x="292" y="320" fill="#c1440e">让 Agent 猜命令，反复试错</text>
+    <text x="582" y="320">能力 Capabilities</text>
+
+    <!-- 行3 -->
+    <rect x="40" y="344" width="240" height="58" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <rect x="280" y="344" width="290" height="58" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <rect x="570" y="344" width="250" height="58" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <text x="52" y="369" font-weight="700">允许与禁改目录</text>
+    <text x="52" y="389" font-size="12" fill="#555555">能碰什么、绝不能碰什么</text>
+    <text x="292" y="378" fill="#c1440e">改到不该改的文件，范围漂移</text>
+    <text x="582" y="378">约束 Constraints</text>
+
+    <!-- 行4 -->
+    <rect x="40" y="402" width="240" height="58" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <rect x="280" y="402" width="290" height="58" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <rect x="570" y="402" width="250" height="58" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <text x="52" y="427" font-weight="700">密钥提供方式</text>
+    <text x="52" y="447" font-size="12" fill="#555555">凭据从哪来、去哪不该留</text>
+    <text x="292" y="436" fill="#c1440e">密钥写进仓库或日志泄露</text>
+    <text x="582" y="436">约束 Constraints</text>
+
+    <!-- 行5 -->
+    <rect x="40" y="460" width="240" height="58" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <rect x="280" y="460" width="290" height="58" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <rect x="570" y="460" width="250" height="58" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <text x="52" y="485" font-weight="700">用户验收路径</text>
+    <text x="52" y="505" font-size="12" fill="#555555">凭什么判断真的做完</text>
+    <text x="292" y="494" fill="#c1440e">只问“完成了吗”，无客观信号</text>
+    <text x="582" y="494">编排 Orchestration</text>
+
+    <!-- 行6 -->
+    <rect x="40" y="518" width="240" height="58" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <rect x="280" y="518" width="290" height="58" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <rect x="570" y="518" width="250" height="58" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <text x="52" y="543" font-weight="700">回滚方式</text>
+    <text x="52" y="563" font-size="12" fill="#555555">失败了怎么安全退回</text>
+    <text x="292" y="552" fill="#c1440e">改坏了无法恢复，只能硬扛</text>
+    <text x="582" y="552">状态 State</text>
+  </g>
+
+  <text x="40" y="602" font-size="12" fill="#888888">LearnPrompt 编辑部原创示意图，CC BY-NC-SA 4.0。组件映射综合自 AGENTS.md 标准与 Claude Code 官方文档。</text>
+</svg>

@@ -1,0 +1,46 @@
+# 开工清单验证结果（脱敏冻结）
+
+来源：在仓库外的临时目录先捕获原始输出，确认无本地绝对路径、无运行时标识符后，
+截取以下最小片段。运行环境 Node.js v24.11.0，命令在 showcase/ 目录内执行。
+核验日期：2026-07-11。
+
+## 完整项目卡：通过
+
+```text
+$ node verify-checklist.mjs checklist/project-card.yaml
+PASS repo_and_branch: 已填写
+PASS run_and_check: 已填写
+PASS boundaries: 已填写
+PASS secrets: 已填写
+PASS acceptance: cd starlight && npm run build
+PASS rollback: 已填写
+PASS summary: 6/6 项开工清单字段齐全
+exit=0
+```
+
+## 不完整项目卡：被拦截
+
+故意删掉 rollback、只写 allow 不写 forbid、把验收写成“手动看一下”。
+
+```text
+$ node verify-checklist.mjs checklist/project-card-incomplete.yaml
+PASS repo_and_branch: 已填写
+PASS run_and_check: 已填写
+PASS secrets: 已填写
+FAIL 字段 boundaries 缺少子项 forbid
+FAIL 字段 acceptance 不是可执行命令：手动打开页面看一下有没有问题
+FAIL 缺失字段 rollback（回滚方式）
+FAIL summary: 3 项未通过，项目卡不完整
+exit=1
+```
+
+## 这个结果证明了什么
+
+- 一份写全的开工清单可以被脚本逐项校验，退出码 0；缺项时退出码 1 并指名缺哪一项。
+- “验收”是不是可执行命令，可以机械判断，散文式的“手动看一下”会被拦下。
+
+## 它没有证明什么
+
+- 脚本只检查字段是否齐全、验收是否像命令，不保证内容本身正确。
+- 验收命令能被识别，不等于它在目标仓库真的会通过；那需要另跑一次真实构建。
+- 禁改目录写进 YAML，是给人看的提醒，真正的强制边界要靠工具的 deny 规则或沙箱。

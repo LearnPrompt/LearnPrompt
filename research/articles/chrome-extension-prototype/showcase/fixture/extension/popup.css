@@ -1,0 +1,175 @@
+:root {
+  color-scheme: light;
+  --bg: #f7efe4;
+  --panel: #fffaf5;
+  --ink: #1f2937;
+  --muted: #5b6574;
+  --line: #e8d8c2;
+  --accent: #b45309;
+  --accent-strong: #92400e;
+  --ok: #0f766e;
+  --warn: #b91c1c;
+  --shadow: 0 18px 40px rgba(95, 57, 16, 0.18);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 360px;
+  font-family: "PingFang SC", "Noto Sans CJK SC", "Helvetica Neue", sans-serif;
+  background:
+    radial-gradient(circle at top right, rgba(251, 191, 36, 0.18), transparent 36%),
+    linear-gradient(180deg, #fff8ef 0%, var(--bg) 100%);
+  color: var(--ink);
+}
+
+code {
+  font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+.shell {
+  padding: 18px;
+}
+
+.hero,
+.status-panel,
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+.hero {
+  padding: 18px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.hero h1 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+
+.summary {
+  margin: 0;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.status-panel {
+  margin-top: 14px;
+  padding: 16px 18px;
+}
+
+.status-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.status-head h2 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.hint {
+  margin: 12px 0 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+kbd {
+  display: inline-block;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 8px;
+  background: #fffdf8;
+  font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+
+.hint span {
+  display: inline-block;
+  margin: 0 8px;
+  color: var(--muted);
+}
+
+.status {
+  margin: 12px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.status.is-ok {
+  color: var(--ok);
+}
+
+.status.is-error {
+  color: var(--warn);
+}
+
+.card {
+  margin-top: 14px;
+  padding: 16px 18px;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.card-head h2 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  background: #fef3c7;
+  color: var(--accent-strong);
+}
+
+.fields {
+  margin: 14px 0 0;
+  display: grid;
+  gap: 12px;
+}
+
+.fields div {
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);
+}
+
+.fields div:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+dt {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+dd {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  word-break: break-word;
+}

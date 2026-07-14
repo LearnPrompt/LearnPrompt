@@ -1,0 +1,35 @@
+五类必要信息 · 字段完整度检查 · fail→pass 实测
+运行日期: 2026-07-11
+运行命令: node check-claude-md.mjs <path>
+说明: 这是字段完整度静态检查，不是模型遵循度实验。
+
+### RUN 1: vague-notes/CLAUDE.md（空泛项目说明，预期 FAIL） ###
+检查文件: vague-notes/CLAUDE.md
+总行数: 10
+----
+FAIL  真实命令
+      建议: 写出项目真实命令（如 `npm run build`），不要只写「运行测试」
+FAIL  允许修改范围
+      建议: 说明允许改哪里、先报计划（如「只改计划中列出的文件」）
+FAIL  禁区
+      建议: 点名不能碰的路径（如 `.env`、`secrets/`、部署配置）
+FAIL  最快验收
+      建议: 指定改完后跑哪个最快的检查命令来验收
+FAIL  输出收尾
+      建议: 要求结尾汇报改了哪些文件、跑了哪些命令、还剩什么风险
+----
+结果: 缺 5 类必要信息（这只是字段完整度，不代表模型一定遵守）
+exit=1
+
+### RUN 2: minimal/CLAUDE.md（最小 CLAUDE.md，预期 PASS） ###
+检查文件: minimal/CLAUDE.md
+总行数: 26
+----
+PASS  真实命令
+PASS  允许修改范围
+PASS  禁区
+PASS  最快验收
+PASS  输出收尾
+----
+结果: 5/5 类必要信息齐全
+exit=0

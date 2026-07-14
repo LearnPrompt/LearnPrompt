@@ -1,0 +1,49 @@
+{
+  "packet_root": ".",
+  "index_citation": "MEMORY_INDEX.md",
+  "current_status": {
+    "answer": "Blocked until the digest fixture is replayed with Asia/Shanghai as the canonical timezone.",
+    "citations": [
+      "memory/status.md"
+    ]
+  },
+  "accepted_decision": {
+    "answer": "Keep Asia/Shanghai as the canonical scheduler timezone for this tutorial fixture.",
+    "citations": [
+      "memory/decision.md"
+    ]
+  },
+  "rationale_and_evidence": {
+    "answer": "The tutorial examples and acceptance fixture were authored around an Asia/Shanghai workday, so preserving that canonical timezone fixes the drift without rewriting the teaching baseline. Evidence: The fixture comparison showed the generated digest at 00:00 UTC instead of the expected 08:00 Asia/Shanghai slot.",
+    "citations": [
+      "memory/decision.md",
+      "memory/context.md"
+    ]
+  },
+  "next_command": {
+    "answer": "node scripts/replay-digest.mjs --timezone Asia/Shanghai",
+    "citations": [
+      "memory/runbook.md"
+    ]
+  },
+  "known_limitation": {
+    "answer": "The fixture does not cover DST regions, so this packet only proves the Asia/Shanghai path.",
+    "citations": [
+      "memory/status.md",
+      "memory/context.md"
+    ]
+  },
+  "verification_date": {
+    "answer": "2026-07-12",
+    "citations": [
+      "memory/status.md"
+    ]
+  },
+  "all_cited_paths": [
+    "MEMORY_INDEX.md",
+    "memory/context.md",
+    "memory/decision.md",
+    "memory/runbook.md",
+    "memory/status.md"
+  ]
+}

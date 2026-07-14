@@ -1,36 +1,314 @@
 ---
-title: Hermes Agent 的学习循环、记忆和 Skill
-description: 从长期协作角度理解 Hermes 的价值。
+title: Hermes Agent 的学习循环：记忆、Skill 与写入审批
+description: 分清 Hermes 何时把事实写入 memory、何时把流程写成 Skill，并用审批 gate 避免错误学习被固化。
 sidebar:
   order: 1
 difficulty: intermediate
 source_repo: alchaincyf/hermes-agent-orange-book
 source_url: https://github.com/alchaincyf/hermes-agent-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-12"
+reading_time: 16 分钟
+research_path: research/articles/hermes-learning-loop
+showcase_path: research/articles/hermes-learning-loop/showcase
+showcase_status: verified
+quality_score: 100
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 16 分钟 | 2026-07-12 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/hermes-agent-orange-book" url="https://github.com/alchaincyf/hermes-agent-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+你连续用 Hermes Agent 改一个项目。第一天你纠正它：“这个仓库发版前必须先跑 Starlight build。”第二天它真的记住了。又过几天，它在一次 API 503 后“学到”某个服务总是不稳定，或者把日志里的 token-shaped 字符串当成长期上下文保存下来。前者省时间，后者会污染下一次会话，甚至扩大安全风险。
 
-## 核心概念
+所以 Hermes 的“学习循环”不能写成拟人化宣传。更准确的说法是：它有几种**可观察的持久化和维护机制**，会把对话后的候选事实或候选流程写入有限的存储层；你可以打开写入审批，让这些变化先进入 pending，再由人批准或拒绝。
 
-Hermes 的价值在于把对话、记忆、工具和 Skill 放进一个持续协作环境。它更像长期工作台，而不是一次性问答窗口。
+本文只讲这一条线：built-in memory、Skills、background self-improvement review、write approval、Curator 与外部 memory provider 的边界。截至 2026-07-12，官方最新 release 是 v0.18.2，而本文本机只读 probe 是 `Hermes Agent v0.17.0 (2026.6.19)`，所以命令可用性必须分版本看，不能把本机帮助输出当成永恒事实。
 
-## 使用方法
+## 读完你能做什么
 
-1. 把稳定偏好写入配置。
-2. 把项目上下文放进可读文件。
-3. 把重复流程写成 Skill。
-4. 对外部工具保持可替换。
+你会得到四个判断：
 
-## 常见错误
+1. 看见 Hermes “学到东西”时，知道它可能改的是 memory、Skill，还是另一个维护路径。
+2. 判断一个候选 lesson 应该进入 `MEMORY.md` / `USER.md`，还是进入 Skill，还是直接拒绝。
+3. 打开 `memory.write_approval` 与 `skills.write_approval`，并用 slash commands 审核 pending 写入。
+4. 解释为什么 background review、Curator、外部 memory provider 都不是“训练模型权重”。
 
-- 让 Hermes 承担所有检索和生成，导致卡顿。
-- 没有区分本地文件问题、模型问题和工具问题。
-- 把临时失败写成永久配置。
+![Hermes 的学习审批循环：证据进入 background review 后先分为 memory fact 或 Skill procedure，再进入 pending approval；91-95 拒绝轨拦截缺证据、分错层、敏感内容、跳过审批和缺版本边界的候选；Curator 标为旁路维护而非同一步。](/images/articles/hermes-learning-loop/hermes-learning-approval-loop.svg)
+*图注：学习循环的关键不是“自动记住一切”，而是把候选 lesson 分流、排除、审批，再让下一次会话或按需 Skill 受影响。*
 
-## 实战案例
+## 先把“学习”拆成可观察机制
 
-Obsidian 检索卡顿时，先检查 iCloud 文件是否完整下载，再决定是否换 VaultSearch 或本地索引方案。
+Hermes 的学习循环至少包含六个可检查环节：
+
+| 环节 | 可观察对象 | 它说明什么 |
+| --- | --- | --- |
+| 会话证据 | 用户纠正、工具结果、错误与成功路径 | 候选 lesson 的来源 |
+| background self-improvement review | turn 后可能提出 memory 或 Skill 写入 | 这是回顾与压缩，不是模型训练 |
+| built-in memory | `MEMORY.md` / `USER.md` | 小而稳定的事实，下一 session start 注入 |
+| Skills | `SKILL.md` 和支持文件 | 较长的多步骤流程，相关时按需加载 |
+| write approval | pending memory / pending skill writes | 人在写入生效前审核 |
+| Curator | skill maintenance commands and lifecycle | 周期性整理路径，不是每轮 review |
+
+这几个机制会让 Agent 在长期使用中表现得更连续，但它们的性质不同。把它们混成一句“它会自我进化”，会掩盖两个工程问题：学错了怎么办，以及什么内容根本不该被学。
+
+## Built-in memory：有界、精选、跨会话
+
+官方 memory 文档把 Hermes 的 built-in memory 描述为两个文件：`MEMORY.md` 和 `USER.md`。截至 2026-07-12，当前官方文档列出的默认上限分别是：
+
+| Store | 用途 | 当前官方默认上限 |
+| --- | --- | ---: |
+| `MEMORY.md` | Agent 的环境事实、项目约定、学到的工作习惯 | 2200 chars |
+| `USER.md` | 用户偏好、沟通风格、期望 | 1375 chars |
+
+这些值是版本事实，不是产品承诺。官方文档可能继续调整；本机或团队配置也可能覆盖默认值。
+
+更重要的是注入时机：built-in memory 会在 session start 作为 frozen snapshot 注入 system prompt。会话中写入会立即持久化到磁盘，但不会改变当前 prompt 前缀；下一次会话开始时才进入模型看到的初始上下文。这能保护 prompt cache，也意味着你不能指望“刚写入 memory”马上改变本轮推理。
+
+适合写入 memory 的内容很短、稳定、可复用：
+
+| 候选内容 | 去向 | 理由 |
+| --- | --- | --- |
+| “用户偏好简洁中文、需要具体命令。” | `USER.md` | 稳定偏好，所有任务都受影响 |
+| “这个仓库的文档站在 `starlight/`，构建命令是 `npm --prefix starlight run build`。” | `MEMORY.md` | 项目环境事实 |
+| “一次请求返回 503。” | 不写 | 暂态错误，不应固化 |
+| “日志里出现 token-shaped 字符串。” | 不写 | 敏感或疑似凭据，不应进入长期上下文 |
+| “今天为了这篇文章临时用了某个 `/tmp/...` 路径。” | 不写 | 一次性运行细节 |
+
+memory 不是 session transcript，也不是错误日志仓库。把整段对话、一次失败、猜测、credential 或密钥路径塞进去，会让每次新会话都携带噪声和风险。
+
+## Skill：保存“怎么做”，不要塞进 always-on memory
+
+Hermes tips 文档给了一个实用分界：memory 存 “what”，Skills 存 “how”。
+
+如果 lesson 是“用户喜欢怎样回答”“这个项目是什么”“某个工具在哪个版本有哪个约定”，它更像事实。事实应该短，适合 built-in memory。
+
+如果 lesson 是“发版要经过 7 步，每一步有哪些命令、失败怎么回滚、哪些文件必须检查”，它更像流程。流程不该常驻每个 prompt；它应该作为 Skill，在任务相关时按需加载。这样做有两个好处：长流程不会挤占每一轮上下文，流程本身也能用 `SKILL.md`、脚本和支持文件表达得更完整。
+
+一个可复用流程候选通常长这样：
+
+```text
+When publishing a LearnPrompt article:
+1. Freeze brief and research pack.
+2. Run the article-specific showcase validator.
+3. Run the single article validator.
+4. Run the Starlight build.
+5. Run git diff --check.
+6. Keep writer phase partial until external review passes.
+```
+
+这不适合压成一条 memory。它包含顺序、检查、边界和异常处理，应该进入 Skill，而且在写入审批打开时先 stage 为 pending。
+
+## Background review：可能提出写入，不是训练权重
+
+官方 memory 与 skills 文档都提到 turn 后的 background self-improvement review。它可能根据刚才的会话保存 memory，或创建、修改、stage 一个 Skill。这里有三个边界必须说清楚：
+
+1. 它不是训练模型权重。下一次表现变化来自持久化上下文和按需 Skill，不是底层模型被重新训练。
+2. 它不是保证每轮都有正确学习。官方措辞是 may；一个 review 可能不写，也可能误判。
+3. 它不是你可以跳过证据的理由。候选 lesson 仍然要有来源、版本范围、目标 store 和拒绝条件。
+
+因此最安全的心智模型是：background review 是“候选 lesson 生成器”，不是“真理写入器”。当任务高风险、环境安全要求高，或你正在调试错误流程时，应该让它先进入 pending。
+
+## 打开写入审批：把写入变成 pending
+
+官方文档给 memory 和 Skills 分别提供了写入审批开关。一个最小配置示例是：
+
+```yaml
+memory:
+  write_approval: true
+
+skills:
+  write_approval: true
+```
+
+这段示例只展示关键字段。真实配置文件位置、完整字段和默认值要以你的 Hermes 版本文档为准，不要把教程里的片段直接当成完整配置。
+
+打开 `memory.write_approval: true` 后，memory 写入会先等待审核。官方列出的 review commands 包括：
+
+```text
+/memory pending
+/memory approve <id>
+/memory reject <id>
+```
+
+打开 `skills.write_approval: true` 后，Skill 的 create / edit / patch / delete / write_file / remove_file 等写操作会 stage。官方列出的 review commands 包括：
+
+```text
+/skills pending
+/skills diff <id>
+/skills approve <id>
+/skills reject <id>
+```
+
+review surface 不完全一样。memory 条目短，CLI 前台写入通常可以 inline 看清；messaging、脚本和 background review 更适合进入 `/memory pending`。Skill diff 可能很长，messaging chat bubble 会截断或只适合看 gist；完整 diff 应优先在 CLI、dashboard 或 pending JSON 中检查。文章的重点不是让你多点一次确认，而是让“影响未来会话的内容”留下一个人工 gate。
+
+## 审批时看什么：一张分流表
+
+审核 pending 写入时，不要只问“听起来对不对”。按下面顺序判断：
+
+| 问题 | 通过时 | 不通过时 |
+| --- | --- | --- |
+| 有证据路径吗？ | 继续判断 | 拒绝，要求 provenance |
+| 是稳定事实还是流程？ | fact 去 memory，procedure 去 Skill | 分错层就拒绝或要求改写 |
+| 是否包含 secret、token、私钥、账号标识？ | 继续判断 | 拒绝，必要时轮换凭据 |
+| 是否只观察了一次？ | 如果仍有长期价值，写明版本范围 | 标记 needs-more-evidence |
+| 是否声明会自动生效？ | stage 项必须 require approval | 拒绝绕过审批的 proposal |
+| 版本范围清楚吗？ | 可接受 | 拒绝没有 version scope 的结论 |
+
+这也是本文 Showcase 的合约：`stage-memory`、`stage-skill`、`reject-transient`、`reject-sensitive`、`needs-more-evidence` 五类 action。所有 stage 项必须 `requires_human_approval: true`，并带 evidence paths、target store、reason 与 version scope。
+
+## Showcase：learning-write-approval-gate
+
+Showcase 目录位于：
+
+```text
+research/articles/hermes-learning-loop/showcase/
+```
+
+它没有读取真实 Hermes memory、skills、config、status、profile 或 session database。输入是完全合成的 `session-lessons.json`，至少包含六条候选：
+
+1. 稳定用户偏好。
+2. 稳定项目环境事实。
+3. 可复用发布流程。
+4. 一次性 503。
+5. secret-shaped token。
+6. 只有单次观察、证据不足的工具行为。
+
+本机 no-model probe 只运行了安全只读命令：
+
+```bash
+hermes --version
+hermes skills --help
+hermes curator --help
+hermes memory --help
+```
+
+研究包只保留脱敏摘要：本机是 `Hermes Agent v0.17.0 (2026.6.19)`；`skills`、`curator`、`memory` 的子命令能力来自本安装版本帮助输出。原始输出里的本地路径、项目路径和运行环境细节没有进入公开工件。
+
+确定性矩阵、隐私门禁与 fresh-model proposal 可以这样复现：
+
+```bash
+node research/articles/hermes-learning-loop/showcase/scripts/verify-showcase.mjs
+node research/articles/hermes-learning-loop/showcase/scripts/privacy-scan.mjs
+CODEX_NESTED_MODEL=gpt-5.5 node research/articles/hermes-learning-loop/showcase/scripts/run-codex-live.mjs
+```
+
+2026-07-12 的实际验证摘要：
+
+```text
+valid: expected 0, actual 0
+missing-provenance: expected 91, actual 91
+wrong-store: expected 92, actual 92
+sensitive-proposal: expected 93, actual 93
+approval-bypass: expected 94, actual 94
+missing-version-scope: expected 95, actual 95
+privacy: expected 0, actual 0
+```
+
+validator 覆盖的失败码：
+
+| 退出码 | 含义 |
+| ---: | --- |
+| 91 | 缺 provenance / evidence，或候选哈希变化 |
+| 92 | memory / Skill store 分错 |
+| 93 | 敏感内容进入 proposal，或 privacy pattern 泄露 |
+| 94 | 声称 auto-applied，或 stage 项 `requires_human_approval` 不是 true |
+| 95 | 未知 action、缺 version scope，或 action 计数不符 |
+
+fresh `gpt-5.5` proposal run 没有启动 Hermes session，也没有读取真实 `~/.hermes`。它在 Showcase 目录只读合成 fixture、合同与脱敏 no-model probe，只写 `reports/learning-proposals.json` 和 `.md`。外层 gate 记录 `exec 0`、两份报告存在、validator `0`、protected files unchanged；六类候选全部按合同分流，且敏感候选只引用 candidate ID，没有复制 credential-shaped 文本。模型完成消息仍不是验收依据，最终通过来自独立 validator 与 privacy scan。
+
+## Curator：旁路维护，不是每轮 review
+
+Curator 经常被误写成“每次对话后自我改进”的同义词。它不是。
+
+background review 是 turn 后可能提出 memory / Skill 写入的路径；Curator 是另一条周期性 skill maintenance 路径，用来处理 skill 生命周期、归档、恢复、备份与回滚。它关注的是技能库维护，而不是把刚才这一轮对话直接压成 memory。
+
+这里还要处理一个版本边界。本文本机 `hermes curator --help` 来自 Hermes Agent v0.17.0，它写明 curator 是 auxiliary-model background task，周期性 review agent-created skills，并列出 `status`、`run`、`pause`、`resume`、`pin`、`unpin`、`restore`、`list-archived`、`archive`、`prune`、`backup`、`rollback` 等子命令；同一帮助输出还说 bundled 和 hub-installed skills are never touched。当前在线官方 curator 文档截至 2026-07-12 更晚：hub-installed skills 仍是 off-limits；bundled built-ins 的处理有更细版本语义，可能在配置允许时被归档，但不会被 patch、consolidate 或 delete，并且 protected built-ins 有硬保护。
+
+所以写教程时不能用一句“Curator 会整理所有 Skill”概括。更稳的表达是：按你的 Hermes 版本核对 `hermes curator --help` 和当前官方文档；不要把 Curator 和每轮 background review 混为一谈；不要假设它能修改 hub skills；bundled built-ins 的边界要看版本和配置。
+
+## 外部 memory provider：扩展，不替代 built-in memory
+
+`hermes memory --help` 在本机 v0.17.0 中显示 `setup`、`status`、`off`、`reset`，并说明 external memory provider 是可选扩展，built-in memory (`MEMORY.md` / `USER.md`) 始终 active。在线官方 memory 文档也把 external providers 写成 built-in memory 之外的 deeper persistent memory。
+
+因此不要把 external provider 当成替代品。built-in memory 仍然是小而关键、session start 注入的事实层；外部 provider 可以提供更深的检索、建模或语义能力，但它不应该成为“什么都往里倒”的借口。
+
+provider 数量也不要写死。在线官方文档和本机 v0.17.0 help 的 provider 列表不完全一致，这正好说明：除非你同时写清核验日期与版本，否则不要用“当前有 N 个 provider”当核心事实。
+
+## 失败模式与调试顺序
+
+如果你怀疑 Hermes 学错了，不要先删库或重装。按影响范围从小到大查：
+
+1. **先确认症状发生在哪个 session**：当前会话没有看到刚写入的 memory，可能只是 frozen snapshot 的正常结果。
+2. **查 pending**：如果打开了审批，先跑 `/memory pending` 和 `/skills pending`，看错误 lesson 是否还没生效。
+3. **看目标层是否分错**：事实不该是 Skill，流程不该塞进 memory。
+4. **检查 evidence 与版本范围**：一次 503、单次工具慢、临时路径，都不该变成长期规则。
+5. **检查隐私与凭据**：任何 token-shaped、key-shaped、账户标识或私有路径都应拒绝进入 proposal。
+6. **再看 Curator**：只有当问题涉及 skill lifecycle、归档、恢复、备份、回滚时，才把 Curator 放进排查路径。
+7. **最后核对版本**：本机 CLI、dashboard、messaging surface 与在线文档可能不完全同步。
+
+一个常见误判是：“我已经 approve 了 memory，为什么当前回合还没有变化？”答案通常是 session-start frozen snapshot。另一个误判是：“Skill pending 没有完整 diff，是不是没有 diff？”答案通常是 messaging surface 不适合看长 diff，要去 CLI、dashboard 或 pending JSON。
+
+## 什么时候不用这个学习循环
+
+以下情况不要让候选 lesson 进入长期层：
+
+- 任务本身是一次性研究，结论不稳定。
+- 你正在处理 secrets、凭据、客户数据或生产账号。
+- 你只观察到一次失败，无法排除网络、速率、权限或环境原因。
+- 流程还在被人类频繁改写，写成 Skill 会让错误步骤传播。
+- 团队尚未约定谁有权 approve 影响所有未来会话的内容。
+- 你只是想找回某段过去对话，而不是让事实常驻 prompt。此时 session search 或普通日志更合适。
+
+学习循环的价值在重复工作中出现：稳定偏好、稳定环境事实、被验证过的多步骤流程、被多次纠正后的固定约定。它不适合保存所有历史。
+
+## 可复制的审核提示词
+
+你可以把下面这段作为 pending memory / Skill review 的人工检查模板：
+
+```text
+请只审核这条 Hermes learning proposal，不要新增事实。
+
+1. 它的 evidence paths 是否足以支持结论？
+2. 它是 what 还是 how？what 才能进入 memory；how 应进入 Skill。
+3. 是否包含 secret-shaped、account id、private path、session/request/thread id？
+4. 是否只是一次性错误、一次 503、猜测或临时路径？
+5. stage 项是否 requires_human_approval: true？
+6. version_scope 是否说明文档日期、Hermes 版本或仓库状态？
+
+输出：approve / reject / needs-more-evidence，并给一句理由。
+```
+
+如果要写配置，请先用你的 Hermes 版本核对完整配置位置与字段，再只改审批相关字段。不要在教程、issue 或聊天里贴 `.env`、token 或真实 pending JSON。
+
+## 练习：审一批候选 lesson
+
+用本文 Showcase 的合成 fixture 做练习：
+
+```bash
+node research/articles/hermes-learning-loop/showcase/scripts/classify-lessons.mjs
+node research/articles/hermes-learning-loop/showcase/scripts/validate-learning-proposals.mjs
+```
+
+完成标准：
+
+- 你能解释为什么稳定用户偏好和项目环境事实进入 `stage-memory`。
+- 你能解释为什么发布流程进入 `stage-skill`。
+- 你能解释一次性 503 为什么是 `reject-transient`。
+- 你能指出 secret-shaped token 为什么必须 `reject-sensitive`。
+- 你能说明单次工具行为为什么是 `needs-more-evidence`。
+- 你能说出 91-95 每个失败码保护了哪类错误。
+
+## 来源与延伸阅读
+
+- [Hermes 官方文档：Persistent Memory](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory/)：built-in memory、`MEMORY.md` / `USER.md`、默认 char limits、frozen snapshot、write approval、background review、external providers。核验日期：2026-07-12。
+- [Hermes 官方文档：Skills System](https://hermes-agent.nousresearch.com/docs/user-guide/features/skills/)：Skill 用途、background review 可提出 skill changes、`skills.write_approval` 与 `/skills pending|diff|approve|reject`。核验日期：2026-07-12。
+- [Hermes 官方文档：Curator](https://hermes-agent.nousresearch.com/docs/user-guide/features/curator)：Curator 的周期性 skill maintenance、归档、恢复、备份/回滚及版本边界。核验日期：2026-07-12。
+- [Hermes 官方文档：Tips & Best Practices](https://hermes-agent.nousresearch.com/docs/guides/tips)：memory vs Skills 的 “what/how” 分界、context files、frozen snapshot 提醒。核验日期：2026-07-12。
+- [NousResearch/hermes-agent GitHub 仓库](https://github.com/NousResearch/hermes-agent)：官方开源仓库。核验日期：2026-07-12。
+- [NousResearch/hermes-agent Releases](https://github.com/NousResearch/hermes-agent/releases/tag/v2026.7.7.2)：官方 v0.18.2 release，发布时间 2026-07-08；晚于本机 v0.17.0 probe。核验日期：2026-07-12。
+- [Hermes Agent Orange Book](https://github.com/alchaincyf/hermes-agent-orange-book)：二手中文主题地图，作者 HuaShu/花叔/alchaincyf。README 说明 2.0 基于 Hermes v0.16.0，且从旧版 CC BY-NC-SA 4.0 改为仓库 `LICENSE` 中的 MIT License；本文没有复制其 PDF、截图、图表或图片，产品事实以官方文档与本机 v0.17.0 no-model probe 为准。
+
+教学图 `/images/articles/hermes-learning-loop/hermes-learning-approval-loop.svg` 为 LearnPrompt 编辑部原创，基于本文 research pack 与 Showcase 合约重绘，许可为 CC BY-NC-SA 4.0。

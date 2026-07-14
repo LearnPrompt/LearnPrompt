@@ -1,0 +1,12 @@
+Date: 2026-07-10
+Node: v24.11.0
+Command: node scripts/verify-harness.mjs
+Working directory: research/golden-samples/harness-five-components/showcase/minimal-harness
+Exit code: 0
+
+PASS instructions: AGENTS.md
+PASS capabilities: capabilities.json
+PASS constraints: constraints.json
+PASS memory: memory.md
+PASS orchestration: orchestration.json
+PASS summary: 5/5 harness components verified

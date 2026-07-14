@@ -1,0 +1,15 @@
+Date: 2026-07-10
+Command: cd starlight && npm run build
+Exit code: 0
+
+Relevant generated routes:
+- /ai-coding/choose-claude-code-or-codex/index.html
+- /agent-engineering/what-is-harness/index.html
+- /loop-engineering/five-moves/index.html
+
+Summary:
+- 49 pages built
+- Pagefind search index built from 49 HTML files
+- sitemap-index.xml generated
+
+Note: the first build attempt correctly failed because unquoted YAML dates were parsed as objects while the content schema required strings. All three `verified_at` values were quoted, and the command above is the successful rerun.

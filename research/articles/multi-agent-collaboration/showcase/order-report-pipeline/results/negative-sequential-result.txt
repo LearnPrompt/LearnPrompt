@@ -1,0 +1,16 @@
+order-report-pipeline 负例二：接口未冻结/依赖未满足 → 判定 sequential
+================================================================
+运行日期：2026-07-11
+说明：以下为脱敏冻结输出，不含本机绝对路径或运行标识。
+
+命令：
+  node merge-gate.mjs tasks/task-a-parser.json tasks/task-d-renderer-unfrozen.json
+输出：
+  协调器合并门禁：order-report-pipeline
+  参与任务：task-a-parser, task-d-renderer-unfrozen
+  ----
+  SEQUENTIAL  task-d-renderer-unfrozen: 接口未冻结（interface_frozen=false），不能并行
+  SEQUENTIAL  task-d-renderer-unfrozen: 依赖 task-a-parser 未满足，必须先串行完成
+  ----
+  判定：SEQUENTIAL
+退出码：4（不进入并行合并，必须先串行冻结接口、完成依赖）

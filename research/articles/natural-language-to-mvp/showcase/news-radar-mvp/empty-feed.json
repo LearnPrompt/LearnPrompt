@@ -1,0 +1,9 @@
+[
+  {
+    "title": "与关注主题无关的测试条目",
+    "source": "fixture",
+    "url": "https://example.com/offtopic",
+    "published": "2026-01-01",
+    "tags": ["offtopic"]
+  }
+]

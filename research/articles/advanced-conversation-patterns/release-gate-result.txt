@@ -1,0 +1,65 @@
+advanced-conversation-patterns 发布前机械门禁（冻结脱敏摘录）
+================================================================
+运行日期：2026-07-11
+运行位置：LearnPrompt 仓库根目录。
+说明：原始终端输出先在工作树外检查；以下为进程退出后冻结的关键行，不含本机绝对路径或运行标识。当前仍是 partial，不代表独立终审通过。
+
+1. Stage A：只读探索并冻结 handoff
+命令：node research/articles/advanced-conversation-patterns/showcase/scripts/stage-a-explore.mjs
+关键输出：
+  mode=inspect-and-freeze
+  exit=1
+  FAIL collapses punctuation gaps into one hyphen expected=rock-roll actual=rock--roll
+  frozen fields=symptom,evidence,allowed_files,acceptance,risks
+退出码：0（脚本成功归档基线失败）
+
+2. Stage B 正例：新进程与临时副本
+命令：
+  node research/articles/advanced-conversation-patterns/showcase/scripts/stage-b-implement.mjs \
+    --handoff research/articles/advanced-conversation-patterns/showcase/handoff/handoff-good.json \
+    --result research/articles/advanced-conversation-patterns/showcase/results/positive-run.txt
+关键输出：
+  isolation=fresh-process-and-temp-copy
+  baseline_exit=1
+  edited=src/slugify.js
+  verify_exit=0
+  allowed_files_respected=yes
+  result=PASS
+退出码：0
+
+3. Stage B 负例：缺 acceptance command
+命令：
+  node research/articles/advanced-conversation-patterns/showcase/scripts/stage-b-implement.mjs \
+    --handoff research/articles/advanced-conversation-patterns/showcase/handoff/handoff-missing-acceptance.json \
+    --result research/articles/advanced-conversation-patterns/showcase/results/negative-run.txt
+关键输出：
+  REJECT missing acceptance.commands[0]
+退出码：2（预期拒绝）
+
+4. 单篇 validator
+命令：
+  node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs \
+    --article starlight/src/content/docs/claude-code/advanced-conversation-patterns.mdx \
+    --research research/articles/advanced-conversation-patterns
+关键输出：
+  PASS article: starlight/src/content/docs/claude-code/advanced-conversation-patterns.mdx
+  PASS research: research/articles/advanced-conversation-patterns
+  PASS status: partial
+退出码：0
+
+5. Starlight 完整构建
+命令：npm --prefix starlight run build
+关键输出：
+  Found 49 HTML files.
+  49 page(s) built
+  Complete!
+退出码：0
+
+6. diff 格式检查
+命令：git diff --check
+关键输出：（无输出）
+退出码：0
+
+7. 教学图浏览器复检
+命令：用 1200x780 Chrome viewport 渲染 conversation-patterns-map.svg，并人工检查文本、箭头和边界。
+结果：PASS；无文本越界或裁切。

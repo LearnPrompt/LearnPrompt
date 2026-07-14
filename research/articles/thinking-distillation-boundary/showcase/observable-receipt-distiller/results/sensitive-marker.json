@@ -1,0 +1,15 @@
+{
+  "scenario": "sensitive-marker",
+  "exit_code": 52,
+  "distill_exit_code": 52,
+  "evaluation_exit_code": null,
+  "tests_exit_code": null,
+  "source_receipts_unchanged": true,
+  "holdout_result": null,
+  "candidate_written": false,
+  "changed_files": [
+    "?? reports/"
+  ],
+  "distill_summary_path": "reports/distillation-summary.json",
+  "evaluation_summary_path": null
+}

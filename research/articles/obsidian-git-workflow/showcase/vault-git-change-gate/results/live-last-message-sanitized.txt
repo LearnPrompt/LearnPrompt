@@ -1,0 +1,13 @@
+已按 `TASK_CONTRACT.md` 完成。
+
+变更文件：
+- `notes/projects/alpha-plan.md`
+- `notes/research/git-boundaries.md`
+- `receipts/candidate-receipt.md`
+
+验证：
+- `git status --short` 仅显示上述允许路径变更。
+- receipt 已包含精确 `baseline_tree_hash: 2949f8fef2a1c94ffecf559476c7881801883ad6`
+- `link_check: passed` 保持为指定字段值。
+
+经验: 新建未跟踪文件不会出现在普通 `git diff --name-only` 中，需结合 `git status --short` 或 `find` 验证。

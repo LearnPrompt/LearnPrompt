@@ -1,43 +1,161 @@
 ---
-title: Plan、Auto 与人工审批边界
-description: 什么时候让 Agent 自动执行，什么时候必须人工确认。
+title: Plan、Auto 与人工审批边界：按风险放权，别按信任放权
+description: 用只读计划、普通自动执行、需人工批准三档风险边界，决定 coding agent 哪些动作能自动跑，并在 Claude Code 与 Codex 里各自选对权限原语。
 sidebar:
   order: 4
 difficulty: beginner
 source_repo: alchaincyf/codex-orange-book
 source_url: https://github.com/alchaincyf/codex-orange-book
-updated_from: 2026-05
+updated_from: "2026-05"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-11"
+reading_time: 12 分钟
+research_path: research/articles/plan-auto-approval-boundary
+showcase_path: research/articles/plan-auto-approval-boundary/showcase
+showcase_status: verified
+quality_score: 89
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 入门 | 12 分钟 | 2026-07-11 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/codex-orange-book" url="https://github.com/alchaincyf/codex-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+你让 agent 改一个小 bug，它顺手跑了 `git push`，把一个没验证的分支推到了远端。你复盘时会怎么说？多半是这句：我以为它会小心一点。问题就出在这句话上。把放权的依据放在对模型的信任上，等于把一次不可逆的动作交给一个概率系统去自觉。
 
-## 核心概念
+真正稳定的做法是按动作的风险放权，并让边界由工具机械强制，而不是靠模型自律。这篇教程给你一套三档风险边界，并且分别落到 Claude Code 和 Codex 两套完全不同的权限原语上。这两套术语很容易被混成一谈，本文会一直把它们分开讲。
 
-Plan 模式负责把任务变清楚，Auto 模式负责执行已经清楚的任务。审批边界不是形式，而是风险控制。
+## 读完你能做什么
 
-## 可以自动执行
+你会得到三件可以立刻用上的东西：
 
-- 只读搜索、读取文件、运行测试。
-- 新建小文件或局部改动。
-- 格式化、lint、构建。
+1. 一套按可逆性和影响半径划分的三档边界：只读计划、普通自动执行、需人工批准的高风险动作。
+2. 同一档边界在 Claude Code 与 Codex 里分别怎么配置，术语不混用。
+3. 一份用 `codex sandbox` 真跑出来的证据，证明边界可以由内核强制，而不是靠信任。
 
-## 需要人工确认
+![三档风险边界分别映射到 Claude Code 与 Codex 的不同权限原语](/images/articles/plan-auto-approval-boundary/risk-tier-primitives.svg)
+*图注：同一套风险分档，Claude Code 用权限模式加 allow/ask/deny 规则实现，Codex 用审批策略加沙箱模式实现；注意每档由应用层还是 OS 层强制，两套术语不能互译。*
 
-- 删除或移动大量文件。
-- 修改生产部署、账单、密钥、权限。
-- 把未验证分支发布到线上。
-- 对外发送邮件、消息或交易指令。
+## 放权的单位是动作，不是模型
 
-## 实战步骤
+先把一个常见错误说清楚。很多人用模型的名气或者一句我信任它来决定放不放权。这条路走不通，因为信任不是一种可执行的策略。今天信任的模型明天换个版本，它对同一条指令的判断可能就变了；而一次 push、一次删库、一次改密钥，出错之后不会因为你当初很信任就能撤回。
 
-1. 先让 Agent 输出 3-6 条计划。
-2. 对每条标注“只读、可写、高风险”。
-3. 只把可写低风险任务交给自动执行。
-4. 高风险任务必须先有回滚方案。
+正确的判断单位是动作本身，看两个属性。第一是可逆性：这个动作能不能撤销。读文件零写入，随时可停；改工作区内的源码可以用版本控制回退；而 push 到远端、删云端数据、发消息，一旦发生就很难收回。第二是影响半径：出错会碰到哪些文件、账号和外部系统。改一个本地文件，半径是这个仓库；改生产部署或账单，半径是整个线上和你的钱包。
 
-## 常见错误
+把这两个属性叠在一起，动作自然落进三档。只读探索是零风险的计划档。工作区内的可撤销写入是普通自动执行档。越界或不可逆的动作是高风险档。这个分法与你用哪个工具无关，它只描述任务本身。难点在下一步：判断框架不等于强制机制。你在提示词里写一句请不要 push，并不构成边界，模型完全可能还是执行了。要让边界真的生效，得落到工具的权限原语上。
 
-把“我信任这个模型”当成权限策略。权限应该由任务风险决定，而不是由模型名字决定。
+## Claude Code：权限模式加 allow/ask/deny 规则
+
+Claude Code 把能不能做拆成两条轴，并且都由 Claude Code 这个程序强制，不是靠模型自觉。这一点官方文档写得很直白：权限规则由 Claude Code 强制，你在提示词或 CLAUDE.md 里写的话只影响模型想做什么，不改变 Claude Code 允许什么。
+
+第一条轴是权限模式（permission mode），决定整体姿态。`plan` 模式只读文件、只跑只读命令来探索，不改你的源文件，正好对应只读计划档。`acceptEdits` 会自动接受工作目录内的文件编辑以及 mkdir、touch、mv、cp 这类常见文件命令，对应普通自动执行档。`default`（在 CLI 里标为 Manual）会在每个工具首次使用时提示你。还有 `auto`、`dontAsk` 和只该在隔离容器里用的 `bypassPermissions`。本机用 `claude --help` 核对（2.1.206），`--permission-mode` 接受的值确实是 acceptEdits、auto、bypassPermissions、manual、dontAsk、plan。
+
+第二条轴是权限规则（permission rule），决定单个工具调用的命运，取值是 allow、ask、deny。它们的求值顺序是固定的：先 deny，再 ask，最后 allow，第一个命中的规则就决定结果，规则写得多具体都不改变这个顺序。而且任何一个层级的 deny 都会压过任何 allow。这条性质非常关键，它让你可以在整体放开 Bash 的同时，用一条 `deny Bash(git push *)` 单独把 push 钉死在高风险这一侧。
+
+于是三档边界在 Claude Code 里就有了确定的落法。只读计划用 `plan` 模式。普通自动执行用 `acceptEdits` 配合对 Edit 和安全 Bash（比如 `allow Bash(npm run *)`）的 allow 规则。高风险动作用 ask 规则要求逐次确认，或者用 deny 规则直接禁止。此外还有一层可选的 OS 沙箱，只约束 Bash 及其子进程，与权限规则互补，做纵深防御。
+
+## Codex：审批策略加沙箱模式
+
+Codex 也有两条轴，但名字和语义都跟 Claude Code 不同，这正是最容易出错的地方。
+
+第一条轴是审批策略（approval_policy，命令行是 `--ask-for-approval`），它决定的是模型在什么时候向人请求批准。本机 `codex --help`（0.142.2）给出的四个取值和官方解释是：`untrusted` 只自动运行受信任的命令（比如 ls、cat、sed），模型一旦提出不在受信集合里的命令就升级给用户；`on-request` 由模型自己决定何时请求批准；`never` 从不请求，执行失败直接返回给模型；`on-failure` 已经废弃。
+
+第二条轴是沙箱模式（sandbox_mode，命令行是 `--sandbox`），它决定的是文件系统和网络的 OS 级边界，取值是 `read-only`、`workspace-write`、`danger-full-access`。一个容易被忽略的细节：workspace-write 模式下，出站网络默认是关闭的（配置项 `sandbox_workspace_write.network_access` 默认 false），你得显式打开才有网络。
+
+这两条轴是正交的：沙箱决定命令即使运行了能碰到什么，审批策略决定运行前什么时候可能询问人，但二者没有自动的一一映射。所以三档边界在 Codex 里的落法是：只读计划用 read-only；普通自动执行在范围明确时用 workspace-write，并单独选择审批策略；高风险动作不要把 `on-request` 当作唯一门禁——它是否询问由模型判断。最稳妥的做法是保持网络与越界能力关闭、停止当前任务，让人显式确认后再以新的最小权限任务执行。`untrusted` 可以作为额外拦截层，但它按命令信任集合判断，也不等于你的业务风险分类。
+
+## 为什么两套术语不能互译
+
+到这里你可能会想，plan 模式和 read-only 沙箱不都是只读吗，能不能当成一回事？不能，而且这个区分很重要。
+
+它们的强制层不一样。Claude Code 的 plan 是一种 agent 行为模式，由应用进程去约束模型能调用哪些工具，属于应用层。Codex 的 read-only 是内核沙箱，由操作系统直接拒绝写系统调用，属于 OS 层。两者表面都表现为只读，但一个是程序不让模型尝试，一个是内核不让进程成功。理解这个差别，你才知道各自的兜底强度和绕过风险不同。
+
+同样，Claude Code 的 allow/ask/deny 是你预先写死的确定性规则，命中就按规则走；Codex 的 approval_policy 里的 on-request 则是让模型临场判断这一步要不要问人，依赖的是模型的判断力。把 allow 规则和 approval policy 画等号，会让你在一个产品里期待另一个产品的行为。所以本文自始至终把它们分开写，你在配置时也应该按你手上的具体工具去查对应的原语，而不是套用另一套名字。
+
+## Showcase：用沙箱把三档边界真的跑出来
+
+抽象的边界要落到能被验证才算数。下面用一个具体任务，把普通自动执行和高风险动作之间的那条线真的跑出来，证明它由内核强制，而不是靠模型客气。
+
+任务很小：修一个记账函数的 bug（整数除法丢分），项目里有 `split.py` 和 `test_split.py`，用 git 初始化在仓库外的临时目录里。我们不关心模型怎么修，只用 Codex 的 `codex sandbox` 子命令把同一批动作放进不同沙箱模式里跑。这个子命令直接调用沙箱、不经过模型，所以结果是确定性的，你可以照着复现。
+
+只读档，读取源码在 read-only 下直接通过：
+
+```text
+$ codex sandbox -c sandbox_mode=read-only -- cat split.py
+def split_bill(total, people):
+    # bug: integer division loses cents
+    return total // people
+exit=0
+```
+
+同一条写入动作，只读模式拒绝，工作区可写模式放行。注意拒绝的措辞是内核返回的 Operation not permitted，不是模型的婉拒：
+
+```text
+$ codex sandbox -c sandbox_mode=read-only -- sh -c 'echo x >> split.py'
+sh: split.py: Operation not permitted
+exit=1
+
+$ codex sandbox -c sandbox_mode=workspace-write -- sh -c 'echo # patched >> split.py'
+exit=0
+```
+
+再往上一档，即使切到 workspace-write，本次实验里的 `$HOME` 写入和联网仍然被拒。这证明这些能力没有随工作区写入一起自动放开；它不证明所有平台、所有临时目录都采用同一策略。真正的高风险动作要跨过这条线，应先停下当前任务并由人显式重新授权，而不是依赖模型在 `on-request` 下主动举手：
+
+```text
+$ codex sandbox -c sandbox_mode=workspace-write -- sh -c 'echo pwned > $HOME/pab-blocked.txt'
+sh: $HOME/pab-blocked.txt: Operation not permitted
+exit=1
+
+$ codex sandbox -c sandbox_mode=workspace-write -- sh -c \
+    'curl -s -m 5 https://example.com >/dev/null && echo NET_OK || echo NET_BLOCKED'
+NET_BLOCKED
+exit=0
+```
+
+汇总成一张裁决表：
+
+| 动作 | read-only | workspace-write |
+| --- | --- | --- |
+| 读工作区文件 | 允许 | 允许 |
+| 写工作区文件 | 拒绝 | 允许 |
+| 写工作区外（$HOME） | 拒绝 | 拒绝 |
+| 出站网络 | 本次未测 | 拒绝（默认关闭） |
+
+这次实验只在 macOS 的 Seatbelt 上跑；其他平台的实现与报错没有在本次实验中核验。它演示的是 OS 沙箱这一条轴，不涉及 Codex 的审批策略，两者是分开的。完整环境、原始片段和复现命令保存在 [Showcase 目录](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/plan-auto-approval-boundary/showcase) 里，原始输出在仓库外捕获、脱敏后才入库，没有执行任何 push、部署或不可逆动作。
+
+## 什么时候这套边界会失效
+
+划边界不是配一次就一劳永逸，有几个地方特别容易翻车。
+
+最常见的是把 workspace-write 当成安全。它只挡工作区之外和网络，工作区内的破坏照样发生：一条 `git reset --hard` 或者覆盖写源文件，都在这条边界之内。所以高风险的工作区内动作也要单独用 ask 或 deny 规则拦，或者让人在场。
+
+第二个坑是只在提示词里写别 push。前面已经反复强调，提示词不构成边界。要真的禁止，就得落到 deny 规则或沙箱上。
+
+第三个是平台和版本差异。沙箱可用性随操作系统变化，拦截信息也不同；产品的模式名、默认值会随版本更新。任何涉及当前行为的结论都要标清楚平台和版本，并在发布前重新核对，别拿旧截图当现行事实。
+
+最后是隔离模式的误用。bypassPermissions 和 danger-full-access 这类跳过一切的模式，只应该在真正隔离的容器或虚拟机里用。即便它们对 rm -rf 根目录之类还留了断路器提示，也不能替代真正的隔离。如果你在自己的日常工作机上开这些模式，等于把边界整个拆掉。
+
+## 练习：给你的任务划一张权限边界卡
+
+挑一个你手上真实的任务，用不超过十行写出下面这张卡，然后照着它在你用的工具里配置：
+
+```yaml
+task: 要交付什么
+readonly_tier: 哪些是只读探索（读文件、跑测试查询）
+auto_tier: 哪些是可撤销、影响半径在仓库内的写入
+approval_tier: 哪些不可逆或触及外部系统，必须人工批准
+rollback: approval_tier 里每个动作的回滚方案
+tool_primitive: 在 Claude Code 用 plan/acceptEdits/ask/deny，还是在 Codex 用 read-only/workspace-write，并把高风险动作留给任务外的人类 gate
+```
+
+验收标准很直接：approval_tier 里的每一项，你都能说出它为什么不可逆、出错半径多大、怎么回滚；并且它在你的工具里确实被一条规则或一个沙箱模式钉住，而不是仅仅写在提示词里。如果这三点里有一条答不出来，先补任务定义和回滚，再谈放权。
+
+## 来源与延伸阅读
+
+- [Claude Code 权限配置](https://code.claude.com/docs/en/permissions)（官方一手文档：权限模式、allow/ask/deny 规则与求值顺序）
+- [Claude Code 沙箱](https://code.claude.com/docs/en/sandboxing)（官方一手文档：OS 级 Bash 沙箱与权限的互补关系）
+- [Codex 配置参考](https://developers.openai.com/codex/config-reference)（官方一手文档：approval_policy 与 sandbox_mode 取值）
+- [Codex 安全与沙箱](https://developers.openai.com/codex/security)（官方一手文档：审批与沙箱的关系）
+- [Codex 橙皮书](https://github.com/alchaincyf/codex-orange-book)（中文二手主题地图，仅提示选题）
+
+Claude Code 与 Codex 的当前行为以 2026-07-11 核对过的官方文档和本机 CLI（claude 2.1.206、codex-cli 0.142.2）为准。Codex 橙皮书按其仓库声明的 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 保留署名，本文只把它当作二手主题地图，结构、论证和 Showcase 均已独立重做并复核。

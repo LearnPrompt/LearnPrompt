@@ -1,0 +1,16 @@
+Date: 2026-07-11
+
+Command:
+node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs --article starlight/src/content/docs/codex/codex-form-factors.mdx --research research/articles/codex-form-factors
+
+Final result:
+PASS article: starlight/src/content/docs/codex/codex-form-factors.mdx
+PASS research: research/articles/codex-form-factors
+PASS status: verified (93/100)
+
+Command:
+cd starlight && npm run build
+
+Final result:
+49 page(s) built, including /codex/codex-form-factors/index.html.
+Pagefind indexed 49 HTML files, sitemap-index.xml was created, and Astro reported Complete.

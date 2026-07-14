@@ -1,0 +1,5 @@
+scenario: stale-resume
+setup_command: node .agents/skills/docs-migration-pipeline/scripts/run-pipeline.mjs --scenario crash-after-transform
+tamper: appended one line to legacy/02-api-auth.md
+command: node .agents/skills/docs-migration-pipeline/scripts/run-pipeline.mjs --resume
+exit_code: 32

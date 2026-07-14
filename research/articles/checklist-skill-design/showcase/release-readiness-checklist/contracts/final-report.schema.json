@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "skill_invocation",
+    "package_name",
+    "expected_version",
+    "report_json",
+    "report_markdown",
+    "release_exit_code",
+    "tests_command",
+    "tests_status",
+    "notes"
+  ],
+  "properties": {
+    "skill_invocation": {
+      "type": "string",
+      "const": "$release-readiness-checklist"
+    },
+    "package_name": {
+      "type": "string",
+      "const": "clip-clean"
+    },
+    "expected_version": {
+      "type": "string",
+      "const": "1.4.0"
+    },
+    "report_json": {
+      "type": "string",
+      "const": "reports/release-readiness.json"
+    },
+    "report_markdown": {
+      "type": "string",
+      "const": "reports/release-readiness.md"
+    },
+    "release_exit_code": {
+      "type": "integer",
+      "enum": [0, 21, 22, 23, 24]
+    },
+    "tests_command": {
+      "type": "string",
+      "const": "npm test"
+    },
+    "tests_status": {
+      "type": "string",
+      "enum": ["passed", "failed", "not-run"]
+    },
+    "notes": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

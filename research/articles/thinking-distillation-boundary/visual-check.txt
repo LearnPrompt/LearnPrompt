@@ -1,0 +1,15 @@
+SVG visual check
+
+date:
+  2026-07-12
+
+source:
+  starlight/public/images/articles/thinking-distillation-boundary/observable-distillation-boundary.svg
+
+render command:
+  magick -background white -font <PingFang.ttc> <source.svg> -alpha remove -alpha off $TMPDIR/observable-distillation-boundary-final.png
+
+result:
+  exit=0
+  rendered_png=$TMPDIR/observable-distillation-boundary-final.png
+  manual_check=no overflow / no crop / no overlap; arrows connect receipts -> filter -> candidate -> holdout; rejection branches 52 / 53 remain legible

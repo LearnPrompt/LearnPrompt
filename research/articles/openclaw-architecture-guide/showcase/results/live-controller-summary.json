@@ -1,0 +1,57 @@
+{
+  "attempted_at": "2026-07-12",
+  "model": "gpt-5.4",
+  "status": "blocked",
+  "attempt_count": 3,
+  "attempts": [
+    {
+      "attempt": 1,
+      "model": "gpt-5.4",
+      "exec_exit_code": 1,
+      "reports_written": { "json": false, "markdown": false },
+      "validation_exit_code": null,
+      "boundary_exit_code": 0,
+      "changed_paths": [],
+      "unexpected_paths": [],
+      "protected_files_unchanged": true,
+      "failure_kind": "usage-limit-before-report"
+    },
+    {
+      "attempt": 2,
+      "model": "gpt-5.4",
+      "exec_exit_code": 1,
+      "reports_written": { "json": false, "markdown": false },
+      "validation_exit_code": null,
+      "boundary_exit_code": 0,
+      "changed_paths": [],
+      "unexpected_paths": [],
+      "protected_files_unchanged": true,
+      "failure_kind": "usage-limit-before-report"
+    },
+    {
+      "attempt": 3,
+      "model": "gpt-5.4",
+      "exec_exit_code": 1,
+      "reports_written": { "json": false, "markdown": false },
+      "validation_exit_code": null,
+      "boundary_exit_code": 0,
+      "changed_paths": [],
+      "unexpected_paths": [],
+      "protected_files_unchanged": true,
+      "failure_kind": "usage-limit-before-report"
+    }
+  ],
+  "allowed_report_paths": [
+    "reports/route-audit.json",
+    "reports/route-audit.md"
+  ],
+  "execution_workspace": "minimal synthetic copy outside the repository",
+  "exec_exit_code": 1,
+  "reports_written": { "json": false, "markdown": false },
+  "validation_exit_code": null,
+  "boundary_exit_code": 0,
+  "protected_files_unchanged": true,
+  "changed_paths": [],
+  "unexpected_paths": [],
+  "raw_capture": "captured outside the repository and removed after sanitized per-attempt summaries"
+}

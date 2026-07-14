@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">Vault Git safety rail for Agent note edits</title>
+  <desc id="desc">A baseline snapshot flows into an isolated candidate worktree, Agent edit, deterministic diff gate, and then either accept commit and merge or discard branch. The diagram marks gates 81 to 85, main unchanged, and the separate boundaries for sync, backup, and Git.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M1,1 L11,6 L1,11 Z" fill="#2f4050"/>
+    </marker>
+    <style>
+      .bg { fill: #f7f5ef; }
+      .panel { fill: #ffffff; stroke: #27333f; stroke-width: 2; rx: 8; }
+      .rail { fill: none; stroke: #2f4050; stroke-width: 4; marker-end: url(#arrow); }
+      .soft { fill: #eef2f5; stroke: #596a78; stroke-width: 2; rx: 8; }
+      .gate { fill: #fff4dc; stroke: #b76f00; stroke-width: 2; rx: 8; }
+      .bad { fill: #ffe8e3; stroke: #b14535; stroke-width: 2; rx: 8; }
+      .good { fill: #e4f4eb; stroke: #2e7d4f; stroke-width: 2; rx: 8; }
+      .line { stroke: #7a8792; stroke-width: 2; fill: none; }
+      .dash { stroke: #7a8792; stroke-width: 2; stroke-dasharray: 8 8; fill: none; }
+      text { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #18232e; }
+      .h1 { font-size: 34px; font-weight: 760; }
+      .h2 { font-size: 22px; font-weight: 740; }
+      .body { font-size: 17px; }
+      .small { font-size: 14px; fill: #415160; }
+      .code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 15px; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1400" height="900"/>
+  <text x="70" y="70" class="h1">Obsidian vault 的 Agent 改动安全轨</text>
+  <text x="70" y="102" class="body">把同步、备份、Git 版本控制和候选改动验收拆开：main 保持不变，candidate 通过 gate 后才接受。</text>
+
+  <rect x="70" y="145" width="230" height="110" class="panel"/>
+  <text x="95" y="183" class="h2">Baseline snapshot</text>
+  <text x="95" y="213" class="body">main 已提交快照</text>
+  <text x="95" y="238" class="code">git status clean</text>
+
+  <rect x="370" y="145" width="250" height="110" class="panel"/>
+  <text x="395" y="183" class="h2">Isolated worktree</text>
+  <text x="395" y="213" class="body">独立 candidate branch</text>
+  <text x="395" y="238" class="code">git worktree add -b</text>
+
+  <rect x="690" y="145" width="230" height="110" class="soft"/>
+  <text x="715" y="183" class="h2">Agent edit</text>
+  <text x="715" y="213" class="body">只改允许 notes</text>
+  <text x="715" y="238" class="body">写 receipt</text>
+
+  <rect x="990" y="130" width="320" height="140" class="gate"/>
+  <text x="1018" y="168" class="h2">Deterministic diff gate</text>
+  <text x="1018" y="198" class="body">路径、链接、secret、diff budget</text>
+  <text x="1018" y="225" class="body">baseline hash + candidate commit</text>
+  <text x="1018" y="252" class="small">不判断文风，只判断能否进入人审</text>
+
+  <path d="M300 200 H360" class="rail"/>
+  <path d="M620 200 H680" class="rail"/>
+  <path d="M920 200 H980" class="rail"/>
+
+  <rect x="220" y="330" width="320" height="88" class="good"/>
+  <text x="246" y="365" class="h2">main unchanged</text>
+  <text x="246" y="390" class="body">Agent 运行期间 baseline</text>
+  <text x="246" y="410" class="small">保持 byte-identical</text>
+  <path d="M185 255 C185 300 260 300 300 330" class="dash"/>
+
+  <rect x="825" y="340" width="230" height="88" class="good"/>
+  <text x="850" y="374" class="h2">Accept</text>
+  <text x="850" y="403" class="body">review 后 commit / merge</text>
+  <path d="M1130 270 C1120 320 1055 330 1000 340" class="rail"/>
+
+  <rect x="1110" y="340" width="230" height="88" class="bad"/>
+  <text x="1135" y="374" class="h2">Discard</text>
+  <text x="1135" y="400" class="body">移除 candidate worktree</text>
+  <text x="1135" y="420" class="small">再删除临时 branch</text>
+  <path d="M1200 270 C1240 302 1260 320 1260 340" class="rail"/>
+
+  <rect x="70" y="500" width="300" height="155" class="soft"/>
+  <text x="95" y="535" class="h2">Sync boundary</text>
+  <text x="95" y="565" class="body">让设备文件保持一致</text>
+  <text x="95" y="592" class="body">坏改动也会传播</text>
+  <text x="95" y="622" class="small">不要混用多个同步服务</text>
+
+  <rect x="410" y="500" width="300" height="155" class="soft"/>
+  <text x="435" y="535" class="h2">Backup boundary</text>
+  <text x="435" y="565" class="body">单向、独立、异地副本</text>
+  <text x="435" y="592" class="body">用于数据丢失恢复</text>
+  <text x="435" y="622" class="small">不是实时协作，也不是 diff review</text>
+
+  <rect x="750" y="500" width="300" height="155" class="soft"/>
+  <text x="775" y="535" class="h2">Git boundary</text>
+  <text x="775" y="565" class="body">status / diff / branch / commit</text>
+  <text x="775" y="592" class="body">跨设备需要 push / pull</text>
+  <text x="775" y="622" class="small">不替代独立备份或隐私决策</text>
+
+  <rect x="1090" y="500" width="250" height="155" class="soft"/>
+  <text x="1115" y="535" class="h2">Privacy boundary</text>
+  <text x="1115" y="565" class="body">公开远端不是默认选项</text>
+  <text x="1115" y="592" class="body">访问控制与加密另行决策</text>
+  <text x="1115" y="622" class="small">私密 vault 先留本地</text>
+
+  <rect x="70" y="705" width="250" height="95" class="bad"/>
+  <text x="95" y="738" class="h2">81</text>
+  <text x="140" y="738" class="body">默认分支 / 缺隔离</text>
+  <text x="95" y="768" class="small">Agent 不能直接改 main</text>
+
+  <rect x="340" y="705" width="250" height="95" class="bad"/>
+  <text x="365" y="738" class="h2">82</text>
+  <text x="410" y="738" class="body">越过 allowed paths</text>
+  <text x="365" y="768" class="small">私密 note、导出物、配置越界</text>
+
+  <rect x="610" y="705" width="250" height="95" class="bad"/>
+  <text x="635" y="738" class="h2">83</text>
+  <text x="680" y="738" class="body">secret / binary</text>
+  <text x="635" y="768" class="small">或 diff 超过预算</text>
+
+  <rect x="880" y="705" width="250" height="95" class="bad"/>
+  <text x="905" y="738" class="h2">84</text>
+  <text x="950" y="738" class="body">链接断裂</text>
+  <text x="905" y="768" class="small">或 rename 未更新引用</text>
+
+  <rect x="1150" y="705" width="190" height="95" class="bad"/>
+  <text x="1175" y="738" class="h2">85</text>
+  <text x="1220" y="738" class="small">receipt 缺失</text>
+  <text x="1175" y="768" class="small">或没有有效改动</text>
+
+  <text x="1000" y="470" class="small">gate 失败不恢复 main：丢弃候选即可</text>
+</svg>

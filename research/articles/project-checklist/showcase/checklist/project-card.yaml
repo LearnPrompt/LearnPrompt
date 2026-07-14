@@ -1,0 +1,16 @@
+# 机器可校验的开工清单（完整版）
+# 每个字段对应 AGENTS.md 里的一节；verify-checklist.mjs 会逐项检查。
+
+repo_and_branch: LearnPrompt 文档站，内容改稿分支，不直接提交主分支
+
+run_and_check: 站点在 starlight/ 目录，最快检查 cd starlight && npm run build
+
+boundaries:
+  allow: [目标 MDX, research/ 研究包, starlight/public/images]
+  forbid: [content/config.ts, 其它文章, package.json, 部署配置]
+
+secrets: 构建不需要密钥；外部凭据走环境变量注入，不写入仓库
+
+acceptance: cd starlight && npm run build
+
+rollback: 未提交用 git restore 丢弃；已提交用 git revert 生成反向提交

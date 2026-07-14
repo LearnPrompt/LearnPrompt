@@ -1,0 +1,19 @@
+{
+  "candidate_only": true,
+  "docs": [
+    {
+      "file": "migration-candidate/docs/01-intro-guide.mdx",
+      "sha": "be0ab3e01e74fde2bbfc3c69a2751b7fceab40761afae62c523c0e51154909c2"
+    },
+    {
+      "file": "migration-candidate/docs/02-api-auth.mdx",
+      "sha": "0fb3628b05efae6466cd73057bef87962b7e910765ee7115b95a688ae2919224"
+    },
+    {
+      "file": "migration-candidate/docs/03-migration-checklist.mdx",
+      "sha": "b97dcb9a64cd2070fc68752e75d742c7fa001d920bdf2479883ee2561e9ef2ea"
+    }
+  ],
+  "package_kind": "migration-candidate",
+  "source_directory": "legacy"
+}

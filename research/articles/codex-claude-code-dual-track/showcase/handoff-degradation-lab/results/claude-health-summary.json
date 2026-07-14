@@ -1,0 +1,27 @@
+{
+  "tool": "Claude Code",
+  "version": "2.1.206",
+  "captured_at": "2026-07-12",
+  "source": "sanitized outer-harness summary from the main session",
+  "note": "This file is not a full raw transcript. It only records the minimum facts needed to prove that the Claude lane did not obtain a model result.",
+  "probes": [
+    {
+      "name": "oauth-removed-smoke",
+      "auth_state": "CLAUDE_CODE_OAUTH_TOKEN removed before launch",
+      "model_result": "absent",
+      "duration_seconds_approx": 90,
+      "outcome": "aborted after no streamed model output"
+    },
+    {
+      "name": "fixed-sonnet-stream-json",
+      "model": "sonnet",
+      "output_format": "stream-json",
+      "model_result": "absent",
+      "attempts_observed": "1-6",
+      "server_error": "503",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "outcome": "aborted after repeated server_error responses"
+    }
+  ]
+}

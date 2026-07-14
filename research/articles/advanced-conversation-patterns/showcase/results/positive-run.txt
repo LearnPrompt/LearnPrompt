@@ -1,0 +1,14 @@
+STAGE B fresh implementation
+isolation=fresh-process-and-temp-copy
+handoff=handoff-good.json
+baseline_exit=1
+FAIL collapses punctuation gaps into one hyphen expected=rock-roll actual=rock--roll
+edited=src/slugify.js
+verify_command=node tests/run-tests.mjs
+verify_exit=0
+PASS keeps simple words
+PASS collapses punctuation gaps into one hyphen
+PASS trims surrounding whitespace
+SUMMARY failed=0 passed=3
+allowed_files_respected=yes
+result=PASS

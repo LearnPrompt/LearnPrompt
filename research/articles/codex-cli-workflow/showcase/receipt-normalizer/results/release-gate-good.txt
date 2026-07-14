@@ -1,0 +1,1 @@
+PASS good patch: file scope, frozen contract, report fields, and npm test all matched

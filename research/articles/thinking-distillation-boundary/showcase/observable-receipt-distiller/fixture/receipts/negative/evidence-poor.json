@@ -1,0 +1,7 @@
+{
+  "id": "evidence-poor-conclusion-only",
+  "contains_sensitive_material": false,
+  "contains_private_transcript": false,
+  "requests_hidden_chain_of_thought": false,
+  "conclusion_only": "把专家经验做成一个会自动修 frontmatter 的 Skill。"
+}

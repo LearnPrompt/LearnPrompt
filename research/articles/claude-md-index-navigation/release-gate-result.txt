@@ -1,0 +1,16 @@
+RELEASE GATE PASS
+
+Writer-stage gate state on 2026-07-12:
+
+- deterministic verifier: PASS, exit 0
+- privacy scan: PASS, exit 0
+- final article gate: PASS, exit 0
+- writer nested live attempt: BLOCKED, exit 2; preserved as historical evidence
+- outer-controller corrected replay: PASS, exit 0; fixture unchanged, reports 3/3, exact trace, validator 0
+- image render and visual inspection: PASS, 1400x900 rendered via sharp to a temporary PNG outside the worktree
+- Starlight build: PASS, exit 0
+- git diff --check: PASS, exit 0
+- body depth: PASS, 11243 MDX characters, 2975 Chinese explanatory characters after code removal, 10 H2 sections
+- independent review: PASS 100/100; blocker/major/minor 0/0/0; visual PASS
+
+Final article state: `showcase_status: verified`, `quality_score: 100`.

@@ -1,0 +1,112 @@
+writer-stage release gate summary
+
+本文件冻结 `release-feed-api` 的 showcase replay、真实 nested Codex 尝试、privacy、partial validator、SVG 渲染检查、完整 build 与 diff check 的精确命令、退出码和关键输出。
+
+1. showcase replay
+
+command:
+  node research/articles/api-integration-skill-design/showcase/release-feed-api/scripts/verify-showcase.mjs
+
+exit:
+  0
+
+key output:
+  fixture_tests_exit=0
+  fixture_tests=7/7 pass
+  two-page-success=0
+  rate-limit-once=0
+  missing-credential=41
+  schema-drift=42
+  retry-exhausted=43
+  mutating-method=44
+  privacy=0
+
+meaning:
+  writer sandbox 的 blocked 证据保留；外层允许 loopback 的隔离环境已把全部网络与 pre-network 场景真实跑通。
+
+2. live Codex explicit Skill call
+
+command:
+  node research/articles/api-integration-skill-design/showcase/release-feed-api/scripts/run-codex-live.mjs
+
+exit:
+  0
+
+key output:
+  status=completed
+  model=gpt-5.5
+  exec_exit_code=0
+  reports_written.json=true
+  reports_written.markdown=true
+  release_count=3
+  tests_status=passed (7/7)
+  changed_files=?? reports/
+
+meaning:
+  writer-side blocked 证据未删除；外层同一冻结 fixture / prompt / schema 的真实嵌套调用已成功。
+
+3. privacy scan
+
+command:
+  node research/articles/api-integration-skill-design/showcase/release-feed-api/scripts/privacy-scan.mjs
+
+exit:
+  0
+
+key output:
+  PASS privacy scan: no runtime IDs, absolute temp paths, user home paths, shell paths, or bearer token material were committed.
+
+4. partial validator
+
+command:
+  node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs \
+    --article starlight/src/content/docs/agent-skills/api-integration-skill-design.mdx \
+    --research research/articles/api-integration-skill-design
+
+exit:
+  0
+
+key output:
+  PASS article: starlight/src/content/docs/agent-skills/api-integration-skill-design.mdx
+  PASS research: research/articles/api-integration-skill-design
+  PASS status: partial
+
+5. SVG visual render check
+
+command:
+  magick -font /System/Library/Fonts/Helvetica.ttc \
+    starlight/public/images/articles/api-integration-skill-design/api-request-contract.svg \
+    $TMPDIR/api-request-contract.png
+
+exit:
+  0
+
+key output:
+  rendered_png=$TMPDIR/api-request-contract.png
+  manual_check=no overflow / no crop / no overlap
+
+6. full site build
+
+command:
+  npm --prefix starlight run build
+
+exit:
+  0
+
+key output:
+  /agent-skills/api-integration-skill-design/index.html
+  [starlight:pagefind] Found 49 HTML files.
+  [build] 49 page(s) built in 3.80s
+
+7. git diff check
+
+command:
+  git diff --check
+
+exit:
+  0
+
+key output:
+  (no output)
+
+最终状态：verified 100/100；showcase 与 nested Codex 已补跑成功；独立只读 reviewer 为 0/0/0，视觉 PASS。

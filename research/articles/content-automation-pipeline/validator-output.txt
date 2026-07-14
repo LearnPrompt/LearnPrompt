@@ -1,0 +1,3 @@
+PASS article: starlight/src/content/docs/claude-code/content-automation-pipeline.mdx
+PASS research: research/articles/content-automation-pipeline
+PASS status: verified (100/100)

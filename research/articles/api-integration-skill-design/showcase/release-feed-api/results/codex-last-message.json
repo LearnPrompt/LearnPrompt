@@ -1,0 +1,1 @@
+{"skill_invocation":"$release-feed-api","report_json":"reports/releases.json","report_markdown":"reports/releases.md","fetch_exit_code":0,"release_count":3,"tests_command":"npm test","tests_status":"passed","notes":"Fetched loopback release feed with GET only; wrote exactly the two requested reports. npm test passed with 7 tests."}

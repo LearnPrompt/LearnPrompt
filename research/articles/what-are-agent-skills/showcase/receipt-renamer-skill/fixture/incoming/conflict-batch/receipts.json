@@ -1,0 +1,12 @@
+{
+  "batch_id": "conflict-batch",
+  "receipts": [
+    {
+      "source_file": "desk-foundry-copy.pdf",
+      "receipt_date": "2026-05-18",
+      "merchant": "Desk Foundry",
+      "total_amount": 124.4,
+      "currency": "usd"
+    }
+  ]
+}

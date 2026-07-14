@@ -1,39 +1,326 @@
 ---
-title: Claude Code 进阶对话技巧
-description: 用更好的对话结构减少返工。
+title: "长任务不漂移：用会话分段、handoff 和 checkpoint 管住 Claude Code 上下文"
+description: 把一次真实 bug 修复拆成探索、冻结结论、干净实现与验证，并知道什么时候该 continue、compact、clear、resume 或 fork。
 sidebar:
   order: 4
 difficulty: intermediate
 source_repo: alchaincyf/claude-code-orange-book
 source_url: https://github.com/alchaincyf/claude-code-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-11"
+reading_time: 15 分钟
+research_path: research/articles/advanced-conversation-patterns
+showcase_path: research/articles/advanced-conversation-patterns/showcase
+showcase_status: verified
+quality_score: 98
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 15 分钟 | 2026-07-11 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/claude-code-orange-book" url="https://github.com/alchaincyf/claude-code-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+你已经能让 Claude Code 完成小任务了：改一两个文件、跑个测试、看一下 diff，都没问题。可一旦任务变成
+“先调查 bug，再规划修复，再实现并验证”，事情就开始变味：
 
-## 有效句式
+- 前面明明说过“先别改文件”，后面还是顺手动了三个不相关文件。
+- 早期已经定义好的验收标准，被后半程的新猜测覆盖掉了。
+- 同一个会话聊到很长时，你开始分不清现在是在继续推进，还是在脏上下文里重复试错。
 
-- “先只读盘点，不要编辑。”
-- “列出你要改的文件和验收命令。”
-- “如果发现不相关改动，不要回滚，先说明。”
-- “先实现最小可运行版本，再做视觉优化。”
+这不是简单的“提示词写得不够好”。更常见的根因是：你把探索、计划、实现、验收全挤在同一条会话里，
+却没有决定下一步究竟要保留什么状态。长任务稳定性的核心，不是让 Claude 多记一点，而是把会话操作
+当成工程边界来用。
 
-## 工作流
+## 读完你能做什么
 
-1. 用一条消息给背景、目标、限制。
-2. 让 Claude Code 输出计划，不急着写代码。
-3. 执行时限制文件范围。
-4. 验收时要求它报告命令、结果和剩余风险。
+读完这篇，你应该能稳定完成三件事：
 
-## 常见错误
+1. 分清 `continue`、`compact`、`clear`、`resume`、`fork`、checkpoint 各自保留的是什么状态。
+2. 把一个真实 bug 任务拆成 **Stage A 只读探索** 与 **Stage B 干净实现**，中间冻结一份 handoff。
+3. 拒绝一份“不含 acceptance command 的 handoff”，避免第二阶段回到“看起来修好了”的主观判断。
 
-- 每轮都改变目标，导致上下文漂移。
-- 让它解释太多，却不给它运行检查的机会。
-- 把失败当成“模型不行”，没有收紧任务。
+本文不会做三件事：
 
-## 实战案例
+- 不展开多 agent。
+- 不把一次 Showcase 写成模型能力排名。
+- 不宣称 `resume`、`compact` 或 checkpoint 自动保证质量。
 
-做 README 优化时，先让 Claude Code列出读者、卖点、安装路径和 FAQ，再改文案。这样比直接说“写得好一点”稳定。
+## 为什么长任务会越聊越脏
+
+官方 `best-practices` 把问题说得很直接：Claude 的 context window 会很快装满，而性能会随着装满而退化。
+这个窗口里不只有你的消息，还包括读过的文件、跑过的命令输出、载入的规则和 memory。会话越长，系统越需要
+清旧输出、做摘要压缩；可一旦压缩发生，早期那些真正重要的边界就更容易被弱化。
+
+所以长任务的失稳，常常不是“模型不会写代码”，而是下面这三件事没有分开：
+
+| 混在一起的环节 | 常见后果 | 真正缺的不是 |
+| --- | --- | --- |
+| 探索和实现混在一条消息里 | 还没搞清症状就直接改 | “更聪明一点” |
+| 验收标准只存在对话里 | 改到后面忘了什么叫完成 | “多提醒几次” |
+| 会话变脏后仍继续追加历史 | 同一 bug 越修越散 | “再继续聊一轮” |
+
+官方 `how-claude-code-works` 也给出同一个机制视角：Claude Code 的 agentic loop 本质上是
+**gather context → take action → verify results**。如果你不给它明确分段，探索时读进来的噪声、
+失败时刷出来的长日志、实现时的中途尝试，都会一起回流到后面的 verify 阶段。
+
+真正的问题因此变成了：**下一步我需要保留的是完整历史、压缩后的结论，还是只带走一份冻结 handoff？**
+
+## 先分清：会话、上下文、checkpoint 各管什么
+
+这几个词经常被混着说，但它们不是同一层。
+
+### 会话（session）
+
+会话是你和 Claude 的一条持续工作流。官方 `sessions` 文档说明，Claude Code 会把会话持续保存在本地，
+因此你可以：
+
+- 用 `claude --continue` 接上当前目录最近一次会话；
+- 用 `claude --resume` 或 `/resume` 选回旧会话；
+- 用 `--fork-session` 或 `/branch` 复制历史到一个新的 session ID。
+
+会话回答的是：“我要不要继续这条工作流？”
+
+### 上下文（context）
+
+上下文是当前这次推理真正看见的材料。即使是同一个 session，上下文也会随着消息、文件、命令输出而变化，
+并且在接近上限时被压缩。`/compact` 管的是这一层：它还留在同一 session，只是把历史替换成摘要，释放空间。
+
+上下文回答的是：“Claude 现在脑子里还装着哪些细节？”
+
+### checkpoint / rewind
+
+checkpoint 回答的是：“我是否要撤回刚才那段编辑或会话状态？”
+
+官方 `checkpointing` 文档给出的边界很重要：
+
+- 可以 restore code、restore conversation，或两者一起恢复；
+- 也可以针对局部消息做 summarize；
+- 但**不能追踪 bash 命令造成的文件修改**，所以它不是 git 替代品。
+
+这意味着 checkpoint 适合撤销刚才的风险编辑，或者把一段旁支讨论压缩掉；它不等于“从此以后一定安全”。
+
+## 五个操作什么时候选
+
+如果把这些操作当成命令清单，很容易记混。更稳妥的问法是：**我要保留什么状态？**
+
+| 你真正想保留的东西 | 更合适的操作 | 为什么不是别的 |
+| --- | --- | --- |
+| 完整工作流和完整历史，只是被打断了 | `continue` / `resume` | 你要的是延续，不是清洗 |
+| 同一工作流，但历史已经太长 | `compact` | 你仍想留在同一 session，只是压缩噪声 |
+| 旧会话已经脏了，只想带走结论 | `clear` 后喂新的 handoff | 继续追加只会放大脏上下文 |
+| 保留原调查，同时试另一条实现路线 | `fork` | 原 session 不动，新 session 带走历史分叉 |
+| 撤回刚才的高风险编辑或错误尝试 | checkpoint / rewind | 这是回退，不是开新工作流 |
+
+![对话模式选择图：左侧比较 continue、compact、clear、fork 各自保留的状态，右侧展示 explore、冻结 handoff、fresh implement、verify 的两阶段流水线](/images/articles/advanced-conversation-patterns/conversation-patterns-map.svg)
+*图注：左边先问“我要保留什么状态”，再选 continue、compact、clear 或 fork；右边说明真正让长任务稳定的，不是一直续聊，而是把探索结果冻结成 handoff，再在新进程里只拿 repo + handoff 做实现与验证。*
+
+读图时先看左边，再看右边：
+
+1. 左边四个框不是命令优先级，而是四种任务关系。
+2. 绿色 `continue / resume` 和蓝色 `compact` 都留在原工作流里，区别只在于要不要压缩历史。
+3. 橙色 `clear + 新 prompt` 说明的是“丢掉脏上下文，但不丢掉结论”；因此必须先有 handoff。
+4. 粉色 `fork` 不是清空，而是复制历史另开分支，适合比较两种实现路线。
+5. 右边的流程线故意把 Stage A 与 Stage B 拆开，强调第二阶段输入应该尽量少，只保留 repo 与冻结 handoff。
+
+这张图要传达的结论只有一个：**不是所有“继续”都该继续原上下文，也不是所有“重开”都该从零开始解释。**
+
+## 把一次真实 bug 修复拆成 Explore → Handoff → Fresh Implement
+
+官方推荐“先探索，再计划，再编码”，但真正在长任务里起作用的，是你有没有把探索结论固定下来。
+本文 Showcase 用一个本地、零依赖的 `slugify` fixture 演示这件事。
+
+### Stage A：只读探索
+
+Stage A 的目标不是修复，而是冻结结论。它做的只有三类事：
+
+1. 读仓库事实：`package.json`、`src/slugify.js`、`tests/run-tests.mjs`。
+2. 运行基线测试，确认症状。
+3. 写出 handoff，明确第二阶段可以改什么、怎么验收、还有哪些风险。
+
+Stage A 的实际基线结果被归档在
+`research/articles/advanced-conversation-patterns/showcase/results/stage-a-summary.txt`。核心症状只有一句：
+
+```text
+FAIL collapses punctuation gaps into one hyphen expected=rock-roll actual=rock--roll
+```
+
+这句话的价值，不在于它“说明模型看懂了”，而在于它把问题压成了一个可传递的工程事实：**验收前，当前仓库确实失败。**
+
+### 冻结 handoff
+
+本文没有把 handoff 写成大而空的摘要，而是强制它回答五个问题：
+
+| 字段 | 为什么必须有 |
+| --- | --- |
+| `symptom` | 第二阶段要修什么 |
+| `evidence` | 为什么相信这个症状是真的 |
+| `allowed_files` | 第二阶段不该随手扩大范围 |
+| `acceptance.commands` | 怎样把“修好了”变成机械信号 |
+| `risks` | 哪些边界仍需要人盯着 |
+
+正例 handoff 在 `showcase/handoff/handoff-good.json`。它把验收命令冻结为 `node tests/run-tests.mjs`，
+并且把允许修改范围锁到 `src/slugify.js`。这两条信息一起，才足以让第二阶段在干净上下文里直接执行。
+
+### Stage B：干净上下文实现
+
+Stage B 用的是全新进程，并且把 fixture 复制到系统临时目录运行。它只吃两样输入：
+
+- 仓库副本；
+- Stage A 冻结的 handoff。
+
+这一步很关键。因为你要证明的不是“我还能回想起前面聊过什么”，而是“前面的探索结论已经足够让另一个干净进程完成最小修复”。
+
+正例结果归档在 `showcase/results/positive-run.txt`。它先重放基线失败，再只改 `src/slugify.js`，
+最后重跑验收命令通过。这里没有任何“模型认为已经完成”的措辞，只有三个工程事实：
+
+1. 基线退出码是失败；
+2. 只改了允许文件；
+3. 验收命令退出码变成 0。
+
+## 为什么缺 acceptance command 的 handoff 必须被拒绝
+
+这是本文最想强调的一条硬边界。
+
+很多团队会写探索总结，但总结里只有“我觉得问题大概在这里”。这种 handoff 看起来比没有强，可它并不能真正
+支撑第二阶段，因为它没有定义完成条件。没有 acceptance command，就没有下面这条闭环：
+
+> 改动 → 运行检查 → 读取 pass/fail → 决定是否停止
+
+负例 handoff 存在 `showcase/handoff/handoff-missing-acceptance.json`。它写了症状、证据、允许文件，
+却故意漏掉 `acceptance.commands`。Stage B 的 deterministic gate 会直接拒绝，而不是猜一个命令继续往下做。
+
+归档结果 `showcase/results/negative-run.txt` 的核心行是：
+
+```text
+REJECT missing acceptance.commands[0]
+```
+
+这不是吹毛求疵，而是避免第二阶段退化成“看起来像修好了”。官方 `best-practices` 强调的也是同一个逻辑：
+Claude 需要一个可运行的验证门。你可以把命令写得很小，例如一条单测；但不能没有。
+
+## 这套做法和 continue、compact、clear、resume、fork 怎么配合
+
+真正工作时，你通常不会每次都从零设计。更实际的搭配方式如下：
+
+### 场景 1：任务没变，只是暂时离开终端
+
+用 `continue` 或 `resume`。这时你保留的是整条 workstream，没必要人为切断历史。
+
+### 场景 2：方向没变，但会话已经很长
+
+先考虑 `compact`。你仍想保留工作流，只是需要把长日志和旁支讨论压缩掉。注意它只能减噪，不能证明摘要里的结论没错。
+
+### 场景 3：前面聊脏了，但探索结论已经够清楚
+
+这是本文最推荐使用 handoff 的场景。先冻结 handoff，再 `clear`，然后在新的 prompt 里只喂：
+
+- 仓库；
+- handoff；
+- 允许文件范围；
+- acceptance command。
+
+这时你不是“从零开始”，而是“丢掉噪声，只保留结论”。
+
+### 场景 4：你想保留原调查，再试另一种实现路线
+
+用 `fork`。例如原会话已经摸清 bug，但你想比较“修 regex”与“拆成多个 helper”的两种方案。fork 的好处是：
+
+- 原调查历史还在；
+- 新路线有新 session ID；
+- 失败后可以回看原路线，而不是把两种实现混成一条历史。
+
+### 场景 5：刚做了危险编辑，想撤回
+
+这时用 checkpoint / rewind，而不是 `clear`。`clear` 解决的是上下文污染，不负责撤销磁盘上的当前编辑；
+checkpoint 则恰好负责回退代码、会话或两者。官方同时提醒：bash 改动不在它的追踪范围内，所以高风险操作仍要配合 git。
+
+## 常见失败模式与边界
+
+这套方法不是银弹，至少有四条边界必须讲清楚。
+
+### 1. handoff 不是越长越好
+
+如果 handoff 变成一份长报告，第二阶段同样会被噪声淹没。真正值得冻结的是执行契约，而不是完整聊天记录。
+
+### 2. `compact` 省的是空间，不是责任
+
+压缩了上下文，不代表错误结论自动消失。如果前面的调查本身就错了，摘要只会把错得更短。
+
+### 3. `resume` 与 `fork` 都不会自动净化历史
+
+`resume` 是续写，`fork` 是复制。原历史脏，两者都会继承脏历史。需要干净实现时，还是要靠 handoff + 新上下文。
+
+### 4. 验收门写错，一样会放过坏结果
+
+本文负例只证明“没有 acceptance command 应被拒绝”；它不证明“任何 acceptance command 都足够”。真正上线前，
+你仍要审查命令本身是否覆盖了目标行为。
+
+## 一份可复制的 handoff 模板
+
+下面这份模板比“写一段总结”更有执行价值，因为它把第二阶段真正需要的东西单列出来了：
+
+```json
+{
+  "task": "用最小改动修复 bug",
+  "symptom": "当前行为错在哪里",
+  "evidence": [
+    "复现命令",
+    "最关键的一行失败输出"
+  ],
+  "allowed_files": [
+    "只允许改动的文件"
+  ],
+  "acceptance": {
+    "commands": [
+      "一条最快验收命令"
+    ],
+    "expected_exit_code": 0
+  },
+  "risks": [
+    "不要顺手扩大范围",
+    "仍未覆盖的边界"
+  ]
+}
+```
+
+真正给 Claude Code 用时，你可以把它放进新 prompt 里，再加一句明确的话：
+
+```md
+只根据仓库和这份 handoff 实现。不要重新探索无关文件；只改 allowed_files；
+完成后运行 acceptance.commands，并报告真实退出码与剩余风险。
+```
+
+这比“继续刚才那个思路修一下”稳得多，因为它把第二阶段需要继承的内容收缩到了最小。
+
+## 练习
+
+拿你自己仓库里一个最近修过的 bug，做一遍下面这套演练：
+
+1. 用计划模式或只读提示，先做 Stage A，只读探索并写出 handoff。
+2. 强迫自己把 `allowed_files` 和 `acceptance.commands` 写完整。
+3. 在一个干净会话里重新开始，只喂 handoff，不复制整段历史。
+4. 如果第二阶段还需要重新问一堆“问题到底是什么”，说明 handoff 不合格。
+
+完成标准不是“修好了”，而是同时满足三点：
+
+- 第二阶段没有扩大文件范围；
+- 验收命令真实运行并返回可解释的退出码；
+- 你能清楚说出这次为什么该 `clear`、为什么不该 `continue`，或者为什么应该 `fork`。
+
+## 来源与延伸阅读
+
+- 官方一手资料：
+  - [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices)
+  - [Manage sessions](https://code.claude.com/docs/en/sessions)
+  - [Checkpointing](https://code.claude.com/docs/en/checkpointing)
+  - [How Claude Code works](https://code.claude.com/docs/en/how-claude-code-works)
+  - [Common workflows](https://code.claude.com/docs/en/common-workflows)
+  - [CLI reference](https://code.claude.com/docs/en/cli-reference)
+- 本文本地证据：
+  - `research/articles/advanced-conversation-patterns/showcase/`
+  - `research/articles/advanced-conversation-patterns/evidence-ledger.md`
+- 二手主题地图（仅用于选题与中文术语，不作为现行产品行为依据）：
+  - [Claude Code Orange Book](https://github.com/alchaincyf/claude-code-orange-book)
+
+官方文档支撑当前产品行为与会话语义；本文 Showcase 只证明本地 deterministic 流程隔离。橙皮书作为二手主题地图保留署名与链接，其仓库 README 声明许可为 CC BY-NC-SA 4.0。

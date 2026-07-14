@@ -1,0 +1,28 @@
+{
+  "task": "Fix the slugify bug with the smallest possible change.",
+  "symptom": "The fixture currently returns \"rock--roll\" for the input \"Rock & Roll\".",
+  "evidence": [
+    "Baseline command: node tests/run-tests.mjs",
+    "FAIL collapses punctuation gaps into one hyphen expected=rock-roll actual=rock--roll",
+    "Two other tests already pass, so the bug is localized rather than systemic."
+  ],
+  "allowed_files": [
+    "src/slugify.js"
+  ],
+  "acceptance": {
+    "commands": [
+      "node tests/run-tests.mjs"
+    ],
+    "expected_exit_code": 0
+  },
+  "risks": [
+    "Do not broaden the change into transliteration or locale-specific slug rules.",
+    "Do not edit tests unless the symptom and acceptance evidence require it."
+  ],
+  "repo_facts": [
+    "packageManager: none",
+    "testScript: node tests/run-tests.mjs",
+    "sourceLines: 8",
+    "testLines: 41"
+  ]
+}

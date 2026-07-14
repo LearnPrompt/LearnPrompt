@@ -1,0 +1,64 @@
+1. Showcase replay
+
+Command:
+node research/articles/codex-claude-code-dual-track/showcase/handoff-degradation-lab/scripts/verify-showcase.mjs
+
+Result:
+degraded_single_lane=0
+invalid_dual_track=30
+bad_write_set=31
+contract_drift=32
+privacy_scan=0
+tests=2 pass=2 fail=0
+tracked_results_unchanged_vs_previous_run=yes
+
+Exit:
+0
+
+2. Single-article validator
+
+Command:
+node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs --article starlight/src/content/docs/codex/codex-claude-code-dual-track.mdx --research research/articles/codex-claude-code-dual-track
+
+Result:
+PASS article
+PASS research
+PASS status: verified (94/100)
+
+Exit:
+0
+
+3. Starlight build
+
+Command:
+npm --prefix starlight run build
+
+Result:
+49 page(s) built
+
+Exit:
+0
+
+4. Diff and privacy checks
+
+Commands:
+git diff --check
+node research/articles/codex-claude-code-dual-track/showcase/handoff-degradation-lab/scripts/privacy-scan.mjs
+
+Result:
+diff check produced no output
+PASS privacy scan
+
+Exit:
+0
+
+5. Visual check
+
+Asset:
+/images/articles/codex-claude-code-dual-track/handoff-degradation-lab.svg
+
+Result:
+Chrome headless rendered 1400x900 PNG; title, healthy lane, degraded lane, arrows, status labels, and three negative cards remained inside their boxes.
+
+Status:
+PASS independent review (94/100, 0 blocker / 0 major / 0 minor)

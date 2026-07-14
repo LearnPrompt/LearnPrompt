@@ -1,0 +1,18 @@
+{
+  "attempted_at": "2026-07-12",
+  "model": "gpt-5.5",
+  "status": "completed",
+  "exec_exit_code": 0,
+  "reports_written": {
+    "json": true,
+    "markdown": true
+  },
+  "validation_exit_code": 0,
+  "protected_files_unchanged": true,
+  "changed_paths": [
+    "reports/learning-proposals.json",
+    "reports/learning-proposals.md"
+  ],
+  "raw_capture": "stored outside the worktree; only sanitized summary and accepted artifacts are committed",
+  "stderr_excerpt": ""
+}

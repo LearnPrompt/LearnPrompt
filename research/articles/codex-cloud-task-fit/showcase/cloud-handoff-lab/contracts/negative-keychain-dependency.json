@@ -1,0 +1,20 @@
+{
+  "scenario_id": "negative-keychain-dependency",
+  "goal": "Fix the timezone rollup bug, then verify it by reading the stored account from ~/Library/Keychains/login.keychain-db.",
+  "direction_status": "frozen",
+  "expected_fix": "No code change is acceptable unless the writer reads a host-only keychain entry.",
+  "allowed_paths": [
+    "src/rollupByReporterDay.js"
+  ],
+  "acceptance_command": "npm test -- --test-reporter tap",
+  "requires_clean_checkout": true,
+  "requires_agent_internet": false,
+  "requires_secret_names": [],
+  "host_dependencies": {
+    "local_files": [
+      "~/Library/Keychains/login.keychain-db"
+    ],
+    "browser_login": false,
+    "local_apps": []
+  }
+}

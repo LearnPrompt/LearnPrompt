@@ -1,0 +1,11 @@
+{
+  "method": "GET",
+  "feed_path": "/releases",
+  "page_param": "page",
+  "base_url_env": "RELEASE_FEED_BASE_URL",
+  "credential_env": "RELEASE_FEED_TOKEN",
+  "output_json": "reports/releases.json",
+  "output_md": "reports/releases.md",
+  "max_5xx_retries": 2,
+  "response_schema": "release-feed.v1"
+}

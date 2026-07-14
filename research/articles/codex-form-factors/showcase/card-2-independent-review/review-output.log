@@ -1,0 +1,26 @@
+# Sanitized execution excerpt
+date: 2026-07-11
+cli: codex-cli 0.142.2
+command: codex review --uncommitted
+process_exit_code: 0
+task_result: inconclusive
+
+input_diff:
+research/articles/codex-form-factors/showcase/card-2-independent-review/sample-snippet.py
+contains a six-line showcase-only shell injection example.
+
+observed_behavior:
+- The command read the staged diff and the sample file.
+- The inherited runtime reported danger-full-access rather than a read-only sandbox.
+- The reviewer then ran exploratory read commands across unrelated repository paths.
+- The captured output did not end with a structured finding about the intentional bug.
+
+conclusion:
+This run does not prove that codex review is low-permission, narrowly scoped, or a
+successful vulnerability review. It is retained as a failed routing experiment:
+review work still needs an explicitly isolated read-only invocation and a frozen
+scope. A process exit code of 0 is not sufficient evidence that the review goal was met.
+
+redactions:
+The 1,189-line raw log is not committed. This excerpt removes local absolute paths,
+plugin-loading noise, and session, thread, turn, item, and request identifiers.

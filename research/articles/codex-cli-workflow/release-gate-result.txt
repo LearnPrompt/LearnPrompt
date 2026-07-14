@@ -1,0 +1,86 @@
+codex-cli-workflow writer gate（冻结脱敏摘录）
+================================================
+运行日期：2026-07-11
+说明：原始 `codex exec` JSONL / stderr / final-report 先写在系统临时目录，再抽取最小脱敏证据进入 repo。
+writer 阶段先记录机械门禁；独立只读 follow-up 已关闭全部 finding，最终 `showcase_status=verified`、质量分 98/100。
+
+------------------------------------------------
+1. 一键离线 replay（不会再次调用模型）
+命令：
+  node research/articles/codex-cli-workflow/showcase/receipt-normalizer/scripts/verify-showcase.mjs
+关键输出：
+  - good_exit_code: 0
+  - good_fresh_repo_tests: tests=4 pass=4 fail=0
+  - bad_exit_code: 3
+  - bad_reason: README.md out of scope
+  - privacy_exit_code: 0
+  - privacy_output: PASS privacy scan
+  - tracked_results_unchanged_vs_previous_run: yes
+退出码：0
+
+2. receipt-normalizer 环境边界
+命令（脱敏后）：
+  codex -a never exec \
+    --cd <temp-repo> \
+    --ephemeral \
+    --ignore-user-config \
+    --ignore-rules \
+    --sandbox workspace-write \
+    --model gpt-5.5 \
+    --json \
+    --output-schema <schema-path> \
+    --output-last-message <temp-artifacts>/final-report.json \
+    - < prompt.txt
+关键事实：
+  - preflight `gpt-5.6-sol` 真实失败：requires a newer version of Codex
+  - 正式 run 固定 `gpt-5.5`
+  - raw JSONL / stderr / final JSON 均先写到工作树外
+  - `stdout-sanitized.jsonl` 中真实 item id 与绝对 shell 路径已替换为稳定占位符
+
+3. 真实 `codex exec` 结果
+关键输出：
+  - files_changed = ["src/normalizeReceipt.js"]
+  - diff_summary = Updated src/normalizeReceipt.js so receipt normalization keeps the last four digits...
+  - npm test = 4 tests passed; 0 failed
+退出码：0
+
+4. 正文字数门禁
+命令：node 统计脚本
+关键输出：
+  body_chars=8412
+  cn_explanatory_chars=2849
+  h2_count=10
+退出码：0
+
+5. 单篇 partial validator
+命令：
+  node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs \
+    --article starlight/src/content/docs/codex/codex-cli-workflow.mdx \
+    --research research/articles/codex-cli-workflow
+关键输出：
+  PASS article: starlight/src/content/docs/codex/codex-cli-workflow.mdx
+  PASS research: research/articles/codex-cli-workflow
+  PASS status: partial
+退出码：0
+
+6. Starlight build
+命令：
+  npm --prefix starlight run build
+关键输出：
+  Found 49 HTML files.
+  /codex/codex-cli-workflow/index.html built
+  49 page(s) built in 2.38s
+  Complete!
+退出码：0
+
+7. staged diff check（临时 index）
+命令：
+  GIT_INDEX_FILE=<temp-index> git read-tree HEAD
+  GIT_INDEX_FILE=<temp-index> git add -N <allowed-paths>
+  GIT_INDEX_FILE=<temp-index> git diff --check -- <allowed-paths>
+关键输出：
+  （无输出）
+退出码：0
+
+================================================
+最终状态：verified 98/100。offline replay、privacy scan、validator、build、diff-check 与独立只读 review 均通过。

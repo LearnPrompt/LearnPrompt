@@ -1,0 +1,108 @@
+{
+  "fixture": "knowledge-maintenance-proposal",
+  "generated_by": "gpt-5.5-live",
+  "source_preservation_rule": "Source notes and frozen manifests must remain byte-identical; AI may write only a maintenance proposal.",
+  "applied_changes": [],
+  "proposals": [
+    {
+      "action": "merge-candidate",
+      "note_paths": [
+        "notes/alpha-project-brief.md",
+        "notes/alpha-accessibility-notes.md"
+      ],
+      "evidence_paths": [
+        "maintenance-manifest.json",
+        "notes/alpha-project-brief.md",
+        "notes/alpha-accessibility-notes.md"
+      ],
+      "observed_fact": "Both Alpha notes share the frozen canonical key alpha-launch-plan. The project brief records beta dependencies on the accessibility pass and partner review checklist, while the accessibility note adds keyboard navigation, contrast review, and reduced motion requirements.",
+      "proposed_change": "Ask a human reviewer to merge these complementary Alpha launch details into one maintained note or explicitly keep the split if the editorial model requires separate planning and accessibility notes.",
+      "confidence": "high",
+      "requires_human_approval": true,
+      "source_preservation_rule": "Source notes and frozen manifests must remain byte-identical; AI may write only a maintenance proposal.",
+      "reason": "The shared canonical key supports a merge candidate, and the bodies are complementary rather than duplicate."
+    },
+    {
+      "action": "stale-flag",
+      "note_paths": [
+        "notes/payment-policy.md"
+      ],
+      "evidence_paths": [
+        "notes/payment-policy.md",
+        "current-sources.json"
+      ],
+      "observed_fact": "The payment note says invoices are due in 30 days, but current-sources.json says sources/billing-policy-2026.md now claims invoices for new contracts are due in 14 days and supersedes notes/payment-policy.md.",
+      "proposed_change": "Flag notes/payment-policy.md as stale for human review and update only after approval against sources/billing-policy-2026.md.",
+      "confidence": "high",
+      "requires_human_approval": true,
+      "source_preservation_rule": "Source notes and frozen manifests must remain byte-identical; AI may write only a maintenance proposal.",
+      "reason": "The frozen current source directly contradicts the note and identifies the note as superseded."
+    },
+    {
+      "action": "source-needed",
+      "note_paths": [
+        "notes/vendor-summary.md"
+      ],
+      "evidence_paths": [
+        "notes/vendor-summary.md",
+        "maintenance-manifest.json"
+      ],
+      "observed_fact": "The vendor summary has an empty source_path and says it records a provider response-time claim without naming a source file or URL.",
+      "proposed_change": "Ask a human reviewer to provide the missing source path or URL; do not invent a source for this note.",
+      "confidence": "high",
+      "requires_human_approval": true,
+      "source_preservation_rule": "Source notes and frozen manifests must remain byte-identical; AI may write only a maintenance proposal.",
+      "reason": "The note contains an unsourced claim and the manifest expects source-needed, but no auditable source is present in the allowed inputs."
+    },
+    {
+      "action": "orphan-review",
+      "note_paths": [
+        "notes/lonely-idea.md"
+      ],
+      "evidence_paths": [
+        "notes/lonely-idea.md",
+        "link-graph.json"
+      ],
+      "observed_fact": "notes/lonely-idea.md appears in link-graph.json nodes and has no edge where it is the from path or the to path, giving it zero out-degree and zero in-degree.",
+      "proposed_change": "Ask a human reviewer to decide whether notes/lonely-idea.md should remain disconnected, receive links, or be retired.",
+      "confidence": "high",
+      "requires_human_approval": true,
+      "source_preservation_rule": "Source notes and frozen manifests must remain byte-identical; AI may write only a maintenance proposal.",
+      "reason": "The frozen graph proves the orphan condition without requiring edits to the note."
+    },
+    {
+      "action": "conflict-review",
+      "note_paths": [
+        "notes/pricing-public.md",
+        "notes/pricing-sales.md"
+      ],
+      "evidence_paths": [
+        "notes/pricing-public.md",
+        "notes/pricing-sales.md",
+        "current-sources.json"
+      ],
+      "observed_fact": "Both pricing notes share canonical key pricing-page but preserve competing source paths: sources/pricing-public.md says Pro is priced per seat per month on the public page, while sources/pricing-sales.md says contracted Pro accounts use annual-only pricing in the sales memo.",
+      "proposed_change": "Route the pricing-page pair to human conflict review while preserving both source paths and their scoped claims.",
+      "confidence": "high",
+      "requires_human_approval": true,
+      "source_preservation_rule": "Source notes and frozen manifests must remain byte-identical; AI may write only a maintenance proposal.",
+      "reason": "The claims can both be true in different contexts, so the proposal should preserve both sources instead of collapsing them automatically."
+    },
+    {
+      "action": "no-op",
+      "note_paths": [
+        "notes/team-rituals.md"
+      ],
+      "evidence_paths": [
+        "notes/team-rituals.md",
+        "link-graph.json"
+      ],
+      "observed_fact": "notes/team-rituals.md is current, says no maintenance action is needed, links to alpha-project-brief, and is also linked from research-index in link-graph.json.",
+      "proposed_change": "Take no maintenance action for notes/team-rituals.md.",
+      "confidence": "high",
+      "requires_human_approval": true,
+      "source_preservation_rule": "Source notes and frozen manifests must remain byte-identical; AI may write only a maintenance proposal.",
+      "reason": "The note is connected in the frozen graph and no allowed current source contradicts it, so restraint is the auditable action."
+    }
+  ]
+}

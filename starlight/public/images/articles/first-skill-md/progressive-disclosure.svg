@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="520" viewBox="0 0 880 520" font-family="'Helvetica Neue', Arial, sans-serif">
+  <rect width="880" height="520" fill="#ffffff"/>
+  <rect x="0.5" y="0.5" width="879" height="519" fill="none" stroke="#111111" stroke-width="1"/>
+
+  <!-- title -->
+  <text x="32" y="44" font-size="22" font-weight="700" fill="#111111">SKILL.md 的三级渐进披露</text>
+  <text x="32" y="70" font-size="14" fill="#555555">同一个 Skill，元数据始终加载，正文与资源再按匹配和引用逐层进入上下文。</text>
+
+  <!-- column headers -->
+  <text x="32" y="112" font-size="12" font-weight="700" fill="#7a2e12">层级 / 内容</text>
+  <text x="470" y="112" font-size="12" font-weight="700" fill="#7a2e12">何时加载</text>
+  <text x="648" y="112" font-size="12" font-weight="700" fill="#7a2e12">上下文成本</text>
+  <line x1="32" y1="122" x2="848" y2="122" stroke="#111111" stroke-width="1"/>
+
+  <!-- Level 1 -->
+  <rect x="32" y="136" width="410" height="96" fill="#faf4f0" stroke="#111111" stroke-width="1"/>
+  <text x="48" y="164" font-size="15" font-weight="700" fill="#111111">Level 1 · 元数据</text>
+  <text x="48" y="188" font-size="12" fill="#333333">frontmatter 的 name + description</text>
+  <text x="48" y="210" font-size="12" fill="#7a2e12">发现元数据：name + description；description 写用途与时机</text>
+  <text x="470" y="176" font-size="13" fill="#111111">始终加载</text>
+  <text x="470" y="196" font-size="12" fill="#555555">进程启动、写入系统提示</text>
+  <text x="648" y="176" font-size="13" font-weight="700" fill="#111111">约 100 tokens / 个</text>
+  <text x="648" y="196" font-size="12" fill="#555555">装多个也几乎不占位</text>
+
+  <!-- arrow 1->2 -->
+  <path d="M 237 232 L 237 252" stroke="#7a2e12" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="248" y="248" font-size="11" fill="#7a2e12">请求匹配 description 后，Claude 用 bash 读正文</text>
+
+  <!-- Level 2 -->
+  <rect x="32" y="256" width="410" height="96" fill="#f6efe9" stroke="#111111" stroke-width="1"/>
+  <text x="48" y="284" font-size="15" font-weight="700" fill="#111111">Level 2 · 正文指令</text>
+  <text x="48" y="308" font-size="12" fill="#333333">SKILL.md 的工作流、步骤与边界</text>
+  <text x="48" y="330" font-size="12" fill="#7a2e12">建议控制在数百行内，便于维护</text>
+  <text x="470" y="296" font-size="13" fill="#111111">触发后加载</text>
+  <text x="470" y="316" font-size="12" fill="#555555">仅在被调用时进入上下文</text>
+  <text x="648" y="296" font-size="13" font-weight="700" fill="#111111">低于 5k tokens</text>
+  <text x="648" y="316" font-size="12" fill="#555555">官方给出的量级参考</text>
+
+  <!-- arrow 2->3 -->
+  <path d="M 237 352 L 237 372" stroke="#7a2e12" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="248" y="368" font-size="11" fill="#7a2e12">正文引用到时，才读文件或跑脚本</text>
+
+  <!-- Level 3 -->
+  <rect x="32" y="376" width="410" height="100" fill="#f1e8e0" stroke="#111111" stroke-width="1"/>
+  <text x="48" y="404" font-size="15" font-weight="700" fill="#111111">Level 3 · 资源与脚本</text>
+  <text x="48" y="428" font-size="12" fill="#333333">scripts/、references/、模板与示例</text>
+  <text x="48" y="450" font-size="12" fill="#7a2e12">脚本经 bash 执行，只有输出进上下文</text>
+  <text x="470" y="416" font-size="13" fill="#111111">按需加载</text>
+  <text x="470" y="436" font-size="12" fill="#555555">未被引用的文件不占位</text>
+  <text x="648" y="416" font-size="13" font-weight="700" fill="#111111">近似无限</text>
+  <text x="648" y="436" font-size="12" fill="#555555">代码本身不进上下文</text>
+
+  <!-- footnote -->
+  <line x1="32" y1="492" x2="848" y2="492" stroke="#cccccc" stroke-width="1"/>
+  <text x="32" y="510" font-size="11" fill="#888888">来源：Anthropic 官方 Agent Skills 文档的三级加载表（2026-07-11 核验）。图为 LearnPrompt 原创绘制。</text>
+
+  <defs>
+    <marker id="a" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#7a2e12"/>
+    </marker>
+  </defs>
+</svg>

@@ -1,0 +1,8 @@
+Date: 2026-07-10
+CLI: codex-cli 0.142.2
+Configured default model: gpt-5.6-sol
+Result: stopped before repository analysis
+
+The 'gpt-5.6-sol' model requires a newer version of Codex. Please upgrade to the latest app or CLI and try again.
+
+Resolution used for this showcase: keep the installed CLI unchanged and retry with an explicitly selected compatible cached model, gpt-5.4.

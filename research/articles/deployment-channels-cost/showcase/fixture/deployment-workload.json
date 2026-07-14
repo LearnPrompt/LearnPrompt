@@ -1,0 +1,72 @@
+{
+  "fixture_id": "synthetic-openclaw-deployment-v1",
+  "as_of": "2026-07-12",
+  "workload": {
+    "availability_required": "24/7",
+    "persistence_required": true,
+    "local_device_required": false,
+    "requests_per_day": 120,
+    "days_per_month": 30,
+    "peak_concurrency": 3,
+    "input_tokens_per_request": 4500,
+    "output_tokens_per_request": 1200,
+    "tool_calls_per_request": 2,
+    "media_calls_per_day": 8,
+    "trust_boundary": "trusted-small-team",
+    "exposure": "public-reverse-proxy",
+    "gateway_auth": "token",
+    "dm_policy": "pairing",
+    "group_policy": "allowlist",
+    "channel_probe_required": true
+  },
+  "pricing_assumptions": {
+    "currency": "USD",
+    "example_only": true,
+    "input_per_million": 0.8,
+    "output_per_million": 4,
+    "tool_per_call": 0.002,
+    "media_per_call": 0.015,
+    "channel_plugin_monthly": 6,
+    "egress_observability_monthly": 8
+  },
+  "budget": {
+    "monthly_cap": 100,
+    "per_run_cap": 0.5,
+    "rate_limit_rpm": 20,
+    "concurrency_limit": 3,
+    "fallback": "approved-lower-cost-model",
+    "kill_switch": true
+  },
+  "candidates": [
+    {
+      "id": "local-laptop",
+      "fixed_infra_monthly": 0,
+      "availability": "operator-hours",
+      "persistent_state": true,
+      "local_device_access": true,
+      "max_concurrency": 1,
+      "exposure": "loopback",
+      "operator_model": "single-operator"
+    },
+    {
+      "id": "vps-container",
+      "fixed_infra_monthly": 18,
+      "availability": "24/7",
+      "persistent_state": true,
+      "local_device_access": false,
+      "max_concurrency": 3,
+      "exposure": "public-reverse-proxy",
+      "operator_model": "trusted-small-team"
+    },
+    {
+      "id": "managed-template",
+      "fixed_infra_monthly": 30,
+      "availability": "24/7",
+      "persistent_state": true,
+      "local_device_access": false,
+      "max_concurrency": 4,
+      "exposure": "public-reverse-proxy",
+      "operator_model": "trusted-small-team"
+    }
+  ]
+}

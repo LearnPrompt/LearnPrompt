@@ -1,0 +1,104 @@
+{
+  "fixture_id": "synthetic-openclaw-deployment-v1",
+  "fixture_sha256": "4cf82e987c89769cb648b647ea9fca0aa1732fc685a7fabb9f2a01a6c139bdc3",
+  "generated_at": "2026-07-12",
+  "status": "accept",
+  "selected_candidate": "vps-container",
+  "rationale": "Meets 24/7 availability, persistence, public exposure/auth/channel-policy constraints and has the lowest replayed total among compatible candidates.",
+  "cost_assumptions_are_examples": true,
+  "provider_invoice": false,
+  "decision_requirements": {
+    "availability_required": "24/7",
+    "persistence_required": true,
+    "local_device_required": false,
+    "trust_boundary": "trusted-small-team"
+  },
+  "security": {
+    "exposure": "public-reverse-proxy",
+    "gateway_auth": "token",
+    "dm_policy": "pairing",
+    "group_policy": "allowlist",
+    "secret_handling": "SecretRef plus clean audit and documented rotation; no plaintext in reports"
+  },
+  "channel_health": {
+    "mode": "live-probe-required",
+    "command": "openclaw channels status --probe",
+    "config_only_is_healthy": false
+  },
+  "acceptance_commands": [
+    "openclaw gateway status --require-rpc",
+    "openclaw channels status --probe",
+    "openclaw health --json",
+    "openclaw doctor"
+  ],
+  "inputs": {
+    "requests_per_day": 120,
+    "days_per_month": 30,
+    "input_tokens_per_request": 4500,
+    "output_tokens_per_request": 1200,
+    "tool_calls_per_request": 2,
+    "media_calls_per_day": 8,
+    "peak_concurrency": 3,
+    "input_per_million": 0.8,
+    "output_per_million": 4,
+    "tool_per_call": 0.002,
+    "media_per_call": 0.015
+  },
+  "monthly_cost": {
+    "currency": "USD",
+    "monthly_requests": 3600,
+    "fixed_infra": 18,
+    "model_input": 12.96,
+    "model_output": 17.28,
+    "tool": 14.4,
+    "media": 3.6,
+    "variable_subtotal": 48.24,
+    "channel_plugin": 6,
+    "egress_observability": 8,
+    "optional_subtotal": 14,
+    "total": 80.24,
+    "monthly_cap": 100,
+    "headroom": 19.76
+  },
+  "per_run": {
+    "model_and_tools": 0.0124,
+    "cap": 0.5
+  },
+  "budget_controls": {
+    "monthly_cap": 100,
+    "per_run_cap": 0.5,
+    "rate_limit_rpm": 20,
+    "concurrency_limit": 3,
+    "fallback": "approved-lower-cost-model",
+    "kill_switch": true
+  },
+  "candidates": [
+    {
+      "id": "local-laptop",
+      "compatible": false,
+      "monthly_total": 62.24,
+      "availability": "operator-hours",
+      "persistent_state": true,
+      "exposure": "loopback",
+      "max_concurrency": 1
+    },
+    {
+      "id": "vps-container",
+      "compatible": true,
+      "monthly_total": 80.24,
+      "availability": "24/7",
+      "persistent_state": true,
+      "exposure": "public-reverse-proxy",
+      "max_concurrency": 3
+    },
+    {
+      "id": "managed-template",
+      "compatible": true,
+      "monthly_total": 92.24,
+      "availability": "24/7",
+      "persistent_state": true,
+      "exposure": "public-reverse-proxy",
+      "max_concurrency": 4
+    }
+  ]
+}

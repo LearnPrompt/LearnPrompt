@@ -1,0 +1,19 @@
+{
+  "candidate_sha": "cdc8bf70d44838e2239ff00052b092cb0ce7d198b77ec5b581e17f799e8dc892",
+  "completed_stages": [
+    "inventory",
+    "normalize",
+    "transform",
+    "validate",
+    "package-candidate"
+  ],
+  "resume": true,
+  "reused_stages": [
+    "inventory",
+    "normalize",
+    "transform"
+  ],
+  "scenario": "normal",
+  "source_sha": "e2ea46ed34bacc0bc494391ae3d5747a361995d3ec063daccaa7c261aaab8cc5",
+  "status": "success"
+}

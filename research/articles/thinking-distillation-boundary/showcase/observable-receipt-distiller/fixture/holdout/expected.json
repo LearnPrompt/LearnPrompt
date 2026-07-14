@@ -1,0 +1,32 @@
+{
+  "cases": [
+    {
+      "file": "01-missing-title.mdx",
+      "title": "Fallback Routes",
+      "description": "Keep fallback routes explicit so reviewers can see when a repair path was chosen.",
+      "sidebar_order": 21,
+      "expect_noop": false
+    },
+    {
+      "file": "02-missing-description.mdx",
+      "title": "Replay Ledger",
+      "description": "Replay Ledger explains how a replay file captures commands, exit codes, and the smallest proof needed to re-run the repair.",
+      "sidebar_order": 22,
+      "expect_noop": false
+    },
+    {
+      "file": "03-invalid-sidebar-order.mdx",
+      "title": "Boundary Markers",
+      "description": "Separate rejected private material from publishable repair evidence.",
+      "sidebar_order": 999,
+      "expect_noop": false
+    },
+    {
+      "file": "04-already-valid.mdx",
+      "title": "No-op Case",
+      "description": "Leave already-valid files unchanged so reviewers can trust the candidate did not rewrite healthy metadata.",
+      "sidebar_order": 8,
+      "expect_noop": true
+    }
+  ]
+}

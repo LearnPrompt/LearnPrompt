@@ -6,45 +6,70 @@ const paths = [
   {
     index: "01",
     title: "AI 编程入门",
-    href: "/ai-coding/choose-claude-code-or-codex/",
-    body: "从需求、计划、实现到验收，建立第一个可复用的 AI 编程闭环。",
-    meta: "5 篇 · 任务卡",
+    href: "/ai-coding/minimum-agentic-coding-workflow/",
+    body: "先做一个小任务。一张任务卡、一份 diff、一次验收，够你跑完第一轮。",
+    meta: "5 篇 · 第一次交付",
   },
   {
     index: "02",
-    title: "Claude Code / Codex",
+    title: "Claude Code",
     href: "/claude-code/install-and-first-project/",
-    body: "理解本地执行、云端任务、代码审查之间的边界和分工。",
-    meta: "14 篇 · 可审查 diff",
+    body: "拿本地项目练手：先学会给规则，再处理长会话、Skills 和多 Agent。",
+    meta: "8 篇 · 本地项目",
   },
   {
     index: "03",
-    title: "Agent 工程",
-    href: "/agent-engineering/what-is-harness/",
-    body: "把模型能力放进可运行、可回滚、可观察、可验收的系统。",
-    meta: "6 篇 · 反馈闭环",
+    title: "Codex",
+    href: "/codex/codex-form-factors/",
+    body: "工作要在哪里跑？先选 CLI、IDE、桌面或 Cloud，再谈权限和审查。",
+    meta: "6 篇 · 执行与审查",
   },
   {
     index: "04",
-    title: "Agent Skills",
-    href: "/agent-skills/what-are-agent-skills/",
-    body: "把稳定工作流包装成可复用的 Skill，而不是每次重新提示。",
-    meta: "7 篇 · SKILL.md",
+    title: "Agent 工程",
+    href: "/agent-engineering/what-is-harness/",
+    body: "Agent 总是跑偏，就沿着指令、约束、记忆、反馈和编排一层层查。",
+    meta: "6 篇 · Harness",
   },
   {
     index: "05",
+    title: "Agent Skills",
+    href: "/agent-skills/what-are-agent-skills/",
+    body: "同一套流程做了三次，可以考虑写成 Skill。先把触发条件和验收补齐。",
+    meta: "7 篇 · 可复用流程",
+  },
+  {
+    index: "06",
+    title: "Loop Engineering",
+    href: "/loop-engineering/five-moves/",
+    body: "一次任务跑完后，留下状态、验收结果和下一步。下一轮才能接得上。",
+    meta: "1 篇 · 持续循环",
+  },
+  {
+    index: "07",
     title: "Obsidian AI",
     href: "/obsidian-ai/markdown-as-agent-memory/",
-    body: "把 Markdown vault 变成 Agent 可读、可维护的长期工作台。",
-    meta: "5 篇 · 长期上下文",
+    body: "目录怎么放、索引怎么写、项目怎么交接，都落到 Markdown 和 Git 里。",
+    meta: "5 篇 · 知识工作台",
+  },
+  {
+    index: "08",
+    title: "Hermes / OpenClaw",
+    href: "/agent-frameworks/hermes-learning-loop/",
+    body: "长驻 Agent 会读写什么、消息怎么走、每月花多少，都需要一笔笔算清。",
+    meta: "3 篇 · Agent 框架",
   },
 ];
 
 const featured = [
-  ["Claude Code 与 Codex 怎么选", "/ai-coding/choose-claude-code-or-codex/", "先确定任务归属，避免一开始就把工具用错。"],
-  ["Agentic Coding 的最小工作流", "/ai-coding/minimum-agentic-coding-workflow/", "把 AI 编程压成计划、改动、验证、复盘四步。"],
-  ["CLAUDE.md 最小可用模板", "/claude-code/minimum-claude-md/", "让项目规则真的影响模型行为，而不是只写口号。"],
-  ["第一个 SKILL.md 怎么写", "/agent-skills/first-skill-md/", "把常用流程包装成别人也能加载的稳定能力。"],
+  ["从自然语言需求到可运行 MVP", "/ai-coding/natural-language-to-mvp/", "先写输入、输出、失败态和验收。少一个，任务都可能做偏。"],
+  ["Claude Code 安装与第一个项目", "/claude-code/install-and-first-project/", "找一个随时可以删掉的小仓库，跑通第一次改动。"],
+  ["Codex 的四个执行面怎么选", "/codex/codex-form-factors/", "先看工作在哪里跑，再选 CLI、IDE、桌面或 Cloud。"],
+  ["Harness 的五个组件", "/agent-engineering/what-is-harness/", "Agent 做不稳时，用五个组件找出缺的那一层。"],
+  ["第一个 SKILL.md 怎么写", "/agent-skills/first-skill-md/", "把重复流程写进 SKILL.md，再亲手校验和打包一次。"],
+  ["一个 Loop 的五个动作", "/loop-engineering/five-moves/", "一圈里发生什么，拆开看其实只有五个动作。"],
+  ["Markdown 何时才算 Agent 记忆", "/obsidian-ai/markdown-as-agent-memory/", "让新会话看完文件就能继续，不必翻聊天记录。"],
+  ["OpenClaw 架构导读", "/agent-frameworks/openclaw-architecture-guide/", "跟着一条消息走完 Gateway、Node、Channel 和几道门禁。"],
 ];
 
 const contactEmail = "carl@goodcase.ai";
@@ -58,7 +83,7 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>LearnPrompt｜把 AI 用进真实项目</title>
-    <meta name="description" content="LearnPrompt 是面向真实项目的中文 AI 编程、Agent、Skills 与知识工作台教程。" />
+    <meta name="description" content="LearnPrompt 用真实项目讲任务拆解、代码交付和知识沉淀，覆盖 Claude Code、Codex、Agent、Skills、Loop 与知识工作台。" />
   </head>
   <body>
     <main class="lp-site">
@@ -80,8 +105,8 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
         <div class="lp-hero-copy">
           <p class="lp-kicker">REEL 01 · LEARNPROMPT / 2026</p>
           <h1 id="hero-title"><span>把AI</span><span>用进真实项目。</span></h1>
-          <p class="lp-hero-meta">AI Coding · Agent Engineering · Skills · Obsidian Workflow</p>
-          <p class="lp-hero-lede">不是提示词收藏夹，而是一套从想法、任务卡、代码交付到知识沉淀的实战路线。</p>
+          <p class="lp-hero-meta">AI Coding · Claude Code · Codex · Agent · Skills · Loop · Knowledge Workflow</p>
+          <p class="lp-hero-lede">想法还很模糊时，先写成任务卡。Agent 交回代码后，看 diff、跑测试。做完别急着关窗口，把踩过的坑记到项目规则或 Skill 里。LearnPrompt 讲的就是这套做法。</p>
           <div class="lp-actions">
             <a class="lp-button lp-button-primary" href={withBase("/start-here/ai-practice-map/")}>开始学习</a>
             <a class="lp-button" href="#paths">查看路径</a>
@@ -100,46 +125,40 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
           ></video>
           <div class="lp-frame-overlay">
             <span>Scene 001</span>
-            <strong>Prompt → Project → Skill</strong>
+            <strong>Idea → Task → Delivery → Memory</strong>
           </div>
         </div>
       </section>
 
-      <section class="lp-metrics" aria-label="核心学习产出">
+      <section class="lp-metrics" aria-label="教程质量证据">
         <div>
           <span>01</span>
-          <strong>任务卡</strong>
-          <p>把想法写成目标、边界和验收命令。</p>
+          <strong>41 篇教程</strong>
+          <p>每篇都有来源、教学图、Showcase 和独立审稿。</p>
         </div>
         <div>
           <span>02</span>
-          <strong>项目规则</strong>
-          <p>把反复踩坑的偏好写进 AGENTS 或 CLAUDE。</p>
+          <strong>8 条路径</strong>
+          <p>按你正在做的事选入口，不要求顺序读完整站。</p>
         </div>
         <div>
           <span>03</span>
-          <strong>Skill 草稿</strong>
-          <p>把稳定流程拆成触发、输入、步骤和验收。</p>
+          <strong>可重放 Showcase</strong>
+          <p>正常路径要跑，失败场景和越界反例也要跑。</p>
         </div>
         <div>
           <span>04</span>
-          <strong>复盘记录</strong>
-          <p>把失败原因沉淀为下次能复用的规则。</p>
+          <strong>一手来源</strong>
+          <p>命令、权限和版本回到官方资料核对，页面标明核验日期。</p>
         </div>
-      </section>
-
-      <section class="lp-quote" aria-label="LearnPrompt promise">
-        <p>“每一页都要帮你多做出一步。”</p>
-        <span>不是把模型、插件和链接按热度堆起来，而是把一次 AI 实战拆成清楚的目标、边界、验收和复盘。</span>
       </section>
 
       <section id="paths" class="lp-section lp-paths">
         <div class="lp-section-head">
-          <p>Selected Tracks · 2026</p>
+          <p>8 Tracks · 41 Verified Tutorials</p>
           <h2 class="lp-heading-lines">
-            <span>按目标进入，</span>
-            <span>不用按目录顺序，</span>
-            <span>就从不熟的开始。</span>
+            <span>你现在卡在哪，</span>
+            <span>就从哪一页开始。</span>
           </h2>
         </div>
         <div class="lp-path-list">
@@ -158,8 +177,8 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
 
       <section id="guides" class="lp-section lp-guides">
         <div class="lp-section-head">
-          <p>First Reading · 入门顺序</p>
-          <h2>第一次访问，先读这几篇。</h2>
+          <p>One Pick per Track · 每条路径一篇</p>
+          <h2>如果只想先挑几篇，从这 8 篇开始。</h2>
         </div>
         <div class="lp-guide-grid">
           {featured.map(([title, href, note], index) => (
@@ -334,6 +353,10 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
     padding: clamp(2rem, 4vw, 4.2rem) 0 clamp(3rem, 5vw, 5.2rem);
   }
 
+  .lp-hero-copy {
+    min-width: 0;
+  }
+
   .lp-kicker {
     margin: 0 0 1.4rem;
   }
@@ -473,7 +496,6 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
 
   .lp-metrics,
   .lp-section,
-  .lp-quote,
   .lp-footer {
     width: min(1180px, calc(100% - 2rem));
     margin-inline: auto;
@@ -507,30 +529,6 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
     margin: 0.85rem 0 0;
     color: rgba(245, 239, 229, 0.62);
     line-height: 1.72;
-  }
-
-  .lp-quote {
-    padding: clamp(4.5rem, 8vw, 8rem) 0;
-    text-align: center;
-  }
-
-  .lp-quote p {
-    margin: 0;
-    color: #fff8ec;
-    font-family: "Avenir Next Condensed", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-    font-size: clamp(2.8rem, 6vw, 6.4rem);
-    font-weight: 700;
-    letter-spacing: -0.07em;
-    line-height: 1;
-  }
-
-  .lp-quote span {
-    display: block;
-    max-width: 46rem;
-    margin: 1.4rem auto 0;
-    color: rgba(245, 239, 229, 0.66);
-    font-size: 1.04rem;
-    line-height: 1.85;
   }
 
   .lp-section {
@@ -772,7 +770,12 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
     }
 
     .lp-hero h1 {
-      font-size: clamp(4.1rem, 19vw, 6.2rem);
+      max-width: 100%;
+      font-size: clamp(3.1rem, 13vw, 3.6rem);
+    }
+
+    .lp-hero h1 span {
+      white-space: normal;
     }
 
     .lp-metrics,

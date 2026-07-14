@@ -1,0 +1,11 @@
+{
+  "id": "LP-42",
+  "title": "slugify 在连续分隔符下产生双连字符",
+  "state": "closed",
+  "description": "输入 'a  b' 期望得到 'a-b'，实际得到 'a--b'。根因是空白折叠后未去除重复连字符。",
+  "acceptance": [
+    "slugify('a  b') === 'a-b'",
+    "slugify('  Hello  World  ') === 'hello-world'"
+  ],
+  "labels": ["bug", "good-first-issue"]
+}

@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="560" viewBox="0 0 920 560" font-family="-apple-system, 'Segoe UI', 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <rect width="920" height="560" fill="#ffffff"/>
+
+  <!-- title -->
+  <text x="40" y="44" font-size="20" font-weight="700" fill="#1a1a1a">多 Agent 协作的可验证骨架</text>
+  <text x="40" y="68" font-size="13" fill="#57534e">冻结 contract → 分配不重叠文件所有权 → 合并门禁（write-set / 校验和 / 端到端）</text>
+
+  <!-- frozen contract -->
+  <rect x="330" y="92" width="260" height="66" fill="#fef3c7" stroke="#1a1a1a" stroke-width="1"/>
+  <text x="460" y="118" font-size="14" font-weight="700" fill="#1a1a1a" text-anchor="middle">① 冻结 contract</text>
+  <text x="460" y="138" font-size="12" fill="#78350f" text-anchor="middle">order-summary.schema.json</text>
+  <text x="460" y="152" font-size="11" fill="#78350f" text-anchor="middle">sha256: 9fda86…5b66（单边不可改）</text>
+
+  <!-- arrows to workers -->
+  <path d="M400 158 L250 208" stroke="#1a1a1a" stroke-width="1" fill="none" marker-end="url(#arrow)"/>
+  <path d="M520 158 L670 208" stroke="#1a1a1a" stroke-width="1" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- worker A -->
+  <rect x="80" y="210" width="300" height="92" fill="#f5f5f4" stroke="#1a1a1a" stroke-width="1"/>
+  <text x="96" y="234" font-size="14" font-weight="700" fill="#1a1a1a">② Worker A（独立进程/会话）</text>
+  <text x="96" y="256" font-size="12" fill="#292524">任务：CSV 订单解析器</text>
+  <text x="96" y="276" font-size="12" fill="#292524">write set：</text>
+  <rect x="168" y="264" width="196" height="18" fill="#ffffff" stroke="#a8a29e" stroke-width="1"/>
+  <text x="174" y="277" font-size="11" fill="#1a1a1a" font-family="monospace">src/parse-orders.mjs</text>
+  <text x="96" y="294" font-size="11" fill="#57534e">只读 contract，只写自己那一个文件</text>
+
+  <!-- worker B -->
+  <rect x="540" y="210" width="300" height="92" fill="#f5f5f4" stroke="#1a1a1a" stroke-width="1"/>
+  <text x="556" y="234" font-size="14" font-weight="700" fill="#1a1a1a">② Worker B（独立进程/会话）</text>
+  <text x="556" y="256" font-size="12" fill="#292524">任务：Markdown 汇总渲染器</text>
+  <text x="556" y="276" font-size="12" fill="#292524">write set：</text>
+  <rect x="628" y="264" width="204" height="18" fill="#ffffff" stroke="#a8a29e" stroke-width="1"/>
+  <text x="634" y="277" font-size="11" fill="#1a1a1a" font-family="monospace">src/render-summary.mjs</text>
+  <text x="556" y="294" font-size="11" fill="#57534e">只读 contract，只写自己那一个文件</text>
+
+  <!-- disjoint note -->
+  <text x="460" y="256" font-size="11" fill="#15803d" text-anchor="middle" font-weight="700">write set</text>
+  <text x="460" y="270" font-size="11" fill="#15803d" text-anchor="middle" font-weight="700">不重叠</text>
+
+  <!-- arrows to merge gate -->
+  <path d="M230 302 L420 360" stroke="#1a1a1a" stroke-width="1" fill="none" marker-end="url(#arrow)"/>
+  <path d="M690 302 L500 360" stroke="#1a1a1a" stroke-width="1" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- merge gate -->
+  <rect x="300" y="362" width="320" height="118" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"/>
+  <text x="460" y="386" font-size="14" font-weight="700" fill="#1a1a1a" text-anchor="middle">③ 协调器合并门禁（确定性）</text>
+  <text x="318" y="410" font-size="12" fill="#292524">✓ write set 两两不重叠</text>
+  <text x="318" y="430" font-size="12" fill="#292524">✓ 无任务触碰冻结 contract</text>
+  <text x="318" y="450" font-size="12" fill="#292524">✓ contract 校验和与磁盘一致</text>
+  <text x="318" y="470" font-size="12" fill="#292524">✓ 接口已冻结、依赖已满足</text>
+
+  <!-- pass path -->
+  <path d="M620 421 L720 421" stroke="#15803d" stroke-width="1.5" fill="none" marker-end="url(#arrowgreen)"/>
+  <rect x="722" y="398" width="160" height="46" fill="#dcfce7" stroke="#15803d" stroke-width="1"/>
+  <text x="802" y="418" font-size="13" font-weight="700" fill="#166534" text-anchor="middle">APPROVE → 合并</text>
+  <text x="802" y="434" font-size="11" fill="#166534" text-anchor="middle">端到端测试 PASS（exit 0）</text>
+
+  <!-- conflict path: worker C -->
+  <rect x="40" y="500" width="360" height="46" fill="#fee2e2" stroke="#b91c1c" stroke-width="1"/>
+  <text x="56" y="520" font-size="12" font-weight="700" fill="#991b1b">冲突路径：某任务 write set 含 contract</text>
+  <text x="56" y="537" font-size="11" fill="#991b1b" font-family="monospace">src/parse-orders.mjs + contract/order-summary.schema.json</text>
+  <path d="M400 523 L455 500" stroke="#b91c1c" stroke-width="1.5" fill="none" stroke-dasharray="4 3" marker-end="url(#arrowred)"/>
+
+  <!-- reject stamp near gate -->
+  <rect x="470" y="496" width="270" height="46" fill="#ffffff" stroke="#b91c1c" stroke-width="1.5"/>
+  <text x="605" y="516" font-size="13" font-weight="700" fill="#b91c1c" text-anchor="middle">REJECT CONFLICT（exit 3）</text>
+  <text x="605" y="533" font-size="11" fill="#991b1b" text-anchor="middle">在应用前拒绝，绝不写盘</text>
+
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#1a1a1a"/>
+    </marker>
+    <marker id="arrowgreen" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#15803d"/>
+    </marker>
+    <marker id="arrowred" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#b91c1c"/>
+    </marker>
+  </defs>
+</svg>

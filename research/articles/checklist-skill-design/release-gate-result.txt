@@ -1,0 +1,113 @@
+writer-stage release gate summary
+
+本文件冻结 offline showcase、真实 Codex 显式 Skill 调用、privacy、终审前 partial validator、最终 verified validator、完整 build 与 diff check 的精确命令、关键输出和退出码。
+
+1. showcase verify
+
+command:
+  node research/articles/checklist-skill-design/showcase/release-readiness-checklist/scripts/verify-showcase.mjs
+
+exit:
+  0
+
+key output:
+  ready: exit=0
+  missing-changelog: exit=21
+  version-mismatch: exit=22
+  unverifiable-install: exit=23
+  na-without-evidence: exit=24
+  privacy: exit=0
+
+meaning:
+  offline replay 冻结了正负场景与 row contract；ready 报告保留全部七个 row 字段。
+
+2. live Codex explicit Skill call
+
+command:
+  node research/articles/checklist-skill-design/showcase/release-readiness-checklist/scripts/run-codex-live.mjs
+
+exit:
+  0
+
+key output:
+  status=completed
+  model=gpt-5.5
+  exec_exit_code=0
+  skill_invocation=$release-readiness-checklist
+  release_exit_code=0
+  tests_exit_code=0
+  tests=passed 2/2
+  reports_written.json=true
+  reports_written.markdown=true
+  changed_files=?? reports/
+
+meaning:
+  writer 隔离层的首次调用曾被宿主权限阻断，失败证据仍保留；外层主控随后用同一冻结 fixture / prompt / schema 补跑成功。Codex 只写报告，不发布，也不改版本、changelog 或安装命令。
+
+3. privacy scan
+
+command:
+  node research/articles/checklist-skill-design/showcase/release-readiness-checklist/scripts/privacy-scan.mjs
+
+exit:
+  0
+
+key output:
+  PASS privacy scan: no runtime IDs, absolute temp paths, user home paths, or shell paths were committed.
+
+4. partial validator
+
+command:
+  node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs \
+    --article starlight/src/content/docs/agent-skills/checklist-skill-design.mdx \
+    --research research/articles/checklist-skill-design
+
+exit:
+  0
+
+key output:
+  PASS article: starlight/src/content/docs/agent-skills/checklist-skill-design.mdx
+  PASS research: research/articles/checklist-skill-design
+  PASS status: partial
+
+5. full site build
+
+command:
+  npm --prefix starlight run build
+
+exit:
+  0
+
+key output:
+  /agent-skills/checklist-skill-design/index.html
+  [starlight:pagefind] Found 49 HTML files.
+  [build] 49 page(s) built in 2.60s
+
+6. git diff check
+
+command:
+  git diff --check
+
+exit:
+  0
+
+key output:
+  (no output)
+
+7. merged-path replay stability
+
+command:
+  连续两次运行 verify-showcase.mjs，并对整个 results 目录计算文件哈希
+
+exit:
+  0
+
+key output:
+  两次 results 哈希清单完全一致
+  Node --test 的行级耗时统一为 (<duration>ms)
+  duration_ms 统一为 <duration>
+
+meaning:
+  只移除非确定性 wall-clock 数值；test pass/fail、2/2 与 0/21/22/23/24 语义保持不变。
+
+最终状态：verified；独立只读 reviewer PASS 97/100，blocker 0 / major 0 / minor 0，视觉 PASS。

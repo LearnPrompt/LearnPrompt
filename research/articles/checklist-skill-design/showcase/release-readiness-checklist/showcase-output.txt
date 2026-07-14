@@ -1,0 +1,14 @@
+release-readiness-checklist archived output index
+
+- README: `README.md`
+- Offline replay summary: `results/verify-showcase.txt`
+- Ready report JSON: `results/ready-report.json`
+- Ready report Markdown: `results/ready-report.md`
+- Live nested Codex attempt summary: `results/live-run-summary.json`
+- Live stderr summary: `results/codex-stderr-summary.txt`
+
+This showcase preserves all states that matter for the article:
+
+- deterministic offline replay passed the frozen `0 / 21 / 22 / 23 / 24 / privacy 0` matrix;
+- the writer-side real invocation was blocked by host permissions and remains archived as historical evidence;
+- the outer controller reran the same frozen fixture / prompt / schema with gpt-5.5, completed the explicit `$release-readiness-checklist` call, wrote JSON and Markdown reports, passed tests 2/2, and changed only `reports/`.

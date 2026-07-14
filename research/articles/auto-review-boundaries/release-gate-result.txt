@@ -1,0 +1,28 @@
+writer-stage release gate summary
+verified_at=2026-07-11
+
+[showcase]
+behavior_repro=future_refund=true
+real_finding=src/refundPolicy.js:15 severity=P1
+good_gate=PASS
+bad_gate=exit 3
+offline_replay=PASS
+
+[content]
+body_chars=16374
+cn_explanatory_chars=4959
+h2_count=14
+partial_validator=PASS
+
+[site]
+build=PASS
+pages=49
+route=/codex/auto-review-boundaries/
+staged_diff_check=PASS
+
+[review]
+independent_read_only_review=PASS
+quality_score=100
+blocker=0
+major=0
+minor=0

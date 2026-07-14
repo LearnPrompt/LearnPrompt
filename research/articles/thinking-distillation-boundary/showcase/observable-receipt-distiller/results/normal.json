@@ -1,0 +1,16 @@
+{
+  "scenario": "normal",
+  "exit_code": 0,
+  "distill_exit_code": 0,
+  "evaluation_exit_code": 0,
+  "tests_exit_code": 0,
+  "source_receipts_unchanged": true,
+  "holdout_result": "4/4",
+  "candidate_written": true,
+  "changed_files": [
+    "?? .agents/skills/frontmatter-repair/",
+    "?? reports/"
+  ],
+  "distill_summary_path": "reports/distillation-summary.json",
+  "evaluation_summary_path": "reports/evaluation-summary.json"
+}

@@ -1,0 +1,108 @@
+release gate result — trigger-rules-and-structure
+
+本文件记录 writer 机械门禁、主控外层补跑与独立终审。最终 `showcase_status=verified`、`quality_score=93`。
+
+1. showcase verify
+
+command:
+  node research/articles/trigger-rules-and-structure/showcase/skill-router-lab/scripts/verify-showcase.mjs
+
+exit:
+  0
+
+key output:
+  {
+    "fixtures_created": true,
+    "malformed_result_rejected": true,
+    "privacy_scan": "PASS privacy scan",
+    "matrix_status": "status=complete; broad=TP2/FP0/FN0/TN2; bounded=TP2/FP0/FN0/TN2; explicit loaded=true exit=0",
+    "showcase_status": "partial"
+  }
+
+meaning:
+  broad / bounded fixtures、runner、schema、privacy scan 与 malformed-result gate 都通过；
+  真实 implicit / explicit matrix complete。
+
+1b. live Codex routing experiment
+
+commands:
+  CODEX_ROUTER_MODEL=gpt-5.5 node research/articles/trigger-rules-and-structure/showcase/skill-router-lab/scripts/run-codex-experiment.mjs --variant broad --mode implicit
+  CODEX_ROUTER_MODEL=gpt-5.5 node research/articles/trigger-rules-and-structure/showcase/skill-router-lab/scripts/run-codex-experiment.mjs --variant bounded --mode implicit
+  CODEX_ROUTER_MODEL=gpt-5.5 node research/articles/trigger-rules-and-structure/showcase/skill-router-lab/scripts/run-codex-experiment.mjs --variant bounded --mode explicit
+  node research/articles/trigger-rules-and-structure/showcase/skill-router-lab/scripts/evaluate-results.mjs --results-dir research/articles/trigger-rules-and-structure/showcase/skill-router-lab/results
+
+exit:
+  0 / 0 / 0 / 0
+
+key output:
+  broad:   TP=2 FP=0 FN=0 TN=2 precision=1 recall=1
+  bounded: TP=2 FP=0 FN=0 TN=2 precision=1 recall=1
+  explicit: request-5 loaded=true exit_code=0
+  total fresh ephemeral sessions: 9
+  canary source: final answer only
+
+2. partial validator
+
+command:
+  node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs \
+    --article starlight/src/content/docs/agent-skills/trigger-rules-and-structure.mdx \
+    --research research/articles/trigger-rules-and-structure
+
+exit:
+  0
+
+key output:
+  PASS article: starlight/src/content/docs/agent-skills/trigger-rules-and-structure.mdx
+  PASS research: research/articles/trigger-rules-and-structure
+  PASS status: partial
+
+3. full site build
+
+command:
+  npm --prefix starlight run build
+
+exit:
+  0
+
+key output:
+  /agent-skills/trigger-rules-and-structure/index.html
+  [starlight:pagefind] Found 49 HTML files.
+  [build] 49 page(s) built in 3.61s
+
+4. privacy scan
+
+command:
+  node research/articles/trigger-rules-and-structure/showcase/skill-router-lab/scripts/privacy-scan.mjs research/articles/trigger-rules-and-structure
+
+exit:
+  0
+
+key output:
+  PASS privacy scan
+
+5. git diff check
+
+command:
+  git diff --check
+
+exit:
+  0
+
+key output:
+  (no output)
+
+6. nested Codex preflight summary
+
+raw logs:
+  captured outside the worktree, then reduced to
+  showcase/skill-router-lab/results/blocked-preflight-summary.json
+
+blocked exits:
+  preflight-1-invalid-approval-flag: exit 2
+  preflight-2-readonly-state-db: exit 1
+  preflight-3-writable-codex-home-network-blocked: exit 1
+
+meaning:
+  writer sandbox could not complete the model calls; the outer controller later completed the same frozen experiment. The blocked summary remains provenance, not the final showcase result.
+
+最终状态：verified（独立只读终审 0/0/0，93/100）

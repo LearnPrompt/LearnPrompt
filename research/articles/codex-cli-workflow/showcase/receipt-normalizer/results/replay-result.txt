@@ -1,0 +1,22 @@
+receipt-normalizer offline replay
+command: node research/articles/codex-cli-workflow/showcase/receipt-normalizer/scripts/verify-showcase.mjs
+mode: offline deterministic replay only; no model call
+
+good_command: node research/articles/codex-cli-workflow/showcase/receipt-normalizer/scripts/release-gate.mjs good
+good_exit_code: 0
+good_output: PASS good patch: file scope, frozen contract, report fields, and npm test all matched
+good_fresh_repo_tests: tests=4 pass=4 fail=0
+
+bad_command: node research/articles/codex-cli-workflow/showcase/receipt-normalizer/scripts/release-gate.mjs bad
+bad_exit_code: 3
+bad_output: FAIL forbidden path in patch: README.md
+bad_reason: README.md out of scope
+
+privacy_command: node research/articles/codex-cli-workflow/showcase/receipt-normalizer/scripts/privacy-scan.mjs
+privacy_exit_code: 0
+privacy_output: PASS privacy scan
+root: research/articles/codex-cli-workflow
+files_scanned: 32
+checks: identifier-like values, uuid, absolute temp or home paths, absolute shell paths
+
+tracked_results_unchanged_vs_previous_run: yes

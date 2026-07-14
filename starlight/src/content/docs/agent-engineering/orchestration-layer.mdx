@@ -1,36 +1,197 @@
 ---
-title: 编排层：单 Agent、多 Agent 与流水线
-description: 选择最简单的 Agent 编排方式。
+title: 编排层：把一次任务变成一台明确的状态机
+description: 用顺序、角色、路由、重试、预算、停止、升级七个决定审计编排，从单 worker 加独立 evaluator 的最小状态机起步，并说清什么时候不该上多 Agent。
 sidebar:
   order: 6
 difficulty: advanced
-source_repo: alchaincyf/harness-engineering-orange-book
-source_url: https://github.com/alchaincyf/harness-engineering-orange-book
-updated_from: 2026-05
+updated_from: "2026-05"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-11"
+reading_time: 14 分钟
+research_path: research/articles/orchestration-layer
+showcase_path: research/articles/orchestration-layer/showcase/state-machine
+showcase_status: verified
+quality_score: 95
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 14 分钟 | 2026-07-11 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/harness-engineering-orange-book" url="https://github.com/alchaincyf/harness-engineering-orange-book" updatedFrom="2026-05" />
+任务一复杂，很多人的第一反应是拆成好几个 Agent 并行跑：一个查资料、一个写代码、一个测试，好像 Agent 越多越高级。可跑完之后，手里往往是更多互相矛盾的文本，而不是一个更稳的结果。
 
-## 选择顺序
+问题从来不在 Agent 的数量，而在控制流没定义：谁按什么顺序做、谁判对错、判定结果该路由到哪一步、失败了重试几次、预算多少、什么时候算完成、什么时候该停手交给人。编排层就是回答这一串问题的那一层。想清楚它，你会发现绝大多数任务先用一个 worker、一个独立的 evaluator、一台写死的状态机就够了；多 Agent 只是其中一种角色拓扑，不是更高级的代名词。
 
-1. 单 Agent：任务短、边界清楚、文件范围小。
-2. 多 Agent：可并行探索或分模块实现。
-3. 流水线：任务重复出现，需要稳定产物。
+## 读完你能做什么
 
-## 操作步骤
+你会学会把编排层看成一台明确的状态机，用七个决定审计任何一个 Agent 流程：
 
-1. 先判断是否真需要并行。
-2. 给每个 Agent 明确责任和文件边界。
-3. 汇总结果时只采纳有证据的结论。
-4. 对重复流程沉淀成 Skill 或脚本。
+1. 顺序：先做什么、后做什么，哪些步骤可以裁剪。
+2. 角色：谁执行、谁判分，两者是不是被刻意分开。
+3. 路由：一次验收的 pass/fail 判定，接下来把控制权交到哪一步。
+4. 重试：失败之后回到哪一步，带着什么反馈重试。
+5. 预算：重试和回合的硬上限是多少。
+6. 停止：什么信号出现才算 done，谁事先约定的。
+7. 升级：撞到什么条件就停手换人，而不是原地打转。
 
-## 常见错误
+你还会运行一台无网络依赖的最小状态机，亲眼看到同一个任务经历 `INSPECT → IMPLEMENT → VERIFY → RETRY → STOP/ESCALATE`：一次失败被路由回去、修正后通过、重试预算用尽后升级给人。
 
-把复杂问题拆给多个 Agent，但没有汇总标准。这样得到的是更多文本，不是更稳定结果。
+![左侧把一次任务画成 INSPECT 到 IMPLEMENT 到 VERIFY 的状态机并标注 ROUTE 读判定后的通过则停止、失败且预算未尽则重试、失败且预算用尽则升级三条分支，右侧比较 worker 执行、evaluator 独立判定、orchestrator 控制流三个角色的分工](/images/articles/orchestration-layer/orchestration-state-machine-and-roles.svg)
+*图注：左边是状态机和它的停止/升级两条出口，右边解释为什么做事的角色和判分的角色必须分开；编排层的活是读判定后决定下一步，既不写码也不自己盖章。*
 
-## 实战案例
+:::note[这是一套操作模型]
+「编排七决定」和「先简单后复杂」是 LearnPrompt 对官方多条工程建议的操作化归纳，方便审计和教学，并非某家产品的官方术语。涉及产品行为的部分都回到官方一手文档核验，日期见文末。
+:::
 
-信息源日报适合流水线：抓取、快照、对比、摘要、发布。每一步都可单独重跑，失败也可定位。
+## 先看一个失败：多拆几个 Agent，得到的是更多文本
+
+假设一个任务是「把这个模块重构得更干净并补上测试」，你直接开了三个 Agent 并行：一个读代码提方案、一个改代码、一个写测试。听起来分工明确，但它没回答任何一个决定控制流的问题。
+
+三个 Agent 谁先谁后？改代码的等不等提方案的结论？写测试的按哪一版代码写？改完之后，谁来判断「更干净」达标了没有，是改代码的那个自己说了算吗？如果测试挂了，是打回给改代码的、还是重开一轮方案？重试几次之后该停手叫人？
+
+这些问题一个都没答，于是三个 Agent 各写各的，最后你收到三份互不咬合的产物，还得自己当汇总人。再加一个 Agent 也补不齐这些工程缺口——缺的不是算力，是控制流。Anthropic 关于长任务 Agent 的工程研究把这条说得很克制：每加一个编排组件，都是在假设模型自己做不到某件事，而这个假设值得反复质疑。换句话说，多 Agent 不是起点，是当单 worker 的状态机确实不够用时，才谨慎加上去的东西。
+
+## 编排层要定死的七个决定
+
+把一次任务的控制流拆开，编排层要回答的其实是七个能被逐一检查的决定。下面这张表是审计一个编排流程的最小清单：
+
+| 决定 | 它回答的问题 | 反模式 | 一手线索 |
+| --- | --- | --- | --- |
+| 顺序 order | 先做什么、后做什么 | 直接开写，解错问题 | 探索→规划→实现→提交，可裁剪 |
+| 角色 role | 谁执行、谁判分 | 做事的自己盖章 | 分离做事与判分是强杠杆 |
+| 路由 routing | 判定后交给哪一步 | 判定含糊，来回争论 | 独立 evaluator 每轮复检 |
+| 重试 retry | 失败后回哪一步 | 无脑重跑同一路径 | 失败把详细反馈交回生成者 |
+| 预算 budget | 最多几次 | 无限循环 | Stop hook 连续 8 次阻塞结束回合 |
+| 停止 stop | 什么算 done | 绿灯后继续瞎改 | 动工前先约定 done |
+| 升级 escalate | 何时换人 | 死循环不叫人 | 纠正两次无效就重来 |
+
+左列每一个都能落到状态机的一段控制流上，右列每一格都有官方一手资料支撑。接下来把其中最容易被漏掉的四组拆开讲。
+
+## 为什么「做事的」和「判分的」必须分开
+
+编排里第一个强杠杆，是角色分工。Anthropic 说得很直接：把做事的 agent 和判分的 agent 分开，是解决自评偏差最有力的一招。原因不难理解——生成者会自信地夸奖自己的产物，哪怕在旁人看来质量明显平庸。
+
+有意思的是，它还补了一个更细的判断：独立的 evaluator 本身也是 LLM，也会偏心，但把一个独立 evaluator 调得挑剔，比让生成者去批判自己的产物，要可行得多。这就是为什么编排要在结构上强制分离，而不是指望一句「请严格自查」。
+
+落到 Claude Code，这条体现为 Writer/Reviewer 模式：一个会话负责写，另一个用全新上下文负责审。官方给的理由是，全新上下文改善代码审查，因为它不会偏向刚写出来的代码。更强的一档是对抗式复审 subagent：它只看 diff 和你给的验收标准，看不到产生这份 diff 的推理过程，所以它在自己的立场上独立判断。编排层的核心动作，就是保证 VERIFY 这一步不由写代码的那个角色自己完成。
+
+## 顺序与路由：状态机怎么读判定决定下一步
+
+第二组决定是顺序和路由。顺序不是仪式。官方推荐的四阶段工作流是探索、规划、实现、提交：先在只读模式下读文件、答问题，再写实现计划，切出只读模式对照计划写码，最后提交。但它同时提醒，如果一句话就能描述改动，跳过规划直接做。所以顺序是可裁剪的控制流，按任务复杂度伸缩，而不是每次都走满全程。
+
+路由是编排里最像状态机的部分：VERIFY 产出一个 pass/fail 判定，编排读这个判定决定把控制权交到哪一步。这里有个前提——判定必须无歧义。Anthropic 关于评测的工程文章给了一条很硬的判据：一个好任务，是两个领域专家各自独立判定都会得到同一个 pass/fail。如果连算不算过都要争论，路由本身就会卡在原地。
+
+官方把停止的强度排成四档，本质就是路由从弱到强：
+
+- 一条 prompt 内让模型自己跑检查并迭代，最弱，随手可用。
+- 设成 `/goal` 条件，由一个独立 evaluator 在每一轮之后复检，直到条件成立。
+- 用 Stop hook 作为确定性闸，它把你的脚本当退出条件，不通过就不让这一回合结束。
+- 请第二意见，让一个 verification subagent 用全新模型试图推翻结果，做事的那个就不再是打分的那个。
+
+还有一条容易被忽略的原则：路由读的是产物对不对，而不是路径走得对不对。官方的说法是，通常应该评产物而非路径——验收只认输出，不规定 worker 走哪条实现路线。这让编排的判定保持干净：VERIFY 通过，只证明当前产物满足验收，不证明它是唯一实现。
+
+## 重试、预算、停止与升级：回路的两个出口
+
+第三组决定，是回路的两个出口。它们最容易被写成文档里的一句漂亮话，却没落到真实控制流上。
+
+重试和预算要分开写。重试回答失败后回哪一步，预算回答最多几次。带反馈的重试，指的是像 Anthropic 长任务研究里那样：一个 sprint 失败时，系统把「哪里错了」的详细反馈交回生成者去改，而不是无脑重跑同一条路径。预算则是一个硬上限：Claude Code 的 Stop hook 在连续 8 次阻塞之后会被覆盖并结束这一回合，这是一个确定性的次数上限——它存在，就是为了不让回路无限转下去。这个「8 次」是当前实现，可能随版本变化。
+
+停止条件要事先约定，而不是靠感觉。Anthropic 长任务研究里，生成者和评审者会在每个 sprint 动工之前先谈一份 sprint contract：把「done 长什么样、成功怎么验证」定下来，再写第一行代码；任一硬指标没达到，这个 sprint 就算失败。落到日常，就是全部验收通过才收工，别在绿灯之后继续改——改动越过验收线之后每一笔都是纯风险。
+
+升级条件同样要显式。当信号连续不再变化，或者已经撞上预算，就该换人、换层或换策略，而不是原地打转。官方给了一条很具体的经验线：如果同一个问题你已经纠正超过两次，正确动作是 `/clear` 重开、用一条更好的提示重来，而不是在被失败尝试污染的上下文里继续加轮次。一个简单的判断法：每一轮判定都在变、改动面在缩小，回路在收敛，继续；判定连续不变、改动却越铺越大，回路在发散，停手升级。
+
+## Showcase：一台最小编排状态机
+
+为了让「编排是一台状态机」不停留在口号，本文附了一个无网络、无第三方依赖的最小状态机，保留了同一任务经历 `INSPECT → IMPLEMENT → VERIFY → RETRY → STOP/ESCALATE` 的可复现全过程。完整目录、命令与脱敏输出见 [研究与 Showcase](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/orchestration-layer/showcase/state-machine)。
+
+三个角色严格分工：`worker.mjs` 只产出候选实现，`evaluator.mjs` 独立跑验收只给 pass/fail 加定位，`orchestrator.mjs` 既不写码也不判分，只读判定后决定去哪一步。这里要说清一条诚实边界：worker 是一个确定性桩，按顺序吐出预先准备好的候选，用来代表执行角色每一轮交出的产物，它不是在线大模型。这个 Showcase 演示的是编排层的控制流，不比较模型智能，也不构成任何模型排名。
+
+任务对象还是那个把标题转成 URL slug 的函数，验收由三条用例规定：小写、连字符、去标点。两个场景跑同一台 orchestrator、同一份验收，只换 worker 候选和重试预算。
+
+第一个场景，重试预算给 2，worker 第一版漏掉小写化、第二版补上。2026-07-11 在 macOS、Node v24.11.0 下的真实状态转换：
+
+```text
+$ node run.mjs
+===== 场景 A：预算内收敛（fail → retry → pass → stop） =====
+[state] INSPECT     task=slugify  acceptance=3 cases  retry_budget=2
+[state] IMPLEMENT   attempt=1/3  worker applied candidate #1
+[state] VERIFY      attempt=1       FAIL  case="lowercases and hyphenates"  expected=hello-world  actual=Hello-World
+[route] RETRY       budget used 1/2, 1 left -> IMPLEMENT
+[state] IMPLEMENT   attempt=2/3  worker applied candidate #2
+[state] VERIFY      attempt=2       PASS  3/3 cases
+[stop]  STOP_DONE   reason=all-acceptance-passed  exit=0
+[result] outcome=done  attempts=2  exit=0
+```
+
+这一段把顺序、路由、重试、停止四个决定都摊开了：INSPECT 先看清验收，VERIFY 失败后 ROUTE 读判定、发现预算还剩 1，就路由回 IMPLEMENT；第二版通过后走 STOP_DONE，退出码 0。整个过程用掉 1 次重试，在预算内收敛。
+
+第二个场景，重试预算只给 1，worker 卡住、两版都还是漏掉小写化。它证明升级出口是真实控制流，不是装饰：
+
+```text
+===== 场景 B：撞预算升级（fail → retry → fail → escalate） =====
+[state] INSPECT     task=slugify  acceptance=3 cases  retry_budget=1
+[state] IMPLEMENT   attempt=1/2  worker applied candidate #1
+[state] VERIFY      attempt=1       FAIL  case="lowercases and hyphenates"  expected=hello-world  actual=Hello-World
+[route] RETRY       budget used 1/1, 0 left -> IMPLEMENT
+[state] IMPLEMENT   attempt=2/2  worker applied candidate #2
+[state] VERIFY      attempt=2       FAIL  case="lowercases and hyphenates"  expected=hello-world  actual=Hello-World
+[route] BUDGET      exhausted after 2 attempts -> ESCALATE
+[stop]  ESCALATE    reason=retry-budget-exhausted  handoff=human  exit=1
+[result] outcome=escalated  attempts=2  exit=1
+```
+
+第二次 VERIFY 仍然失败，但这次预算已经用尽，状态机不再回 IMPLEMENT，而是走 ESCALATE、`handoff=human`、退出码 1。`run.mjs` 整体退出码是 2：只要有场景以升级收尾，就把「需要人接手」这个事实用退出码暴露给上游脚本，而不是悄悄吞掉。
+
+这个 Showcase 证明的是：编排的五个决定——顺序、路由、重试预算、停止、升级——都能落到可观察、可复现的状态转换上；停止和升级是两条真实分支，分别被场景 A 和场景 B 触发。它没有证明的是：worker 是确定性桩、不是在线模型，所以这里不比较模型能力；一次收敛也不代表真实任务长期可靠，真实编排还要把能力、约束、沙箱、CI 和人工审批接进来。
+
+## 编排层和其他五层的分工
+
+编排层是 harness 叙事的收口，但它只负责控制流，不负责内容、能力、边界、数据和判决。分不清边界，就会把本该别处解决的问题塞进编排里。
+
+- 指令层回答「每个角色应该怎么做」。指令是喂给角色的内容；编排决定谁按什么顺序做、谁验收。指令是内容，编排是控制流。
+- 能力层回答「角色能调用什么」。能力是工具清单；编排决定在状态机的哪一步允许调用哪个工具。
+- 约束层回答「什么绝对不能做」。约束是动作发生前的硬边界，靠 deny 规则、沙箱、审批拦住；编排的升级出口，是在约束拦不住、需要人判断时才触发的那条线。
+- 状态层回答「下一轮要记住什么」。状态是数据，存目标和上次失败证据；编排是读状态、写状态并决定下一步的那台机器。
+- 反馈与评测层回答「怎么判过没过、怎么把判决翻成动作」。评测产出 pass/fail 判决，反馈把判决翻成下一步最小改动；编排是读这个信号之后决定路由、重试、停止、升级的控制流。评测给判决，反馈给动作，编排给控制流。
+
+一句话记法：其他五层准备好角色、工具、边界、数据和判决，编排层决定这一切按什么顺序流动、在哪里停、在哪里交给人。
+
+## 什么时候不该上多 Agent
+
+编排层不等于「更多 Agent」。遇到下面这些情况，先别急着拆分：
+
+- 任务短、边界清楚、只碰一两个文件。一个 worker 加一条验收就够，多开 Agent 只增加协调成本和汇总负担。
+- 失败来自工具缺失或权限不足。这是能力层或约束层的事，再多 Agent 也跑不动一条不存在的命令。
+- 还没有能出 pass/fail 的验收。先补一条确定性检查——测试、构建退出码、把输出和 fixture 做 diff 的脚本——否则任何编排的停止条件都无信号可读。
+- 并行探索却没有汇总标准。多个 Agent 各写各的，若没有一个能判对错的 evaluator 收口，你收到的只是更多文本，不是更稳结果。
+
+一个判断法：如果把任务交给单 worker、配一个独立 evaluator、跑一台写死了停止和升级条件的状态机就能可靠完成，那就别加 Agent；只有当单机状态机确实撑不住某个环节时，才把那个环节拆成独立角色，并同样给它验收和出口。
+
+## 练习：把你的任务画成一台状态机
+
+找一个最近让你想「多开几个 Agent」的任务，先别拆，把它按七个决定填进这张表：
+
+```yaml
+顺序: 先做什么后做什么，哪些步骤可以裁剪
+角色: 谁执行谁判分，判分的是不是执行的那个
+路由: 一次验收的 pass/fail，接下来去哪一步
+重试: 失败后回哪一步，带着什么反馈
+预算: 重试和回合的硬上限是多少
+停止: 什么信号出现才算 done，谁事先约定的
+升级: 撞到什么条件就停手交人
+```
+
+任何一行答不上「落到了某个真实状态或命令」，就是这个编排最薄弱的一环。先把它补成一台单 worker、单 evaluator 的状态机，跑一遍，观察它能不能自己在预算内收敛、能不能在撞预算时正确升级。只有当某个环节真的撑不住时，再把它拆成独立角色。不要一上来就同时加并行、加路由、加长期记忆，否则你无法知道是哪一项真正起了作用。
+
+完成标准：七行都能指向一个具体状态、命令或判定；你能只凭状态机的退出码而不是感觉，判断这次是收敛了、还是该交给人。如果还要靠「我觉得几个 Agent 应该跑完了」，这次审计就还没完成。
+
+## 来源与延伸阅读
+
+- [Claude Code 官方文档：Best practices（顺序、gating、Writer/Reviewer、升级）](https://code.claude.com/docs/en/best-practices)
+- [Anthropic：Effective harnesses for long-running agents](https://www.anthropic.com/engineering/harness-design-long-running-apps)
+- [Anthropic：Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)
+- [Harness Engineering 橙皮书](https://github.com/alchaincyf/harness-engineering-orange-book)
+- [本篇研究包与可运行 Showcase](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/orchestration-layer)
+
+前三条为官方一手资料，支撑本文所有当前产品行为，核验日期 2026-07-11；其中 Stop hook「连续 8 次阻塞后结束回合」为当前实现，可能随版本变化。橙皮书作为中文主题地图（二手来源）帮助确认编排层在 harness 叙事中的收口位置，其仓库为教育性分享并要求署名，本文在此保留链接与署名，未复制其任何图片或成段文字。编排七决定、先简单后复杂与「连续失败/撞预算即升级」，是 LearnPrompt 对官方建议的操作化综合，不是行业统一标准；文中 Showcase 已重新组织并复核，worker 为确定性桩、未运行在线大模型，不构成任何模型排名。

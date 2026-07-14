@@ -1,0 +1,25 @@
+{
+  "tool": "Codex CLI",
+  "cli_version": "0.142.2",
+  "model": "gpt-5.4",
+  "sandbox": "read-only",
+  "approval_policy": "never",
+  "project": "LearnPrompt 当前以 starlight 目录中的 Astro Starlight 文档站为主，根目录保留旧 Docusaurus。",
+  "entrypoints": [
+    "vercel.json",
+    "starlight/src/pages/index.astro",
+    "src/pages/index.js"
+  ],
+  "first_check": "cd starlight && npm run build",
+  "evidence": [
+    "README.md 说明当前与旧站边界",
+    "vercel.json 指定 starlight 构建",
+    "starlight/package.json 定义 Astro 构建",
+    "根 package.json 与 src/pages/index.js 属于旧站"
+  ],
+  "uncertainty": [
+    "尚未实际运行构建",
+    "本轮没有读取 astro.config.mjs",
+    "旧入口是否仍承接流量"
+  ]
+}

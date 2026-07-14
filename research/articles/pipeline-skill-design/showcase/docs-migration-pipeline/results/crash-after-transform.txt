@@ -1,0 +1,3 @@
+scenario: crash-after-transform
+command: node .agents/skills/docs-migration-pipeline/scripts/run-pipeline.mjs --scenario crash-after-transform
+exit_code: 30

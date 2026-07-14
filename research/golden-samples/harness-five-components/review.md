@@ -1,0 +1,62 @@
+# Review：Harness 的五个组件
+
+审稿日期：2026-07-10
+独立审稿器：Codex CLI 0.142.2 / `gpt-5.4` / read-only / never approval
+评审证据：原始评审输出在仓库外捕获；本文件是会话结束后的脱敏定稿，不是评审中的实时日志。
+隔离声明：reviewer 使用独立只读会话，writer 未参与打分或修改评审结果。
+
+## 初审结论：FAIL（87/100）
+
+| 维度 | 初审分数 |
+| --- | ---: |
+| 事实与证据 | 23/25 |
+| 解释深度 | 18/20 |
+| Showcase | 14/20 |
+| 教学设计 | 14/15 |
+| 时效性 | 9/10 |
+| 编辑质量 | 9/10 |
+
+## 初审问题与处理
+
+- Blocker：缺少 `review.md`。处理：已创建本文件，并保存初审、修订与待复核状态。
+- Minor：正文链接指向 `minimal-harness/`，原始结果却位于上一级 `showcase/result.txt`。处理：把 `result.txt` 移入 `minimal-harness/`，同步更新证据台账与 README；代码和运行记录现在位于同一目录。
+
+审稿器确认本文已明确“五组件是 LearnPrompt 的教学性综合，不是行业标准”，没有发现未处理的伪标准主张。
+
+## 终审结论：PASS（92/100）
+
+终审使用新的 Codex CLI 独立只读会话，仅核对初审问题、证据闭环与构建记录；未修改文件、未重跑命令。
+
+| 维度 | 终审分数 |
+| --- | ---: |
+| 事实与证据 | 24/25 |
+| 解释深度 | 18/20 |
+| Showcase | 18/20 |
+| 教学设计 | 14/15 |
+| 时效性 | 9/10 |
+| 编辑质量 | 9/10 |
+
+未关闭问题：blocker 0 / major 0 / minor 0。正文、台账、代码与原始结果路径一致；站点构建通过。
+
+## 视觉补充终审：PASS（92/100）
+
+新的 Codex `gpt-5.4` 独立只读会话核对正文、SVG、资产台账与本审稿记录；原始输出在仓库外捕获，writer 未参与打分或修改结论。图片把五组件模型压缩成可扫读的审计框架，与正文五问和 Showcase 的 `5/5 verified` 逻辑一致；alt、图注、SVG 文案和许可台账闭环。
+
+Visual assessment: PASS
+Asset: `/images/articles/what-is-harness/harness-five-components.svg`
+Teaching role: 解释规则、能力、约束、状态与编排怎样形成可验证执行闭环
+Decorative-only: no
+Rights: CC BY-NC-SA 4.0
+
+| 维度 | 视觉补充终审分数 |
+| --- | ---: |
+| 事实与证据 | 24/25 |
+| 解释深度 | 18/20 |
+| Showcase | 18/20 |
+| 教学设计 | 14/15 |
+| 时效性 | 9/10 |
+| 编辑质量 | 9/10 |
+
+未关闭问题：blocker 0 / major 0 / minor 0。
+
+最终状态：PASS

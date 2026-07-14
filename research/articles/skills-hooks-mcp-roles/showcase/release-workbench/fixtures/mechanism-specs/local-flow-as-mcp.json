@@ -1,0 +1,9 @@
+{
+  "task": "从 issue + diff 生成发布摘要（同一个纯本地固定流程，却想包装成 MCP）",
+  "needs": {
+    "repeatable_workflow": true,
+    "event_timing_guarantee": false,
+    "external_system_or_data": false
+  },
+  "declared_mechanism": "mcp"
+}

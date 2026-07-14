@@ -1,0 +1,18 @@
+> release-feed-api-fixture@0.0.0 test
+> node --test test/*.test.mjs
+
+✔ two-page success writes redacted reports (<duration>ms)
+✔ 429 once then success records one retry (<duration>ms)
+✔ missing credential exits 41 before network (<duration>ms)
+✔ schema drift exits 42 (<duration>ms)
+✔ 503 retry exhausted exits 43 (<duration>ms)
+✔ mutating method is rejected before network (<duration>ms)
+✔ loopback preflight is either available or explicitly blocked by the host (<duration>ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms <duration>

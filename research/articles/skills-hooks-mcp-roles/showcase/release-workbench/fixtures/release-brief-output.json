@@ -1,0 +1,10 @@
+{
+  "issue": "LP-42",
+  "summary": "修复 slugify 在连续分隔符下产生双连字符的缺陷，并补齐回归测试。",
+  "change_type": "fix",
+  "risk": "改动集中在 src/slugify.js，回归面限于 slug 生成；历史生成的 slug 不受影响，无需数据迁移。",
+  "verification": [
+    "node fixture/tests/run-tests.mjs",
+    "node -e \"import('./src/slugify.js').then(m=>console.log(m.slugify('a  b')))\""
+  ]
+}

@@ -1,38 +1,270 @@
 ---
-title: Codex CLI 入门工作流
-description: 用 Codex CLI 完成计划、编辑、验证和汇报。
+title: Codex CLI 入门工作流：把一次聊天变成可验证闭环
+description: 用隔离 receipt-normalizer 仓库的一次真实 codex exec，学会检查目录与工作树、冻结 contract、最小修改、测试、diff 与结构化汇报。
 sidebar:
   order: 1
 difficulty: beginner
 source_repo: alchaincyf/codex-orange-book
 source_url: https://github.com/alchaincyf/codex-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-11"
+reading_time: 14 分钟
+research_path: research/articles/codex-cli-workflow
+showcase_path: research/articles/codex-cli-workflow/showcase
+showcase_status: verified
+quality_score: 98
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 入门 | 14 分钟 | 2026-07-11 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/codex-orange-book" url="https://github.com/alchaincyf/codex-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+你已经会在终端里和 Codex 对话，也看过不少“让 Agent 改一下代码”的演示。但一到自己手上，最容易出问题的不是代码本身，而是整个工作流没有闭环：你不知道它读的是不是正确目录，不知道改动是不是只落在允许文件里，不知道测试和 diff 有没有真的看过，最后只拿到一句“我修好了”。
 
-## 最小闭环
+这篇文章要解决的不是“怎么写更厉害的 prompt”，而是一个更基础、也更容易被忽略的问题：**新手怎样把 Codex CLI 从一次聊天，变成“检查目录与工作树 -> 冻结 task contract -> 执行最小修改 -> 测试 -> 检查 diff -> 结构化汇报”的可验证闭环？**
 
-Codex CLI 的核心不是聊天，而是把工程任务推进到可验证状态：读代码、定计划、改文件、跑检查、说明结果。
+我们不会用一个大仓库做模糊演示，而是会在 LearnPrompt 工作树之外，真实创建一个隔离 Git 仓库 `receipt-normalizer`，里面只有一个实现文件带着可复现 bug、一份冻结 contract 和一组测试。然后实际运行一次 `codex-cli 0.142.2` 的 `codex exec`，要求它只改这一个实现文件、跑测试、输出结构化最终报告。原始 `stdout` JSONL、`stderr` 和最终 JSON 都先写到系统临时目录，确认无误后再脱敏放回 research pack。最后再用**不调用模型**的 deterministic gate 去证明：好 patch 能通过，故意改 README 的坏 patch 会稳定返回非零退出码。
 
-## 操作步骤
+:::note[本文不是模型跑分]
+这次 Showcase 只验证 workflow 是否闭环，不比较模型能力排名，也不把一次成功外推成“Codex 最强”或“所有仓库都适合 exec”。本文的比较单位是目录、权限、contract、patch、测试、diff 和报告这些工程接口。
+:::
 
-1. 进入项目根目录，先看 `git status`。
-2. 让 Codex 搜索相关文件，不急着编辑。
-3. 要求它列出 3-6 条计划和预计文件。
-4. 执行最小改动。
-5. 跑最快相关检查，再跑完整构建。
-6. 查看 diff，决定是否提交。
+## 读完你能做什么
 
-## 常见错误
+读完后，你应该能独立做四件事：
 
-- 在错误目录启动。
-- 没有告诉 Codex 哪些文件不能改。
-- 只看回答，不看真实 diff。
+1. 区分交互式 `codex` 与自动化 `codex exec` 的职责，不再把它们当成“同一个聊天框换个命令”。
+2. 在运行前先检查目录、工作树、Git 仓库和权限参数，把任务冻结成机器能执行、你也能审查的 contract。
+3. 让 `codex exec` 只改最小范围、跑测试、输出 JSON 报告，而不是只吐一段自然语言总结。
+4. 把一次模型运行的结果转成离线可复现的 patch + gate，而不是每次都再开一次模型“帮我看看行不行”。
 
-## 实战案例
+## 先分清交互 `codex` 与自动化 `codex exec`
 
-迁移 LearnPrompt 时，Codex 先新建分支和 `starlight/` 子目录，保留旧站文件，让每个阶段都能单独 review。
+很多人一上来就问：“我要修这个 bug，该直接 `codex exec`，还是在交互会话里先聊几轮？”真正稳定的答案不是看任务大小，而是看**需求是否已经冻结**。
+
+| 场景 | 更适合交互 `codex` | 更适合 `codex exec` |
+| --- | --- | --- |
+| 你还不知道要改哪些文件 | 是 | 否 |
+| 你需要边看仓库边追问 | 是 | 否 |
+| 允许范围、禁止范围、验收命令已经明确 | 否 | 是 |
+| 结果要进脚本、CI 或 release gate | 否 | 是 |
+| 你希望最后得到 machine-readable 结果 | 一般 | 是 |
+
+交互式 `codex` 适合 discovery。你可以先读目录、看相邻文件、问出真正影响结果的几个问题，再由人冻结任务边界。`codex exec` 适合在这个 discovery 之后接棒：**边界清楚了，就不要再让模型一边问一边猜，而是让它在固定 contract 里完成一次最小执行。**
+
+这也是为什么官方文档把 `codex exec` 放在 scripts 和 CI 的语境下。它不是“更强的聊天”，而是“更适合进入流水线的执行面”。
+
+:::caution[想要 `resume`，就别先假设 `--ephemeral`]
+`codex exec resume --last` 的前提是存在已记录 session；`--ephemeral` 的定义则是不把 rollout files 持久化到磁盘。两者没有谁更高级，只是目标不同：需要续跑的多阶段 pipeline 用 recorded exec，需要工作树外一次性自动化和最小痕迹时用 `--ephemeral`。
+:::
+
+## 闭环从检查目录和工作树开始
+
+新手最常见的错误不是“模型写错代码”，而是**根本没有先确认执行对象**。你以为自己在修当前仓库，其实 Agent 可能在错误目录里；你以为这是一次单文件 patch，实际上工作树原本就脏着几处未提交改动；你以为最后可以用 diff 验收，结果当前目录甚至不在 Git 仓库里。
+
+所以闭环的第一步不是 prompt，而是四个硬检查：
+
+1. 当前目录是不是你想改的仓库。
+2. `git status --short` 是不是干净，或者你是否明确知道哪些脏改动属于基线。
+3. 当前目录是不是 Git 仓库。
+4. 这次 run 的权限是不是显式设定，而不是继承了本机默认高权限。
+
+官方 Non-interactive mode 文档明确写了：`codex exec` 默认要求在 Git 仓库内运行；要跳过它，必须显式写 `--skip-git-repo-check`。这不是形式主义，而是因为没有 Git，后面的 `diff`、patch artifact 和 deterministic gate 都会失去根基。
+
+本机 `codex --help` / `codex exec --help` 还给了另一个很实用的提醒：`--ask-for-approval` 是**全局 flag**，不在 `codex exec --help` 的本地 option 列表里；而 `--ephemeral`、`--json`、`--output-schema`、`--output-last-message`、`--skip-git-repo-check` 则是 `codex exec` 自己的参数。这种细节不能靠旧教程回忆，必须以 2026-07-11 的本机帮助为准。
+
+## 冻结 task contract：别把 bug 描述当 contract
+
+“修复收据编号规范化 bug”只是目标，不是 contract。真正能让自动化闭环的，是你把允许范围和验收方式提前钉死。本文 Showcase 的冻结 contract 是这样的：
+
+```json
+{
+  "goal": "Normalize receipt references to RCPT-#### while keeping the last four digits of the numeric sequence.",
+  "allowed_paths": ["src/normalizeReceipt.js"],
+  "forbidden_paths": ["README.md", "task-contract.json", "package.json", "test/"],
+  "required_checks": [
+    "git status --short",
+    "npm test",
+    "git diff --stat",
+    "git diff -- src/normalizeReceipt.js"
+  ]
+}
+```
+
+这里最重要的不是 `goal`，而是另外三部分：
+
+- `allowed_paths` 告诉 Agent：你就算能想到别的改法，也只准动这一处实现。
+- `forbidden_paths` 告诉后续 gate：哪怕 README 只是多了一行，也应直接判越界。
+- `required_checks` 告诉自动化：不看测试、不看 diff，就不算完成。
+
+这和“请尽量只改一个文件”完全不是一回事。前者可以被 deterministic gate 机械验证，后者只是礼貌请求。
+
+![一张图看懂交互 codex、冻结 contract、codex exec 与 deterministic gate 的闭环关系](/images/articles/codex-cli-workflow/codex-cli-closed-loop.svg)
+*图注：交互式 codex 负责 discovery 与冻结 contract；codex exec 在隔离仓库里生成 patch、test、diff 与 report；deterministic gate 不再调用模型，只验证这些工件是否满足原始 contract。*
+
+## Showcase：在工作树外跑一次真实 `codex exec`
+
+这次 Showcase 不在 LearnPrompt 仓库里直接试，也不拿“扫一下目录”这种太宽泛的任务做演示。我们先在系统临时目录里创建一个隔离 Git 仓库 `receipt-normalizer`，里面只有这些文件：
+
+```text
+README.md
+package.json
+task-contract.json
+src/normalizeReceipt.js
+test/normalizeReceipt.test.js
+```
+
+这个小仓库故意只留一个 bug：实现里用了 `digits.slice(0, 4)`，但 contract 规定规范化时要保留**数字序列的末四位**。因此 `rcpt-12034` 当前会输出 `RCPT-1203`，测试期望却是 `RCPT-2034`。
+
+在真正调用模型前，我们先遇到一个很重要的 preflight 事实：把模型固定为 `gpt-5.6-sol` 时，`codex-cli 0.142.2` 收到 400 错误，提示“这个模型需要更新的 Codex 版本”。这件事值得写进教程，因为它说明：
+
+- “固定模型”是必要的，但前提是**这台机器、这版 CLI 真能用它**。
+- doctor 里显示的默认模型，不等于 non-interactive run 一定兼容。
+- 自动化脚本里最好把“模型兼容失败”的现象记录进环境边界，而不是悄悄换模型后假装从未出过问题。
+
+因此正式 Showcase 固定在同一台机器上可用的 `gpt-5.5`，并显式使用下面这条命令：
+
+```bash
+codex -a never exec \
+  --cd <temp-repo> \
+  --ephemeral \
+  --ignore-user-config \
+  --ignore-rules \
+  --sandbox workspace-write \
+  --model gpt-5.5 \
+  --json \
+  --output-schema <schema-path> \
+  --output-last-message <temp-artifacts>/final-report.json \
+  - < prompt.txt
+```
+
+这几个参数分别解决不同问题：
+
+- `-a never`：把 approval policy 钉死，避免 run 过程中等待人工确认。
+- `--sandbox workspace-write`：允许在隔离 repo 内自动改文件，但不直接打开更大的宿主机权限。
+- `--ephemeral`：不把这次 run 的 rollout files 持久化到磁盘。
+- `--ignore-user-config` / `--ignore-rules`：不继承本机默认高权限配置和规则文件。
+- `--json`：让 stdout 变成 JSONL 事件流，便于脚本消费。
+- `--output-schema`：把最终回答约束成固定 JSON 结构。
+- `--output-last-message`：把最终 JSON 单独落盘，避免你自己再从 JSONL 里截最后一行。
+
+## 为什么 stdout、stderr、patch、report 要分开保存
+
+官方文档里有一句很容易被忽略，但对自动化最关键的话：默认进度在 `stderr`，最终消息在 `stdout`；启用 `--json` 后，`stdout` 变成 JSONL 事件流。
+
+这意味着你不能再把整段终端输出混成一坨“日志”，而要分层处理：
+
+1. raw `stdout.jsonl`：留给脚本和后续审计。
+2. raw `stderr.log`：保存进度和环境警告，但别把它当最终结论。
+3. `final-report.json`：只认经过 schema 约束的最终结果。
+
+这次真实 run 正好把这个边界暴露得很清楚：
+
+- stdout 里不仅有最终 `agent_message`，还有 `command_execution`、`file_change`、`turn.completed` 等事件。
+- stderr 里主要是本机 plugin / skills 的噪声警告，不是 `receipt-normalizer` 仓库本身的失败。
+- 最终我们真正拿来进入 gate 的，是脱敏后的 `final-report.json`、good patch 和测试输出，而不是 stderr 里的自然语言碎片。
+
+研究包里公开的 `stdout-sanitized.jsonl` 没有保留真实 thread / item / 临时路径 / 绝对 shell 路径：这类值已经换成稳定占位符，并由同目录下的 `privacy-scan.mjs` 做机械扫描，防止 writer 手工漏改。
+
+从研究包里冻结的最小证据看，结果是可验证的：
+
+```diff
+-  return `RCPT-${digits.slice(0, 4).padStart(4, "0")}`;
++  return `RCPT-${digits.slice(-4).padStart(4, "0")}`;
+```
+
+对应的测试输出是：
+
+```text
+ℹ tests 4
+ℹ pass 4
+ℹ fail 0
+```
+
+最终结构化报告里，`files_changed` 只有 `src/normalizeReceipt.js`，`diff_summary` 明确写的是“保留末四位并补零”，而不是一句模糊的“bug fixed”。
+
+## 零模型 release gate：好 patch 通过，坏 patch 失败
+
+如果教程停在这里，它仍然只是一次成功的模型演示。真正的闭环要再往前走一步：**把模型 run 变成一个离线也能验的 patch artifact。**
+
+本文在 `research/articles/codex-cli-workflow/showcase/receipt-normalizer/scripts/release-gate.mjs` 里做了两件事：
+
+1. 用 `fixture/` 在 fresh 临时目录里重建 baseline 仓库。
+2. 对 patch 和最终 JSON 做机械校验，再重跑 `npm test`。
+
+正例 gate 检查的不是“看起来对不对”，而是具体规则：
+
+- patch 里改过的文件，是否全部在 `allowed_paths` 内。
+- 最终 JSON 里的 `goal`、`allowed_paths`、`forbidden_paths`、`verify_command` 是否和冻结 contract 一致。
+- `files_changed` 是否仍然只有 `src/normalizeReceipt.js`。
+- 把 patch 应到 fresh repo 后，`npm test` 是否通过。
+
+对应的负例也不是虚构的“如果越界怎么办”，而是真实构造了一份 `bad.patch`：它只改 README，多加一行 `Unsafe manual README edit.`。然后 gate 在文件范围检查阶段就返回了非零退出码 3，错误信息是：
+
+```text
+FAIL forbidden path in patch: README.md
+```
+
+这一步的意义非常大。因为从这里开始，你对模型 run 的信任，已经不再建立在“它刚才说自己做对了”，而是建立在：
+
+- patch 可重放；
+- 测试可重跑；
+- 文件范围可拒绝；
+- 最终报告字段可比对。
+
+研究包还额外冻结了一条**从仓库根即可复制**的离线 replay 命令：
+
+```bash
+node research/articles/codex-cli-workflow/showcase/receipt-normalizer/scripts/verify-showcase.mjs
+```
+
+这条 replay 不会再次调用模型；它只读取已经冻结的 patch、final report 和脱敏工件，然后验证 `good` gate 退出码是 `0`、fresh repo 测试仍是 `4/4`、`bad` gate 会因 `README.md` 越界稳定返回 `3`，最后再跑一次 privacy scan。
+
+也就是说，**你真正复用的不是模型，而是模型生成出的工件和验收门禁。**
+
+## 什么时候不要用 `codex exec`
+
+有些任务一上来就不该自动化，至少不该直接进入 `codex exec`。典型信号有五个：
+
+- 你还说不清允许修改哪些文件。
+- 你没有任何验收命令，只能靠肉眼感觉“像是好了”。
+- 任务依赖本机登录态、App 状态或未冻结的外部上下文。
+- 你打算一边让模型试、一边临时改变目标。
+- 你希望最后得到的是思路讨论，而不是 patch artifact。
+
+这时应该回到交互式 `codex`。先在会话里把 contract 问清楚，再把冻结后的版本交给 `codex exec`。把 discovery 和 execution 混在一次自动化里，往往才是新手最常见的坑。
+
+还有一个边界也值得单独说：**不要把一次成功 run 包装成能力排名。** 本文的 `receipt-normalizer` 只是一个单文件、单测试、单 contract 的最小闭环案例。它能证明 workflow 可以被机械验收，不能证明哪个模型或哪个工具“整体更强”。
+
+## 练习：把你的下一个任务写成 contract
+
+找一个你最近真会交给 Agent 的小任务，不超过十行，先别急着跑模型，先写这张卡：
+
+```yaml
+goal: 要修什么行为
+repo_check: 需要先确认哪些目录 / git 状态
+allowed_paths:
+forbidden_paths:
+verify:
+deliver:
+needs_interactive_codex_first: yes / no
+```
+
+然后只问自己两个问题：
+
+1. 如果 patch 多改了一个 README，我能不能机械拒绝它？
+2. 如果测试失败但模型说“已经修好了”，我会信哪一个？
+
+如果这两题你还答不稳，说明你现在缺的不是更强的模型，而是更硬的 contract。
+
+## 来源与延伸阅读
+
+- 官方文档：[Non-interactive mode](https://learn.chatgpt.com/docs/non-interactive-mode)
+- 官方文档：[Developer commands](https://learn.chatgpt.com/docs/developer-commands?surface=cli)
+- 官方文档：[Agent approvals & security](https://learn.chatgpt.com/docs/agent-approvals-security)
+- 官方文档：[Codex CLI](https://developers.openai.com/codex/cli)
+- 中文二手主题地图：[Codex Orange Book](https://github.com/alchaincyf/codex-orange-book)
+
+本文关于 `codex exec`、`--ephemeral`、`--json`、`--output-schema`、`resume`、Git 仓库检查、sandbox 与 approvals 的事实，以 2026-07-11 官方文档和本机 `codex-cli 0.142.2` 的 `--help` / `doctor` 为准。Codex Orange Book 只作为中文二手主题地图保留，并按其仓库声明的 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 保留署名与许可说明；本文的结构、论证和 Showcase 均已重新组织并复核。

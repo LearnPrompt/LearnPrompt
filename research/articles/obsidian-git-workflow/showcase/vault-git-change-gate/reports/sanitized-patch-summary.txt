@@ -1,0 +1,1 @@
+Sanitized patch archived: two allowed notes and one receipt changed in a temporary candidate worktree.

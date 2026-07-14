@@ -1,0 +1,78 @@
+markdown-as-agent-memory final release gate
+===========================================
+运行日期：2026-07-12
+说明：当前冻结合同、正文、research pack 与教学图已完成机械门禁；独立只读终审 PASS 后标记 verified。
+
+1. Deterministic showcase verification
+命令：
+  node research/articles/markdown-as-agent-memory/showcase/markdown-handoff-packet/scripts/verify-showcase.mjs
+关键输出：
+  normal=0
+  missing-evidence=41
+  contradictory=42
+  sensitive=43
+  binary-only=44
+  source_packet_unchanged=yes
+  reports_written=handoff.json, handoff.md
+  assertions=pass
+退出码：0
+
+2. Privacy scan
+命令：
+  node research/articles/markdown-as-agent-memory/showcase/markdown-handoff-packet/scripts/privacy-scan.mjs
+关键输出：
+  PASS privacy scan: no runtime IDs, absolute temp paths, user home paths, shell paths, or credential material were committed.
+退出码：0
+
+3. Frozen contract live attempt
+命令：
+  node research/articles/markdown-as-agent-memory/showcase/markdown-handoff-packet/scripts/run-codex-live.mjs
+关键输出：
+  status=completed
+  codex_cli_version=codex-cli 0.142.2
+  model=gpt-5.5
+  exec_exit_code=0
+  packet_unchanged=true
+  reports_written=json:true, markdown:true
+  report_match=true
+  assertions=pass
+  changed_files=?? reports/
+退出码：0
+说明：writer-side 首次调用形状失败与外层控制器成功补跑分层记录；没有把首次失败改写成成功。
+
+4. Writer-stage validator
+命令：
+  node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs \
+    --article starlight/src/content/docs/obsidian-ai/markdown-as-agent-memory.mdx \
+    --research research/articles/markdown-as-agent-memory
+关键输出：
+  PASS article
+  PASS research
+  PASS status: partial
+退出码：0
+
+5. SVG render check
+方法：
+  Chrome headless 以 1400x900 渲染 durable-memory-record.svg 到 worktree 外临时 PNG，并用原始分辨率目视检查。
+结果：
+  PASS；三段主流程、输出字段与 41/42/43/44 四条拒绝分支清晰，无越框、裁切或关键标签缺失。
+
+6. Starlight build
+命令：
+  npm --prefix starlight run build
+关键输出：
+  Found 49 HTML files.
+  49 page(s) built
+  Complete!
+退出码：0
+
+7. git diff --check
+退出码：0
+关键输出：(none)
+
+8. Independent read-only review
+结果：PASS 97/100；blocker=0、major=0、minor=0；Visual assessment: PASS。
+隔离：raw final report 保存在仓库外；writer 未参与评分或修改评审结果。
+
+当前状态：verified
+frontmatter：showcase_status=verified；quality_score=97

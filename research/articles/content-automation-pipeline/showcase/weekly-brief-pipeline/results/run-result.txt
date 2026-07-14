@@ -1,0 +1,8 @@
+weekly-brief-pipeline deterministic replay
+
+success: exit 0, candidate_ready, final_stage=approve
+missing-source-field: exit 21, blocked_data_quality, final_stage=normalize
+verify-failed: exit 23, failed_contract, final_stage=verify
+no-approval: exit 31, awaiting_human_approval, final_stage=approve
+
+Detailed sanitized stdout/stderr was read back from isolated os.tmpdir raw captures and archived in each scenario's command-summary.txt.

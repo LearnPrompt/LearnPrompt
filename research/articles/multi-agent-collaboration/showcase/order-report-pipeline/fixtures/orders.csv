@@ -1,0 +1,6 @@
+order_id,status,amount,currency
+1001,paid,120.00,USD
+1002,paid,80.50,USD
+1003,refunded,30.00,USD
+1004,pending,55.25,USD
+1005,paid,44.25,USD

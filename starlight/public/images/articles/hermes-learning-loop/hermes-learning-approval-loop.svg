@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">Hermes learning approval loop</title>
+  <desc id="desc">A teaching diagram showing session evidence flowing into background review, fact and procedure split, pending approval, human approve or reject, then next-session memory or on-demand skills, with rejection rails 91 to 95 and Curator as a side maintenance path.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#273044"/>
+    </marker>
+    <style>
+      .bg { fill: #f7f4ed; }
+      .title { font: 700 38px Arial, sans-serif; fill: #202638; }
+      .subtitle { font: 400 18px Arial, sans-serif; fill: #4b5568; }
+      .box { fill: #ffffff; stroke: #273044; stroke-width: 2.5; rx: 8; }
+      .box2 { fill: #eef6f3; stroke: #1d6b63; stroke-width: 2.5; rx: 8; }
+      .box3 { fill: #fff1db; stroke: #a25d16; stroke-width: 2.5; rx: 8; }
+      .reject { fill: #fff0f0; stroke: #a43a3a; stroke-width: 2.5; rx: 8; }
+      .side { fill: #f0f2fb; stroke: #4b5f9f; stroke-width: 2.5; rx: 8; }
+      .label { font: 700 20px Arial, sans-serif; fill: #202638; }
+      .small { font: 400 16px Arial, sans-serif; fill: #334155; }
+      .tiny { font: 400 14px Arial, sans-serif; fill: #475569; }
+      .code { font: 700 18px Arial, sans-serif; fill: #8a2d2d; }
+      .arrow { stroke: #273044; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #4b5f9f; stroke-width: 3; fill: none; stroke-dasharray: 10 8; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1400" height="900"/>
+  <text class="title" x="72" y="70">Hermes Agent 的学习循环：先分流，再审批，最后才持久化</text>
+  <text class="subtitle" x="72" y="104">可观察机制，不是模型权重训练；审批 gate 防止暂态错误、秘密和错误流程进入下一次会话。</text>
+
+  <rect class="box" x="72" y="160" width="230" height="132"/>
+  <text class="label" x="96" y="200">1. Session evidence</text>
+  <text class="small" x="96" y="232">对话、更正、工具结果</text>
+  <text class="small" x="96" y="258">候选事实与候选流程</text>
+
+  <rect class="box" x="362" y="160" width="230" height="132"/>
+  <text class="label" x="386" y="200">2. Background review</text>
+  <text class="small" x="386" y="232">turn 后可能提出写入</text>
+  <text class="small" x="386" y="258">不保证每轮正确学习</text>
+
+  <rect class="box2" x="652" y="122" width="250" height="110"/>
+  <text class="label" x="676" y="162">3A. Fact: memory</text>
+  <text class="small" x="676" y="194">what：偏好、环境、约定</text>
+
+  <rect class="box3" x="652" y="260" width="250" height="110"/>
+  <text class="label" x="676" y="300">3B. Procedure: Skill</text>
+  <text class="small" x="676" y="332">how：多步骤可复用流程</text>
+
+  <rect class="box" x="968" y="180" width="250" height="132"/>
+  <text class="label" x="994" y="220">4. Pending approval</text>
+  <text class="small" x="994" y="252">memory.write_approval</text>
+  <text class="small" x="994" y="278">skills.write_approval</text>
+
+  <rect class="box" x="958" y="395" width="270" height="130"/>
+  <text class="label" x="984" y="435">5. Human review</text>
+  <text class="small" x="984" y="467">approve / reject</text>
+  <text class="small" x="984" y="493">CLI、dashboard、messaging</text>
+
+  <rect class="box2" x="710" y="605" width="270" height="132"/>
+  <text class="label" x="734" y="645">6A. Next session memory</text>
+  <text class="small" x="734" y="677">MEMORY.md / USER.md</text>
+  <text class="small" x="734" y="703">session start frozen snapshot</text>
+
+  <rect class="box3" x="1030" y="605" width="270" height="132"/>
+  <text class="label" x="1054" y="645">6B. On-demand Skill</text>
+  <text class="small" x="1054" y="677">相关时加载 SKILL.md</text>
+  <text class="small" x="1054" y="703">避免流程常驻上下文</text>
+
+  <rect class="reject" x="72" y="515" width="530" height="222"/>
+  <text class="label" x="96" y="555">Rejection rail: deterministic guard</text>
+  <text class="code" x="96" y="592">91</text><text class="small" x="138" y="592">缺 provenance / evidence</text>
+  <text class="code" x="96" y="622">92</text><text class="small" x="138" y="622">memory 与 Skill store 分错</text>
+  <text class="code" x="96" y="652">93</text><text class="small" x="138" y="652">敏感内容进入 proposal</text>
+  <text class="code" x="96" y="682">94</text><text class="small" x="138" y="682">声称 auto-applied 或 approval=false</text>
+  <text class="code" x="96" y="712">95</text><text class="small" x="138" y="712">未知 action 或缺 version scope</text>
+
+  <rect class="side" x="1110" y="78" width="228" height="82"/>
+  <text class="label" x="1130" y="111">Curator side path</text>
+  <text class="tiny" x="1130" y="137">周期性 Skill 维护</text>
+  <text class="tiny" x="1130" y="155">不是 turn 后同一步</text>
+
+  <path class="arrow" d="M302 226 H362"/>
+  <path class="arrow" d="M592 226 C620 226 622 176 652 176"/>
+  <path class="arrow" d="M592 226 C620 226 622 315 652 315"/>
+  <path class="arrow" d="M902 176 C930 176 938 230 968 230"/>
+  <path class="arrow" d="M902 315 C930 315 938 262 968 262"/>
+  <path class="arrow" d="M1093 312 V395"/>
+  <path class="arrow" d="M1030 525 C960 560 900 575 852 605"/>
+  <path class="arrow" d="M1138 525 C1174 552 1180 575 1165 605"/>
+  <path class="arrow" d="M958 462 C780 462 650 530 602 586"/>
+  <path class="dash" d="M1110 145 C1020 120 940 120 878 142"/>
+  <text class="tiny" x="922" y="118">maintenance, not approval</text>
+
+  <text class="subtitle" x="72" y="818">阅读顺序：证据先进入分流；只有 stage-memory / stage-skill 需要人工批准；拒绝轨丢弃不应学习的候选。</text>
+  <text class="subtitle" x="72" y="848">版本边界：命令可用性以本机 probe 为准；在线官方文档可能对应更新版本。</text>
+</svg>

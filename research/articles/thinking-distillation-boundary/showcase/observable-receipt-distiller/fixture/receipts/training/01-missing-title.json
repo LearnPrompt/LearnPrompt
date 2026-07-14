@@ -1,0 +1,17 @@
+{
+  "id": "missing-title-from-first-h1",
+  "contains_sensitive_material": false,
+  "contains_private_transcript": false,
+  "requests_hidden_chain_of_thought": false,
+  "input_snapshot": {
+    "file_path": "examples/release-week-guardrails.mdx",
+    "content": "---\ndescription: Freeze validator evidence before release-week metadata drifts silently.\nsidebar:\n  order: 14\nlegacy_status: current\n---\n\n# Release Week Guardrails\n\nRelease Week Guardrails shows how to freeze validator evidence before handoff so metadata regressions stay observable.\n"
+  },
+  "accepted_patch": "--- before\n+++ after\n@@\n+title: Release Week Guardrails\n description: Freeze validator evidence before release-week metadata drifts silently.\n sidebar:\n   order: 14\n legacy_status: current\n",
+  "user_correction": "标题缺失时，只能从正文里的第一个 H1 提取；不要根据抽象 taxonomy 猜标题，也不要改正文。",
+  "validator": {
+    "command": "node scripts/check-frontmatter.mjs examples/release-week-guardrails.mdx",
+    "result_excerpt": "PASS title restored from first H1; description and sidebar.order preserved."
+  },
+  "known_limitation": "假设正文里只有一个 H1，且它确实是页面标题。"
+}

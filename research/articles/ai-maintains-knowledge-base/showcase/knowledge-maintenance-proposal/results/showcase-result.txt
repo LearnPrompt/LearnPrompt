@@ -1,0 +1,17 @@
+valid plan: expected 0, actual 0
+  PASS valid maintenance plan
+  PASS proposals: 6
+  PASS actions: merge-candidate=1 stale-flag=1 source-needed=1 orphan-review=1 conflict-review=1 no-op=1
+  PASS source inventory and hashes unchanged
+missing provenance/evidence: expected 71, actual 71
+  FAIL 71 missing field or evidence: evidence_paths
+destructive mutation or auto-apply: expected 72, actual 72
+  FAIL 72 plan claims applied changes
+unsupported merge: expected 73, actual 73
+  FAIL 73 merge candidate lacks shared canonical key
+stale flag without contradiction: expected 74, actual 74
+  FAIL 74 stale flag lacks current-source contradiction
+orphan without zero-degree graph: expected 75, actual 75
+  FAIL 75 orphan claim lacks zero-degree graph evidence
+privacy scan: expected 0, actual 0
+  PASS privacy scan: no credential, runtime id, account id, or local absolute path leakage found.

@@ -1,0 +1,4 @@
+RUN scenario=missing-source-field
+PASS snapshot sources=2 items=6
+FAIL normalize missing_required_field=source_url entry=openai-codex-cloud
+RESULT blocked_data_quality exit=21

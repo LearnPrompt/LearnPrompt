@@ -1,0 +1,6 @@
+{
+  "read": ["README.md", "AGENTS.md", "*.json", "memory.md", "scripts/*.mjs"],
+  "write": ["README.md", "memory.md"],
+  "commands": ["node scripts/verify-harness.mjs"],
+  "network": false
+}

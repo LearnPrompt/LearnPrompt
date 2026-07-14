@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "order-summary",
+  "description": "冻结接口：parser 的输出和 renderer 的输入都必须符合本 schema。任何一方想改字段，都必须先解冻 contract 并重跑两侧，不允许单边并行修改。",
+  "type": "object",
+  "required": ["currency", "order_count", "total_amount", "by_status"],
+  "additionalProperties": false,
+  "properties": {
+    "currency": { "type": "string", "minLength": 3, "maxLength": 3 },
+    "order_count": { "type": "integer", "minimum": 0 },
+    "total_amount": { "type": "number", "minimum": 0 },
+    "by_status": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    }
+  }
+}

@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">本地 structured review 的边界流转图</title>
+  <desc id="desc">展示 staged diff 和仓库 review guidance 如何产生 candidate finding，再经过机械验证进入 human 或 CI 决策；并标注这条本地链路不等于 GitHub 托管 review。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f8f3ea"/>
+      <stop offset="100%" stop-color="#fffdf8"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fffaf1"/>
+      <stop offset="100%" stop-color="#fff4de"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#3e4a3f"/>
+    </marker>
+    <style>
+      .frame { fill: url(#bg); }
+      .title { font: 700 34px "Helvetica Neue", Arial, sans-serif; fill: #22201d; }
+      .subtitle { font: 500 19px "Helvetica Neue", Arial, sans-serif; fill: #57524b; }
+      .section { fill: url(#panel); stroke: #d5c4a7; stroke-width: 2.5; rx: 28; }
+      .box { fill: #fffdf9; stroke: #9c8762; stroke-width: 2.5; rx: 22; }
+      .box-title { font: 700 23px "Helvetica Neue", Arial, sans-serif; fill: #2b2a28; }
+      .body { font: 500 18px "Helvetica Neue", Arial, sans-serif; fill: #3c3934; }
+      .small { font: 500 17px "Helvetica Neue", Arial, sans-serif; fill: #58524a; }
+      .tag { font: 700 17px "Helvetica Neue", Arial, sans-serif; fill: #9a5400; }
+      .tag-bg { fill: #ffe4bf; rx: 12; }
+      .warn { fill: #fff1ed; stroke: #d98a74; stroke-width: 2.5; rx: 20; }
+      .warn-title { font: 700 21px "Helvetica Neue", Arial, sans-serif; fill: #7d3726; }
+      .arrow { stroke: #3e4a3f; stroke-width: 4; fill: none; marker-end: url(#arrow); }
+      .split-arrow { stroke: #55756a; stroke-width: 3.5; fill: none; marker-end: url(#arrow); }
+      .pill { fill: #eef6ef; stroke: #88a293; stroke-width: 1.5; rx: 12; }
+      .pill-text { font: 700 16px "Helvetica Neue", Arial, sans-serif; fill: #2d5948; }
+    </style>
+  </defs>
+
+  <rect class="frame" x="0" y="0" width="1400" height="900" rx="40"/>
+
+  <text class="title" x="76" y="84">本地 structured review 只复现审查合同，不冒充 GitHub 托管 review</text>
+  <text class="subtitle" x="76" y="122">主链路验证的是 staged diff、repo guidance、anchored finding 与机械 gate；GitHub PR comment、Automatic reviews 与外部状态不在这张图里。</text>
+
+  <rect class="section" x="58" y="170" width="1284" height="560"/>
+
+  <rect class="box" x="96" y="250" width="250" height="210"/>
+  <rect class="tag-bg" x="116" y="214" width="120" height="32"/>
+  <text class="tag" x="135" y="236">Step 1</text>
+  <text class="box-title" x="124" y="292">staged diff</text>
+  <text class="body" x="124" y="332">真实 PR fixture</text>
+  <text class="body" x="124" y="362">只改一条右侧新增行</text>
+  <text class="body" x="124" y="392">未来 deliveredAt</text>
+  <text class="body" x="124" y="420">会落入退款窗口判断</text>
+
+  <rect class="box" x="392" y="250" width="250" height="210"/>
+  <rect class="tag-bg" x="412" y="214" width="120" height="32"/>
+  <text class="tag" x="431" y="236">Step 2</text>
+  <text class="box-title" x="420" y="292">repo guidance</text>
+  <text class="body" x="420" y="332">closest AGENTS.md</text>
+  <text class="body" x="420" y="362">只报 changed-line 回归</text>
+  <text class="body" x="420" y="392">退款边界 bug 记为 P1</text>
+  <rect class="pill" x="420" y="414" width="152" height="34"/>
+  <text class="pill-text" x="440" y="436">focus: one finding</text>
+
+  <rect class="box" x="688" y="228" width="278" height="254"/>
+  <rect class="tag-bg" x="708" y="192" width="120" height="32"/>
+  <text class="tag" x="727" y="214">Step 3</text>
+  <text class="box-title" x="716" y="270">candidate finding</text>
+  <text class="body" x="716" y="312">Codex read-only review</text>
+  <text class="body" x="716" y="342">锚定 src/refundPolicy.js:15</text>
+  <text class="body" x="716" y="372">P1: future timestamp</text>
+  <text class="body" x="716" y="402">negative elapsed returns true</text>
+  <text class="small" x="716" y="438">raw JSONL / stderr 留在工作树外</text>
+
+  <rect class="box" x="1012" y="220" width="282" height="270"/>
+  <rect class="tag-bg" x="1032" y="184" width="120" height="32"/>
+  <text class="tag" x="1051" y="206">Step 4</text>
+  <text class="box-title" x="1040" y="262">mechanical gate</text>
+  <text class="body" x="1040" y="304">good gate checks:</text>
+  <text class="body" x="1040" y="334">命中 changed file / 右侧行</text>
+  <text class="body" x="1040" y="364">future timestamp named</text>
+  <text class="body" x="1040" y="394">negative elapsed named</text>
+  <text class="body" x="1040" y="424">severity + reproduction</text>
+  <text class="small" x="1040" y="452">伪造 out-of-diff finding</text>
+  <text class="small" x="1040" y="476">稳定 non-zero exit</text>
+
+  <path class="arrow" d="M346 355 C368 355, 372 355, 392 355"/>
+  <path class="arrow" d="M642 355 C664 355, 668 355, 688 355"/>
+  <path class="arrow" d="M966 355 C988 355, 992 355, 1012 355"/>
+
+  <rect class="box" x="906" y="562" width="178" height="126"/>
+  <text class="box-title" x="934" y="604">human gate</text>
+  <text class="body" x="934" y="638">accept finding</text>
+  <text class="body" x="934" y="664">request more proof</text>
+
+  <rect class="box" x="1116" y="562" width="178" height="126"/>
+  <text class="box-title" x="1156" y="604">CI gate</text>
+  <text class="body" x="1144" y="638">good gate pass</text>
+  <text class="body" x="1144" y="664">bad gate fail</text>
+
+  <path class="split-arrow" d="M1154 490 L995 562"/>
+  <path class="split-arrow" d="M1166 490 L1204 562"/>
+
+  <rect class="warn" x="120" y="540" width="666" height="150"/>
+  <text class="warn-title" x="154" y="586">Not reproduced here</text>
+  <text class="body" x="154" y="624">GitHub PR comments、Automatic reviews trigger、@codex review 解析</text>
+  <text class="body" x="154" y="654">与 cloud task follow-up 不在这条本地链路中。</text>
+</svg>

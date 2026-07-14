@@ -1,0 +1,5 @@
+{
+  "denyPaths": ["config/*.env", "config/secrets*", "**/*.key"],
+  "denyCommands": ["(^|\\s)git\\s+push", "(^|\\s)rm\\s+-rf", "(^|\\s)npm\\s+publish"],
+  "allowWritePaths": ["docs/*.md"]
+}

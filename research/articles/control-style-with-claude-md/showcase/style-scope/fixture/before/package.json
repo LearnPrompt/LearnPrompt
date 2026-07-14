@@ -1,0 +1,8 @@
+{
+  "name": "style-scope-before",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "verify": "node ../verify-style-scope.mjs before"
+  }
+}

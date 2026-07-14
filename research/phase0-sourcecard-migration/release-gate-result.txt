@@ -1,0 +1,73 @@
+Phase 0 release gate
+Date: 2026-07-10
+Repository HEAD at start: 038bcd5
+
+Scope:
+- Update learnprompt-single-mdx skill contract and validator.
+- Remove SourceCard from the three verified golden-sample articles.
+- Keep bottom sources and applicable attribution or license notes.
+- Do not start Phase 1.
+
+Deterministic checks:
+
+1. SourceCard search over the three public golden samples: PASS (zero matches)
+
+2. Golden article validator: PASS
+- agent-engineering/what-is-harness.mdx: verified (92/100)
+- ai-coding/choose-claude-code-or-codex.mdx: verified (92/100)
+- loop-engineering/five-moves.mdx: verified (89/100)
+
+3. Skill structure validation: PASS
+- quick_validate.py: Skill is valid
+- package_skill.py: validation and packaging succeeded
+- package SHA-256: 693eba0b640311108e5c94a16d5fc38421f6e01dfcebad32e48e9cbd0423725f
+
+4. Starlight build: PASS
+- command: cd starlight && npm run build
+- result: 49 pages built; Pagefind indexed 49 HTML files; sitemap created
+- existing informational line: Entry docs -> 404 was not found
+
+5. git diff --check: PASS
+
+Independent review round 1: FAIL
+- blocker: 0
+- major: 2
+- minor: 1
+- findings saved in review.md
+
+Pending after round 1:
+- Fix validator research-path binding and secondary-topic-map enforcement.
+- Fix one legacy source metadata pair.
+- Final deterministic rerun and independent follow-up review.
+
+Round 1 fixes applied:
+- Validator now requires Orange Book material to be labeled as a secondary topic map.
+- Validator now requires frontmatter research_path to match --research.
+- Validator now requires showcase_path to remain inside research_path.
+- choose-claude-code-or-codex legacy source_repo now matches source_url.
+- The article source note explicitly labels both Orange Books as secondary Chinese topic maps.
+- Review contract now requires blocker, major, and minor findings all to be closed.
+
+Post-fix deterministic rerun: PASS
+- three positive article validations: PASS (92, 92, 89)
+- negative test, wrong --research directory: correctly rejected
+- negative test, Orange Book without secondary-topic-map label: correctly rejected
+- quick_validate.py: Skill is valid
+- package_skill.py: validation and packaging succeeded
+- final package SHA-256: b490472620fe49de1e8b12e2443c958da7312fda927991cf5e304a42d5128cff
+- Starlight build: PASS, 49 pages, Pagefind 49 HTML files, sitemap created
+- git diff --check: PASS
+
+Pending after deterministic rerun:
+- Independent read-only follow-up review.
+
+Independent follow-up review: PASS
+- reviewer: separate Codex CLI read-only session
+- blocker: 0
+- major: 0
+- minor: 0
+- all three initial findings: CLOSED
+- three articles: PASS
+- Phase 1 ready: YES
+
+Final Phase 0 state: PASS

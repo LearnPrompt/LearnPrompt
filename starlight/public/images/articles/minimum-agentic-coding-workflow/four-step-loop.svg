@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="600" viewBox="0 0 980 600" font-family="-apple-system, 'Helvetica Neue', 'PingFang SC', sans-serif">
+  <rect width="980" height="600" fill="#ffffff"/>
+
+  <!-- 标题 -->
+  <text x="40" y="50" font-size="24" font-weight="700" fill="#111111">Plan → Patch → Verify → Learn：一次任务的最小循环</text>
+  <text x="40" y="78" font-size="14" fill="#555555">这是 LearnPrompt 的操作模型，不是行业标准。每一步都有产出、拦截一种失败，并锚定一项一手工具能力。</text>
+
+  <!-- 四张步骤卡 -->
+  <!-- 卡片布局：x = 40 / 280 / 520 / 760，宽 180，顶部 y=110，高 340 -->
+  <g>
+    <!-- 卡 1 Plan -->
+    <rect x="40" y="110" width="180" height="360" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <rect x="40" y="110" width="180" height="44" fill="#c1440e" stroke="#111111" stroke-width="1"/>
+    <text x="130" y="139" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">1 · Plan 计划</text>
+    <text x="54" y="182" font-size="12" font-weight="700" fill="#111111">产出</text>
+    <text x="54" y="202" font-size="12" fill="#333333">文件范围、禁区、</text>
+    <text x="54" y="220" font-size="12" fill="#333333">最快检查、回滚方式</text>
+    <line x1="54" y1="236" x2="206" y2="236" stroke="#dddddd" stroke-width="1"/>
+    <text x="54" y="260" font-size="12" font-weight="700" fill="#c1440e">拦截的失败</text>
+    <text x="54" y="280" font-size="12" fill="#333333">无计划直接大改、</text>
+    <text x="54" y="298" font-size="12" fill="#333333">范围一路漂移</text>
+    <line x1="54" y1="314" x2="206" y2="314" stroke="#dddddd" stroke-width="1"/>
+    <text x="54" y="338" font-size="12" font-weight="700" fill="#111111">本文 Showcase</text>
+    <text x="54" y="358" font-size="12" fill="#333333">plan.md：只改</text>
+    <text x="54" y="376" font-size="12" fill="#333333">split-bill.mjs</text>
+    <line x1="54" y1="392" x2="206" y2="392" stroke="#dddddd" stroke-width="1"/>
+    <text x="54" y="416" font-size="11" font-weight="700" fill="#555555">一手锚点</text>
+    <text x="54" y="434" font-size="11" fill="#555555">Claude Code plan</text>
+    <text x="54" y="450" font-size="11" fill="#555555">mode（只读提计划）</text>
+
+    <!-- 卡 2 Patch -->
+    <rect x="280" y="110" width="180" height="360" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <rect x="280" y="110" width="180" height="44" fill="#c1440e" stroke="#111111" stroke-width="1"/>
+    <text x="370" y="139" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">2 · Patch 改动</text>
+    <text x="294" y="182" font-size="12" font-weight="700" fill="#111111">产出</text>
+    <text x="294" y="202" font-size="12" fill="#333333">五分钟能读完的</text>
+    <text x="294" y="220" font-size="12" fill="#333333">一个 git diff</text>
+    <line x1="294" y1="236" x2="446" y2="236" stroke="#dddddd" stroke-width="1"/>
+    <text x="294" y="260" font-size="12" font-weight="700" fill="#c1440e">拦截的失败</text>
+    <text x="294" y="280" font-size="12" fill="#333333">一次改动藏多个</text>
+    <text x="294" y="298" font-size="12" fill="#333333">决定、无法审查</text>
+    <line x1="294" y1="314" x2="446" y2="314" stroke="#dddddd" stroke-width="1"/>
+    <text x="294" y="338" font-size="12" font-weight="700" fill="#111111">本文 Showcase</text>
+    <text x="294" y="358" font-size="12" fill="#333333">切片一只做均分</text>
+    <text x="294" y="376" font-size="12" fill="#333333">（+3 / −2 行）</text>
+    <line x1="294" y1="392" x2="446" y2="392" stroke="#dddddd" stroke-width="1"/>
+    <text x="294" y="416" font-size="11" font-weight="700" fill="#555555">一手锚点</text>
+    <text x="294" y="434" font-size="11" fill="#555555">git diff：可审查</text>
+    <text x="294" y="450" font-size="11" fill="#555555">的最小切片</text>
+
+    <!-- 卡 3 Verify -->
+    <rect x="520" y="110" width="180" height="360" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <rect x="520" y="110" width="180" height="44" fill="#c1440e" stroke="#111111" stroke-width="1"/>
+    <text x="610" y="139" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3 · Verify 验证</text>
+    <text x="534" y="182" font-size="12" font-weight="700" fill="#111111">产出</text>
+    <text x="534" y="202" font-size="12" fill="#333333">客观信号：退出码，</text>
+    <text x="534" y="220" font-size="12" fill="#333333">不是一句"完成了"</text>
+    <line x1="534" y1="236" x2="686" y2="236" stroke="#dddddd" stroke-width="1"/>
+    <text x="534" y="260" font-size="12" font-weight="700" fill="#c1440e">拦截的失败</text>
+    <text x="534" y="280" font-size="12" fill="#333333">只问模型是否完成、</text>
+    <text x="534" y="298" font-size="12" fill="#333333">验收失真</text>
+    <line x1="534" y1="314" x2="686" y2="314" stroke="#dddddd" stroke-width="1"/>
+    <text x="534" y="338" font-size="12" font-weight="700" fill="#111111">本文 Showcase</text>
+    <text x="534" y="358" font-size="12" fill="#333333">node --test 退出码</text>
+    <text x="534" y="376" font-size="12" fill="#333333">1：sum 9999≠10000</text>
+    <line x1="534" y1="392" x2="686" y2="392" stroke="#dddddd" stroke-width="1"/>
+    <text x="534" y="416" font-size="11" font-weight="700" fill="#555555">一手锚点</text>
+    <text x="534" y="434" font-size="11" fill="#555555">AGENTS.md：可执行</text>
+    <text x="534" y="450" font-size="11" fill="#555555">程序化检查</text>
+
+    <!-- 卡 4 Learn -->
+    <rect x="760" y="110" width="180" height="360" fill="#ffffff" stroke="#111111" stroke-width="1"/>
+    <rect x="760" y="110" width="180" height="44" fill="#c1440e" stroke="#111111" stroke-width="1"/>
+    <text x="850" y="139" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4 · Learn 复盘</text>
+    <text x="774" y="182" font-size="12" font-weight="700" fill="#111111">产出</text>
+    <text x="774" y="202" font-size="12" fill="#333333">一条改变下次行为</text>
+    <text x="774" y="220" font-size="12" fill="#333333">的规则，写回项目</text>
+    <line x1="774" y1="236" x2="926" y2="236" stroke="#dddddd" stroke-width="1"/>
+    <text x="774" y="260" font-size="12" font-weight="700" fill="#c1440e">拦截的失败</text>
+    <text x="774" y="280" font-size="12" fill="#333333">同类失败反复</text>
+    <text x="774" y="298" font-size="12" fill="#333333">发生</text>
+    <line x1="774" y1="314" x2="926" y2="314" stroke="#dddddd" stroke-width="1"/>
+    <text x="774" y="338" font-size="12" font-weight="700" fill="#111111">本文 Showcase</text>
+    <text x="774" y="358" font-size="12" fill="#333333">写回「先写守恒</text>
+    <text x="774" y="376" font-size="12" fill="#333333">断言」到 AGENTS.md</text>
+    <line x1="774" y1="392" x2="926" y2="392" stroke="#dddddd" stroke-width="1"/>
+    <text x="774" y="416" font-size="11" font-weight="700" fill="#555555">一手锚点</text>
+    <text x="774" y="434" font-size="11" fill="#555555">CLAUDE.md：持久指令</text>
+    <text x="774" y="450" font-size="11" fill="#555555">（是上下文非强制）</text>
+  </g>
+
+  <!-- 步骤间箭头 -->
+  <g stroke="#111111" stroke-width="1.5">
+    <line x1="220" y1="280" x2="278" y2="280"/>
+    <line x1="460" y1="280" x2="518" y2="280"/>
+    <line x1="700" y1="280" x2="758" y2="280"/>
+  </g>
+  <g fill="#111111">
+    <polygon points="278,280 266,274 266,286"/>
+    <polygon points="518,280 506,274 506,286"/>
+    <polygon points="758,280 746,274 746,286"/>
+  </g>
+
+  <!-- 回环箭头：Learn → Plan（复盘规则进入下一次计划）-->
+  <g stroke="#c1440e" stroke-width="1.5" fill="none">
+    <path d="M 850 470 L 850 500 L 130 500 L 130 472"/>
+  </g>
+  <polygon points="130,472 124,484 136,484" fill="#c1440e"/>
+  <rect x="405" y="488" width="170" height="24" fill="#ffffff"/>
+  <text x="490" y="505" font-size="12" fill="#c1440e" text-anchor="middle">复盘规则进入下一次计划</text>
+
+  <!-- 底部说明 -->
+  <text x="40" y="556" font-size="12" fill="#555555">省略一步就会失去对应护栏：只做 Patch 难控范围；只做 Plan 无客观信号；不 Learn 则经验不会形成可审计规则。</text>
+  <text x="40" y="578" font-size="11" fill="#888888">图：LearnPrompt 编辑部，依据本文 Showcase（split-bill 账单拆分任务）与四步各自的一手锚点原创绘制。</text>
+</svg>

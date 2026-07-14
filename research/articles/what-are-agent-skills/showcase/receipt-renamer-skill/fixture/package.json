@@ -1,0 +1,8 @@
+{
+  "name": "receipt-renamer-fixture",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/plan-renames.test.mjs"
+  }
+}

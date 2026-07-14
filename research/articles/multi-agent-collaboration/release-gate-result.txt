@@ -1,0 +1,106 @@
+multi-agent-collaboration 发布前机械门禁（冻结脱敏摘录）
+=========================================================
+运行日期：2026-07-11
+运行位置：LearnPrompt 仓库根目录
+说明：原始终端输出先采集在工作树外的 $TMPDIR；以下为进程退出后冻结的关键行，不含本机路径或运行标识。
+
+1. 独立 worker 实跑与临时产物集成
+命令：
+  node run-independent-workers.mjs
+关键输出：
+  parallel_processes=2
+  worker-a: owned_file=src/parse-orders.mjs; unexpected_files=none; self_test=PASS
+  worker-b: owned_file=src/render-summary.mjs; unexpected_files=none; self_test=PASS
+  write_sets_disjoint=yes
+  contract_unchanged=yes
+  integration_inputs=worker-a-output+worker-b-output
+  integration_from_worker_outputs=PASS
+  RESULT PASS
+退出码：0
+说明：两个 worker 是不同 Node 子进程，输出到不同系统临时目录；协调器集成读取的是临时产物，不是仓库终态源码。
+
+2. Showcase 正例（合并前门禁 + 合并后端到端）
+命令：
+  node merge-gate.mjs tasks/task-a-parser.json tasks/task-b-renderer.json
+关键输出：
+  write set 两两不重叠
+  无任务触碰冻结 contract
+  contract 校验和与磁盘一致
+  所有接口已冻结，依赖已满足
+  判定：APPROVE PARALLEL
+退出码：0
+命令：
+  node e2e-test.mjs
+关键输出：
+  PASS  管线输出与冻结 golden 一致
+退出码：0
+
+3. Showcase 负例一（声明修改冻结 contract）
+命令：
+  node merge-gate.mjs tasks/task-a-parser.json tasks/task-c-bad-contract.json
+关键输出：
+  REJECT  task-c-bad-contract: write set 含冻结 contract contract/order-summary.schema.json，禁止单边修改
+  REJECT  写入冲突：task-a-parser 与 task-c-bad-contract 都要改 src/parse-orders.mjs
+  判定：REJECT CONFLICT
+退出码：3（合并动作在应用前被拒绝）
+
+4. Showcase 负例二（接口未冻结 / 依赖未满足）
+命令：
+  node merge-gate.mjs tasks/task-a-parser.json tasks/task-d-renderer-unfrozen.json
+关键输出：
+  SEQUENTIAL  task-d-renderer-unfrozen: 接口未冻结（interface_frozen=false），不能并行
+  SEQUENTIAL  task-d-renderer-unfrozen: 依赖 task-a-parser 未满足，必须先串行完成
+  判定：SEQUENTIAL
+退出码：4（不进入并行合并）
+
+5. 单篇 validator（writer 阶段）
+命令：
+  node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs \
+    --article starlight/src/content/docs/claude-code/multi-agent-collaboration.mdx \
+    --research research/articles/multi-agent-collaboration
+关键输出：
+  PASS article: starlight/src/content/docs/claude-code/multi-agent-collaboration.mdx
+  PASS research: research/articles/multi-agent-collaboration
+  PASS status: partial
+退出码：0
+
+6. Starlight 完整构建
+命令：
+  npm --prefix starlight run build
+关键输出：
+  [starlight:pagefind] Found 49 HTML files.
+  [build] 49 page(s) built in 3.24s
+  [build] Complete!
+退出码：0
+
+7. Diff 格式检查
+命令：
+  git diff --check            # 已跟踪改动
+  git add -A && git diff --cached --check && git reset   # 覆盖新增文件
+输出：无（未发现 whitespace error）
+退出码：0
+
+8. 冻结 contract 校验和
+命令：
+  shasum -a 256 contract/order-summary.schema.json
+输出：
+  9fda86dbd946659407714b3971984562cf568fab647416dad1cad08774f55b66
+说明：与 task-a / task-b 任务卡声明的 contract_checksum 一致；改动 contract 会改变该值并触发门禁拒绝。
+
+9. 主仓库 Unicode 路径回放与独立窄审
+命令：
+  node src/parse-orders.mjs fixtures/orders.csv
+  node src/render-summary.mjs <parser-output.json>
+  node run-independent-workers.mjs
+  node merge-gate.mjs tasks/task-a-parser.json tasks/task-b-renderer.json
+  node e2e-test.mjs
+关键结果：
+  worker CLI：PASS
+  independent workers：PASS
+  merge gate 正例：退出码 0
+  conflict 负例：退出码 3
+  sequential 负例：退出码 4
+  e2e：PASS
+说明：合并回含中文的真实仓库路径后发现 URL percent-encoding 问题；四处路径处理已改用
+fileURLToPath / pathToFileURL。第一次独立只读窄审因两个 worker CLI 遗漏判 FAIL；修正后新的独立
+只读会话复审 PASS（blocker 0 / major 0 / minor 0），并重算确认冻结 worker SHA 与当前源码一致。

@@ -1,0 +1,44 @@
+{
+  "package_name": "clip-clean",
+  "expected_version": "1.4.0",
+  "release_ready": true,
+  "exit_code": 0,
+  "rows": [
+    {
+      "id": "PACK-00",
+      "question": "Does npm pack dry-run assemble a local tarball for clip-clean 1.4.0 without publishing?",
+      "evidence": "npm pack --dry-run --json exit 0; filename=clip-clean-1.4.0.tgz; entryCount=5",
+      "pass_rule": "npm pack --dry-run --json exits 0 and reports clip-clean-1.4.0.tgz.",
+      "severity": "major",
+      "not_applicable_policy": "Never N/A for an npm CLI release candidate; a package that cannot be packed cannot ship.",
+      "result": "pass"
+    },
+    {
+      "id": "CHANGELOG-21",
+      "question": "Does CHANGELOG.md contain a 1.4.0 section with at least one user-visible change?",
+      "evidence": "CHANGELOG.md inspected; first release heading=1.4.0",
+      "pass_rule": "CHANGELOG.md exists and includes a 1.4.0 heading plus at least one bullet item.",
+      "severity": "blocker",
+      "not_applicable_policy": "Never N/A for this fixture. If there is no changelog, fail the gate instead of waiving it.",
+      "result": "pass"
+    },
+    {
+      "id": "VERSION-22",
+      "question": "Do package.json, the changelog heading, and the install contract agree on 1.4.0?",
+      "evidence": "package.json=1.4.0; changelog=1.4.0; install-command=local-smoke-only",
+      "pass_rule": "package.json.version is 1.4.0; CHANGELOG.md headline is 1.4.0; the install contract does not contradict that version.",
+      "severity": "blocker",
+      "not_applicable_policy": "Only N/A if the repo proves there is no versioned package surface; cite the inspected file in evidence.",
+      "result": "pass"
+    },
+    {
+      "id": "INSTALL-23",
+      "question": "Can the committed install command be verified locally without npm publish or registry writes?",
+      "evidence": "release/install-command.txt=npm run release:smoke; smoke output=> clip-clean@1.4.0 release:smoke\n> node scripts/release-smoke.mjs\n\ntarball=clip-clean-1.4.0.tgz\ninstall=ok\nhelp=ok",
+      "pass_rule": "The committed install command is local-only and its smoke run exits 0 after packaging the tarball.",
+      "severity": "blocker",
+      "not_applicable_policy": "Only N/A if the package has no executable surface and the inspected bin mapping or CLI entrypoint proves that absence.",
+      "result": "pass"
+    }
+  ]
+}

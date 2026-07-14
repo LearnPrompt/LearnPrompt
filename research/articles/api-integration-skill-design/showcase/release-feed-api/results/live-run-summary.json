@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "codex_cli_version": "codex-cli 0.142.2",
+  "model": "gpt-5.5",
+  "prompt_file": "contracts/prompt.md",
+  "schema_file": "contracts/final-report.schema.json",
+  "exec_exit_code": 0,
+  "changed_files": [
+    "?? reports/"
+  ],
+  "tests_command": "npm test",
+  "tests_exit_code": 0,
+  "tests_status": "passed",
+  "reports_written": {
+    "json": true,
+    "markdown": true
+  },
+  "redaction_note": "Absolute temp paths, loopback ports, runtime identifiers, shell paths, and bearer material were redacted before commit."
+}

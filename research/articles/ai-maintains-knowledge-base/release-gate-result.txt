@@ -1,0 +1,47 @@
+Release gate result: PASS, 2026-07-12
+
+Commands already run:
+
+1. `node research/articles/ai-maintains-knowledge-base/showcase/knowledge-maintenance-proposal/scripts/verify-showcase.mjs`
+   - Exit: `0`
+   - Relevant output: valid `0`; missing evidence `71`; auto-apply `72`; unsupported merge `73`; stale no contradiction `74`; orphan no zero-degree evidence `75`; privacy `0`; source inventory and hashes unchanged.
+
+2. `node research/articles/ai-maintains-knowledge-base/showcase/knowledge-maintenance-proposal/scripts/privacy-scan.mjs`
+   - Exit: `0`
+   - Relevant output: no credential, runtime id, account id, or local absolute path leakage found.
+
+3. `CODEX_NESTED_MODEL=gpt-5.5 node research/articles/ai-maintains-knowledge-base/showcase/knowledge-maintenance-proposal/scripts/run-codex-live.mjs`
+   - Writer attempt: exit `1`, no reports; preserved separately.
+   - Outer attempt 1: exec `0`, reports 2/2, validator `71` for missing top-level fixture; rejected.
+   - Final retry: exec `0`, reports 2/2, validator `0`, protected files and source inventory/hash unchanged; accepted.
+
+Commands to be appended after article write:
+
+4. `node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs --article starlight/src/content/docs/obsidian-ai/ai-maintains-knowledge-base.mdx --research research/articles/ai-maintains-knowledge-base`
+   - Exit: `0`
+   - Relevant output before review: article PASS, research PASS, status partial.
+
+5. `npm --prefix starlight run build`
+   - Exit: `0`
+   - Relevant output: 49 pages built; search index built; sitemap created.
+
+6. `git diff --check`
+   - Exit: `0`
+   - Relevant output: no whitespace errors.
+
+Versions:
+
+- Node: `v24.11.0`
+- npm: `11.6.1`
+- Astro: `v6.3.3`
+
+Image inspection:
+
+- `knowledge-maintenance-control-loop.svg` rendered through Chrome at 1400x900 outside the worktree.
+- First raster exposed one overflow and one crowded line; final rerender PASS after layout correction.
+
+Independent review:
+
+- Initial arithmetic-inconsistent report was rejected.
+- Fresh read-only follow-up: PASS 97/100; blocker/major/minor 0/0/0; visual PASS.
+- Final article state: `showcase_status: verified`, `quality_score: 97`.

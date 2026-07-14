@@ -1,0 +1,10 @@
+{
+  "scenario": "no-approval",
+  "stage": "verify",
+  "status": "ok",
+  "checks": [
+    "every selected item keeps source_url",
+    "every selected item keeps selection_reason",
+    "dedupe removed duplicate source_url before drafting"
+  ]
+}

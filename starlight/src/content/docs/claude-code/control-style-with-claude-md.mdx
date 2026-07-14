@@ -1,36 +1,322 @@
 ---
-title: 用 CLAUDE.md 管住代码风格和工程约束
-description: 把项目习惯写成 Agent 能长期遵守的规则。
+title: "用 CLAUDE.md 管住风格膨胀：把规则放对层，而不是越写越长"
+description: 从一次真实风格失败出发，判断规则该放根 CLAUDE.md、路径作用域 `.claude/rules`，还是确定性检查，并建立添加、验证、修剪的维护循环。
 sidebar:
   order: 3
 difficulty: intermediate
 source_repo: alchaincyf/claude-code-orange-book
 source_url: https://github.com/alchaincyf/claude-code-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-11"
+reading_time: 16 分钟
+research_path: research/articles/control-style-with-claude-md
+showcase_path: research/articles/control-style-with-claude-md/showcase
+showcase_status: verified
+quality_score: 92
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 16 分钟 | 2026-07-11 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/claude-code-orange-book" url="https://github.com/alchaincyf/claude-code-orange-book" updatedFrom="2026-05" license="CC BY-NC-SA 4.0" />
+你已经写过一份最小 `CLAUDE.md`，里面有真实命令、验收命令和禁区路径。最初它很好用。但协作几轮以后，文件开始长出新的段落：
 
-## 核心概念
+- “UI 统一用设计 token。”
+- “API 返回统一 envelope。”
+- “提交前顺手检查文件命名。”
+- “遇到多目录时先想想影响面。”
+- “重要：不要再写奇怪的 className。”
 
-`CLAUDE.md` 最有价值的不是记录“喜欢什么”，而是减少重复沟通。它应该帮助 Agent 在同一个项目里稳定做出一致选择。
+问题不是这些话都错，而是它们混在一层后，开始互相抢注意力。Claude Code 官方把 `CLAUDE.md` 定义成每轮都会读入的 context，不是强制配置；一旦规则写得太长、太泛、太互相打架，你得到的通常不是更稳定，而是更随机。
 
-## 规则写法
+这篇教程不重讲第一份最小文件怎么写。它解决的是下一步：当规则已经开始膨胀，怎样把一次真实风格失败拆成三种不同的落点。
 
-- 具体：写“用 `rg` 搜索”，不要写“高效搜索”。
-- 可验证：写“改 UI 后跑构建”，不要写“保证质量”。
-- 有边界：写“不要修改部署配置”，不要写“谨慎操作”。
+1. 根级 `CLAUDE.md`：每次都该知道的全局约定。
+2. `.claude/rules/`：只在某个目录或文件类型工作时才该出现的局部规则。
+3. 确定性检查：必须硬性通过、不能靠模型“尽量遵守”的部分。
 
-## 操作步骤
+![从一次风格失败拆到根级规则、路径作用域规则、机械检查与修剪循环的放置判断图](/images/articles/control-style-with-claude-md/rule-placement-loop.svg)
+*图注：读图顺序从左到右。先看一次失败如何被改写成“具体规则”；再看它应放在根级、路径作用域还是机械检查；最后看维护循环：只添加改变行为的规则，跑检查，再删掉已失效或重复的部分。*
 
-1. 从最近三次协作失败里提取规则。
-2. 每条规则只解决一个问题。
-3. 把一次性任务放在 issue，不放进长期规则。
-4. 每月删掉已经不再需要的规则。
+## 读完你能做什么
 
-## 常见错误
+你会拿走三样可直接复用的判断框架：
 
-把 `CLAUDE.md` 当项目百科。百科会膨胀，规则应该保持短、硬、可执行。
+1. 一套放置判断：什么时候写进根级 `CLAUDE.md`，什么时候拆到 `.claude/rules/`，什么时候直接做成脚本或 CI 检查。
+2. 一个可复现 Showcase：同一个小型 UI + API 仓库里，先让风格规则放错层导致失败，再把它拆成根规则、UI 作用域规则、API 作用域规则和确定性脚本，得到 `before FAIL -> after PASS`。
+3. 一个维护循环：不是“想到一条就继续加”，而是“添加一条具体规则 -> 验证它是否改变行为 -> 修剪没价值或互相冲突的规则”。
+
+这篇文章的非目标也先说清楚：
+
+- 不重讲最小 `CLAUDE.md` 的五类必要信息，那个主题已在 [第一份 CLAUDE.md：从重复失败里提炼最小可用规则](/claude-code/minimum-claude-md/) 里处理。
+- 不把 `CLAUDE.md` 说成硬权限层。若某动作必须被拦截，应该落在确定性执行层，而不是期待一段 Markdown 绝不失手。
+- 不展开 Skills、MCP 或更广义的扩展设计。这里只用到它们的边界判断，不进入写法细节。
+
+## 先从一次真实失败开始：规则不是不够多，而是放错层
+
+我们先看一个很典型的失败。
+
+项目本身同时有前端和后端：
+
+- `src/ui/` 里是 React 组件，要求使用设计 token，避免硬编码颜色。
+- `src/api/handlers/` 里是接口处理器，要求返回统一的 `jsonOk/jsonError` envelope。
+
+团队一开始把这两类约束都堆在根级 `CLAUDE.md` 里，写成类似下面的句子：
+
+```md
+## Style
+- 始终使用设计 token，不要写硬编码颜色。
+- API 返回统一 envelope，不要直接 return 原始对象。
+- 修改完成后运行风格检查。
+```
+
+这看起来“都对”，但它会同时制造三个问题。
+
+第一，Claude 每次进入任意目录都会读到所有风格提醒。它在改 API 时也会看见 UI token 规则，在改 UI 时也会看见 API envelope 规则。官方 memory 文档对这一点说得很直白：`CLAUDE.md` 会在每轮启动时被载入，越具体越好，越长越容易降低遵循度。把局部规则塞进全局入口，本质上是在给每次会话增加无关噪音。
+
+第二，规则里混进了不同强度的约束。“不要写硬编码颜色”还可以留给模型理解代码上下文；但“API 返回统一 envelope”往往已经可以被静态脚本机械判断。把两者都写成提醒句，会让你误以为它们属于同一个层级。
+
+第三，根文件越来越长后，你很难判断哪条规则真的改变了行为。官方 best practices 的建议是把 `CLAUDE.md` 当代码维护，反问每一行：“如果删掉它，Claude 会不会更容易犯错？”如果答案是否定的，就该删，而不是继续叠字数。
+
+所以真正的问题不是“规则不够多”，而是“该全局的和该局部的混了，该软提醒的和该硬检查的混了”。
+
+## 三层放置判断：根规则、路径作用域规则、确定性检查
+
+把风格规则放对层，核心不是靠感觉，而是问三个判断题。
+
+| 判断题 | 如果答案是“是” | 应该放哪里 |
+| --- | --- | --- |
+| 这条规则是否每次会话都该知道？ | 比如真实命令、目录主边界、统一交付格式 | 根级 `CLAUDE.md` |
+| 这条规则是否只对某个目录、文件类型或子系统成立？ | 比如 UI token、API envelope、测试目录约定 | `.claude/rules/` 的 path-scoped rule |
+| 这条规则是否可以被机械判定为 pass/fail？ | 比如禁止十六进制颜色、API 必须返回 helper | 确定性脚本、lint、测试或 CI |
+
+这三层不是互斥关系，而是逐层收窄。
+
+根级 `CLAUDE.md` 负责“总是知道什么”。官方 features overview 把它定义为 `always know / always do X` 的地方，适合放项目共识、命令、目录边界、维护方式。它不适合承载大量语言细则和只对某个子目录成立的风格。
+
+`.claude/rules/` 负责“什么时候才知道什么”。官方 memory 文档明确支持在规则文件 frontmatter 里使用 `paths`，只在 Claude 处理匹配文件时加载这部分上下文。这对多目录项目非常关键，因为它把噪音从“每轮都读”变成“进入相关路径才读”。
+
+确定性检查负责“必须真的过什么”。只要某条规则可以被脚本判断，就不要只停留在自然语言提醒。自然语言规则适合给模型提供方向；确定性检查才负责给你一个明确的通过/失败信号。
+
+可以把它理解成一句更实用的话：
+
+- 根级文件定义默认世界观。
+- 作用域规则定义子目录的局部语法。
+- 机械检查定义最后的裁判。
+
+## 根级文件只保留“每次都该知道”的东西
+
+先看根级 `CLAUDE.md` 该保留什么。
+
+在本文的 Showcase 里，根文件只留下四类内容：
+
+```md
+# Repo Rules
+
+- 先读 `README.md` 和 `package.json`，确认命令与目录边界。
+- 根规则只放所有改动都适用的约束；UI 和 API 细则放进 `.claude/rules/`。
+- 改动完成后运行 `node ../verify-style-scope.mjs <snapshot>`。
+- 如果某条风格要求已经可以被脚本确定性检查，就不要再把它写成长段解释。
+```
+
+为什么这样裁剪？
+
+因为这些信息满足“每次都该知道”的标准。无论 Claude 改的是前端还是后端，它都需要知道：
+
+- 先确认真实命令，而不是猜。
+- 局部风格不在根文件里，而在 `.claude/rules/`。
+- 最后的验证入口是什么。
+- 规则一旦可机械化，就应该下沉到脚本而不是继续堆在上下文里。
+
+这和“把所有风格细节都写进根文件”有本质区别。官方 best practices 给出的一个强信号是“Keep it concise”，并建议逐行判断：删掉这行会不会导致更多错误？像“UI 组件使用 token”这种只在 `src/ui/` 成立的信息，不满足“每次都该知道”。继续留在根文件，只会把真正全局的命令和边界埋掉。
+
+这里最容易犯的错，是把根文件写成“组织思想汇报”。
+
+坏写法通常长这样：
+
+- 保持良好风格。
+- 优先考虑一致性。
+- 以长期可维护性为中心。
+- 前后端都要遵循最佳实践。
+
+这些句子也许没错，但它们没有给出具体落点，也不能直接验证。相比之下，“UI 和 API 细则放进 `.claude/rules/`，最后跑 `node verify-style-scope.mjs`”是可执行的。
+
+## 局部风格放进 `.claude/rules/`，并让作用域自己说话
+
+官方 memory 文档给出了 path-scoped rules 的直接机制：规则文件放在 `.claude/rules/`，用 YAML frontmatter 的 `paths` 指定匹配范围，只在 Claude 处理这些文件时生效。
+
+这对“规则膨胀”特别重要，因为它解决的是加载时机，不只是目录整理。
+
+本文 Showcase 里的 UI 规则文件长这样：
+
+```md
+---
+paths:
+  - "src/ui/**/*.tsx"
+---
+
+# UI Style Rules
+
+- 组件颜色来自 `theme.ts` 的 token，不要写十六进制颜色。
+- `className` 统一经过 `cx()` 组合，避免在 JSX 里拼接样式字符串。
+```
+
+API 规则文件则是：
+
+```md
+---
+paths:
+  - "src/api/**/*.ts"
+---
+
+# API Contract Rules
+
+- 处理器返回 `jsonOk(...)` 或 `jsonError(...)`。
+- 不要直接 `return { ... }` 暴露裸对象。
+```
+
+把规则拆成这样以后，有两个收益。
+
+第一个收益是减少无关上下文。Claude 在处理 `src/api/handlers/profile.ts` 时，不需要每轮都读“不要写十六进制颜色”；反过来，在处理 UI 组件时，也不需要背着 API envelope 的实现细则。
+
+第二个收益是更容易发现冲突。官方文档提醒过：如果两条规则互相矛盾，Claude 可能会任意选择其中一条。局部规则拆开以后，你会更快看见“这条到底只属于 UI，还是其实应该升级为全局约束”。
+
+需要特别强调的是：path-scoped rule 不是确定性测试。它只是更精确地决定“什么上下文该在什么时候读到”。真正证明是否通过，还得看后面的脚本。
+
+## Showcase：同一个小仓库里，先 FAIL，再拆层后 PASS
+
+本文的 Showcase 在 `research/articles/control-style-with-claude-md/showcase/style-scope/`。它不是在线模型跑分，也不是“Claude 一定会照做”的证明；它是一个可重跑的机械实验，回答更收敛的问题：
+
+> 当我们把风格规则从“堆在根文件里”改成“根规则 + path-scoped rules + 确定性检查”后，能否更清楚地证明哪类约束该作用于哪类文件？
+
+Showcase 目录里有两个快照：
+
+- `fixture/before/`：规则已经分层，但代码还保留失败状态。
+- `fixture/after/`：同样的规则结构下，把 UI 和 API 的实现都修到通过。
+
+运行命令：
+
+```bash
+cd research/articles/control-style-with-claude-md/showcase/style-scope
+node verify-style-scope.mjs before
+node verify-style-scope.mjs after
+```
+
+2026-07-11 实际归档结果保存在 `result.txt`。最重要的几行是：
+
+```text
+SCENARIO before
+PASS root CLAUDE.md keeps only repo-wide instructions
+PASS UI rule is path-scoped to src/ui/**/*.tsx
+PASS API rule is path-scoped to src/api/**/*.ts
+FAIL src/ui/Button.tsx uses hard-coded color #7c3aed
+SKIP ui-token rule for src/api/handlers/profile.ts because path does not match src/ui/**/*.tsx
+FAIL src/api/handlers/profile.ts returns a raw object instead of jsonOk/jsonError
+RESULT FAIL
+
+SCENARIO after
+PASS root CLAUDE.md keeps only repo-wide instructions
+PASS UI rule is path-scoped to src/ui/**/*.tsx
+PASS API rule is path-scoped to src/api/**/*.ts
+PASS src/ui/Button.tsx uses theme tokens and cx()
+SKIP ui-token rule for src/api/handlers/profile.ts because path does not match src/ui/**/*.tsx
+PASS src/api/handlers/profile.ts returns jsonOk/jsonError helpers
+RESULT PASS
+```
+
+这组结果证明了三件事。
+
+第一，UI 规则确实不该作用于 API。注意 `SKIP` 行不是装饰，它是这个 showcase 最关键的证据之一：检查器明确记录 UI 规则因路径不匹配而跳过了 API 文件。也就是说，我们不是靠主观解释“理论上不该作用”，而是把作用域决策写进了可重跑输出。
+
+第二，静态检查只能证明机械约束，不证明模型遵循。`src/ui/Button.tsx` 有没有写十六进制颜色、`profile.ts` 有没有返回 `jsonOk/jsonError`，这些都可以由脚本稳定判定。但脚本不能证明 Claude 为什么这么写，更不能证明只要放对规则就一定会自动生成正确代码。
+
+第三，真正适合保留在根文件里的，是“分层原则”和“验证入口”，不是具体风格细节。否则你很难从结果里看见哪条规则起作用，哪条只是背景噪音。
+
+:::note[这组 Showcase 的边界]
+这里展示的是“规则放置是否清晰、机械约束是否可验证”，不是在线 Claude Code 的行为排名。由于本次恢复任务明确不能重新发起原有认证链路，research pack 如实记录了这一限制，没有把静态结果包装成模型服从性测试。
+:::
+
+## 把规则写成维护循环：添加、验证、修剪
+
+规则治理的难点从来不在第一次写，而在第三次、第五次、第十次以后还是否干净。
+
+官方 best practices 的一句话很值得直接落地：把 `CLAUDE.md` 当代码维护。本文把它展开成一个三步循环。
+
+### 1. 添加：只添加能改变行为的一条
+
+不要在一次失败后同时补五条抽象提醒。先问：
+
+- 这次失败具体发生在哪个目录？
+- 它属于全局信息、局部上下文，还是其实应该脚本化？
+- 如果删掉这条，新一轮是否仍会重复犯同样的错？
+
+比如这次 UI 组件写了硬编码颜色，你可以先补一条 path-scoped UI 规则；如果以后每次都还会漏，那就把“禁止十六进制颜色”再下沉成检查脚本。不要一步到位把所有历史经验写成长文。
+
+### 2. 验证：拿真实输出判断规则是否改变行为
+
+验证不是“我感觉现在更清楚了”，而是看有没有通过信号。
+
+对本文场景，验证信号有两种：
+
+- 作用域验证：脚本是否明确输出 UI 规则只命中 UI 文件、不会误伤 API 文件。
+- 行为验证：`before` 是否失败、`after` 是否通过，失败原因是否恰好对应你刚添加的那条规则。
+
+如果一条新规则既没有改变检查结果，也没有减少后续返工，它就很可能只是噪音。
+
+### 3. 修剪：删掉重复、失效和已脚本化的内容
+
+修剪通常最容易被忽略，但它决定根文件会不会再次膨胀。
+
+下面三类内容最该删：
+
+- 已经可以由脚本判定的长段提醒。
+- 只属于某个目录，却还残留在根文件里的局部规则。
+- 与现行实现冲突、或已经不再需要的旧约定。
+
+官方 memory 文档还提醒了另一个风险：如果规则之间冲突，Claude 可能任意选一条。修剪本质上也是在做冲突控制。根文件越短，局部规则越按路径加载，真正需要人审查的地方就越少。
+
+## 什么时候不要继续往 CLAUDE.md 里加
+
+“继续加规则”不是默认答案。下面几种情况，应该停下来换层。
+
+### 情况一：你要的是硬失败，而不是“尽量遵守”
+
+如果你的真实需求是“API 一律不能返回裸对象”，并且这完全可机械判断，那就直接写检查器。自然语言规则仍可保留一句摘要，但裁判必须换成脚本。
+
+### 情况二：规则只属于单一目录或语言
+
+比如“Markdown 文档标题用 sentence case”“前端组件只用设计 token”“数据库迁移文件命名带时间戳”。这些都不适合常驻根文件。把它们留在根级，只会让每次会话都多读一段对当前任务没帮助的信息。
+
+### 情况三：你补的是一次性任务说明
+
+“这周把 billing 改成新接口”“这次 PR 不要动登录页”是任务指令，不是长期记忆。它们应该留在当前对话、issue 或任务卡，不该变成每轮都读的项目规则。
+
+### 情况四：你已经看不出每条规则的效果
+
+当你无法回答“这条规则改变了什么行为”“如果删掉它会怎样”，说明文件已经进入膨胀区，需要先修剪，再决定要不要添加。
+
+## 练习：把你现有的风格失败拆成三层
+
+找一个你最近两周内重复出现过至少两次的失败，按下面步骤做一次最小治理。
+
+1. 先写下失败的具体表现，不要写抽象价值观。例如“组件再次写了硬编码颜色”，而不是“风格不一致”。
+2. 判断它是否每次会话都该知道。如果不是，就不要放根级 `CLAUDE.md`。
+3. 判断它是否只作用于某个目录或文件类型。如果是，设计一条 path-scoped rule。
+4. 判断它是否能被脚本稳定判定。如果能，补一个最小检查，而不是继续往 Markdown 里加段落。
+5. 记录一次 `before FAIL -> after PASS`。如果你拿不出这个证据，就先别说规则已经治理成功。
+
+完成标准也要可观察：
+
+- 你能指出一条根级规则、一条局部规则和一个确定性检查各自解决什么。
+- 你能说明为什么某条 UI 规则不该再出现在 API 改动的上下文里。
+- 你能删除至少一条原先留在根文件、但现在已经冗余的旧规则。
+
+## 来源与延伸阅读
+
+- 官方一手资料：[How Claude remembers your project](https://code.claude.com/docs/en/memory)、[Best practices for Claude Code](https://code.claude.com/docs/en/best-practices)、[Extend Claude Code](https://code.claude.com/docs/en/features-overview)。
+- 官方一手资料：[Overview](https://code.claude.com/docs/en/overview)。本文用它校对 Claude Code 的产品定位与多表面入口，不把第三方截图当现状依据。
+- 二手主题地图：[Claude Code Orange Book](https://github.com/alchaincyf/claude-code-orange-book)。该仓库 README 声明采用 CC BY-NC-SA 4.0；本文只把它作为中文主题地图，不把它当现行产品事实来源。
+
+官方文档支撑本文关于 `CLAUDE.md`、`.claude/rules/` 与确定性执行层分工的当前行为。橙皮书只帮助确定选题与中文语境，正文结构、Showcase、图示和结论均按 2026-07-11 的官方资料与本地可重跑证据重建。

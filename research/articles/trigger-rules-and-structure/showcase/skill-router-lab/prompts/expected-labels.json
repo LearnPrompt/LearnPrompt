@@ -1,0 +1,21 @@
+{
+  "implicit": {
+    "broad": {
+      "request-1": true,
+      "request-2": true,
+      "request-3": false,
+      "request-4": false
+    },
+    "bounded": {
+      "request-1": true,
+      "request-2": true,
+      "request-3": false,
+      "request-4": false
+    }
+  },
+  "explicit": {
+    "bounded": {
+      "request-5": true
+    }
+  }
+}

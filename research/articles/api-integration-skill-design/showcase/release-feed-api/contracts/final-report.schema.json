@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "skill_invocation",
+    "report_json",
+    "report_markdown",
+    "fetch_exit_code",
+    "release_count",
+    "tests_command",
+    "tests_status",
+    "notes"
+  ],
+  "properties": {
+    "skill_invocation": {
+      "type": "string",
+      "const": "$release-feed-api"
+    },
+    "report_json": {
+      "type": "string",
+      "const": "reports/releases.json"
+    },
+    "report_markdown": {
+      "type": "string",
+      "const": "reports/releases.md"
+    },
+    "fetch_exit_code": {
+      "type": "integer",
+      "enum": [0, 41, 42, 43, 44]
+    },
+    "release_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "tests_command": {
+      "type": "string",
+      "const": "npm test"
+    },
+    "tests_status": {
+      "type": "string",
+      "enum": ["passed", "failed", "not-run"]
+    },
+    "notes": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

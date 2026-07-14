@@ -1,0 +1,28 @@
+# 冻结的真实运行输出（已脱敏）
+# 环境：Node v24（本地），无网络依赖，纯本地 fixture。
+# 捕获方式：原始日志先写在仓库外的临时目录运行，确认后只把这份摘要落盘。
+# 采集日期：2026-07-11
+
+$ node radar.mjs feed.json --top 3
+# AI 新闻雷达 · Top 3
+
+- **Anthropic 发布 Claude 新模型** — 官方博客（命中 2 个关注标签）
+  https://example.com/a
+- **OpenAI 更新 Codex CLI** — 官方博客（命中 2 个关注标签）
+  https://example.com/b
+- **开源 Agent 框架月度进展** — GitHub Trending（命中 1 个关注标签）
+  https://example.com/e
+exit=0
+
+$ node radar.mjs nope.json
+radar: 读不到输入文件：nope.json
+exit=1
+
+$ node verify.mjs
+PASS Top 3 恰好输出三条并含来源
+PASS 重复标题被去重
+PASS 缺失输入文件时非零退出
+PASS 零命中时非零退出
+
+summary: 4 passed, 0 failed
+exit=0

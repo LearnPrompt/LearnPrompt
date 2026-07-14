@@ -1,0 +1,6 @@
+positive-clean-room: gate=0 apply=0 test=0 changed=src/rollupByReporterDay.js
+negative-keychain-dependency: gate=21
+negative-browser-login: gate=22
+negative-missing-acceptance: gate=23
+negative-unclear-direction: gate=24
+privacy-scan: 0

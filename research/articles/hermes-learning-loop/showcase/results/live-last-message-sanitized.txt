@@ -1,0 +1,8 @@
+已生成并校验两个报告：
+
+- `reports/learning-proposals.json`
+- `reports/learning-proposals.md`
+
+校验结果：JSON 可解析，包含 6 个 proposals，动作分布符合合同；`auto_applied: false`，`applied_changes: []`；敏感候选的 credential-shaped 文本未出现在任一报告中。
+
+Lessons learned: 合成学习候选应按证据强度和敏感性分流，credential-like 内容只引用候选 ID。

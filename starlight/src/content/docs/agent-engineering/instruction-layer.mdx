@@ -1,37 +1,188 @@
 ---
-title: 指令层：如何写少而有效的规则
-description: 用少量硬规则提升 Agent 的稳定性。
+title: 指令层：把意图翻译成 Agent 能执行的项目地图
+description: 用目标、范围、顺序、验收和冲突优先级五个可执行维度，把一份指令从形容词变成能被验收的项目地图。
 sidebar:
   order: 2
 difficulty: intermediate
-source_repo: alchaincyf/harness-engineering-orange-book
-source_url: https://github.com/alchaincyf/harness-engineering-orange-book
-updated_from: 2026-05
+updated_from: "2026-05"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-11"
+reading_time: 13 分钟
+research_path: research/articles/instruction-layer
+showcase_path: research/articles/instruction-layer/showcase/instruction-map
+showcase_status: verified
+quality_score: 93
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后验证 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 13 分钟 | 2026-07-11 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/harness-engineering-orange-book" url="https://github.com/alchaincyf/harness-engineering-orange-book" updatedFrom="2026-05" />
+你给 Agent 写了一份 CLAUDE.md，加了「你是资深工程师」「请认真、保持高质量」，结果它还是不读规则就动手、把范围越改越大、最后自己宣布「做完了」而没人能判断对错。
 
-## 好规则的标准
+多数人的下一步是再补几句形容词。但问题从来不在措辞。指令层真正要做的，是把你脑子里的意图翻译成一张 Agent 能落地执行、能被验收的项目地图：做成什么样、能动哪些文件、按什么顺序、用什么命令验收、维度打架时听谁的。翻译不到位，再客气的句子也补不上工程缺口。
 
-- 会改变 Agent 行为。
-- 能被执行或检查。
-- 不和其他规则冲突。
-- 不替代任务本身。
+## 读完你能做什么
 
-## 操作步骤
+你会学会用五个可执行维度审计并重写任何一份 Agent 指令：
 
-1. 先列出 Agent 最近三次失败。
-2. 每次失败只写一条补救规则。
-3. 删除“认真、谨慎、高质量”这类空泛词。
-4. 用真实任务验证规则是否有效。
+1. 目标：做成什么样，且能被判断。
+2. 范围：能动哪些文件。
+3. 顺序：先读什么、再做什么、最后验什么。
+4. 验收：用哪条命令判定完成。
+5. 冲突优先级：维度打架时谁说了算。
 
-## 常见错误
+你还会看到指令层与能力、约束、状态、编排四层的清晰分工，并运行一个最小仓库，亲眼看到模糊指令让验收挂掉、补齐可执行指令后同一验收通过。
 
-规则越多越好。实际上，规则越长，模型越容易忽略关键边界。
+![左侧五个维度各自映射到一个真实资源，右侧是安全约束、显式任务指令、通用风格偏好三层的冲突优先级阶梯](/images/articles/instruction-layer/instruction-map-and-conflict.svg)
+*图注：左边每个维度都要落到一个可定位的真实资源，右边决定维度打架时谁压过谁；模糊指令的问题是两边都缺。*
 
-## 实战案例
+:::note[这是一套操作模型]
+「五个可执行维度」和「优先级阶梯」是 LearnPrompt 对官方「具体、可验证」建议的操作化归纳，方便审计和教学，并非某家产品的官方术语。涉及产品行为的部分都回到官方一手文档核验，日期见文末。
+:::
 
-“不要泄露密钥”应该写成“不要读取、打印或提交 `.env`、token、private key；需要密钥时要求用户通过环境变量提供”。
+## 先看一个失败：指令写了，任务还是跑偏
+
+假设你在 CLAUDE.md 里只写了一句：
+
+```text
+改进 format-date 模块，让日期显示得更好读一些，完成后自测一下。
+```
+
+句子读着没毛病，但它没有回答任何一个可执行问题。「更好读」是人类可读的长串，还是机器可解析的格式？能不能顺手改测试和别的文件？「自测一下」用哪条命令、几条用例算过？当模块里已经藏着一份验收测试要求输出 `2026-07-11`，而指令却在暗示「更好读」时，这两个诉求会直接对撞——而这份指令没有说清谁赢。
+
+Agent 于是任选一边。这不是它不听话。Claude Code 官方文档把 CLAUDE.md 明确定位为上下文而非强制配置，并直说：两条规则互相矛盾时，模型可能任选其一。跑偏的根因是指令层留了一个没有裁决的冲突，而不是措辞不够诚恳。
+
+## 指令层做的是翻译，不是修辞
+
+把有效指令的官方建议推到底，指令层其实在回答五个能被定位的问题。下面这张表是审计一份指令的最小清单：
+
+| 维度 | 它回答的问题 | 反例（形容词） | 正例（落到资源） |
+| --- | --- | --- | --- |
+| 目标 | 做成什么样？ | 让代码更优雅 | `formatDate` 返回 `YYYY-MM-DD` |
+| 范围 | 能动哪些文件？ | 改相关的地方 | 只改 `src/format-date.mjs` |
+| 顺序 | 先后怎么走？ | 认真完成 | 读测试 → 实现 → 跑验收 |
+| 验收 | 谁说了算？ | 完成后自测 | `node --test` 三条全过 |
+| 冲突优先级 | 打架听谁的？ | 综合权衡 | 冲突时以测试规定为准 |
+
+左列的形容词无法被机械检查，右列的每一格都能落到一个真实文件、命令或判定上。官方给的对照例子是同一个道理：「Run `npm test` before committing」优于「Test your changes」，「Use 2-space indentation」优于「Format code properly」。可执行的意思，就是每个维度都能被指到一个具体资源。
+
+## 五个维度，逐个落到真实资源
+
+**目标**要可判断，而不是可称赞。「更好」永远为真，也永远无法验收；「返回 `YYYY-MM-DD`」则要么满足要么不满足。目标写成一个可判定的完成态，后面的验收才有对象。
+
+**范围**要指向具体路径。写「改相关文件」等于没写，Agent 会自行扩大改动面，失败半径随之扩大。写「只改 `src/format-date.mjs`」，越界就是明确的违规。
+
+**顺序**要把「先看验收标准再动手」固化下来。很多跑偏发生在 Agent 还没读测试就开始猜实现。把「先读 `test/`、再实现、最后跑验收」写进指令，等于给它一条不会迷路的路径。
+
+**验收**要是一条命令，不是一种感觉。「完成后自测」把判断权交还给了生成者，而生成者最容易把「我写完了」误当成「结果合格」。写「`node --test` 三条全过」，完成与否就从主观变成退出码。
+
+**冲突优先级**是最常被漏掉、却最致命的一维。真实工程里冲突必然发生，下一节单独讲。
+
+## 冲突不是措辞问题，是优先级缺失
+
+冲突在 Agent 工程里是常态，不是意外。你会同时有多层 CLAUDE.md、全局与项目两份 AGENTS.md、一个模糊目标和一个隐藏验收。系统对冲突的默认解法并不安全：Claude Code 说矛盾时可能任选其一；Codex 则把发现到的 AGENTS.md 按根到叶拼接，越靠近当前目录的越靠后、也就越优先，而且合并超过 32 KiB（`project_doc_max_bytes` 默认值）就会把后面的内容丢掉。也就是说，你不显式声明优先级，系统就用「任选其一」或「越近越赢」替你决定。
+
+指令层要做的，是把冲突从默认行为改成显式规则。一条稳定好用的优先级阶梯是：
+
+1. 安全与范围约束（最高）：不越界、不碰密钥、不发布。
+2. 显式任务指令：本轮的目标与验收，压过通用偏好。
+3. 通用风格偏好（最低）：好听，但会被上层的验收否决。
+
+同层才升级给人。有了这条阶梯，「让日期更好读」和「测试要 `2026-07-11`」的对撞就有了唯一裁决：第 3 层服从第 2 层，测试说了算。这一条声明，往往就是模糊指令和可执行指令的全部差距。
+
+## 指令层和其他四层的分工
+
+指令层很强，但它只负责解释意图，不负责强制执行。分不清这条边界，就会把本该别处解决的问题硬塞进措辞里。
+
+- 能力层回答「实际能做什么」。工具缺失、路径不可写导致的失败，补形容词无用，得去补工具或权限。
+- 约束层回答「什么绝对不能做」。「不要碰密钥」写进指令只是软提醒；官方明说要真正拦住一个动作，得用 PreToolUse 钩子或沙箱。指令解释意图，钩子执行拒绝。
+- 状态层回答「下一轮要记住什么」。目标、上次失败证据属于状态，不该每轮靠指令重述。
+- 编排层回答「谁验收、失败回到哪一步、何时停」。
+
+指令层自己也有物理上限。CLAUDE.md 每次全量载入、越长遵循度越低，官方建议单文件控制在 200 行内；Codex 合并项目指令达到 `project_doc_max_bytes`（默认 32 KiB）后，会停止继续加入后续文件，而不是把已经合并的内容整体丢弃。所以「把所有知识塞进入口文件」本身就是反模式。入口文件应该像一张导航地图，把细节下沉到就近的文档、`.claude/rules/` 或 skill 里，而不是长成一本百科全书。
+
+## Showcase：从模糊指令到可执行地图
+
+为了让「可执行」不停留在口号，本文附了一个无网络依赖的最小仓库，保留了指令不足时失败、补齐后通过的可复现前后对照。完整目录、命令与脱敏输出见 [研究与 Showcase](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/instruction-layer/showcase/instruction-map)。
+
+任务对象是一个日期格式化函数，它的验收标准由一份隐藏测试规定：
+
+```js
+// test/format-date.test.mjs（节选）
+test("returns ISO calendar date YYYY-MM-DD", () => {
+  assert.equal(formatDate(new Date("2026-07-11T09:30:00Z")), "2026-07-11");
+});
+```
+
+第一步，用一个确定性检查器判断两份指令能不能被解析成可执行地图。它不问模型「你觉得写得好吗」，而是逐项检查五个维度是否落到可定位的资源上。2026-07-11 在 macOS、Node v24.11.0 下的真实结果：
+
+```text
+$ node scripts/verify-instruction-map.mjs before/AGENTS.md
+FAIL 目标 / FAIL 范围 / FAIL 顺序 / FAIL 验收 / FAIL 冲突优先级
+summary: 0/5 dimensions executable   (exit 1)
+
+$ node scripts/verify-instruction-map.mjs after/AGENTS.md
+PASS 目标 / PASS 范围 / PASS 顺序 / PASS 验收 / PASS 冲突优先级
+summary: 5/5 dimensions executable   (exit 0)
+```
+
+第二步，把两种指令各自导向的候选实现放进同一份验收里跑。顺着「让日期更好读」写出的实现返回人类可读串，被机器格式的断言拒绝：
+
+```text
+$ (cd repo && node --test)   # before-candidate
+✖ returns ISO calendar date YYYY-MM-DD
+  + 'Sat, 11 Jul 2026'
+  - '2026-07-11'
+ℹ pass 1  ℹ fail 2   (exit 1)
+```
+
+补齐可执行指令、并声明「冲突时以测试为准」后，顺着它写出的实现同一验收三条全过：
+
+```text
+$ (cd repo && node --test)   # after-candidate
+✔ returns ISO calendar date YYYY-MM-DD
+✔ pads single-digit month and day
+✔ does not mutate the input date
+ℹ pass 3  ℹ fail 0   (exit 0)
+```
+
+这个 Showcase 证明的是：指令层的产物能落到真实文件、命令和判定上，冲突写清优先级后，同一次执行才有确定的对错。它没有证明的是：两个候选实现由作者手写，用来代表模糊与精确指令各自把人导向哪里，可复现的确定部分是验收 harness 与它的真实输出——本文没有运行在线大模型，因此不构成任何模型排名。检查器也只判断五维是否可定位，不判断内容是否明智；一份 5/5 的指令仍可能把目标写错。
+
+## 什么时候不该用指令层解决
+
+指令层不是万能钥匙。遇到下面这些情况，先别改措辞：
+
+- 失败来自工具缺失或权限不足。这属于能力层，补一句「请认真检查」不会让不存在的命令跑起来。
+- 你需要的是硬拦截而非提醒。「绝对不能删生产库」要靠 deny 规则、沙箱或 PreToolUse 钩子强制，写进 CLAUDE.md 只是软约束。
+- 冲突发生在同一优先级。两条同为「显式任务指令」的规则打架，正确动作是升级给人，而不是让模型任选其一。
+- 指令已经太长。超过官方建议的 200 行，或让 Codex 合并内容触及 32 KiB 默认上限而停止继续加入文件，问题是过载而非不够详细，应该做减法和下沉。
+
+一个简单的判断法：如果补一句话能让某个维度从形容词变成可定位资源，那是指令层的活；如果补再多话都改变不了环境、工具或强制边界，那就换层解决。
+
+## 练习：给你的入口文件做一次五维审计
+
+找一份你正在用的 CLAUDE.md 或 AGENTS.md，以及一个它最近没管住的任务，填这张表：
+
+```yaml
+目标:      是否可判断，还是只是“更好/更优雅”
+范围:      是否指向具体文件路径，还是“相关文件”
+顺序:      是否要求先读验收标准再动手
+验收:      是否是一条可运行命令，还是“自测一下”
+冲突优先级: 当风格偏好撞上任务验收，是否写清了谁赢
+```
+
+任何一行答不上「落到了某个真实资源」，就是这次跑偏的嫌疑维度。只补最薄弱的一维，再用同一个任务重跑，观察验收是否从主观变成退出码。不要同时换模型、换提示词、换工具，否则你无法知道是哪一项真正起了作用。
+
+完成标准：五行都能指向一个具体文件、路径、命令或裁决规则；补写前后的同一条验收命令各保存一次结果；补写后退出码符合任务卡预期。如果仍需靠「我觉得更好了」判断，就还没有完成这次审计。
+
+## 来源与延伸阅读
+
+- [Claude Code 官方文档：How Claude remembers your project（CLAUDE.md）](https://code.claude.com/docs/en/memory)
+- [OpenAI Codex 官方文档：Custom instructions with AGENTS.md](https://developers.openai.com/codex/guides/agents-md)
+- [AGENTS.md 官方站点](https://agents.md/)
+- [Harness Engineering 橙皮书](https://github.com/alchaincyf/harness-engineering-orange-book)
+- [本篇研究包与可运行 Showcase](https://github.com/LearnPrompt/LearnPrompt/tree/main/research/articles/instruction-layer)
+
+前三条为官方一手资料，支撑本文所有当前产品行为，核验日期 2026-07-11。橙皮书作为中文主题地图（二手来源）帮助确认分层叙事的组织方式，其仓库为教育性分享并要求署名，本文在此保留链接与署名，未复制其任何图片或成段文字。五个可执行维度与优先级阶梯是 LearnPrompt 对官方建议的操作化综合，不是行业统一标准；文中 Showcase 已重新组织并复核。

@@ -1,0 +1,15 @@
+> receipt-normalizer@0.0.0 test
+> node --test
+
+✔ normalizes a plain number (<duration-ms>)
+✔ normalizes common aliases (<duration-ms>)
+✔ keeps the last four digits when upstream scanners prepend store codes (<duration-ms>)
+✔ rejects inputs without digits (<duration-ms>)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms <duration-ms>

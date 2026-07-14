@@ -1,0 +1,3 @@
+PASS valid 0: proposals match contract
+PASS privacy 0: 8 patterns absent
+PASS fixture hash: 6a8071ce3686bd30b21f19c5b8c755c4de356ada6eab2475620e338e086db1a6

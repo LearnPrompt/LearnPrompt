@@ -1,0 +1,21 @@
+{
+  "exit_code": 0,
+  "status": "candidate_written",
+  "training_receipt_ids": [
+    "missing-title-from-first-h1",
+    "missing-description-from-opening-paragraph",
+    "invalid-sidebar-order-fallback"
+  ],
+  "candidate_dir": ".agents/skills/frontmatter-repair",
+  "extracted_rules": [
+    "title_from_first_h1",
+    "description_from_opening_sentence",
+    "invalid_sidebar_order_to_999",
+    "already_valid_noop"
+  ],
+  "candidate_files": [
+    "SKILL.md",
+    "references/frontmatter-contract.md",
+    "scripts/repair-frontmatter.mjs"
+  ]
+}

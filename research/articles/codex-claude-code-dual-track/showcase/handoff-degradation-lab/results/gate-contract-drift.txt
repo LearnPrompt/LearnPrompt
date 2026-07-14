@@ -1,0 +1,2 @@
+Preparing worktree (new branch 'codex-lane')
+FAIL codex receipt contract_sha does not match frozen contract

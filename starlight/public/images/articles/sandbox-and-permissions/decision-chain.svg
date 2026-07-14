@@ -1,0 +1,68 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Codex 风险到权限结果的决策链</title>
+  <desc id="desc">从任务风险、permission profile、approval policy 到最终可观察结果的四段式决策链，并标注写 docs、越界写和读取 .env 的不同结果。</desc>
+  <rect width="1200" height="760" rx="36" fill="#F5EBDD"/>
+  <rect x="44" y="44" width="1112" height="672" rx="28" fill="#FFF9F1" stroke="#D8C6AB" stroke-width="2"/>
+
+  <text x="88" y="108" fill="#2B2B2B" font-family="ui-sans-serif, system-ui, sans-serif" font-size="34" font-weight="700">任务风险 -&gt; profile -&gt; approval -&gt; 可观察结果</text>
+  <text x="88" y="146" fill="#655A4E" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18">先决定本地命令物理上能碰到什么，再决定 agent 何时停下来问。少提问不等于权限更大。</text>
+
+  <rect x="88" y="206" width="232" height="416" rx="24" fill="#FCE4D0" stroke="#D88F54" stroke-width="2"/>
+  <text x="116" y="250" fill="#6A3512" font-family="ui-sans-serif, system-ui, sans-serif" font-size="28" font-weight="700">1. 任务风险</text>
+  <text x="116" y="294" fill="#5A4B40" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20">低风险：</text>
+  <text x="116" y="324" fill="#5A4B40" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18">只读检查、问答、查结构</text>
+  <text x="116" y="378" fill="#5A4B40" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20">中风险：</text>
+  <text x="116" y="408" fill="#5A4B40" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18">改 docs、改代码、跑构建</text>
+  <text x="116" y="462" fill="#5A4B40" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20">高风险：</text>
+  <text x="116" y="492" fill="#5A4B40" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18">删数据、发消息、碰密钥</text>
+  <text x="116" y="560" fill="#8D4F25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="600">先问任务要碰哪些路径和网络，</text>
+  <text x="116" y="588" fill="#8D4F25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="600">不要先问“要不要全权限”。</text>
+
+  <rect x="356" y="206" width="232" height="416" rx="24" fill="#E5F3EB" stroke="#4E9C73" stroke-width="2"/>
+  <text x="384" y="250" fill="#1E5A37" font-family="ui-sans-serif, system-ui, sans-serif" font-size="28" font-weight="700">2. Profile</text>
+  <text x="384" y="292" fill="#415345" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20">内置：</text>
+  <text x="384" y="324" fill="#415345" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18">`:read-only`</text>
+  <text x="384" y="352" fill="#415345" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18">`:workspace`</text>
+  <text x="384" y="380" fill="#415345" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18">`:danger-full-access`</text>
+  <text x="384" y="432" fill="#415345" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20">自定义：</text>
+  <text x="384" y="464" fill="#415345" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18">`extends = &quot;:workspace&quot;`</text>
+  <text x="384" y="492" fill="#415345" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18">`&quot;**/*.env&quot; = &quot;deny&quot;`</text>
+  <text x="384" y="560" fill="#2D6E49" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="600">这层回答：本地命令物理上</text>
+  <text x="384" y="588" fill="#2D6E49" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="600">能读写哪些文件、能否联网。</text>
+
+  <rect x="624" y="206" width="232" height="416" rx="24" fill="#E7EEF9" stroke="#4D77C3" stroke-width="2"/>
+  <text x="652" y="250" fill="#244A8D" font-family="ui-sans-serif, system-ui, sans-serif" font-size="28" font-weight="700">3. Approval</text>
+  <text x="652" y="294" fill="#42536A" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20">常见策略：</text>
+  <text x="652" y="326" fill="#42536A" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18">`untrusted`</text>
+  <text x="652" y="354" fill="#42536A" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18">`on-request`</text>
+  <text x="652" y="382" fill="#42536A" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18">`never`</text>
+  <text x="652" y="438" fill="#42536A" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20">真正作用：</text>
+  <text x="652" y="470" fill="#42536A" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18">agent 何时暂停</text>
+  <text x="652" y="498" fill="#42536A" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18">何时把决定抛回给人</text>
+  <text x="652" y="560" fill="#2E568E" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="600">这层不扩展 OS 边界，</text>
+  <text x="652" y="588" fill="#2E568E" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="600">只决定会不会先问你。</text>
+
+  <rect x="892" y="206" width="220" height="416" rx="24" fill="#FFF0D4" stroke="#D1A23D" stroke-width="2"/>
+  <text x="920" y="250" fill="#7A5610" font-family="ui-sans-serif, system-ui, sans-serif" font-size="28" font-weight="700">4. 结果</text>
+  <rect x="920" y="288" width="164" height="74" rx="16" fill="#FFFFFF" stroke="#E0C48B"/>
+  <text x="938" y="320" fill="#2B2B2B" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="700">写 docs/link.md</text>
+  <text x="938" y="346" fill="#2D6E49" font-family="ui-sans-serif, system-ui, sans-serif" font-size="17">workspace / docs-edit: 允许</text>
+  <rect x="920" y="384" width="164" height="74" rx="16" fill="#FFFFFF" stroke="#E0C48B"/>
+  <text x="938" y="416" fill="#2B2B2B" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="700">写 sentinel.txt</text>
+  <text x="938" y="442" fill="#9B3325" font-family="ui-sans-serif, system-ui, sans-serif" font-size="17">workspace: 越界 deny</text>
+  <rect x="920" y="480" width="164" height="74" rx="16" fill="#FFFFFF" stroke="#E0C48B"/>
+  <text x="938" y="512" fill="#2B2B2B" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="700">读 `.env`</text>
+  <text x="938" y="538" fill="#9B3325" font-family="ui-sans-serif, system-ui, sans-serif" font-size="17">docs-edit: deny</text>
+  <text x="920" y="586" fill="#7A5610" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="600">审批只影响“停不停”，</text>
+  <text x="920" y="612" fill="#7A5610" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="600">不会把 deny 变 allow。</text>
+
+  <path d="M320 414H356" stroke="#B07C4B" stroke-width="4" stroke-linecap="round"/>
+  <path d="M588 414H624" stroke="#6D9F7E" stroke-width="4" stroke-linecap="round"/>
+  <path d="M856 414H892" stroke="#6A88C2" stroke-width="4" stroke-linecap="round"/>
+  <path d="M340 414L328 406V422L340 414Z" fill="#B07C4B"/>
+  <path d="M608 414L596 406V422L608 414Z" fill="#6D9F7E"/>
+  <path d="M876 414L864 406V422L876 414Z" fill="#6A88C2"/>
+
+  <rect x="88" y="654" width="1024" height="32" rx="16" fill="#F1DEBC"/>
+  <text x="116" y="676" fill="#5F4E3C" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18">最小权限的顺序：先缩“能碰什么”，再决定“何时停下来问”，最后才讨论是否需要 full access。</text>
+</svg>

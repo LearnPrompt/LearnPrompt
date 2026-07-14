@@ -1,0 +1,8 @@
+{
+  "name": "style-scope-after",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "verify": "node ../verify-style-scope.mjs after"
+  }
+}

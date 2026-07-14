@@ -1,0 +1,55 @@
+{
+  "status": "ok",
+  "stages": [
+    {
+      "stage": "inventory",
+      "input_sha": "e2ea46ed34bacc0bc494391ae3d5747a361995d3ec063daccaa7c261aaab8cc5",
+      "output_sha": "ad06562ae4990b5bdb1e89aed2f6a47fadf182e80356e379b125b44e6ef5e604",
+      "output_files": [
+        "work/inventory.json"
+      ]
+    },
+    {
+      "stage": "normalize",
+      "input_sha": "ad06562ae4990b5bdb1e89aed2f6a47fadf182e80356e379b125b44e6ef5e604",
+      "output_sha": "ee4da96f11407a656711951668f8673180bd8e93ecab43fcc94aea51e93c3a8e",
+      "output_files": [
+        "work/normalized/01-intro-guide.json",
+        "work/normalized/02-api-auth.json",
+        "work/normalized/03-migration-checklist.json"
+      ]
+    },
+    {
+      "stage": "transform",
+      "input_sha": "ee4da96f11407a656711951668f8673180bd8e93ecab43fcc94aea51e93c3a8e",
+      "output_sha": "45b21db8614e2b98c058fcee0f185ffa3856b21cfbadb4705b19417784fe4541",
+      "output_files": [
+        "work/transformed/01-intro-guide.mdx",
+        "work/transformed/02-api-auth.mdx",
+        "work/transformed/03-migration-checklist.mdx"
+      ]
+    },
+    {
+      "stage": "validate",
+      "input_sha": "45b21db8614e2b98c058fcee0f185ffa3856b21cfbadb4705b19417784fe4541",
+      "output_sha": "13dbcbbfc68603be4e5c836bbe813b2cc90b1e482fc84516a4a1c8492f3a3af3",
+      "output_files": [
+        "reports/validation.json"
+      ]
+    },
+    {
+      "stage": "package-candidate",
+      "input_sha": "04f12078372051e4c3651e51ade6a8dff5f135af09715e60693c5a65b82d0ec8",
+      "output_sha": "cdc8bf70d44838e2239ff00052b092cb0ce7d198b77ec5b581e17f799e8dc892",
+      "output_files": [
+        "migration-candidate/docs/01-intro-guide.mdx",
+        "migration-candidate/docs/02-api-auth.mdx",
+        "migration-candidate/docs/03-migration-checklist.mdx",
+        "migration-candidate/manifest.json",
+        "reports/receipt-summary.md"
+      ]
+    }
+  ],
+  "candidate_hash": "cdc8bf70d44838e2239ff00052b092cb0ce7d198b77ec5b581e17f799e8dc892",
+  "source_unchanged": true
+}

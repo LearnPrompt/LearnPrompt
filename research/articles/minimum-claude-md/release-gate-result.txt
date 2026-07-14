@@ -1,0 +1,56 @@
+minimum-claude-md 发布前机械门禁（冻结脱敏摘录）
+===================================================
+运行日期：2026-07-11
+运行位置：LearnPrompt 仓库根目录
+说明：原始终端输出先采集在工作树外；以下为进程退出后冻结的关键行，不含本机路径或运行标识。
+
+1. 单篇 validator
+命令：
+  node .claude/skills/learnprompt-single-mdx/scripts/validate-golden-mdx.mjs \
+    --article starlight/src/content/docs/claude-code/minimum-claude-md.mdx \
+    --research research/articles/minimum-claude-md
+输出：
+  PASS article: starlight/src/content/docs/claude-code/minimum-claude-md.mdx
+  PASS research: research/articles/minimum-claude-md
+  PASS status: partial
+退出码：0
+
+2. Showcase 负向分支
+命令：
+  node research/articles/minimum-claude-md/showcase/claude-md-fields/check-claude-md.mjs \
+    research/articles/minimum-claude-md/showcase/claude-md-fields/vague-notes/CLAUDE.md
+关键输出：
+  FAIL  真实命令
+  FAIL  允许修改范围
+  FAIL  禁区
+  FAIL  最快验收
+  FAIL  输出收尾
+退出码：1（预期拒绝）
+
+3. Showcase 正向分支
+命令：
+  node research/articles/minimum-claude-md/showcase/claude-md-fields/check-claude-md.mjs \
+    research/articles/minimum-claude-md/showcase/claude-md-fields/minimal/CLAUDE.md
+关键输出：
+  PASS  真实命令
+  PASS  允许修改范围
+  PASS  禁区
+  PASS  最快验收
+  PASS  输出收尾
+  结果: 5/5 类必要信息齐全
+退出码：0
+
+4. Starlight 完整构建
+命令：
+  npm --prefix starlight run build
+关键输出：
+  [starlight:pagefind] Found 49 HTML files.
+  [build] 49 page(s) built
+  [build] Complete!
+退出码：0
+
+5. Diff 格式检查
+命令：
+  git diff --check
+输出：无（表示未发现 whitespace error）
+退出码：0

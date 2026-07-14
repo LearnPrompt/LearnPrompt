@@ -1,37 +1,288 @@
 ---
-title: API 集成型 Skill 设计
-description: 接入外部 API 时如何控制密钥、失败和版本变化。
+title: API 集成型 Skill 设计：把一次 REST 调用写成 request contract，而不是把 token、重试、schema 和副作用全交给 Agent 猜
+description: 用一个只读 release feed Showcase 学会冻结 credential 来源、GET/pagination、429/5xx、schema validation 与脱敏 evidence。
 sidebar:
   order: 6
 difficulty: advanced
 source_repo: alchaincyf/agent-skills-orange-book
 source_url: https://github.com/alchaincyf/agent-skills-orange-book
-updated_from: 2026-05
+updated_from: "2026-07"
+author: LearnPrompt 编辑部
+verified_at: "2026-07-12"
+reading_time: 16 分钟
+research_path: research/articles/api-integration-skill-design
+showcase_path: research/articles/api-integration-skill-design/showcase/release-feed-api
+showcase_status: verified
+quality_score: 100
 legacy_status: current
 ---
 
-import SourceCard from "../../../components/SourceCard.astro";
+| 难度 | 阅读时间 | 最后核对 | 作者 |
+| --- | --- | --- | --- |
+| 进阶 | 16 分钟 | 2026-07-12 | LearnPrompt 编辑部 |
 
-<SourceCard repo="alchaincyf/agent-skills-orange-book" url="https://github.com/alchaincyf/agent-skills-orange-book" updatedFrom="2026-05" note="仅参考主题结构，正文重新组织。" />
+你已经会写基础 Skill，也知道“要接 API 就写个脚本”。真正会把项目拖进返工的，往往不是 `fetch()` 这一步，而是另外几件更工程化的事：
 
-## 核心原则
+- token 到底能不能出现在 repo、命令行或日志里？
+- 为什么这个任务明明只是读 release feed，却会被 Agent 临场换成 `POST` 或别的写操作？
+- 分页遇到 `429`、`5xx`、空 payload、字段缺失时，到底该重试、该等待，还是该明确失败？
+- 报告里哪些内容算“足够可重放的证据”，哪些内容一旦写进去就成了泄露或脏证据？
 
-API Skill 的重点不是“能请求”，而是密钥安全、错误处理、限流、字段变化和可替换方案。
+这篇文章只回答一个中心问题：**当 Skill 要接一个只读 REST API 时，怎样把一次调用写成可审计的 request contract，而不是把 credential、method、retry、schema 和 side effect 全交给 Agent 当场猜。**
 
-## 操作步骤
+我不会在这里讨论 MCP 或 connector 选型，也不会调用任何公网、收费或私有 API。本文只用一个隔离 temp repo 里的 loopback fixture，解释 API 集成型 Skill 最需要先冻结的 contract。
 
-1. 密钥只从环境变量读取。
-2. 保存原始响应样例。
-3. 对空数据、限流、字段变化做显式错误。
-4. 把主接口和备用接口分开记录。
-5. 不把失败误写成“无内容”。
+## 读完你能做什么
 
-## 常见错误
+1. 说清为什么 API Skill 不是“会请求”就够了，而要先写 request contract。
+2. 给一个只读 REST 集成补齐六层边界：credential 来源、request envelope、`GET` 语义、串行分页、`429`/`5xx` 策略、response schema。
+3. 用固定退出码区分 4 种典型失败：缺 credential、schema drift、`5xx` 重试耗尽、配置要求变更型 method。
+4. 判断什么时候该把逻辑写进 scripts，而不是继续堆在 `SKILL.md` 正文里。
 
-- 把 token 写进 README 或日志。
-- 假设 API 字段永远稳定。
-- 没有记录请求参数，导致榜单不可复现。
+![从环境变量注入到请求信封、GET 与串行分页、429/5xx 重试、schema validation，再到最终报告的 request contract 闭环；同时标出 41/42/43/44 失败分支](/images/articles/api-integration-skill-design/api-request-contract.svg)
+*图注：API 集成型 Skill 的关键不是“打通 HTTP”，而是调用前后都有可检查 contract：credential 只能从环境变量注入，请求只能走 `GET` 与串行分页，`429`/`5xx` 各有策略，schema drift 不能被美化成“没有新版本”，最后只留下可重放、脱敏的 evidence。*
 
-## 实战案例
+:::note[术语边界]
+本文中的 `request contract`、`41 / 42 / 43 / 44` 退出码、以及 `release-feed-api` fixture 都是 LearnPrompt 的操作化设计，不是官方 Agent Skills 规范，也不是某家 REST API 的通用标准。
+:::
 
-X 信息源如果使用 API，应要求用户自己提供 token，并在 Skill 中写清权限、速率限制和失败时的降级策略。
+## 为什么“能发请求”不等于“能交付”
+
+很多旧式 API 教程会给你一段类似这样的要求：
+
+```text
+读一下 release feed，整理最新版本，如果报错就重试一下。
+```
+
+表面上它已经说明了“要做什么”。工程上它还缺 5 个最关键的事实：
+
+1. credential 从环境变量、命令行、`.env` 还是 repo 文件来？
+2. 这次任务只读还是允许写？如果只读，`POST` / `PUT` / `PATCH` / `DELETE` 是不是应该在发请求前就拒绝？
+3. 分页要不要并发？遇到限流时是抢跑还是等 `Retry-After`？
+4. 返回空数组或缺字段时，到底是“没有新版本”还是上游 contract 已经 drift？
+5. 最后留下什么 evidence，才能让下一位接手的人重放，而不是只能看一段模糊总结？
+
+这就是 request contract 的起点。**API Skill 的价值，不是帮 Agent 多记一个 endpoint，而是把“这次调用在什么条件下才算可接受”写成可检查协议。**
+
+这里有三层一手资料拼在一起很关键：
+
+- OpenAI 当前把 Skill 定义成 instructions、resources、optional scripts 组成的可复用 workflow，并明确建议：除非需要确定性行为或外部工具，否则优先 instructions，真正需要机械执行时再下沉脚本。
+- Claude Code 当前也把 Skill 视为“反复粘贴的 instructions / checklist / multi-step procedure”的容器，而且 body 只在使用时加载，不该把长篇实现细节全塞进主文件。
+- Agent Skills specification 则把 `SKILL.md`、`scripts/`、`references/`、`assets/` 这些层次固定下来，并强调 metadata、instructions、resources 的渐进加载。
+
+放到 API 场景里，工程结论很直接：
+
+- `SKILL.md` 负责说清何时使用、读什么 contract、什么场景必须拒绝。
+- `references/` 负责保存 API contract、失败码、schema、边界说明。
+- `scripts/` 负责 method 检查、分页、重试、schema validation、report 写出这些确定性动作。
+
+如果你把这些都留给 Agent 临场推断，它做的就不是“调用 API”，而是在**猜测你的 API contract**。
+
+## API Skill 的 request contract 至少要冻结哪六件事
+
+本文用一个隔离 showcase `release-feed-api` 来解释。这个 Skill 的目标很小：读取一个只读 release feed，写出：
+
+```text
+reports/releases.json
+reports/releases.md
+```
+
+它的核心不是 endpoint 本身，而是六个先于模型判断的 contract：
+
+| Contract 面 | 要先冻结什么 | 为什么不能交给 Agent 临场猜 |
+| --- | --- | --- |
+| credential source | `RELEASE_FEED_BASE_URL`、`RELEASE_FEED_TOKEN` 只从环境变量读取 | 一旦允许 repo / CLI / 日志混入 secret，后面所有成功都不可发布 |
+| request envelope | method、path、分页参数、输出路径、最大 `5xx` retries | 没有 envelope，Agent 就可能临时改 method、改输出、改预算 |
+| read-only boundary | 本文只允许 `GET` | 只读任务不该在网络前还保留写操作自由度 |
+| pagination policy | 串行分页，不并发 fan-out | 并发往往先制造 rate-limit，再把顺序证据打乱 |
+| retry policy | `429` 服从 `Retry-After`，`5xx` 只做有限重试 | 限流和服务端错误不是一类问题，不该混成同一种“再试一次” |
+| response contract | 必填字段、空 payload 处理、evidence 最小面 | 缺字段和空数据如果被写成“没有新版本”，你就把 contract drift 伪装成业务结论了 |
+
+其中最容易被低估的是**read-only boundary**。RFC 9110 能证明 `GET` 是检索目标资源当前表征的语义；GitHub 的 REST best practices 则说明大量 `POST` / `PATCH` / `PUT` / `DELETE` 请求要额外节流，还建议串行请求以降低次级限流风险。两者拼在一起，不是要你把 GitHub 当标准，而是得到一个通用工程判断：
+
+> 如果这次任务只是“读取 release feed 并做报告”，那 method 就应该先冻结成 `GET`，而不是保留成一个待模型自由选择的参数。
+
+## `GET`、分页、`429`、`5xx` 和 schema 这五件事为什么必须拆开
+
+把 API 失败一律写成“重试一下”是最常见的错误。至少有 4 类状态必须分开处理：
+
+### 1. 缺 credential 不是网络问题
+
+如果没有 `RELEASE_FEED_TOKEN`，正确的行为不是试着请求一次看看，而是直接退出 `41`。这说明问题发生在**调用前**，不是网络中。
+
+### 2. `429` 不是“服务挂了”
+
+RFC 6585 说明 `429 Too Many Requests` 可以带 `Retry-After`，告诉客户端等多久再发下一次请求。本文的 fixture 为了便于测试，允许服务端回 `Retry-After: 0`，但正文必须把真实边界讲清楚：**线上服务如果给了更长等待值，你就应该服从那个值。**
+
+### 3. `5xx` 不是无限重试许可
+
+`5xx` 说明服务端出了问题，不代表你应该永远抖动。本文把它单独冻结成“有限重试，超过预算退出 `43`”。这给调用方一个明确分流：
+
+- 还在预算内，可以继续重试；
+- 超出预算，必须明确失败，而不是靠人读日志猜“这次是不是偶发波动”。
+
+### 4. 空 payload 和缺字段都不是“没有新版本”
+
+如果 release feed 返回空数组，或者 release 缺 `published_at` 这种关键字段，本文一律视为 `42` contract violation。原因很简单：
+
+- “没有新版本”是业务结论；
+- 空 payload / 缺字段是**上游契约不成立**。
+
+这两者一旦混写，下游会以为你做的是正常业务判断，而不是发现了 schema drift。
+
+## Showcase：`release-feed-api` 这次到底冻结了什么
+
+Showcase 目录位于：
+
+```text
+research/articles/api-integration-skill-design/showcase/release-feed-api/
+├── fixture/
+│   ├── .agents/skills/release-feed-api/
+│   │   ├── SKILL.md
+│   │   ├── references/api-contract.md
+│   │   ├── scripts/fetch-releases.mjs
+│   │   ├── scripts/mock-release-api.mjs
+│   │   └── assets/report-template.md
+│   ├── release-feed.config.json
+│   ├── package.json
+│   └── test/release-feed-api.test.mjs
+├── contracts/
+│   ├── prompt.md
+│   └── final-report.schema.json
+├── scripts/
+│   ├── verify-showcase.mjs
+│   ├── release-gate.mjs
+│   ├── privacy-scan.mjs
+│   └── run-codex-live.mjs
+└── results/
+```
+
+这个 fixture 明确做了 5 件事：
+
+1. credential 只能通过 `RELEASE_FEED_BASE_URL` 和 `RELEASE_FEED_TOKEN` 注入。
+2. config 一旦要求 `POST`，脚本会在发请求前直接退出 `44`。
+3. 请求顺序固定为串行分页，不允许并发 fan-out。
+4. evidence 只保留 request path、分页顺序、状态码、retry 次数和输出路径，不保留 raw header、credential、runtime ID 或本地绝对路径。
+5. Markdown / JSON 报告只在成功场景生成；失败场景通过固定退出码和最小 summary 解释原因。
+
+### 两层实跑：先保留 blocked，再用外层环境补齐
+
+writer sandbox 的第一次尝试确实被 `EPERM listen 127.0.0.1` 阻断。这个结果没有被删掉；它证明宿主限制必须单独记录，不能伪装成业务失败。随后，外层主控在允许 loopback 的隔离 temp repo 中重跑同一 fixture、prompt 与 schema，并修复了两个由实跑暴露的问题：
+
+1. `release-gate.mjs` 原先用同步子进程等待 fetch，导致同一进程里的 mock server 事件循环被锁死；改为异步子进程后，server 才能真实响应。
+2. “缺 credential”测试原先继承了 live run 的 token；显式把该测试的 token 设为空后，测试在有无上层环境变量时都保持 hermetic。
+
+最终冻结结果是：
+
+```text
+fixture tests: 0 (7/7 pass)
+two-page success: 0
+429 once then success: 0
+missing credential: 41
+schema drift: 42
+503 retry exhausted: 43
+mutating method rejected before network: 44
+privacy scan: 0
+live Codex gpt-5.5 explicit $release-feed-api: 0
+live release count: 3
+live reports: releases.json + releases.md
+live tests: 7/7 pass
+```
+
+live run 中，Codex 只新增 `reports/`，两份报告都真实落盘；JSON 记录 3 个 release、两页串行请求、零重试和脱敏 credential evidence，`npm test` 7/7 通过。writer-side blocked 证据与外层 success 证据同时保留，前者说明宿主边界，后者证明 request contract 能完整执行。
+
+:::caution[为什么不能只看最后一个绿色结果]
+如果没有第一次 blocked 和后续修复过程，我们不会发现“同步子进程锁死 mock server”以及“测试继承 token”这两个问题。Showcase 的价值不是制造一次 PASS，而是让失败能定位到 runner、环境或 contract 的具体层级。
+:::
+
+## 固定退出码为什么比“写清楚报错信息”更重要
+
+自然语言总结当然要保留，但它不够驱动后续动作。退出码的价值在于，下游不用再次解析一段 prose 才知道该怎么处理：
+
+| 退出码 | 表示什么 | 调用方下一步该做什么 |
+| --- | --- | --- |
+| `41` | 缺 credential | 补环境变量，不要怀疑上游 API |
+| `42` | schema 或空数据 contract 失败 | 查 response shape，不要写“没有新版本” |
+| `43` | `5xx` 重试预算耗尽 | 终止并升级故障，不要无限重试 |
+| `44` | method 越界 | 修 config / Skill contract，不该发第一包请求 |
+
+这类编码还有一个教学价值：它把“失败点在哪里”写成调用前就知道的协议，而不是把问题推给下一轮 Agent 临时解释。
+
+## 什么时候不要用这种 API Skill 设计
+
+不是每个接 API 的任务都值得做成本文这种 request contract。
+
+### 情况一：你其实要做的是写操作工作台
+
+如果任务核心是“创建 issue、改 repo、发通知、写数据库”，那就不是本文的只读 contract 了。你需要先讨论副作用、权限、审批和回滚，而不是照搬只读 release feed 的做法。
+
+### 情况二：接口还不稳定，连 schema 都没定
+
+如果上游字段还在高频变化，你先该做的是稳定 schema 或补 adapter，不是把一堆会变的细节硬塞进 `SKILL.md`。
+
+### 情况三：没有必要保留 request evidence
+
+如果这是一个一次性脚本，没人会交接，也不会被复跑，那普通脚本可能就够了。本文适合的是“未来还要维护、交接、审计”的集成。
+
+### 情况四：真正的问题不是 HTTP，而是外部平台接入方式
+
+如果你卡住的是账号、浏览器登录、远端权限或组织级系统边界，那应该先解决接入层，不是先来写本文这种 request contract。
+
+## 一个可直接复用的 request contract 检查表
+
+在你把下一次 API 调用写进 Skill 之前，先把这 8 行补全：
+
+```yaml
+credential 来源:
+base URL 来源:
+允许的 method:
+分页策略:
+429 策略:
+5xx 策略:
+response 必填字段:
+报告里允许留下的 evidence:
+```
+
+如果你还想再往前走，至少再加四条显式拒绝规则：
+
+```yaml
+缺 credential 时退出码:
+method 越界时退出码:
+schema 或空 payload 时退出码:
+5xx 重试耗尽时退出码:
+```
+
+只要这四条还写不出来，你的 API Skill 大概率还停在“能发请求”的阶段，还没长成“可交接的 contract”。
+
+## 练习：给你自己的 Skill 写第一版拒绝规则
+
+选一个你最近真的想接的只读 API，不必真发请求，先只做下面这件事：
+
+1. 写出 `credential 来源 / method / pagination / response 必填字段 / report outputs`。
+2. 再写 4 个退出码，至少覆盖：
+   - 缺 credential
+   - method 越界
+   - schema drift
+   - 服务端失败预算耗尽
+3. 最后问自己一句：**如果下一位接手的人只看到这些退出码和一份脱敏 evidence，他能不能知道下一步该修哪里？**
+
+如果答案还是“不太行”，不要急着接真实 API。先把 contract 写完整。
+
+## 来源与延伸阅读
+
+- [Agent Skills specification](https://agentskills.io/specification)（一手规范，支撑 Skill 目录、`SKILL.md`、`scripts/` / `references/` / `assets/` 与渐进加载）
+- [Best practices for skill creators](https://agentskills.io/skill-creation/best-practices)（一手最佳实践，支撑“从真实经验出发”“progressive disclosure”“procedure over declaration”）
+- [OpenAI Learn: Build skills](https://learn.chatgpt.com/docs/build-skills)（一手文档，支撑 Codex Skills 作为可复用 workflow 容器，以及“优先 instructions，必要时再下沉 scripts”）
+- [OpenAI Learn: Customization overview](https://learn.chatgpt.com/docs/customization/overview)（一手文档，支撑 `AGENTS.md`、Skills、MCP 的职责分层）
+- [Claude Code Docs: Skills](https://code.claude.com/docs/en/skills)（一手文档，支撑 Claude 侧 Skill 的触发场景与按需加载边界）
+- [RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html)（IETF 标准，支撑 `GET` 的检索语义）
+- [RFC 6585: Additional HTTP Status Codes](https://www.rfc-editor.org/rfc/rfc6585.html)（IETF 标准，支撑 `429` 与 `Retry-After` 的语义）
+- [GitHub REST API best practices](https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api)（官方 REST 最佳实践，支撑串行请求、`429` 处理和 mutative request 节流）
+- [GitHub REST pagination](https://docs.github.com/en/rest/using-the-rest-api/using-pagination-in-the-rest-api)（官方文档，支撑分页只返回结果子集，需要继续请求后续页）
+- [Keeping your API credentials secure](https://docs.github.com/en/rest/authentication/keeping-your-api-credentials-secure)（官方安全文档，支撑“不硬编码、不明文推仓库”的凭据边界）
+- [Node.js globals: fetch](https://nodejs.org/api/globals.html#fetch)（官方运行时文档，支撑 Node 当前内建 `fetch` / `Request` / `Response` / `Headers`）
+- [Agent Skills 橙皮书仓库](https://github.com/alchaincyf/agent-skills-orange-book)（中文主题地图 / 二手来源）
+
+官方资料支撑本文关于 Skill 容器、`GET` 语义、分页、`429`、凭据安全和 Node 运行时的当前事实。本文中的 `request contract`、`41 / 42 / 43 / 44` 退出码、以及 `release-feed-api` fixture 属于 LearnPrompt 的教学性实现，不冒充 HTTP 或厂商标准。
+
+橙皮书只作为 “Integration pattern” 的中文主题地图使用。本文参考了仓库 README 中的作者信息、主题定位和许可边界：作者为 Huashu；README 当前声明该书免费供个人和教育用途使用，未经许可不得商业再分发。本文未复制其 PDF 正文、截图或图片，只保留链接、作者署名、用途与限制说明。

@@ -1,7 +1,143 @@
 ---
-title: 旧版 LearnPrompt
+title: 来源索引与许可边界
+description: LearnPrompt 各栏目的官方资料、二手主题地图、现场实验和内容许可说明。
 sidebar:
   hidden: true
 ---
 
-旧版课程内容请访问 [v1.learnprompt.pro](https://v1.learnprompt.pro/)。
+## 这页怎样使用
+
+这不是把全站脚注复制一遍，而是一张来源地图。每篇深度教程的页面记录核验日期，底部保留实际使用过的链接与适用边界；本页帮助你判断一种说法应该回哪类来源复核。
+
+LearnPrompt 把证据分成三层：
+
+| 层级 | 主要用途 | 不能单独证明什么 |
+| --- | --- | --- |
+| 一手资料 | 核对产品能力、命令、权限、规范、版本和发布状态 | 不能自动证明文章示例适合你的项目 |
+| 二手主题地图 | 发现问题空间、案例和学习结构 | 不能替代当前官方事实，也不自动授予转载许可 |
+| 现场实验 | 用冻结 fixture、脚本、receipt 和 review 证明具体 Showcase | 不能外推到所有版本、环境或权限组合 |
+
+## AI 编程、Claude Code 与 Codex
+
+### 一手入口
+
+- [Anthropic Claude Code 文档](https://code.claude.com/docs/en/overview)
+- [Claude Code best practices](https://code.claude.com/docs/en/best-practices)
+- [Claude Code security](https://code.claude.com/docs/en/security)
+- [OpenAI Codex 文档](https://developers.openai.com/codex/)
+- [Codex prompting](https://developers.openai.com/codex/prompting/)
+- [Codex Agent approvals & security](https://learn.chatgpt.com/docs/agent-approvals-security)
+- [Codex AGENTS.md guide](https://developers.openai.com/codex/guides/agents-md)
+
+涉及模型名称、执行面、登录、沙箱、审批、Cloud、review 或 CLI 参数时，以这些官方页面和当前 `--help` / 实际界面为准，不从二手教程推断。
+
+### 二手主题地图
+
+- [Claude Code 橙皮书](https://github.com/alchaincyf/claude-code-orange-book)
+- [Claude Code 源码解析橙皮书](https://github.com/alchaincyf/claude-code-source-analysis-orange-book)
+- [Codex 橙皮书](https://github.com/alchaincyf/codex-orange-book)
+
+## Agent 工程、Skills 与 Loop Engineering
+
+### 一手入口
+
+- [Agent Skills specification](https://agentskills.io/specification)
+- [Anthropic Agent Skills](https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills/overview)
+- [OpenAI Codex Skills](https://developers.openai.com/codex/skills/)
+- [CommonMark specification](https://spec.commonmark.org/)
+
+Harness、反馈、编排与 Loop 文章还会按具体问题引用产品官方文档、代码仓库或现场实验；这些概念不存在一个能替所有实现背书的单一官方页面。
+
+### 二手主题地图
+
+- [Harness Engineering 橙皮书](https://github.com/alchaincyf/harness-engineering-orange-book)
+- [Agent Skills 橙皮书](https://github.com/alchaincyf/agent-skills-orange-book)
+- [Loop Engineering 橙皮书](https://github.com/alchaincyf/loop-engineering-orange-book)
+
+## Obsidian、Markdown 与 Git
+
+### 一手入口
+
+- [Obsidian Help](https://obsidian.md/help)
+- [Obsidian 如何存储数据](https://obsidian.md/help/Files%2Band%2Bfolders/How%2BObsidian%2Bstores%2Bdata)
+- [Obsidian Sync notes](https://obsidian.md/help/sync-notes)
+- [Git reference](https://git-scm.com/docs)
+- [Git worktree](https://git-scm.com/docs/git-worktree)
+- [Git diff](https://git-scm.com/docs/git-diff)
+
+Obsidian 的文件、属性、链接、Search 和 Sync 能力来自官方文档；目录 role、placement contract、handoff packet 和 Git change gate 是 LearnPrompt 的编辑合同，不冒充 Obsidian 原生机制。
+
+### 二手主题地图
+
+- [Obsidian AI 橙皮书](https://github.com/alchaincyf/obsidian-ai-orange-book)
+
+## Hermes Agent 与 OpenClaw
+
+### 一手入口
+
+- [Hermes Agent 文档](https://hermes-agent.nousresearch.com/docs/)
+- [Hermes Agent GitHub](https://github.com/NousResearch/hermes-agent)
+- [OpenClaw 文档](https://docs.openclaw.ai/)
+- [OpenClaw GitHub](https://github.com/openclaw/openclaw)
+- [OpenClaw Gateway security](https://docs.openclaw.ai/gateway/security)
+- [OpenClaw API usage costs](https://docs.openclaw.ai/reference/api-usage-costs)
+
+框架版本、协议、scope、pairing、安装方式和费用入口变化较快。文章中的冻结版本只说明核验时点；使用前应重新检查 release、官方文档和真实运行环境。
+
+### 二手主题地图
+
+- [Hermes Agent 橙皮书](https://github.com/alchaincyf/hermes-agent-orange-book)
+- [OpenClaw 橙皮书](https://github.com/alchaincyf/openclaw-orange-book)
+
+## 橙皮书署名与许可边界
+
+上述橙皮书仓库由花叔（Huashu / GitHub `alchaincyf`）维护，是本次课程重构的重要主题地图。LearnPrompt 不通过删掉署名或来源来隐藏这层影响。
+
+截至 2026-07-12，逐项读取仓库当前默认分支的 `LICENSE` 与 README，得到下面的许可矩阵。GitHub API 的 `spdx_id: null` 或 `NOASSERTION` 只表示平台没有识别出标准 SPDX，不能据此推导“仓库未声明许可”。
+
+| 仓库 | 当前声明 | 使用时的边界 |
+| --- | --- | --- |
+| Claude Code 橙皮书 | README：CC BY-NC-SA 4.0 | 可按该许可分享、改编；需署名、非商业、相同方式共享 |
+| Claude Code 源码解析橙皮书 | README：仅供教育与研究，并附商标/泄露代码免责声明 | 自定义说明，不扩写成标准开放许可 |
+| Codex 橙皮书 | README：CC BY-NC-SA 4.0 | 可按该许可分享、改编；需署名、非商业、相同方式共享 |
+| Harness Engineering 橙皮书 | README：仅供学习交流，引用注明出处 | 自定义说明，不自动允许商业再分发或改编 |
+| Agent Skills 橙皮书 | README：个人及教育用途；未经授权不得商业再分发 | 自定义、非商业个人与教育使用边界 |
+| Loop Engineering 橙皮书 | 仓库 `LICENSE`：MIT | 可按 MIT 使用、复制、修改和分发，并保留许可文本 |
+| Obsidian AI 橙皮书 | README：学习交流；欢迎转载和引用，需注明出处 | 自定义署名分享说明，不等同 CC/OSI |
+| Hermes Agent 橙皮书 | 当前仓库 `LICENSE`：MIT；README 说明 2.0 从旧版 CC BY-NC-SA 4.0 改为 MIT | 当前版本按 MIT；引用旧版素材时仍核对对应版本 |
+| OpenClaw 橙皮书 | README：内容仅供教育用途，并声明相关商标归属 | 自定义说明，不自动允许复制、改编或商业传播 |
+
+许可适用于各仓库中受其覆盖的内容，不会自动覆盖第三方截图、商标、上游代码或外链素材。
+
+因此本项目采用下面的保守边界：
+
+1. 橙皮书用于选题、问题地图和待核对线索。
+2. 易变事实回到一手资料或现场实验，不把书中描述当当前真值。
+3. 没有明确覆盖关系的 PDF 正文、截图和图片不复制进公开教程；MIT 或 CC 仓库也要排除第三方素材。
+4. 如使用某仓库明确授权的素材，逐项记录作者、原链接、版本、许可、修改方式和核验日期；不能从一本书的许可推断整个系列。
+5. 每篇文章底部保留实际使用的橙皮书链接和适用边界。
+
+## LearnPrompt 自己的现场证据
+
+每篇 verified 深度教程对应一个 `research/` 目录，至少包含：
+
+- `brief.md`：读者任务、范围和非目标。
+- `horizontal-research.md`：相邻方案、差异和适用边界。
+- `vertical-research.md`：关键概念的纵向证据链。
+- `evidence-ledger.md`：正文事实与来源映射。
+- `asset-ledger.md`：图片来源、许可、修改和视觉检查。
+- `review.md`：独立 reviewer 的分项结论、findings 和最终 verdict。
+- `showcase/`：冻结 fixture、脚本、输出和拒绝场景；具体文件按文章需要组织。
+
+研究目录记录的是这篇文章怎样得出结论，不是对来源内容的镜像。公开 MDX 不显示独立来源卡片组件，但移除组件不等于删掉来源。
+
+## 版本与失效链接怎样处理
+
+- 产品能力、命令、价格、权限和 release 属于高漂移信息，按文章核验日期使用。
+- 外链自动检查遇到 `403` 只说明自动请求受阻，必须浏览器人工复核，不能直接标记有效或失效。
+- 指向尚未进入公开分支的 research 深链接不算发布候选通过项；push 后复核，或发布前改为稳定链接。
+- 发现官方页面迁移时，优先更新到同一官方域名的当前页面，并在研究记录中保留旧链接与变更原因。
+
+## 旧版课程
+
+旧版 LearnPrompt 仍可在 [v1.learnprompt.pro](https://v1.learnprompt.pro/) 阅读。它是历史内容入口，不代表新版教程的事实、结构和验收门禁。
