@@ -26,13 +26,13 @@
 <text x="680.0" y="390" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#6b675e">2026-07</text>
 <line x1="60" y1="30" x2="60" y2="370" stroke="#6b675e" stroke-width="1"/>
 <line x1="60" y1="370" x2="680" y2="370" stroke="#6b675e" stroke-width="1"/>
-<polyline points="60.0,369.7 75.9,338.9 91.8,336.9 107.7,335.7 123.6,333.7 139.5,318.8 155.4,305.8 171.3,297.0 187.2,289.5 203.1,283.4 219.0,278.5 234.9,272.2 250.8,267.0 266.7,262.3 282.6,259.0 298.5,255.1 314.4,251.1 330.3,248.3 346.2,245.6 362.1,242.8 377.9,240.9 393.8,238.7 409.7,236.0 425.6,233.7 441.5,232.3 457.4,230.3 473.3,228.4 489.2,226.5 505.1,224.0 521.0,221.3 536.9,220.1 552.8,218.6 568.7,216.9 584.6,215.2 600.5,214.0 616.4,212.8 632.3,210.7 648.2,206.9 664.1,200.7 680.0,198.6" fill="none" stroke="#1B365D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="600.5,355.7 616.4,353.5 632.3,353.0 648.2,316.5 664.1,275.5 680.0,264.9" fill="none" stroke="#b4533a" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="664.1,327.1 680.0,314.6" fill="none" stroke="#147968" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<polyline points="648.2,364.4 664.1,326.3 680.0,319.5" fill="none" stroke="#a67413" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<text x="690" y="202.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#1B365D">LearnPrompt (2520)</text>
-<text x="690" y="268.9" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#b4533a">ai-news-radar (1546)</text>
-<text x="690" y="318.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#147968">luban-skill (814)</text>
-<text x="690" y="334.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#a67413">humanize-ppt (743)</text>
+<polyline points="60.0,369.7 75.9,338.9 91.8,336.9 107.7,335.7 123.6,333.7 139.5,318.9 155.4,305.9 171.3,297.1 187.2,289.6 203.1,283.4 219.0,278.6 234.9,272.3 250.8,267.1 266.7,262.4 282.6,259.1 298.5,255.1 314.4,251.1 330.3,248.4 346.2,245.6 362.1,242.9 377.9,240.9 393.8,238.8 409.7,236.1 425.6,233.7 441.5,232.4 457.4,230.4 473.3,228.5 489.2,226.5 505.1,224.1 521.0,221.4 536.9,220.2 552.8,218.7 568.7,217.0 584.6,215.2 600.5,214.1 616.4,212.9 632.3,210.8 648.2,206.9 664.1,200.8 680.0,197.3" fill="none" stroke="#1B365D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="600.5,355.7 616.4,353.5 632.3,353.0 648.2,316.5 664.1,275.5 680.0,261.9" fill="none" stroke="#b4533a" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="664.1,327.2 680.0,309.1" fill="none" stroke="#147968" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="648.2,364.4 664.1,326.4 680.0,317.9" fill="none" stroke="#a67413" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="690" y="201.3" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#1B365D">LearnPrompt (2539)</text>
+<text x="690" y="265.9" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#b4533a">ai-news-radar (1589)</text>
+<text x="690" y="313.1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#147968">luban-skill (895)</text>
+<text x="690" y="329.1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" fill="#a67413">humanize-ppt (766)</text>
 <text x="60" y="20" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#3b382f">Star History</text>
 </svg>
