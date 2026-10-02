@@ -1,0 +1,25 @@
+<script>
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  const start = () => {
+    if (reducedMotion.matches || connection?.saveData) return;
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const video = entry.target as HTMLVideoElement;
+        const source = video.dataset.reelSrc;
+        if (!source) continue;
+        video.src = source;
+        video.play().catch(() => {});
+        observer.unobserve(video);
+      }
+    });
+    document.querySelectorAll<HTMLVideoElement>("video[data-reel-src]").forEach((video) => observer.observe(video));
+  };
+  const schedule = () => {
+    if ("requestIdleCallback" in window) window.requestIdleCallback(start, { timeout: 2000 });
+    else setTimeout(start, 500);
+  };
+  if (document.readyState === "complete") schedule();
+  else window.addEventListener("load", schedule, { once: true });
+</script>

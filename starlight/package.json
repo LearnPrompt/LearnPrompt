@@ -10,6 +10,7 @@
     "check:i18n": "node scripts/check-i18n-slice.mjs",
     "check:legacy-redirects": "node scripts/check-legacy-redirects.mjs",
     "check:legacy-topic-seo": "node scripts/check-legacy-topic-seo.mjs",
+    "check:seo": "node scripts/check-seo.mjs",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview"
   },
   "dependencies": {

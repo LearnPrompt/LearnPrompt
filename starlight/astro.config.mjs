@@ -49,6 +49,13 @@ const translatedEnglishRoutes = new Set(
     .filter((file) => sourceFilePattern.test(file))
     .map((file) => documentRoute(file, "en")),
 );
+translatedEnglishRoutes.add("/en/skills/");
+const customPageLastModified = new Map([
+  ["/", "2026-10-03"],
+  ["/en/", "2026-10-03"],
+  ["/skills/", "2026-10-03"],
+  ["/en/skills/", "2026-10-03"],
+]);
 
 function includeInSitemap(page) {
   const pathname = new URL(page).pathname;
@@ -56,6 +63,7 @@ function includeInSitemap(page) {
     ? pathname.slice(base.length)
     : pathname;
 
+  if (route === "/workshop/") return false;
   if (route === "/en/" || !route.startsWith("/en/")) {
     return true;
   }
@@ -68,8 +76,8 @@ function serializeSitemapItem(item) {
   const route = base && pathname.startsWith(`${base}/`)
     ? pathname.slice(base.length)
     : pathname;
-  const verifiedAt = documentLastModified.get(route);
-  return verifiedAt ? { ...item, lastmod: verifiedAt } : item;
+  const lastModified = customPageLastModified.get(route) || documentLastModified.get(route);
+  return lastModified ? { ...item, lastmod: lastModified } : item;
 }
 
 function rewriteRootRelativePaths() {
@@ -99,7 +107,6 @@ export default defineConfig({
   },
   redirects: {
     "/workshop/": "/skills/",
-    "/en/skills/": "/skills/",
   },
   integrations: [
     sitemap({
@@ -117,6 +124,7 @@ export default defineConfig({
       title: "LearnPrompt",
       description: "面向普通 AI 爱好者和实践者的中文 AI 编程、Agent、Skills 与知识工作台教程。",
       defaultLocale: "root",
+      routeMiddleware: "./src/starlight-route-data.ts",
       locales: {
         root: {
           label: "简体中文",
@@ -152,7 +160,7 @@ export default defineConfig({
       sidebar: [
         {
           label: "Skill 工坊 · Skills",
-          translations: { en: "Skill Workshop (Chinese)" },
+          translations: { en: "Skill Workshop" },
           link: "/skills/",
         },
         {

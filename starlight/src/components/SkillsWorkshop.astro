@@ -1,0 +1,667 @@
+---
+import ProducedByBar from "./ProducedByBar.astro";
+import { activeProjects, stableProjects, archivedProjects, type Project } from "../data/workshop";
+import { createOrganizationSchema } from "../lib/seo";
+export interface Props { lang?: "zh" | "en"; }
+const { lang = "zh" } = Astro.props;
+const isEnglish = lang === "en";
+const base = import.meta.env.BASE_URL === "/" ? "" : import.meta.env.BASE_URL.replace(/\/$/, "");
+const withBase = (href: string) => (href.startsWith("/") ? `${base}${href}` : href);
+const chineseUrl = new URL(withBase("/skills/"), Astro.site);
+const englishUrl = new URL(withBase("/en/skills/"), Astro.site);
+const canonicalUrl = isEnglish ? englishUrl : chineseUrl;
+const homeUrl = new URL(withBase("/"), Astro.site);
+const socialImageUrl = new URL(withBase("/images/wiki-transition-poster-v1.jpg"), Astro.site);
+const title = isEnglish ? "Skill Workshop | LearnPrompt" : "Skill 工坊 · Skill Workshop | LearnPrompt";
+const description = isEnglish
+  ? "Build your own tools with AI agents. Explore LearnPrompt’s open-source projects, installable Skills, and the stories behind them."
+  : "LearnPrompt 的 Skill 工坊：用 AI Agent 造自己的工具，每个项目都开源、可安装、有故事。";
+const copy = isEnglish ? {
+  nav: "Main navigation", home: "Home", homeLabel: "LearnPrompt home", active: "Active", stable: "Stable", follow: "Follow",
+  hero: ["Skill", "Workshop"], activeKicker: "Active · In development", activeTitle: "In development", stableKicker: "Stable · Ready to install", stableTitle: "Ready to use",
+  archivedKicker: "Archived", archivedTitle: "Archived projects", article: "Article (Chinese)", copy: "Copy", copied: "Copied",
+  followKicker: "Follow · WeChat", followTitle: "Find new Skills here first.", followBody: "New Skills launch first on Carl’s AIwarts WeChat account. Scan the code to add Carl and include ‘skill’ in your request.", qrAlt: "Scan this QR code to add Carl on WeChat", wechat: "WeChat",
+} : {
+  nav: "主导航", home: "首页", homeLabel: "LearnPrompt 首页", active: "迭代中", stable: "稳定", follow: "公众号",
+  hero: ["Skill 工坊", "Skill Workshop"], activeKicker: "Active · 正在打磨", activeTitle: "迭代中 · Active", stableKicker: "Stable · 装上就能用", stableTitle: "稳定可用 · Stable",
+  archivedKicker: "Archived · 归档", archivedTitle: "已归档 · Archived", article: "发布文", copy: "复制", copied: "已复制",
+  followKicker: "Follow · 公众号", followTitle: "新 Skill 发布，第一时间在这里。", followBody: "新 Skill 发布，第一时间在公众号「卡尔的AI沃茨」。扫码加我微信，备注 skill。", qrAlt: "扫二维码添加卡尔为微信好友", wechat: "微信",
+};
+const schema = [
+  createOrganizationSchema(homeUrl, new URL(withBase("/favicon.svg?v=transparent-circle"), Astro.site)),
+  {
+    "@context": "https://schema.org", "@type": "WebPage", "@id": `${canonicalUrl.href}#webpage`,
+    name: title, description, url: canonicalUrl.href, inLanguage: isEnglish ? "en" : "zh-CN",
+    publisher: { "@id": `${homeUrl.href}#organization` },
+  },
+];
+const serializedSchema = JSON.stringify(schema).replaceAll("</", "<\\/");
+async function fetchStars(project: Project): Promise<number> {
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 5000);
+    const headers: Record<string, string> = {
+      Accept: "application/vnd.github+json",
+    };
+    if (import.meta.env.GITHUB_TOKEN) {
+      headers.Authorization = `Bearer ${import.meta.env.GITHUB_TOKEN}`;
+    }
+    const res = await fetch(`https://api.github.com/repos/${project.repo}`, {
+      headers,
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    if (!res.ok) return project.fallbackStars;
+    const data = await res.json();
+    if (typeof data.stargazers_count !== "number") return project.fallbackStars;
+    return data.stargazers_count;
+  } catch {
+    return project.fallbackStars;
+  }
+}
+
+const withStars = async (projects: Project[]) =>
+  Promise.all(projects.map(async (p) => ({ ...p, tagline: isEnglish ? p.taglineEn : p.tagline, stars: await fetchStars(p) })));
+
+const active = await withStars(activeProjects);
+const stable = await withStars(stableProjects);
+const archived = await withStars(archivedProjects);
+
+const formatStars = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n));
+---
+
+<!doctype html>
+<html lang={isEnglish ? "en" : "zh-CN"}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang="zh-CN" href={chineseUrl} />
+    <link rel="alternate" hreflang="en" href={englishUrl} />
+    <link rel="alternate" hreflang="x-default" href={chineseUrl} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="LearnPrompt" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:locale" content={isEnglish ? "en_US" : "zh_CN"} />
+    <meta property="og:locale:alternate" content={isEnglish ? "zh_CN" : "en_US"} />
+    <meta property="og:image" content={socialImageUrl} />
+    <meta property="og:image:alt" content="LearnPrompt AI Practice Wiki" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImageUrl} />
+    <meta name="twitter:image:alt" content="LearnPrompt AI Practice Wiki" />
+    <script type="application/ld+json" set:html={serializedSchema} />
+  </head>
+  <body>
+    <main class="lp-site">
+      <ProducedByBar lang={lang} />
+      <nav class="lp-nav" aria-label={copy.nav}>
+        <a class="lp-brand" href={withBase(isEnglish ? "/en/" : "/")} aria-label={copy.homeLabel}>
+          <span>LearnPrompt</span>
+          <small>Skill Workshop</small>
+        </a>
+        <div class="lp-nav-links">
+          <a href={withBase(isEnglish ? "/en/" : "/")}>{copy.home}</a>
+          <a href="#active">{copy.active}</a>
+          <a href="#stable">{copy.stable}</a>
+          <a href="#follow">{copy.follow}</a>
+          <a href={withBase(isEnglish ? "/skills/" : "/en/skills/")} lang={isEnglish ? "zh-CN" : "en"}>{isEnglish ? "Chinese" : "English"}</a>
+        </div>
+      </nav>
+
+      <section class="lp-hero" aria-labelledby="hero-title">
+        <p class="lp-kicker">WORKSHOP · 2026</p>
+        <h1 id="hero-title"><span>{copy.hero[0]}</span><span>{copy.hero[1]}</span></h1>
+        <p class="lp-hero-lede">{isEnglish ? "Build your own tools with AI agents. Every project is open source, installable, and has a story." : "用 AI Agent 造自己的工具——每个项目都开源、可安装、有故事。"}</p>
+      </section>
+
+      <section id="active" class="lp-section">
+        <div class="lp-section-head">
+          <p>{copy.activeKicker}</p>
+          <h2>{copy.activeTitle}</h2>
+        </div>
+        <div class="lp-card-grid lp-card-grid-active">
+          {active.map((project) => (
+            <article class="lp-project-card">
+              <header class="lp-project-head">
+                <h3>{project.name}</h3>
+                <span class="lp-star">★ {formatStars(project.stars)}</span>
+              </header>
+              <p class="lp-project-tagline">{project.tagline}</p>
+              <div class="lp-project-actions">
+                <a class="lp-button lp-button-small" href={`https://github.com/${project.repo}`} target="_blank" rel="noreferrer">GitHub ↗</a>
+                {project.articleUrl && (
+                  <a class="lp-button lp-button-small" href={project.articleUrl} target="_blank" rel="noreferrer">{copy.article} ↗</a>
+                )}
+              </div>
+              {project.installCmd && (
+                <div class="lp-install">
+                  <code>{project.installCmd}</code>
+                  <button type="button" class="lp-copy" data-copy={project.installCmd} data-copied={copy.copied}>{copy.copy}</button>
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="stable" class="lp-section">
+        <div class="lp-section-head">
+          <p>{copy.stableKicker}</p>
+          <h2>{copy.stableTitle}</h2>
+        </div>
+        <div class="lp-card-grid lp-card-grid-stable">
+          {stable.map((project) => (
+            <article class="lp-project-card lp-project-card-compact">
+              <header class="lp-project-head">
+                <h3>{project.name}</h3>
+                <span class="lp-star">★ {formatStars(project.stars)}</span>
+              </header>
+              <p class="lp-project-tagline">{project.tagline}</p>
+              <div class="lp-project-actions">
+                <a class="lp-button lp-button-small" href={`https://github.com/${project.repo}`} target="_blank" rel="noreferrer">GitHub ↗</a>
+                {project.articleUrl && (
+                  <a class="lp-button lp-button-small" href={project.articleUrl} target="_blank" rel="noreferrer">{copy.article} ↗</a>
+                )}
+              </div>
+              {project.installCmd && (
+                <div class="lp-install">
+                  <code>{project.installCmd}</code>
+                  <button type="button" class="lp-copy" data-copy={project.installCmd} data-copied={copy.copied}>{copy.copy}</button>
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {archived.length > 0 && (
+        <section id="archived" class="lp-section">
+          <div class="lp-section-head">
+            <p>{copy.archivedKicker}</p>
+            <h2>{copy.archivedTitle}</h2>
+          </div>
+          <div class="lp-card-grid lp-card-grid-stable">
+            {archived.map((project) => (
+              <article class="lp-project-card lp-project-card-compact">
+                <header class="lp-project-head">
+                  <h3>{project.name}</h3>
+                  <span class="lp-star">★ {formatStars(project.stars)}</span>
+                </header>
+                <p class="lp-project-tagline">{project.tagline}</p>
+                <div class="lp-project-actions">
+                  <a class="lp-button lp-button-small" href={`https://github.com/${project.repo}`} target="_blank" rel="noreferrer">GitHub ↗</a>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section id="follow" class="lp-section lp-follow">
+        <div>
+          <p class="lp-kicker">{copy.followKicker}</p>
+          <h2>{copy.followTitle}</h2>
+          <p>{copy.followBody}</p>
+        </div>
+        <div class="lp-follow-panel">
+          <img src={withBase("/images/wechat-qrcode.jpg")} alt={copy.qrAlt} width="200" height="255" loading="lazy" />
+          <span>{copy.wechat} · aiwarts101</span>
+        </div>
+      </section>
+
+      <footer class="lp-footer">
+        <span>© 2026 LearnPrompt</span>
+        <a href="https://github.com/LearnPrompt/LearnPrompt" target="_blank" rel="noreferrer">GitHub</a>
+      </footer>
+    </main>
+
+    <script>
+      document.addEventListener("click", (event) => {
+        const target = event.target as HTMLElement | null;
+        const button = target?.closest?.(".lp-copy") as HTMLButtonElement | null;
+        if (!button) return;
+        const text = button.dataset.copy;
+        if (!text || !navigator.clipboard?.writeText) return;
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            const original = button.textContent;
+            button.textContent = button.dataset.copied ?? original;
+            setTimeout(() => {
+              button.textContent = original;
+            }, 1500);
+          })
+          .catch(() => {});
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  :global(*) {
+    box-sizing: border-box;
+  }
+
+  :global(html) {
+    scroll-behavior: smooth;
+    background: #0a070d;
+  }
+
+  :global(body) {
+    margin: 0;
+    min-width: 320px;
+    background:
+      radial-gradient(circle at 76% 10%, rgba(196, 171, 130, 0.15), transparent 30rem),
+      radial-gradient(circle at 12% 36%, rgba(112, 88, 165, 0.18), transparent 26rem),
+      #0a070d;
+    color: #f5efe5;
+    font-family: "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  }
+
+  :global(a) {
+    color: inherit;
+  }
+
+  .lp-site {
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 4rem 4rem;
+  }
+
+  .lp-site::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.14;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+    mix-blend-mode: screen;
+  }
+
+  .lp-site > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .lp-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    width: min(1080px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 1.15rem 0;
+  }
+
+  .lp-brand {
+    display: grid;
+    gap: 0.12rem;
+    text-decoration: none;
+  }
+
+  .lp-brand span {
+    font-size: 0.98rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+
+  .lp-brand small,
+  .lp-kicker,
+  .lp-section-head p,
+  .lp-star,
+  .lp-footer {
+    color: rgba(245, 239, 229, 0.54);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  .lp-nav-links {
+    display: flex;
+    gap: 0.35rem;
+    padding: 0.32rem;
+    border: 1px solid rgba(245, 239, 229, 0.11);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.035);
+    backdrop-filter: blur(18px);
+  }
+
+  .lp-nav-links a {
+    padding: 0.52rem 0.82rem;
+    border-radius: 999px;
+    color: rgba(245, 239, 229, 0.72);
+    font-size: 0.86rem;
+    text-decoration: none;
+  }
+
+  .lp-nav-links a:hover {
+    color: #fffaf0;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .lp-hero {
+    width: min(1080px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: clamp(3rem, 7vw, 6.5rem) 0 clamp(2.5rem, 5vw, 4.5rem);
+  }
+
+  .lp-kicker {
+    margin: 0 0 1.4rem;
+  }
+
+  .lp-hero h1 {
+    margin: 0;
+    color: #fff8ec;
+    font-family: "Avenir Next Condensed", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    font-size: clamp(3rem, 6.4vw, 6.4rem);
+    font-weight: 820;
+    letter-spacing: -0.075em;
+    line-height: 0.98;
+  }
+
+  .lp-hero h1 span {
+    display: block;
+    white-space: nowrap;
+  }
+
+  .lp-hero-lede {
+    max-width: 38rem;
+    margin: 1.4rem 0 0;
+    color: rgba(245, 239, 229, 0.78);
+    font-size: clamp(1.05rem, 1.7vw, 1.38rem);
+    line-height: 1.85;
+  }
+
+  .lp-section,
+  .lp-footer {
+    width: min(1180px, calc(100% - 2rem));
+    margin-inline: auto;
+  }
+
+  .lp-section {
+    padding: clamp(4rem, 7vw, 7rem) 0;
+    border-top: 1px solid rgba(245, 239, 229, 0.11);
+  }
+
+  .lp-section-head {
+    display: grid;
+    grid-template-columns: minmax(12rem, 0.36fr) minmax(0, 1fr);
+    gap: 2rem;
+    align-items: end;
+    margin-bottom: 2rem;
+  }
+
+  .lp-section-head h2,
+  .lp-follow h2 {
+    margin: 0;
+    color: #fff8ec;
+    font-size: clamp(2.3rem, 4.6vw, 5.2rem);
+    letter-spacing: -0.065em;
+    line-height: 0.98;
+  }
+
+  .lp-card-grid {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .lp-card-grid-active {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .lp-card-grid-stable {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .lp-project-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    min-width: 0;
+    min-height: 16rem;
+    border: 1px solid rgba(245, 239, 229, 0.13);
+    border-radius: 1.1rem;
+    padding: 1.2rem;
+    background:
+      radial-gradient(circle at 18% 0%, rgba(228, 196, 139, 0.13), transparent 16rem),
+      rgba(255, 255, 255, 0.035);
+    transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+  }
+
+  .lp-project-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(228, 196, 139, 0.35);
+    background: rgba(255, 255, 255, 0.055);
+  }
+
+  .lp-project-card-compact {
+    min-height: 13rem;
+    padding: 1.05rem;
+  }
+
+  .lp-project-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.8rem;
+  }
+
+  .lp-project-head h3 {
+    margin: 0;
+    color: #fff8ec;
+    font-size: 1.32rem;
+    letter-spacing: -0.03em;
+    overflow-wrap: anywhere;
+  }
+
+  .lp-project-card-compact .lp-project-head h3 {
+    font-size: 1.08rem;
+  }
+
+  .lp-star {
+    flex-shrink: 0;
+    color: rgba(228, 196, 139, 0.82);
+    letter-spacing: 0.06em;
+  }
+
+  .lp-project-tagline {
+    flex: 1;
+    margin: 0;
+    color: rgba(245, 239, 229, 0.64);
+    font-size: 0.94rem;
+    line-height: 1.78;
+  }
+
+  .lp-project-card-compact .lp-project-tagline {
+    font-size: 0.86rem;
+  }
+
+  .lp-project-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .lp-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.9rem;
+    border: 1px solid rgba(245, 239, 229, 0.2);
+    border-radius: 999px;
+    padding: 0 1.18rem;
+    color: #f7efe4;
+    background: rgba(255, 255, 255, 0.045);
+    font-size: 0.92rem;
+    font-weight: 760;
+    text-decoration: none;
+    transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+  }
+
+  .lp-button:hover {
+    transform: translateY(-2px);
+    border-color: rgba(245, 239, 229, 0.42);
+    background: rgba(255, 255, 255, 0.085);
+  }
+
+  .lp-button-small {
+    min-height: 2.2rem;
+    padding: 0 0.85rem;
+    font-size: 0.8rem;
+  }
+
+  .lp-install {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid rgba(245, 239, 229, 0.13);
+    border-radius: 0.75rem;
+    padding: 0.55rem 0.7rem;
+    background: rgba(10, 7, 13, 0.58);
+  }
+
+  .lp-install code {
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    color: rgba(245, 239, 229, 0.78);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.74rem;
+    white-space: nowrap;
+    scrollbar-width: thin;
+  }
+
+  .lp-copy {
+    flex-shrink: 0;
+    border: 1px solid rgba(245, 239, 229, 0.2);
+    border-radius: 999px;
+    padding: 0.32rem 0.72rem;
+    color: rgba(245, 239, 229, 0.78);
+    background: rgba(255, 255, 255, 0.045);
+    font-family: inherit;
+    font-size: 0.74rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color 180ms ease, background 180ms ease, color 180ms ease;
+  }
+
+  .lp-copy:hover {
+    color: #fffaf0;
+    border-color: rgba(228, 196, 139, 0.45);
+    background: rgba(255, 255, 255, 0.085);
+  }
+
+  .lp-follow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, 0.5fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(245, 239, 229, 0.13);
+    border-radius: 1.6rem;
+    padding: clamp(1.5rem, 4vw, 3rem);
+    background:
+      radial-gradient(circle at 82% 20%, rgba(228, 196, 139, 0.14), transparent 24rem),
+      rgba(255, 255, 255, 0.035);
+  }
+
+  .lp-follow p {
+    margin: 0.9rem 0 0;
+    color: rgba(245, 239, 229, 0.64);
+    line-height: 1.78;
+  }
+
+  .lp-follow-panel {
+    display: grid;
+    gap: 0.7rem;
+    justify-self: end;
+    justify-items: center;
+    border: 1px solid rgba(245, 239, 229, 0.13);
+    border-radius: 1.2rem;
+    padding: 1.1rem;
+    background: rgba(10, 7, 13, 0.58);
+  }
+
+  .lp-follow-panel img {
+    display: block;
+    width: 200px;
+    height: auto;
+    border-radius: 0.75rem;
+  }
+
+  .lp-follow-panel span {
+    color: rgba(245, 239, 229, 0.62);
+    font-size: 0.88rem;
+  }
+
+  .lp-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 2rem 0 2.6rem;
+    border-top: 1px solid rgba(245, 239, 229, 0.11);
+  }
+
+  .lp-footer a {
+    text-decoration: none;
+  }
+
+  @media (max-width: 980px) {
+    .lp-nav {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .lp-nav-links {
+      max-width: 100%;
+      overflow-x: auto;
+    }
+
+    .lp-section-head,
+    .lp-follow {
+      grid-template-columns: 1fr;
+    }
+
+    .lp-card-grid-active {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .lp-card-grid-stable {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .lp-follow-panel {
+      justify-self: start;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .lp-nav-links a {
+      padding-inline: 0.72rem;
+      white-space: nowrap;
+    }
+
+    .lp-card-grid-active,
+    .lp-card-grid-stable {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lp-project-card,
+    .lp-project-card-compact {
+      min-height: 0;
+    }
+  }
+</style>

@@ -1,11 +1,12 @@
 ---
+import { createOrganizationSchema } from "../lib/seo";
 const { head, entry, lang, isFallback } = Astro.locals.starlightRoute;
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 const socialImageUrl = new URL(
-  `${import.meta.env.BASE_URL}images/wiki-transition-poster-v1.jpg`,
+  `${base}images/wiki-transition-poster-v1.jpg`,
   Astro.site,
 );
-const sitemapUrl = new URL(`${import.meta.env.BASE_URL}sitemap-index.xml`, Astro.site);
-const organizationUrl = new URL(`${import.meta.env.BASE_URL}#organization`, Astro.site);
+const sitemapUrl = new URL(`${base}sitemap-index.xml`, Astro.site);
 const hasMeta = (attribute: "name" | "property", value: string) =>
   head.some(({ tag, attrs }) => tag === "meta" && attrs?.[attribute] === value);
 const hasLink = (rel: string) =>
@@ -18,12 +19,10 @@ const articleSchema = {
   inLanguage: lang,
   url: Astro.url.href,
   image: socialImageUrl.href,
-  publisher: {
-    "@id": organizationUrl.href,
-    "@type": "Organization",
-    name: "LearnPrompt",
-    url: new URL(import.meta.env.BASE_URL, Astro.site).href,
-  },
+  publisher: createOrganizationSchema(
+    new URL(base, Astro.site),
+    new URL(`${base}favicon.svg?v=transparent-circle`, Astro.site),
+  ),
 };
 const serializedArticleSchema = JSON.stringify(articleSchema).replaceAll("</", "<\\/");
 ---

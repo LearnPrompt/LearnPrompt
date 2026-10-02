@@ -229,6 +229,21 @@ for (const [sourceName, route] of translatedPages) {
 }
 
 const englishHome = await readFile(routeFile("/en/"), "utf8");
+const englishWorkshop = await readFile(routeFile("/en/skills/"), "utf8");
+if (!/<html[^>]*lang="en"/.test(englishWorkshop) || /http-equiv="refresh"/i.test(englishWorkshop)) {
+  throw new Error("English Workshop must be an English page, not a redirect");
+}
+for (const marker of ["Build your own tools", "Copy", 'rel="canonical"', 'property="og:image"', 'type="application/ld+json"']) {
+  if (!englishWorkshop.includes(marker)) throw new Error(`Missing English Workshop marker: ${marker}`);
+}
+assertBaseAwareUrls(englishWorkshop, "/en/skills/");
+if (englishHome.includes('href="/skills/">Workshop')) {
+  throw new Error("English homepage sends Workshop visitors to Chinese content");
+}
+const englishDocsSample = await readFile(routeFile("/en/agent-engineering/"), "utf8");
+if (!englishDocsSample.includes("Mac storage cleanup for AI workflows (Chinese)") || englishDocsSample.includes("让老爷爷先看家底")) {
+  throw new Error("Chinese-only guide is not clearly labeled in English navigation");
+}
 if (!/<html[^>]*lang="en"/.test(englishHome)) {
   throw new Error("Missing lang=en on English homepage");
 }
@@ -325,7 +340,7 @@ const actualEnglishSitemapRoutes = normalizedSitemapRoutes.filter((route) =>
 );
 assertSameList(
   "English sitemap routes",
-  ["/en/", ...translatedPages.map(([, route]) => route)],
+  ["/en/", "/en/skills/", ...translatedPages.map(([, route]) => route)],
   actualEnglishSitemapRoutes
 );
 

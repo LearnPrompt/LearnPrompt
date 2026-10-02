@@ -1,5 +1,9 @@
 ---
 import ProducedByBar from "../components/ProducedByBar.astro";
+import HeroVideoLoader from "../components/HeroVideoLoader.astro";
+import { createOrganizationSchema } from "../lib/seo";
+import { countGuides } from "../lib/content-stats";
+const guideCount = await countGuides("");
 const base = import.meta.env.BASE_URL === "/" ? "" : import.meta.env.BASE_URL.replace(/\/$/, "");
 const withBase = (href: string) => (href.startsWith("/") ? `${base}${href}` : href);
 const chineseHomeUrl = new URL(withBase("/"), Astro.site);
@@ -8,14 +12,7 @@ const sitemapUrl = new URL(withBase("/sitemap-index.xml"), Astro.site);
 const socialImageUrl = new URL(withBase("/images/wiki-transition-poster-v1.jpg"), Astro.site);
 const organizationUrl = new URL(`${withBase("/")}#organization`, Astro.site);
 const homeSchema = [
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "@id": organizationUrl.href,
-    name: "LearnPrompt",
-    url: chineseHomeUrl.href,
-    logo: new URL(withBase("/favicon.svg?v=transparent-circle"), Astro.site).href,
-  },
+  createOrganizationSchema(chineseHomeUrl, new URL(withBase("/favicon.svg?v=transparent-circle"), Astro.site)),
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -55,7 +52,7 @@ const paths = [
     title: "Agent 工程",
     href: "/agent-engineering/",
     body: "Agent 总是跑偏，就沿着指令、约束、记忆、反馈和编排一层层查。",
-    meta: "6 篇 · Harness",
+    meta: `${await countGuides("", "agent-engineering")} 篇 · Harness`,
   },
   {
     index: "05",
@@ -115,6 +112,7 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
     <link rel="alternate" hreflang="en" href={englishHomeUrl} />
     <link rel="alternate" hreflang="x-default" href={chineseHomeUrl} />
     <link rel="sitemap" href={sitemapUrl} />
+    <link rel="preload" as="image" href={socialImageUrl} fetchpriority="high" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="LearnPrompt" />
     <meta property="og:title" content="LearnPrompt｜把 AI 用进真实项目" />
@@ -162,14 +160,16 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
 
         <div class="lp-hero-frame" aria-label="LearnPrompt visual reel">
           <video
-            src={withBase("/videos/wiki-transition-v1.mp4")}
-            autoplay
+            data-reel-src={withBase("/videos/wiki-transition-v2.mp4")}
             loop
             muted
             playsinline
-            preload="metadata"
+            preload="none"
+            width="960"
+            height="960"
             poster={withBase("/images/wiki-transition-poster-v1.jpg")}
           ></video>
+          <HeroVideoLoader />
           <div class="lp-frame-overlay">
             <span>Scene 001</span>
             <strong>Idea → Task → Delivery → Memory</strong>
@@ -180,7 +180,7 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
       <section class="lp-metrics" aria-label="教程质量证据">
         <div>
           <span>01</span>
-          <strong>47 篇教程</strong>
+          <strong>{guideCount} 篇教程</strong>
           <p>每篇都有来源、教学图、Showcase 和独立审稿。</p>
         </div>
         <div>
@@ -202,7 +202,7 @@ const mailSubject = encodeURIComponent("想和 LearnPrompt 聊聊");
 
       <section id="paths" class="lp-section lp-paths">
         <div class="lp-section-head">
-          <p>8 Tracks · 47 Verified Tutorials</p>
+          <p>8 Tracks · {guideCount} Tutorials</p>
           <h2 class="lp-heading-lines">
             <span>你现在卡在哪，</span>
             <span>就从哪一页开始。</span>

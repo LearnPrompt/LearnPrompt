@@ -55,6 +55,14 @@ jobs:
       - name: Build GitHub Pages version
         run: npm run build:pages
 
+      - name: Check preview SEO and language routes
+        env:
+          EXPECTED_BASE: /LearnPrompt
+        run: |
+          npm run check:i18n
+          npm run check:legacy-topic-seo
+          npm run check:seo
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
