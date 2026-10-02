@@ -108,14 +108,9 @@ function Hero() {
           curriculum! Kickstart your free learning journey today! 🥳🎉
         </div>
         <div className="flex items-center justify-center pt-6">
-          <a href="https://learnprompt.pro/docs/intro">
+          <a href="/docs/intro/">
             {/* <a href="https://learn-prompting.webflow.io"> */}
             <Button
-              onClick={() =>
-                React.useEffect(() => {
-                  window.location.replace("/docs/intro");
-                }, [])
-              }
               text={"Start Learning"}
               // text={"See our Latest Offerings"}
               icon={

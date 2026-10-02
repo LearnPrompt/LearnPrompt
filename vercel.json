@@ -1,5 +1,7 @@
 {
-    "rewrites": [
-    { "source": "/:path*", "destination": "/" }
-    ]
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "trailingSlash": true,
+  "framework": "docusaurus-2",
+  "installCommand": "npm ci"
 }

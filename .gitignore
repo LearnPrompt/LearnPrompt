@@ -14,6 +14,7 @@
 
 # production
 /build
+/.docusaurus/
 
 # misc
 .DS_Store
