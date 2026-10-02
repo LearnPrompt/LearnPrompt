@@ -1,3 +1,16 @@
+---
+description: Archived legal template, not current LearnPrompt policy.
+---
+
+import {createElement} from 'react';
+import Head from '@docusaurus/Head';
+
+<Head>
+  {createElement('meta', {name: 'robots', content: 'noindex,follow'})}
+</Head>
+
+> **Archive notice / 归档提示：** Archived legal template, not current LearnPrompt policy. 本页为历史法律模板存档，不代表 LearnPrompt 当前政策。
+
 # Learn Prompting Terms of Use
 
 **Learn Prompting Company** (together with our affiliates, “Learn Prompting”, “we”, or “us”) provides an online education service on the Learn Prompting website located at `learnprompting.org` and `http://learn-prompting.webflow.io` (collectively, the “Site”, and the Site, together with any products and services provided by Learn Prompting, the “Service”). By registering on the Site or by visiting, browsing, or using the Learn Prompting Service in any way, you (“user” or “you”) accept these Terms of Use (the “Terms”), which forms a binding agreement between you and Learn Prompting.

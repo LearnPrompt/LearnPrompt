@@ -1,2 +1,5 @@
 User-agent: *
 Disallow:
+
+Sitemap: https://v1.learnprompt.pro/sitemap.xml
+Sitemap: https://v1.learnprompt.pro/zh-Hans/sitemap.xml

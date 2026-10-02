@@ -14,11 +14,8 @@ function GetStarted() {
           Learn Al for free, for all levels!
           </div>
           <div className="flex justify-center md:justify-start pt-8 text-[1rem] tracking-tighter mb-12 mt-1">
-            <a href="https://learnprompt.pro/docs/intro">
+            <a href="/docs/intro/">
               <Button
-                onClick={() => {
-                  window.location.replace("/docs/intro");
-                }}
                 text={"Start Learning"}
                 icon={
                   <RxArrowTopRight

@@ -8,7 +8,7 @@ async function createConfig() {
     title: "Learn Prompt: Your CookBook to Communicating with AI",
     tagline:
       "A Free, Open Source Course on Communicating with Artificial Intelligence",
-    url: "https://www.learnprompt.pro",
+    url: "https://v1.learnprompt.pro",
     baseUrl: "/",
     onBrokenLinks: "throw",
     onBrokenMarkdownLinks: "warn",
@@ -24,7 +24,7 @@ async function createConfig() {
         "zh-Hans",
       ],
       localeConfigs: {
-        zh: {
+        "zh-Hans": {
           htmlLang: 'zh-Hans',
         },
         en: {
@@ -41,10 +41,6 @@ async function createConfig() {
       {
         src:
           "https://tag.clearbitscripts.com/v1/pk_5621ff511ea83a6ec015bee0a0b5dd79/tags.js",
-        async: true,
-      },
-      {
-        src: '/js/detectLanguage.js',
         async: true,
       },
     ],
@@ -169,88 +165,34 @@ async function createConfig() {
         async: true,
       },
     ],
+    headTags: [
+      {
+        tagName: "script",
+        attributes: { type: "application/ld+json" },
+        innerHTML: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "LearnPrompt",
+          url: "https://v1.learnprompt.pro/",
+          logo: "https://v1.learnprompt.pro/img/logo.svg",
+          sameAs: ["https://github.com/LearnPrompt/LearnPrompt"],
+        }),
+      },
+    ],
     themeConfig: {
+      image: "https://v1.learnprompt.pro/img/learnprompt-archive-social.jpg",
       metadata: [
         {
           name: "description",
-          content:
-            "Learn Prompt is the largest and most comprehensive course in artificial intelligence available on the internet, with over 80 content modules, translated into 13 languages, and a thriving community.",
+          content: "LearnPrompt's archived open-source tutorials on prompt engineering, ChatGPT and AI tools. Explore the original course in English and Chinese.",
         },
         {
           name: "keywords",
-          content:
-            "prompting, prompt engineering, learn prompting, learn, prompt, AI, chatGPT, How to use ChatGPT'",
-        },
-        {
-          name: "og:title",
-          content: "Learn Prompt: Your CookBook to Communicating with AI",
-        },
-        {
-          name: "og:description",
-          content:
-            "Learn Prompt is the largest and most comprehensive course in artificial intelligence available on the internet, with over 80 content modules, translated into 13 languages, and a thriving community.",
-        },
-        {
-          name: "og:url",
-          content: "https://www.learnprompt.pro",
-        },
-        {
-          name: "og:image",
-          content: "https://learnprompting.org/docs/assets/star.webp", // Replace this with the actual path to your og-image.
-        },
-        {
-          name: "og:type",
-          content: "website",
-        },
-        {
-          to: "consulting",
-          label: "Consulting",
-          position: "left",
+          content: "LearnPrompt, prompt engineering, AI tutorials, ChatGPT, AI tools",
         },
         {
           name: "twitter:card",
           content: "summary_large_image",
-        },
-        {
-          name: "twitter:title",
-          content: "Learn Prompt: Your CookBook to Communicating with A",
-        },
-        {
-          name: "twitter:description",
-          content:
-            "Learn Prompting is the largest and most comprehensive course in prompt engineering available on the internet, with over 60 content modules, translated into 9 languages, and a thriving community.",
-        },
-        {
-          name: "twitter:url",
-          content: "https://www.learnprompt.pro",
-        },
-        {
-          name: "twitter:image",
-          content: "https://learnprompting.org/img/twitter-image.webp", // Replace this with the actual path to your twitter-image.
-        },
-      ],
-      headTags: [
-        // Declare a <link> preconnect tag
-        {
-          tagName: 'link',
-          attributes: {
-            rel: 'preconnect',
-            href: 'https://www.learnprompt.pro',
-          },
-        },
-        // Declare some json-ld structured data
-        {
-          tagName: 'script',
-          attributes: {
-            type: 'application/ld+json',
-          },
-          innerHTML: JSON.stringify({
-            '@context': 'https://schema.org/',
-            '@type': 'Organization',
-            name: 'Learn Prompt',
-            url: 'https://www.learnprompt.pro',
-            logo: 'https://www.learnprompt.pro/img/logo.svg',
-          }),
         },
       ],
       navbar: {

@@ -1,3 +1,16 @@
+---
+description: Archived legal template, not current LearnPrompt policy.
+---
+
+import {createElement} from 'react';
+import Head from '@docusaurus/Head';
+
+<Head>
+  {createElement('meta', {name: 'robots', content: 'noindex,follow'})}
+</Head>
+
+> **Archive notice / 归档提示：** Archived legal template, not current LearnPrompt policy. 本页为历史法律模板存档，不代表 LearnPrompt 当前政策。
+
 # Privacy Policy
 
 ## 1. Scope
