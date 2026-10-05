@@ -102,6 +102,16 @@ const assertBaseAwareUrls = (html, route) => {
   }
 };
 
+const withExpectedBase = (route) => `${expectedBase}${route}`;
+const hasChinese = (text) => /[\u4e00-\u9fff]/.test(text);
+const anchorsIn = (html) =>
+  [...html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)].map(([, attributes, body]) => ({
+    href: attributes.match(/\bhref="([^"]*)"/)?.[1],
+    lang: attributes.match(/\blang="([^"]*)"/)?.[1],
+    hreflang: attributes.match(/\bhreflang="([^"]*)"/)?.[1],
+    text: body.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim(),
+  }));
+
 const frontmatterContract = (source) => {
   const match = source.match(/^---\n([\s\S]*?)\n---/);
   if (!match) throw new Error("Missing frontmatter");
@@ -237,12 +247,35 @@ for (const marker of ["Build your own tools", "Copy", 'rel="canonical"', 'proper
   if (!englishWorkshop.includes(marker)) throw new Error(`Missing English Workshop marker: ${marker}`);
 }
 assertBaseAwareUrls(englishWorkshop, "/en/skills/");
-if (englishHome.includes('href="/skills/">Workshop')) {
+const englishHomeLinks = anchorsIn(englishHome);
+if (englishHomeLinks.some(({ href }) => href === withExpectedBase("/skills/"))) {
   throw new Error("English homepage sends Workshop visitors to Chinese content");
 }
-const englishDocsSample = await readFile(routeFile("/en/agent-engineering/"), "utf8");
-if (!englishDocsSample.includes("Mac storage cleanup for AI workflows (Chinese)") || englishDocsSample.includes("让老爷爷先看家底")) {
-  throw new Error("Chinese-only guide is not clearly labeled in English navigation");
+if (!englishHomeLinks.some(({ href }) => href === withExpectedBase("/en/skills/"))) {
+  throw new Error("English homepage does not link to the English Workshop");
+}
+const englishWorkshopLinks = anchorsIn(englishWorkshop);
+const chineseWorkshopSwitch = englishWorkshopLinks.find(
+  ({ href }) => href === withExpectedBase("/skills/")
+);
+if (
+  chineseWorkshopSwitch?.lang !== "zh-CN" ||
+  chineseWorkshopSwitch.hreflang !== "zh-CN" ||
+  !hasChinese(chineseWorkshopSwitch.text)
+) {
+  throw new Error("English Workshop language switch must be a Chinese-labeled zh-CN link");
+}
+for (const link of englishWorkshopLinks.filter(({ text }) => text.includes("Article (Chinese)"))) {
+  if (link.hreflang !== "zh-CN") {
+    throw new Error(`Chinese article link on English Workshop lacks hreflang: ${link.href}`);
+  }
+}
+const chineseWorkshop = await readFile(routeFile("/skills/"), "utf8");
+const englishWorkshopSwitch = anchorsIn(chineseWorkshop).find(
+  ({ href }) => href === withExpectedBase("/en/skills/")
+);
+if (englishWorkshopSwitch?.lang !== "en" || englishWorkshopSwitch.hreflang !== "en") {
+  throw new Error("Chinese Workshop language switch must be an en link to the English Workshop");
 }
 if (!/<html[^>]*lang="en"/.test(englishHome)) {
   throw new Error("Missing lang=en on English homepage");
@@ -310,6 +343,29 @@ for (const route of fallbackRoutes) {
   }
   if (fallbackHtml.includes('type="application/ld+json"')) {
     throw new Error(`Fallback route exposes duplicate structured data: ${route}`);
+  }
+}
+
+// Every untranslated guide must surface in English navigation as an explicitly
+// labeled link to the Chinese page, never as a Chinese title under /en/.
+const englishNavigationSample = anchorsIn(
+  await readFile(routeFile("/en/agent-engineering/"), "utf8")
+);
+for (const route of fallbackRoutes) {
+  const chineseRoute = route.replace(/^\/en\//, "/");
+  if (englishNavigationSample.some(({ href }) => href === withExpectedBase(route))) {
+    throw new Error(`English navigation links to untranslated fallback: ${route}`);
+  }
+  const link = englishNavigationSample.find(
+    ({ href }) => href === withExpectedBase(chineseRoute)
+  );
+  if (
+    !link ||
+    link.lang !== "zh-CN" ||
+    !link.text.endsWith("(Chinese)") ||
+    hasChinese(link.text)
+  ) {
+    throw new Error(`Chinese-only guide is not clearly labeled in English navigation: ${chineseRoute}`);
   }
 }
 
