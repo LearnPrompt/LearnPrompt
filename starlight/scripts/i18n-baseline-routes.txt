@@ -3,6 +3,7 @@
 ./agent-engineering/feedback-loop/index.html
 ./agent-engineering/index.html
 ./agent-engineering/instruction-layer/index.html
+./agent-engineering/mac-workflow-storage-cleanup/index.html
 ./agent-engineering/memory-layer/index.html
 ./agent-engineering/orchestration-layer/index.html
 ./agent-engineering/what-is-harness/index.html

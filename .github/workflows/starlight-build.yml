@@ -48,3 +48,10 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Check SEO and language routes
+        run: |
+          npm run check:i18n
+          npm run check:legacy-redirects
+          npm run check:legacy-topic-seo
+          npm run check:seo
