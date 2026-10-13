@@ -1,0 +1,311 @@
+---
+title: "Let Grandpa Check the Books First: Three Blades for Slimming Down a Mac Running AI Workflows"
+description: "Use a read-only inventory, a three-tier cleanup order, and a manifest/report to handle caches, worktrees, the Downloads folder, and cold backups on a Mac separately, freeing space without breaking handoff."
+sidebar:
+  order: 7
+difficulty: intermediate
+updated_from: "2026-09"
+author: LearnPrompt Editorial Team
+verified_at: "2026-09-01"
+reading_time: 12 minutes
+legacy_status: current
+---
+
+The machine is slow, the disk is red, and every Agent launch feels like running through mud. The most dangerous reaction at this moment is not anxiety. It is shouting "clear the cache!" right away.
+
+Grandpa usually stops you first.
+
+Grandpa here means [Ring Grandpa (laoyeye)](https://github.com/LearnPrompt/laoyeye), a skill repository that collects thinking-aid prompts verbatim.
+
+He does not start by asking "which one do I delete". He asks three things:
+
+- Where is this machine actually stuck right now?
+- Which things will grow back after you delete them?
+- Which things, once cut, leave the next Agent unable to pick up where you left off?
+
+This article is a Mac storage cleanup method built for AI workflows. It is not a replacement for traditional disk cleaner apps. It is an auditable operating discipline: take a read-only inventory first, cut by risk tier, and leave a report at the end so that both people and Agents know what just happened.
+
+## What You Will Get
+
+By the end you can do four things:
+
+- Use a set of read-only commands to tell whether a Mac has disk pressure, memory pressure, or a pile-up of background processes.
+- Sort cleanup targets into three groups: regenerable burden, workflow sediment, and high-value cold storage.
+- Stay away from high-risk locations such as VMs, browser profiles, the Photos library, chat data, and the Keychain.
+- Leave a manifest and a report for every cleanup, so next time you do not start guessing from zero.
+
+## One Iron Rule: Check the Books Before You Cut
+
+Unless it has been explicitly authorized to execute, an Agent may only do a read-only inventory.
+
+This rule sounds conservative, but it can save you. A machine used for AI workflows usually has code repositories, video footage, PPT source files, download caches, browser data, chat history, model runtime environments, and temporary worktrees all mixed together. They all look big, but their value is completely different.
+
+Start with a read-only health check:
+
+```bash
+date '+%Y-%m-%d %H:%M:%S %z'
+df -h / /System/Volumes/Data 2>/dev/null || df -h
+sw_vers 2>/dev/null || true
+sysctl -n hw.memsize hw.ncpu machdep.cpu.brand_string 2>/dev/null || true
+memory_pressure 2>/dev/null | sed -n '1,80p' || true
+vm_stat | sed -n '1,40p' || true
+pmset -g therm 2>/dev/null || true
+uptime
+```
+
+You can use this table as the starting point for judging the results:
+
+| Signal | Meaning | Next step |
+| --- | --- | --- |
+| Data volume usage above 85% | Multiple Agents, browsers, video, and local builds will clearly feel the squeeze | Find the regenerable big items first |
+| Free space below 30 GiB | Not enough headroom for system and app caches | Free caches and build artifacts first |
+| `memory_pressure` or swap history runs high | Background processes have stacked up for a long time, and it may not be one app's fault | Look at processes and resident services |
+| No thermal warning but high load | Most likely sync, indexing, remote control, and an LLM desktop app all grinding together | Cut background work first, talk about uninstalling later |
+
+Grandpa's first sentence is not "delete". It is "where is the evidence?"
+
+## Find the Big Items: Do Not Scan the Whole World
+
+A full-disk deep scan easily drags system directories, chat libraries, and browser databases into pointless slow queries. Looking at the user workspace and the usual cache areas is enough.
+
+```bash
+du -sh "$HOME/Downloads" "$HOME/Desktop" "$HOME/Documents" "$HOME/projects" "$HOME/Library" "$HOME/Movies" "$HOME/Music" "$HOME/Pictures" "$HOME/Backups" "$HOME/agent-workbench" 2>/dev/null | sort -h
+
+du -sh "$HOME/Library/Caches" "$HOME/Library/Application Support" "$HOME/Library/Containers" "$HOME/Library/Group Containers" "$HOME/Library/Logs" "$HOME/Library/Developer" 2>/dev/null | sort -h
+```
+
+Once you see the big items, go only one level deeper:
+
+```bash
+find "$HOME/Library/Application Support" -maxdepth 1 -mindepth 1 -exec du -sh {} + 2>/dev/null | sort -h | tail -n 30
+find "$HOME/Library/Caches" -maxdepth 1 -mindepth 1 -exec du -sh {} + 2>/dev/null | sort -h | tail -n 30
+find "$HOME/projects" -maxdepth 1 -mindepth 1 -type d -exec du -sh {} + 2>/dev/null | sort -h | tail -n 30
+find "$HOME/agent-workbench" -maxdepth 1 -mindepth 1 -exec du -sh {} + 2>/dev/null | sort -h | tail -n 30
+find "$HOME/Backups" -maxdepth 2 -mindepth 1 -exec du -sh {} + 2>/dev/null | sort -h | tail -n 30
+```
+
+Then look at background processes:
+
+```bash
+ps aux | awk 'NR==1 || $3+0 >= 10 || $4+0 >= 2 {print}' | sort -k3 -nr | sed -n '1,30p'
+```
+
+This round only needs to produce five conclusions:
+
+| Question | Output format |
+| --- | --- |
+| Who are the 5 biggest space hogs | Path, size, guess at purpose |
+| Which are regenerable burden | Why they can be deleted, how to restore them |
+| Which are business assets or user assets | Why they cannot be deleted directly |
+| Which processes are creating performance friction | Process name, CPU, memory, likely source |
+| How much the first cut is expected to free | Rough estimate in GiB, no promise of precision |
+
+## The Three Blades
+
+The core of this method is not "clean more". It is "cut the most certain things first".
+
+### First Blade: Regenerable Burden
+
+This is the best tier to handle first. These items are usually large, rebuildable, and low risk to user assets.
+
+| Target | Why it can go first | How to restore |
+| --- | --- | --- |
+| `$HOME/Library/Caches/ms-playwright` | Browser automation cache, can be downloaded again | Reinstall the browsers the next time Playwright runs |
+| App update caches | Installers or intermediate states left by updaters | The app will fetch them again |
+| `.next`, `dist`, `build`, `coverage` in repositories | Build artifacts, not source code | Rerun build/test |
+| `node_modules` that is clearly reinstallable | Dependency directories are big and regenerable | `npm install` / `pnpm install` / `bun install` |
+| Temporary exports and failed build artifacts | Usually one-off products | Re-export from the source files |
+
+This blade has to be very precise. Do not write "clean all caches". Write "clean these 5 paths".
+
+### Second Blade: Workflow Sediment
+
+This tier does not necessarily need deleting. It is better suited to tidying up.
+
+Typical targets include:
+
+- New loose files in the Downloads folder.
+- Projects where an archive and its extracted directory both exist.
+- PPTs, videos, screenshots, web exports, and article materials.
+- Multiple project directories with the same name or the same origin.
+- One-off upload bundles, temporary asset bundles, and tool exports.
+
+The approach is not "throw away" but to return them to the workflow:
+
+| Scenario | Recommended action |
+| --- | --- |
+| Archive and extracted directory both exist | Put them in the same candidate group and decide which one is the primary copy |
+| Material on the same topic scattered across Downloads | Merge into a content, assets, project, or archive directory |
+| Names that look like keys, tokens, or account exports | Do not read the contents; move to a sensitive holding area or stop and ask |
+| Just moved but not yet confirmed by a human | Add a Finder tag, such as "file moved" |
+| A same-name file already exists at the destination | Do not overwrite; put it into duplicates awaiting confirmation |
+
+This is "Grandpa calls the roll": not every file goes to the execution ground, some just need to go back to the dorm.
+
+### Third Blade: High-Value Cold Storage
+
+This tier is usually very large, but it must not lead the first round.
+
+| Target | Why it is dangerous | A better action |
+| --- | --- | --- |
+| Large historical project bundles | May be the only state you can review | Generate a list first, then compress or migrate to external storage |
+| Old DMGs, ISOs, installers | Some can be downloaded again, some cannot | Note the source and purpose before deleting |
+| Video asset libraries, PPT source collections | Content assets cannot be regenerated | Cold storage, external drive, or cloud drive; do not delete blindly |
+| Whole old worktrees | May hold unmerged context | Check Git status and task records before handling |
+| Backup directories | Value density is opaque | Layer them by time and purpose first |
+
+The keyword of the third blade is "cold storage", not "wipe".
+
+## No-Cut Zones
+
+The directories below are not forever off limits to optimization, but they must not be handled with a plain `rm -rf` or an all-in-one script.
+
+| No-cut target | Reason |
+| --- | --- |
+| LLM desktop app VM or runtime bundles | May be the core of the app's runtime, deleting them breaks the environment |
+| Chrome / browser profiles | Mixed with login sessions, extensions, history, and databases |
+| Messages, Mail, chat data | Private and complicated to recover |
+| Keychain, password vaults, certificate directories | An Agent must not read or move them |
+| Photos Library | Complex package structure, should be handled through the Photos app or a backup strategy |
+| `.git` of an actively used Git repository | This is project history and state, not an ordinary cache |
+| Obsidian or main knowledge-base vaults | Many files and many links, high repair cost if moved by mistake |
+| ID documents, contracts, finance, visa materials | Personal assets that require human confirmation |
+
+A simple test: if you delete it, will the next Agent no longer know what happened? If yes, hold off.
+
+## Execution Gate
+
+Even when the user says "execute", only the exact first-blade targets just listed get executed. The scope must not grow.
+
+Checks before execution:
+
+- The path exists.
+- The path is under `$HOME`.
+- The path is not a symlink to an unknown location.
+- The path is not `.git`, Keychain, Mail, Messages, Photos Library, a browser profile, or an LLM VM bundle.
+- `df -h` and `du -sh` from before the cleanup are recorded.
+- The manifest is written.
+
+The way of execution must also be clearly distinguished:
+
+| User authorization | Allowed action |
+| --- | --- |
+| "Move to Trash" | Only trash, do not empty |
+| "Free it now" | Only delete the exact paths listed in the manifest |
+| "Tidy up" | Only move files that can clearly be classified, do not delete |
+| "See if it can be deleted" | Read-only inventory and suggestions, no deletion |
+
+Do not use wildcard deletion, do not use `sudo rm -rf`, and do not let a script expand its own gains.
+
+## Manifest and Report
+
+Every execution must leave two records.
+
+The manifest is a machine-readable detail table:
+
+```text
+$HOME/Observation/reports/performance-cleanup-YYYY-MM-DD_HH-MM-SS.tsv
+```
+
+Suggested fields:
+
+```text
+action_at	status	path	size_kib_before	reason	restore_method	error
+```
+
+The report is a review a person can read:
+
+```text
+$HOME/Observation/reports/performance-cleanup-YYYY-MM-DD_HH-MM-SS.md
+```
+
+It must include:
+
+- Execution time.
+- Cleanup scope.
+- Scope left untouched.
+- Disk state before cleanup.
+- Disk state after cleanup.
+- Estimated space freed.
+- The detail table.
+- Suggestions for the second and third blades.
+- How conflicts were handled.
+
+This is not fussiness over paperwork. Without records, the next Agent guesses everything again. With records, the next cut is steadier.
+
+## Copyable Prompt
+
+Below is a public prompt you can hand straight to an Agent. Replace `$HOME`, the workspace name, and the report path with your own environment.
+
+```text
+You are my Mac workflow slimming assistant. Use Occam's razor to tidy this Mac: handle the biggest, most certain, most recoverable burdens first, no superstitious optimization, no showing off, no careless deletion.
+
+The goal is not to empty the computer, but to restore it to a state where work can continue:
+- The Downloads folder no longer looks like a mudslide.
+- Agent worktrees are not full of regenerable build artifacts.
+- Caches do not eat up the disk headroom.
+- High-risk assets such as backups, VMs, chat data, and photo libraries are not hurt by mistake.
+- Every action leaves a manifest/report so that people and the next Agent can take over.
+
+Iron rules:
+- Unless I explicitly say "execute", only a read-only inventory is allowed.
+- Do not read secrets, tokens, keys, .env, browser databases, chat bodies, email bodies, the Keychain, or the contents of password files.
+- Files with sensitive names are judged by file name only; do not open their contents.
+- Do not use directory mtime to decide "last tidied"; trust only the manifest, report, and human logs.
+- Do not hardcode user-name paths; use $HOME or Path.home().
+- Do not touch active repos, VM bundles, browser profiles, photo libraries, or chat/mail main data directly.
+- Write a list before deleting or moving; recheck and write a report after execution.
+- If the target already exists, do not overwrite; put it in "duplicates awaiting confirmation" or stop and explain the conflict.
+
+Phase one: read-only health check.
+Run date, df, sw_vers, memory_pressure, vm_stat, pmset -g therm, and uptime, and output the current disk, memory, and load status.
+
+Phase two: find the big items.
+Scan only Downloads, Desktop, Documents, projects, Library, Movies, Music, Pictures, Backups, and agent-workbench under $HOME, plus Caches, Application Support, Containers, Group Containers, Logs, and Developer under Library.
+Do not deep-scan the whole disk, and do not read the contents of sensitive files.
+
+Phase three: classify.
+Sort candidates into three categories:
+1. Regenerable burden: caches, build artifacts, reinstallable dependencies.
+2. Workflow sediment: loose downloads, archives and extracted directories, assets, temporary exports, duplicate projects.
+3. High-value cold storage: backups, old project bundles, video/PPT source files, photo libraries, possibly the only copy.
+
+Execution gate:
+When I say "execute", execute only the exact first-blade targets you just listed, and do not expand the scope. Write the manifest before execution and the report after. Do not use sudo rm -rf, and do not use wildcard deletion.
+
+Your final reply should include:
+- Read-only inventory done / executed.
+- Estimated space freed.
+- Number of items cleaned.
+- Number of items tidied.
+- Scope left untouched.
+- Report and manifest paths.
+- The biggest win this time and the pitfalls avoided.
+```
+
+## An Anonymized Real-World Account
+
+On an Apple Silicon Mac that has long run browsers, an LLM desktop app, multi-Agent worktrees, and content production assets, the first blade usually does not need to touch user assets.
+
+A steadier order is:
+
+- First clean the automation browser cache and app update caches.
+- Then handle `.next`, `node_modules`, `dist`, and `coverage` inside worktrees.
+- Then tidy the archives, extracted directories, and loose assets in the Downloads folder.
+- Only at the end, list large backups, old project bundles, and video/PPT source files as cold-storage candidates.
+
+In one conservative run, the first blade handled only regenerable caches and build artifacts, and that alone can free several GiB to a dozen or so GiB. But what really matters is not the number. It is that the VM, browser profiles, photo library, chat data, backups, and user documents were not hurt by mistake.
+
+This workflow of read-only inventory, three-color grading, manifest, and report has already been packaged as a skill named [carl-file-organizer](https://github.com/LearnPrompt/carl-skills/tree/main/skills/ops/carl-file-organizer), included in carl-skills.
+
+## Wrapping Up: Not Fussiness, but Handoff-Readiness
+
+For a computer in an AI workflow, this is not a "clean desktop" problem. It is a problem of "can we pick up and keep going next time".
+
+Grandpa's judgment is simple:
+
+- What can be rebuilt, cut first.
+- What can be archived, put back in place first.
+- What might be the only copy, stop and call Grandpa. Do not touch it.
+
+The goal of this process is not to make the Mac look empty, but to make it a machine that people, Agents, and next week's you can keep picking up.
