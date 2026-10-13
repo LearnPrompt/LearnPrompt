@@ -2,9 +2,9 @@ import { defineRouteMiddleware, type StarlightRouteData } from "@astrojs/starlig
 
 // Keep Chinese-only guides available without presenting their Chinese titles
 // as untranslated English navigation. The destination makes the language explicit.
-const chineseGuides: Record<string, string> = {
-  "agent-engineering/mac-workflow-storage-cleanup/": "Mac storage cleanup for AI workflows (Chinese)",
-};
+// Currently empty: every guide has an English translation. Add entries as
+// "route/": "English label (Chinese)" when a new Chinese-only guide ships.
+const chineseGuides: Record<string, string> = {};
 
 type SidebarEntry = StarlightRouteData["sidebar"][number];
 
