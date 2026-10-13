@@ -110,7 +110,7 @@ const formatStars = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : St
           <a href="#active">{copy.active}</a>
           <a href="#stable">{copy.stable}</a>
           <a href="#follow">{copy.follow}</a>
-          <a href={withBase(isEnglish ? "/skills/" : "/en/skills/")} lang={isEnglish ? "zh-CN" : "en"}>{isEnglish ? "Chinese" : "English"}</a>
+          <a href={withBase(isEnglish ? "/skills/" : "/en/skills/")} hreflang={isEnglish ? "zh-CN" : "en"} lang={isEnglish ? "zh-CN" : "en"}>{isEnglish ? "中文" : "English"}</a>
         </div>
       </nav>
 
@@ -136,7 +136,7 @@ const formatStars = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : St
               <div class="lp-project-actions">
                 <a class="lp-button lp-button-small" href={`https://github.com/${project.repo}`} target="_blank" rel="noreferrer">GitHub ↗</a>
                 {project.articleUrl && (
-                  <a class="lp-button lp-button-small" href={project.articleUrl} target="_blank" rel="noreferrer">{copy.article} ↗</a>
+                  <a class="lp-button lp-button-small" href={project.articleUrl} hreflang="zh-CN" target="_blank" rel="noreferrer">{copy.article} ↗</a>
                 )}
               </div>
               {project.installCmd && (
@@ -166,7 +166,7 @@ const formatStars = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : St
               <div class="lp-project-actions">
                 <a class="lp-button lp-button-small" href={`https://github.com/${project.repo}`} target="_blank" rel="noreferrer">GitHub ↗</a>
                 {project.articleUrl && (
-                  <a class="lp-button lp-button-small" href={project.articleUrl} target="_blank" rel="noreferrer">{copy.article} ↗</a>
+                  <a class="lp-button lp-button-small" href={project.articleUrl} hreflang="zh-CN" target="_blank" rel="noreferrer">{copy.article} ↗</a>
                 )}
               </div>
               {project.installCmd && (
